@@ -1,0 +1,397 @@
+<div class="flex h-screen bg-gray-50">
+    <app-sidebar></app-sidebar>
+
+
+    <div class="flex-1 overflow-auto">
+        <header class="bg-white shadow-sm ml-0 md:ml-20">
+            <div class="max-w-7xl mx-auto py-2 md:py-4 px-3 md:px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between">
+                    <h1 *ngIf="!isMobile" class="text-xl md:text-2xl font-semibold text-gray-900">Create Assessment</h1>
+                    <div *ngIf="!isMobile" class="flex flex-wrap w-full sm:w-auto gap-2 text-sm sm:text-base">
+                        <button
+                            class="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:bg-gray-50 flex items-center justify-center gap-2 shadow"
+                            (click)="previewAssessment()">
+                            <i class="fas fa-eye"></i>
+                            Preview
+                        </button>
+                        <button
+                            class="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:bg-gray-50 flex items-center justify-center gap-2 shadow"
+                            (click)="saveAsDraft()">
+                            <i class="fas fa-save"></i>
+                            Save Draft
+                        </button>
+                        <button
+                            class="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 bg-black text-white rounded-lg hover:bg-gray-800 flex items-center justify-center gap-2 shadow"
+                            (click)="publishAssessment()">
+                            Publish
+                        </button>
+                    </div>
+                    <button *ngIf="isMobile" (click)="toggleSidebar()"
+                        class="p-1.5 md:p-2 rounded-md hover:bg-gray-100 transition-colors">
+                        <i class="fas fa-bars w-5 md:w-6 h-5 md:h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+        <div class="max-w-5xl mx-auto p-6">
+
+            <div *ngIf="isMobile"
+                class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                <h1 class="text-2xl font-bold">Create New Assessment</h1>
+                <div class="flex flex-wrap w-full sm:w-auto gap-2 text-sm sm:text-base">
+                    <button
+                        class="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:bg-gray-50 flex items-center justify-center gap-2 shadow"
+                        (click)="previewAssessment()">
+                        <i class="fas fa-eye"></i>
+                        Preview
+                    </button>
+                    <button
+                        class="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:bg-gray-50 flex items-center justify-center gap-2 shadow"
+                        (click)="saveAsDraft()">
+                        <i class="fas fa-save"></i>
+                        Save Draft
+                    </button>
+                    <button
+                        class="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 bg-black text-white rounded-lg hover:bg-gray-800 flex items-center justify-center gap-2 shadow"
+                        (click)="publishAssessment()">
+                        Publish
+                    </button>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-3">
+                <h2 class="text-lg font-semibold mb-4">Basic Information</h2>
+                <div class="space-y-4">
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">Title</label>
+                            <input type="text" [(ngModel)]="assessmentData.title" placeholder="Enter assessment title"
+                                class="w-full p-2.5 border rounded-lg" />
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">Subject/Category</label>
+                            <select [(ngModel)]="assessmentData.category" class="w-full p-2.5 border rounded-lg">
+                                <option value="">Select a category</option>
+                                <option value="networking">Networking</option>
+                                <option value="programming">Programming</option>
+                                <option value="database">Database</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">Time Limit (minutes)</label>
+                            <input type="number" [(ngModel)]="assessmentData.timeLimit"
+                                class="w-full p-2.5 border rounded-lg" />
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">Passing Score (%)</label>
+                            <input type="number" [(ngModel)]="assessmentData.passingScore"
+                                class="w-full p-2.5 border rounded-lg" />
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">Maximum Attempts</label>
+                            <input type="number" [(ngModel)]="assessmentData.maxAttempts"
+                                class="w-full p-2.5 border rounded-lg" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <div class="flex rounded-lg bg-gray-100 p-1 shadow-sm">
+                    <button [class]="'flex-1 px-4 py-2 rounded-md transition-all ' + 
+                            (activeTab === 'ai' ? 'bg-white shadow-sm' : 'hover:bg-gray-200')"
+                        (click)="setActiveTab('ai')">
+                        AI Generation
+                    </button>
+                    <button [class]="'flex-1 px-4 py-2 rounded-md transition-all ' + 
+                            (activeTab === 'manual' ? 'bg-white shadow-sm' : 'hover:bg-gray-200')"
+                        (click)="setActiveTab('manual')">
+                        Manual Creation
+                    </button>
+                </div>
+            </div>
+
+            <!-- AI Generation Content -->
+            <div *ngIf="activeTab === 'ai'" class="space-y-4">
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <div class="mb-4">
+                        <h2 class="text-lg font-semibold">Generate Questions</h2>
+                        <p class="text-gray-500">Let AI help you create questions based on your topic and requirements
+                        </p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">Topic</label>
+                            <input type="text" [(ngModel)]="aiGeneration.topic" placeholder="Enter your topic"
+                                class="w-full p-2.5 border rounded-lg" />
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <label class="text-sm font-medium">Difficulty</label>
+                                <select [(ngModel)]="aiGeneration.difficulty" class="w-full p-2.5 border rounded-lg">
+                                    <option value="easy">Easy</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="hard">Hard</option>
+                                </select>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-sm font-medium">Number of Questions</label>
+                                <input type="number" [(ngModel)]="aiGeneration.questionCount"
+                                    class="w-full p-2.5 border rounded-lg" />
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">Question Types</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="flex items-center space-x-2">
+                                    <input type="checkbox" id="mc" [checked]="isTypeSelected('mc')"
+                                        (change)="toggleType('mc')" />
+                                    <label for="mc">Multiple Choice</label>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <input type="checkbox" id="sa" [checked]="isTypeSelected('sa')"
+                                        (change)="toggleType('sa')" />
+                                    <label for="sa">Short Answer</label>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <input type="checkbox" id="enum" [checked]="isTypeSelected('enum')"
+                                        (change)="toggleType('enum')" />
+                                    <label for="enum">Enumeration</label>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <input type="checkbox" id="tf" [checked]="isTypeSelected('tf')"
+                                        (change)="toggleType('tf')" />
+                                    <label for="tf">True/False</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">Additional Instructions</label>
+                            <textarea [(ngModel)]="aiGeneration.instructions"
+                                placeholder="Enter any specific instructions or context for the AI"
+                                class="w-full p-2.5 border rounded-lg resize-none h-24"></textarea>
+                        </div>
+
+                        <button class="w-full px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 shadow-sm"
+                            (click)="generateQuestions()" [disabled]="isGenerating">
+                            <span *ngIf="!isGenerating">Generate Questions</span>
+                            <span *ngIf="isGenerating">Generating...</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div *ngIf="errorMessage" class="mt-4 text-red-500 text-sm">
+                    {{ errorMessage }}
+                </div>
+
+                <!-- generated questions, still need the tables to be fixed -->
+                <div *ngIf="questions.length > 0" class="mt-6 space-y-4">
+                    <h3 class="text-lg font-semibold">Generated Questions</h3>
+                    <div *ngFor="let question of questions" class="bg-white rounded-lg shadow">
+                        <div class="p-4 border-b">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-base font-medium">Question {{question.id}}</h3>
+                                <button class="p-2 hover:bg-gray-100 rounded-lg text-red-500"
+                                    (click)="deleteQuestion(question.id)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <p class="mb-4">{{question.question}}</p>
+
+                            <div *ngIf="question.type === 'multiple-choice'" class="space-y-2">
+                                <div *ngFor="let option of question.options | keyvalue"
+                                    class="flex items-center space-x-2">
+                                    <input type="radio" [id]="'q'+question.id+'opt'+option.key"
+                                        [name]="'question'+question.id" [value]="option.key"
+                                        [checked]="option.key === question.answer">
+                                    <label [for]="'q'+question.id+'opt'+option.key">
+                                        {{option.key}}. {{option.value}}
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div *ngIf="question.type !== 'multiple-choice'" class="mt-2">
+                                <p class="text-gray-600">Answer: {{question.answer}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manual Creation Content -->
+            <div *ngIf="activeTab === 'manual'" class="space-y-4">
+                <div class="grid gap-6">
+                    <!-- Question Cards -->
+                    <div class="space-y-4">
+                        <div *ngFor="let question of questions" class="bg-white rounded-lg shadow">
+                            <!-- Card Header -->
+                            <div class="p-4 border-b">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-base font-medium">Question {{question.id}}</h3>
+                                    <div class="flex items-center gap-2">
+                                        <button class="p-2 hover:bg-gray-100 rounded-lg">
+                                            <i class="fas fa-grip-vertical"></i>
+                                        </button>
+                                        <button class="p-2 hover:bg-gray-100 rounded-lg text-red-500"
+                                            (click)="deleteQuestion(question.id)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card Content based on type -->
+                            <div class="p-6" [ngSwitch]="question.type">
+                                <div *ngSwitchCase="'multiple-choice'" class="space-y-4">
+                                    <textarea [(ngModel)]="question.question" placeholder="Enter your question here"
+                                        class="w-full p-2.5 border rounded-lg resize-none">
+                                    </textarea>
+                                    <div class="space-y-2">
+                                        <div *ngFor="let letter of ['A', 'B', 'C', 'D']"
+                                            class="flex items-center space-x-2">
+                                            <input type="radio" [id]="'option' + letter + question.id"
+                                                [name]="'question' + question.id" [value]="letter"
+                                                [(ngModel)]="question.answer" class="mr-2" />
+                                            <input type="text" [placeholder]="'Option ' + letter"
+                                                [(ngModel)]="question.options![letter]"
+                                                class="flex-1 p-2.5 border rounded-lg" />
+                                        </div>
+                                    </div>
+                                    <!-- Add points input -->
+                                    <div class="mt-4 w-32">
+                                        <label class="text-sm font-medium">Points</label>
+                                        <input type="number" [(ngModel)]="question.points"
+                                            class="w-full p-2.5 border rounded-lg" min="1" />
+                                    </div>
+                                </div>
+
+                                <div *ngSwitchCase="'short-answer'" class="space-y-4">
+                                    <textarea [(ngModel)]="question.question" placeholder="Enter your question here"
+                                        class="w-full p-2.5 border rounded-lg resize-none">
+                                    </textarea>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="text-sm font-medium">Sample Answer</label>
+                                            <textarea placeholder="Enter a sample answer"
+                                                class="w-full p-2.5 border rounded-lg resize-none mt-1"
+                                                [(ngModel)]="question.answer"></textarea>
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="text-sm font-medium">Character Limit</label>
+                                                <input type="number" value="500"
+                                                    class="w-full p-2.5 border rounded-lg" />
+                                            </div>
+                                            <div>
+                                                <label class="text-sm font-medium">Points</label>
+                                                <input type="number" value="5" class="w-full p-2.5 border rounded-lg" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div *ngSwitchCase="'enumeration'" class="space-y-4">
+                                    <textarea [(ngModel)]="question.question" placeholder="Enter your question here"
+                                        class="w-full p-2.5 border rounded-lg resize-none">
+                                    </textarea>
+                                    <div class="space-y-2">
+                                        <div *ngFor="let item of $any(question.answer); let i = index"
+                                            class="flex items-center gap-2">
+                                            <span class="text-sm font-medium w-6">{{i + 1}}.</span>
+                                            <input type="text" [placeholder]="'Answer ' + (i + 1)"
+                                                [ngModel]="$any(question.answer)[i]"
+                                                (ngModelChange)="$any(question.answer)[i] = $event"
+                                                class="flex-1 p-2.5 border rounded-lg" />
+                                        </div>
+                                        <button (click)="addEnumerationItem(question)"
+                                            class="w-full px-4 py-2 border rounded-lg hover:bg-gray-50">
+                                            <i class="fas fa-plus mr-2"></i>
+                                            Add Item
+                                        </button>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="text-sm font-medium">Required Items</label>
+                                            <input type="number" [(ngModel)]="question.requiredItems"
+                                                class="w-full p-2.5 border rounded-lg" min="1" />
+                                        </div>
+                                        <div>
+                                            <label class="text-sm font-medium">Points</label>
+                                            <input type="number" [(ngModel)]="question.points"
+                                                class="w-full p-2.5 border rounded-lg" min="1" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div *ngSwitchCase="'true-false'" class="space-y-4">
+                                    <textarea [(ngModel)]="question.question" placeholder="Enter your question here"
+                                        class="w-full p-2.5 border rounded-lg resize-none">
+                                    </textarea>
+                                    <div class="space-y-4">
+                                        <div class="space-y-2">
+                                            <div class="flex items-center space-x-2">
+                                                <input type="radio" [id]="'true' + question.id"
+                                                    [name]="'tf' + question.id" [value]="true"
+                                                    [(ngModel)]="question.answer" />
+                                                <label [for]="'true' + question.id">True</label>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <input type="radio" [id]="'false' + question.id"
+                                                    [name]="'tf' + question.id" [value]="false"
+                                                    [(ngModel)]="question.answer" />
+                                                <label [for]="'false' + question.id">False</label>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="text-sm font-medium">Points</label>
+                                            <input type="number" [(ngModel)]="question.points"
+                                                class="w-full p-2.5 border rounded-lg" min="1" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- button for dropdown, still need to fix the lapse of the button or other style implementation -->
+                <div class="flex justify-center mt-6">
+                    <div class="relative">
+                        <button
+                            class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 flex items-center gap-2 shadow"
+                            (click)="toggleDropdown()">
+                            <i class="fas fa-plus"></i>
+                            Add Question
+                        </button>
+                        <div *ngIf="isDropdownOpen"
+                            class="absolute bottom-full mb-2 w-48 bg-white rounded-lg shadow-lg py-2">
+                            <button class="w-full px-4 py-2 text-left hover:bg-gray-100 text-sm"
+                                (click)="addQuestion('multiple-choice')">
+                                Multiple Choice
+                            </button>
+                            <button class="w-full px-4 py-2 text-left hover:bg-gray-100 text-sm"
+                                (click)="addQuestion('short-answer')">
+                                Short Answer
+                            </button>
+                            <button class="w-full px-4 py-2 text-left hover:bg-gray-100 text-sm"
+                                (click)="addQuestion('enumeration')">
+                                Enumeration
+                            </button>
+                            <button class="w-full px-4 py-2 text-left hover:bg-gray-100 text-sm"
+                                (click)="addQuestion('true-false')">
+                                True/False
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

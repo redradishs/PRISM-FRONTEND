@@ -1,0 +1,22 @@
+<!-- Hamburger menu for both mobile and desktop -->
+<button class="hamburger-menu" (click)="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</button>
+
+<nav class="sidebar" [class.open]="isOpen">
+    <!-- Profile section -->
+    <div class="profile-section">
+        <div class="profile-image">
+            <img src="assets/images/profile-placeholder.jpg" alt="Profile">
+        </div>
+        <span class="profile-name">{{username}}</span>
+    </div>
+
+    <!-- Navigation links -->
+    <div class="nav-links">
+        <a *ngFor="let item of menuItems" [routerLink]="item.route" routerLinkActive="active" class="nav-item">
+            <i [class]="item.icon" class="nav-icon"></i>
+            <span class="nav-text">{{item.title}}</span>
+        </a>
+    </div>
+</nav>

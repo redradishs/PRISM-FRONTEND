@@ -1,0 +1,11 @@
+<p class="text-center font-bold text-4xl">TEST CHEATING MONITORING</p>
+
+
+<div class="flex justify-center">
+    <div class="w-1/2 shadow-lg p-4 rounded border border-black-50">
+        <h1 class="text-center">STATUS LIST</h1>
+        <p class="text-center mt-2">Cheating Detected: {{cheatingCount}} times</p>
+        <p *ngIf="cheatMessage !== null" class="text-center text-red-400 mt-4">{{cheatMessage}}</p>
+    </div>
+
+</div>

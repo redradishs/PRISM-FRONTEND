@@ -1,0 +1,174 @@
+<app-sidebar></app-sidebar>
+
+<header class="bg-white shadow-sm ml-0 md:ml-20">
+    <div class="max-w-7xl flex justify-between mx-auto py-2 md:py-4 px-3 md:px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between">
+            <h1 class="text-2xl md:text-2xl font-semibold text-gray-900">Assessments</h1>
+        </div>
+        <div *ngIf="!isMobile" class="flex gap-2">
+            <button class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">Generate</button>
+            <button class="px-4 py-2 border rounded-lg hover:bg-gray-50">Assign</button>
+        </div>
+        <button *ngIf="isMobile" (click)="toggleSidebar()"
+            class="p-1.5 md:p-2 rounded-md hover:bg-gray-100 transition-colors">
+            <i class="fas fa-bars w-5 md:w-6 h-5 md:h-6"></i>
+        </button>
+    </div>
+</header>
+
+<div class="flex-1 overflow-auto p-4 md:p-3 ml-0 md:ml-20 max-w-7xl mx-auto space-y-6">
+
+
+    <main class="p-6 max-w-7xl mx-auto">
+        <!-- Performance Metrics -->
+        <section class="mb-8">
+            <h2 class="text-lg font-semibold mb-4">Performance Metrics</h2>
+            <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                <div class="bg-white p-6 rounded-lg border">
+                    <div class="flex items-center justify-between space-y-0 pb-2">
+                        <h3 class="text-sm font-medium">Average Score</h3>
+                        <i class="fas fa-chart-bar text-gray-400"></i>
+                    </div>
+                    <div class="text-2xl font-bold">82%</div>
+                    <p class="text-xs text-gray-500">+2.5% from last month</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg border">
+                    <div class="flex items-center justify-between space-y-0 pb-2">
+                        <h3 class="text-sm font-medium">Total Students</h3>
+                        <i class="fas fa-users text-gray-400"></i>
+                    </div>
+                    <div class="text-2xl font-bold">{{totalStudents}}</div>
+                    <p class="text-xs text-gray-500">Across {{totalClasses}} classes</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg border">
+                    <div class="flex items-center justify-between space-y-0 pb-2">
+                        <h3 class="text-sm font-medium">Completion Rate</h3>
+                        <i class="fas fa-chart-line text-gray-400"></i>
+                    </div>
+                    <div class="text-2xl font-bold">91.8%</div>
+                    <p class="text-xs text-gray-500">+4.3% from last month</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg border">
+                    <div class="flex items-center justify-between space-y-0 pb-2">
+                        <h3 class="text-sm font-medium">Active Classes</h3>
+                        <i class="fas fa-users-class text-gray-400"></i>
+                    </div>
+                    <div class="text-2xl font-bold">{{totalClasses}}</div>
+                    <p class="text-xs text-gray-500">BSIT 3A, 3B, 3C</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- On Going Assessments  -->
+        <section class="mb-8">
+            <h2 class="text-lg font-semibold mb-4">On Going Assessments</h2>
+            <div class="grid gap-4 md:grid-cols-3">
+                <div *ngFor="let classData of filterAssessments()" class="bg-white p-6 rounded-lg border">
+                    <div class="font-semibold mb-4">{{classData.title}} - {{classData.classes[0].className}}</div>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-sm">
+                                    <span class="font-medium">Progress</span>
+                                    <span class="text-gray-600">{{classData.progress | number:'1.0-0'}}%</span>
+                                </div>
+                                <div class="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                                    <div class="h-full bg-blue-600 rounded-full transition-all duration-300"
+                                        [style.width]="classData.progress + '%'">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span>Students: {{classData.totalStudents}}</span>
+                            <span>Completion: {{classData.progress | number:'1.0-0'}}%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Assessment Sections -->
+        <div class="space-y-8">
+            <!-- Filters -->
+            <div class="flex flex-col sm:flex-row gap-4">
+                <div class="relative flex-1 max-w-sm">
+                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    <input type="text" placeholder="Search assessments" class="w-full pl-10 p-2.5 border rounded-lg"
+                        [value]="searchTerm" (input)="onSearch($event)" />
+                </div>
+                <select [(ngModel)]="sortBy" class="w-full sm:w-[180px] p-2.5 border rounded-lg">
+                    <option value="date">Date</option>
+                    <option value="name">Name</option>
+                    <option value="score">Score</option>
+                    <option value="progress">Progress</option>
+                </select>
+            </div>
+
+            <!-- Recently Added Section -->
+            <section>
+                <h2 class="text-xl font-semibold mb-4">Recently Added</h2>
+                <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    <div *ngFor="let assessment of filterOwnAssessments()" class="bg-white rounded-lg border shadow-sm">
+                        <div class="p-6 space-y-6">
+                            <!-- Header -->
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white font-medium">
+                                    {{assessment.title.substring(0,2).toUpperCase()}}
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold">{{assessment.title}}</h3>
+                                    <p class="text-sm text-gray-500">Created: {{assessment.createdAt | date}}</p>
+                                </div>
+                            </div>
+
+                            <!-- Stats -->
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div class="flex items-center gap-2 text-gray-600">
+                                    <i class="fas fa-list-ol"></i>
+                                    <span>{{assessment.totalQuestions}} questions</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-gray-600">
+                                    <i class="fas fa-star"></i>
+                                    <span>{{assessment.totalPoints}} points</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-gray-600">
+                                    <i class="fas fa-file-alt"></i>
+                                    <span class="capitalize">{{assessment.status}}</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-gray-600">
+                                    <i class="fas fa-layer-group"></i>
+                                    <span>{{getTypeCount(assessment)}} types</span>
+                                </div>
+                            </div>
+
+                            <!-- Question Types -->
+                            <div class="flex flex-wrap gap-2">
+                                <span *ngFor="let type of getQuestionTypes(assessment)"
+                                    class="px-2 py-1 text-xs rounded-full bg-blue-50 text-blue-600">
+                                    {{type}}
+                                </span>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="flex gap-3 pt-2">
+                                <button
+                                    class="flex-1 px-4 py-2.5 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">
+                                    Assign
+                                </button>
+                                <button
+                                    class="flex-1 px-4 py-2.5 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                    Edit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>

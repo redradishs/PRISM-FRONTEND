@@ -1,0 +1,22 @@
+:host {
+    display: block;
+    height: 100%;
+  }
+  
+  .group:hover .group-hover\:opacity-100 {
+    opacity: 1;
+  }
+  
+  /* Ensure icons are centered */
+  i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Add smooth transitions */
+  .transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+  }

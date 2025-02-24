@@ -1,0 +1,43 @@
+<div *ngIf="isMobile && isExpanded" class="fixed inset-0 bg-black/50 z-20" (click)="toggleSidebar()">
+</div>
+
+<nav [class]="getSidebarClasses()">
+    <div class="flex flex-col h-full bg-gray-900">
+        <div class="flex flex-col items-center py-8">
+            <button (click)="toggleSidebar()" class="p-2 mb-8 rounded-full hover:bg-gray-800 transition-colors">
+                <i class="fas fa-bars w-6 h-6"></i>
+            </button>
+
+            <div class="relative group">
+                <div class="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center">
+                    <span class="text-white">AD</span>
+                </div>
+                <div *ngIf="!isExpanded"
+                    class="absolute left-full ml-4 px-2 py-1 bg-gray-800 rounded-md text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                    {{username}}
+                </div>
+            </div>
+            <h3 *ngIf="isExpanded" class="mt-4 font-medium text-lg">{{username}}</h3>
+        </div>
+
+        <div class="flex-1 w-full px-4">
+            <button *ngFor="let item of navItems" (click)="navigateTo(item.route, item.id)"
+                [class]="getNavItemClasses(item.id)" [routerLinkActive]="'bg-blue-600 text-white'">
+                <i [class]="item.icon + ' w-6 h-6'"></i>
+                <span *ngIf="isExpanded" class="text-sm ml-3">{{item.label}}</span>
+                <div *ngIf="!isExpanded"
+                    class="absolute left-full ml-4 px-2 py-1 bg-gray-800 rounded-md text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                    {{item.label}}
+                </div>
+            </button>
+        </div>
+
+
+        <div class="p-4">
+            <button [class]="getLogoutButtonClasses()">
+                <i class="fas fa-sign-out-alt w-6 h-6"></i>
+                <span *ngIf="isExpanded" class="text-sm ml-3">Logout</span>
+            </button>
+        </div>
+    </div>
+</nav>
