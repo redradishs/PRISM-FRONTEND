@@ -30,7 +30,7 @@ export class HeaderComponent {
     { title: 'Home', icon: 'fas fa-home', route: '/instructor/dashboard' },
     { title: 'Students', icon: 'fas fa-users', route: '/instructor/students' },
     { title: 'Assessment', icon: 'fas fa-chart-bar', route: '/instructor/assessment' },
-    { title: 'Resources', icon: 'fas fa-book', route: '/instructor/resources' },
+    { title: 'Generate', icon: 'fas fa-book', route: '/instructor/genererate' },
     { title: 'Profile', icon: 'fas fa-user', route: '/instructor/profile' }
   ];
 

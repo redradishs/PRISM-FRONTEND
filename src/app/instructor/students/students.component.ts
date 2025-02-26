@@ -36,10 +36,17 @@ interface ClassDetails {
 export class StudentsComponent {
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
   isMobile = window.innerWidth < 768;
+  sidebarOpen = !this.isMobile;
+
   @HostListener('window:resize')
   onResize() {
+    const wasDesktop = !this.isMobile;
     this.isMobile = window.innerWidth < 768;
+    if (!this.isMobile && !wasDesktop) {
+      this.sidebarOpen = true;
+    }
   }
+
   userId: string = '';
   searchTerm: string = '';
   currentPage: number = 1;
@@ -49,7 +56,6 @@ export class StudentsComponent {
   selectedClass: any;
   isLoading: boolean = false;
   error: string | null = null;
-
   admittedCount: number = 0;
   pendingCount: number = 0;
 
@@ -121,6 +127,7 @@ export class StudentsComponent {
   ];
 
   toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
     if (this.sidebar) {
       this.sidebar.toggleSidebar();
     }

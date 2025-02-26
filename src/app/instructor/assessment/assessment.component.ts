@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 interface AssessmentCard {
   title: string;
@@ -43,8 +44,10 @@ export class AssessmentComponent {
   totalClasses: number = 0;
   isLoading: boolean = false;
   ownAssessments: any[] = [];
+  activeDropdown: string | null = null;
+  showAll: boolean = false;
 
-  constructor(private api: ApiService, private auth: AuthService) {
+  constructor(private api: ApiService, private auth: AuthService, private router: Router) {
 
   }
 
@@ -185,12 +188,37 @@ export class AssessmentComponent {
   }
 
   getQuestionTypes(assessment: any): string[] {
+    Object.entries(assessment.questionTypes)
+      .map(([type, count]) => `${type} (${count})`);
     return Object.entries(assessment.questionTypes)
       .map(([type, count]) => `${type} (${count})`);
   }
 
   getTypeCount(assessment: any): number {
     return Object.keys(assessment.questionTypes).length;
+  }
+
+  toggleTypeDropdown(assessmentId: string) {
+    if (this.activeDropdown === assessmentId) {
+      this.activeDropdown = null;
+    } else {
+      this.activeDropdown = assessmentId;
+    }
+    console.log('Active dropdown is now:', this.activeDropdown);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    if (this.activeDropdown) {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.relative')) {
+        this.activeDropdown = null;
+      }
+    }
+  }
+
+  goToGenerate() {
+    this.router.navigate(['/instructor/generate']);
   }
 
 }

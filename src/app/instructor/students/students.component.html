@@ -1,125 +1,137 @@
-<app-sidebar></app-sidebar>
-<header class="bg-white shadow-sm ml-0 md:ml-20">
-    <div class="max-w-7xl mx-auto py-2 md:py-4 px-3 md:px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between">
-            <h1 class="text-xl md:text-2xl font-semibold text-gray-900">Students</h1>
-            <button *ngIf="isMobile" (click)="toggleSidebar()"
-                class="p-1.5 md:p-2 rounded-md hover:bg-gray-100 transition-colors">
-                <i class="fas fa-bars w-5 md:w-6 h-5 md:h-6"></i>
-            </button>
-        </div>
-    </div>
-</header>
-
-<div class="p-4 md:p-8 ml-0 md:ml-20 max-w-7xl mx-auto space-y-6">
-    <!-- Course Selection and Export -->
-    <div class="flex flex-row justify-between items-center gap-4">
-        <div class="relative flex-1 max-w-[300px]">
-            <select [(ngModel)]="selectedClass" (ngModelChange)="onClassSelect()"
-                class="appearance-none w-full p-2.5 pr-8 border rounded-lg bg-white cursor-pointer">
-                <option *ngFor="let class of classes" [ngValue]="class">{{class.className}} - {{class.classCode}}
-                </option>
-            </select>
-            <div *ngIf="isLoading" class="text-sm text-gray-500">Loading classes...</div>
-            <div *ngIf="error" class="text-sm text-red-500">{{error}}</div>
-        </div>
-        <button class="flex items-center gap-2 px-4 py-2.5 border rounded-lg hover:bg-gray-50 whitespace-nowrap">
-            Export List <i class="fas fa-download"></i>
-        </button>
-    </div>
-
-    <h1 class="text-3xl md:text-4xl font-bold">BSIT BLOCK A</h1>
-
-    <div class="grid grid-cols-3 gap-2 md:gap-4">
-        <div class="p-4 md:p-6 bg-white rounded-lg border">
-            <h3 class="text-xs md:text-sm font-medium text-gray-500">PERFORMANCE</h3>
-            <div class="text-xl md:text-3xl font-bold mt-1">87%</div>
-        </div>
-        <div class="p-4 md:p-6 bg-white rounded-lg border">
-            <h3 class="text-xs md:text-sm font-medium text-gray-500">ADMITTED</h3>
-            <div class="text-xl md:text-3xl font-bold mt-1">{{admittedCount}}</div>
-        </div>
-        <div class="p-4 md:p-6 bg-white rounded-lg border">
-            <h3 class="text-xs md:text-sm font-medium text-gray-500">PENDING</h3>
-            <div class="text-xl md:text-3xl font-bold mt-1">{{pendingCount}}</div>
-        </div>
-    </div>
-
-    <!-- Search and Actions -->
-    <div class="flex flex-row items-center justify-between gap-4">
-        <div class="relative flex-1 max-w-[300px]">
-            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-            <input type="text" placeholder="Search students" class="w-full pl-10 p-2.5 border rounded-lg"
-                [value]="searchTerm" (input)="onSearch($event)" />
-        </div>
-        <div class="flex gap-2">
-            <button
-                class="flex items-center gap-2 px-4 py-2.5 bg-black text-white rounded-lg hover:bg-gray-800 whitespace-nowrap">
-                Add user <i class="fas fa-plus"></i>
-            </button>
-            <button class="px-4 py-2.5 border rounded-lg hover:bg-gray-50 whitespace-nowrap">
-                Export
-            </button>
-        </div>
-    </div>
-
-    <!-- Table -->
-    <div class="overflow-x-auto border rounded-lg bg-white">
-        <table class="w-full min-w-[800px]">
-            <thead>
-                <tr class="border-b">
-                    <th class="px-6 py-4 text-left font-medium text-gray-500">Name</th>
-                    <th class="px-6 py-4 text-left font-medium text-gray-500">Student ID</th>
-                    <th class="px-6 py-4 text-left font-medium text-gray-500">Block</th>
-                    <th class="px-6 py-4 text-left font-medium text-gray-500">Accuracy</th>
-                    <th class="px-6 py-4 text-right font-medium text-gray-500">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngIf="filteredStudents.length === 0">
-                    <td colspan="5" class="text-center py-8">
-                        <div class="flex flex-col items-center justify-center gap-3">
-                            <i class="fas fa-search text-4xl text-gray-400"></i>
-                            <h3 class="font-medium text-gray-900">
-                                {{ searchTerm ? 'No matching students found' : 'No students enrolled' }}
-                            </h3>
-                            <p class="text-gray-500 text-sm">
-                                {{ searchTerm
-                                ? 'Try adjusting your search term'
-                                : 'There are currently no students enrolled in ' + selectedClass?.className
-                                }}
-                            </p>
-                        </div>
-                    </td>
-                </tr>
-                <tr *ngFor="let student of currentStudents" class="border-b">
-                    <td class="px-6 py-4 font-medium">{{student.name}}</td>
-                    <td class="px-6 py-4">{{student.email}}</td>
-                    <td class="px-6 py-4">{{student.block}}A</td>
-                    <td class="px-6 py-4">{{student.accuracy}}99%</td>
-                    <td class="px-6 py-4 text-right space-x-2 whitespace-nowrap">
-                        <button class="px-3 py-1 rounded bg-pink-50 text-pink-600 hover:bg-pink-100">
-                            Edit
+<div class="min-h-screen bg-gray-50">
+    <div class="flex">
+        <app-sidebar></app-sidebar>
+        <div class="flex-1 ml-0 md:ml-20">
+            <header class="bg-white shadow-sm">
+                <div class="max-w-7xl mx-auto py-2 md:py-4 px-3 md:px-4 sm:px-6 lg:px-8">
+                    <div class="flex items-center justify-between">
+                        <h1 class="text-xl md:text-2xl font-semibold text-gray-900">Students</h1>
+                        <button *ngIf="isMobile" (click)="toggleSidebar()"
+                            class="p-1.5 md:p-2 rounded-md hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-bars w-5 md:w-6 h-5 md:h-6"></i>
                         </button>
-                        <button class="px-3 py-1 rounded bg-red-50 text-red-600 hover:bg-red-100">
-                            Delete
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+                    </div>
+                </div>
+            </header>
 
-    <!-- Pagination -->
-    <div class="flex items-center justify-between mt-4">
-        <button class="btn btn-outline" (click)="previousPage()" [disabled]="currentPage === 1">
-            Previous
-        </button>
-        <div class="text-sm text-gray-500">
-            Page {{currentPage}} out of {{totalPages}}
+            <div class="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
+                <!-- Course Selection and Export -->
+                <div class="flex flex-row justify-between items-center gap-4">
+                    <div class="relative flex-1 max-w-[300px]">
+                        <select [(ngModel)]="selectedClass" (ngModelChange)="onClassSelect()"
+                            class="appearance-none w-full p-2.5 pr-8 rounded-lg bg-white shadow-sm hover:shadow transition-shadow focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option *ngFor="let class of classes" [ngValue]="class">{{class.className}} -
+                                {{class.classCode}}</option>
+                        </select>
+                        <div *ngIf="isLoading" class="text-sm text-gray-500">Loading classes...</div>
+                        <div *ngIf="error" class="text-sm text-red-500">{{error}}</div>
+                    </div>
+                    <button
+                        class="flex items-center gap-2 px-4 py-2.5 bg-white rounded-lg shadow-sm hover:shadow transition-all">
+                        Export List <i class="fas fa-download"></i>
+                    </button>
+                </div>
+
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-900">
+                    {{selectedClass?.className || 'Select a class'}}
+                    {{selectedClass?.classCode ? '- ' + selectedClass.classCode : ''}}
+                </h1>
+
+                <!-- Metric Cards -->
+                <div class="grid grid-cols-3 gap-2 md:gap-4">
+                    <div class="p-4 md:p-6 bg-white rounded-lg shadow-sm hover:shadow transition-all">
+                        <h3 class="text-xs md:text-sm font-medium text-gray-500">PERFORMANCE</h3>
+                        <div class="text-xl md:text-3xl font-bold mt-1">87%</div>
+                    </div>
+                    <div class="p-4 md:p-6 bg-white rounded-lg shadow-sm hover:shadow transition-all">
+                        <h3 class="text-xs md:text-sm font-medium text-gray-500">ADMITTED</h3>
+                        <div class="text-xl md:text-3xl font-bold mt-1">{{admittedCount}}</div>
+                    </div>
+                    <div class="p-4 md:p-6 bg-white rounded-lg shadow-sm hover:shadow transition-all">
+                        <h3 class="text-xs md:text-sm font-medium text-gray-500">PENDING</h3>
+                        <div class="text-xl md:text-3xl font-bold mt-1">{{pendingCount}}</div>
+                    </div>
+                </div>
+
+                <!-- Search and Actions -->
+                <div class="flex flex-row items-center justify-between gap-4">
+                    <div class="relative flex-1 max-w-[300px]">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                        <input type="text" placeholder="Search students"
+                            class="w-full pl-10 p-2.5 rounded-lg shadow-sm hover:shadow transition-shadow focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            [value]="searchTerm" (input)="onSearch($event)" />
+                    </div>
+                    <div class="flex gap-2">
+                        <button
+                            class="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-sm transition-all">
+                            Add user <i class="fas fa-plus"></i>
+                        </button>
+                        <button class="px-4 py-2.5 bg-white rounded-lg shadow-sm hover:shadow transition-all">
+                            Export
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="overflow-x-auto rounded-lg bg-white shadow-sm">
+                    <table class="w-full min-w-[800px]">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="px-6 py-4 text-left font-medium text-gray-500">Name</th>
+                                <th class="px-6 py-4 text-left font-medium text-gray-500">Student ID</th>
+                                <th class="px-6 py-4 text-left font-medium text-gray-500">Block</th>
+                                <th class="px-6 py-4 text-left font-medium text-gray-500">Accuracy</th>
+                                <th class="px-6 py-4 text-right font-medium text-gray-500">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngIf="filteredStudents.length === 0">
+                                <td colspan="5" class="text-center py-8">
+                                    <div class="flex flex-col items-center justify-center gap-3">
+                                        <i class="fas fa-search text-4xl text-gray-400"></i>
+                                        <h3 class="font-medium text-gray-900">
+                                            {{ searchTerm ? 'No matching students found' : 'No students enrolled' }}
+                                        </h3>
+                                        <p class="text-gray-500 text-sm">
+                                            {{ searchTerm
+                                            ? 'Try adjusting your search term'
+                                            : 'There are currently no students enrolled in ' + selectedClass?.className
+                                            }}
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr *ngFor="let student of currentStudents" class="border-b">
+                                <td class="px-6 py-4 font-medium">{{student.name}}</td>
+                                <td class="px-6 py-4">{{student.email}}</td>
+                                <td class="px-6 py-4">{{student.block}}A</td>
+                                <td class="px-6 py-4">{{student.accuracy}}99%</td>
+                                <td class="px-6 py-4 text-right space-x-2 whitespace-nowrap">
+                                    <button class="px-3 py-1 rounded bg-pink-50 text-pink-600 hover:bg-pink-100">
+                                        Edit
+                                    </button>
+                                    <button class="px-3 py-1 rounded bg-red-50 text-red-600 hover:bg-red-100">
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex items-center justify-between mt-4">
+                    <button class="btn btn-outline" (click)="previousPage()" [disabled]="currentPage === 1">
+                        Previous
+                    </button>
+                    <div class="text-sm text-gray-500">
+                        Page {{currentPage}} out of {{totalPages}}
+                    </div>
+                    <button class="btn btn-outline" (click)="nextPage()" [disabled]="currentPage === totalPages">
+                        Next
+                    </button>
+                </div>
+            </div>
         </div>
-        <button class="btn btn-outline" (click)="nextPage()" [disabled]="currentPage === totalPages">
-            Next
-        </button>
     </div>
 </div>
