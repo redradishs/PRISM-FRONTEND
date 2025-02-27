@@ -54,9 +54,6 @@ export class HomeComponent implements OnInit {
   onGoingAssessments: AssessmentProgress[] = [];
 
 
-
-
-
   isMobile = window.innerWidth < 768;
   @HostListener('window:resize')
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;

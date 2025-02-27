@@ -9,6 +9,7 @@ import { GenerateAssessmentComponent } from './instructor/generate-assessment/ge
 import { TakeAssessmentComponent } from './instructor/take-assessment/take-assessment.component';
 import { TestComponent } from './adons/test/test.component';
 import { UhomeComponent } from './user/uhome/uhome.component';
+import { ResultComponent } from './instructor/result/result.component';
 
 export const routes: Routes = [
     {path: '', redirectTo: 'login', pathMatch: 'full'},
@@ -22,7 +23,7 @@ export const routes: Routes = [
     {path: 'instructor/profile', component: ProfileComponent },
     {path: 'instructor/generate', component: GenerateAssessmentComponent },
     {path: 'instructor/takeassessment', component: TakeAssessmentComponent },
-
+    {path: 'instructor/result', component: ResultComponent },
     //user routes
     {path: 'user/dashboard', component:  UhomeComponent},
 

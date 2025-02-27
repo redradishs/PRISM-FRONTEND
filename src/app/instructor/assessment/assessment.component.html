@@ -3,90 +3,83 @@
         <app-sidebar></app-sidebar>
         <div class="flex-1 ml-0 md:ml-20">
             <header class="bg-white shadow-sm">
-                <div class="max-w-7xl flex justify-between mx-auto py-2 md:py-4 px-3 md:px-4 sm:px-6 lg:px-8">
+                <div class="max-w-7xl mx-auto py-2 md:py-4 px-3 md:px-4 sm:px-6 lg:px-8">
                     <div class="flex items-center justify-between">
-                        <h1 class="text-2xl md:text-2xl font-semibold text-gray-900">Assessments</h1>
+                        <h1 class="text-xl md:text-2xl font-semibold text-gray-900">Assessments</h1>
+                        <div class="header-actions">
+                            <button class="generate-button">
+                                <i class="fas fa-plus"></i>
+                                Generate
+                            </button>
+                            <button *ngIf="isMobile" (click)="toggleSidebar()"
+                                class="p-1.5 md:p-2 rounded-md hover:bg-gray-100 transition-colors">
+                                <i class="fas fa-bars w-5 md:w-6 h-5 md:h-6"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div *ngIf="!isMobile" class="flex gap-2">
-                        <button
-                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-sm transition-all"
-                            (click)="goToGenerate()">Generate</button>
-                        <button
-                            class="px-4 py-2 bg-white rounded-lg hover:bg-gray-50 shadow-sm transition-all">Assign</button>
-                    </div>
-                    <button *ngIf="isMobile" (click)="toggleSidebar()"
-                        class="p-1.5 md:p-2 rounded-md hover:bg-gray-50 transition-all">
-                        <i class="fas fa-bars w-5 md:w-6 h-5 md:h-6"></i>
-                    </button>
                 </div>
             </header>
 
-            <div class="p-4 md:p-3 max-w-7xl mx-auto space-y-6">
-                <!-- Performance Metrics -->
-                <section class="mb-8">
-                    <h2 class="text-lg font-semibold mb-4">Performance Metrics</h2>
-                    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                        <div class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                            <div class="flex items-center justify-between space-y-0 pb-2">
-                                <h3 class="text-sm font-medium">Average Score</h3>
-                                <i class="fas fa-chart-bar text-gray-400"></i>
+            <div class="main-content">
+                <!-- Performance Details Section, responsiveness needs to be fixed and also add few more details about the students -->
+                <section class="metrics-section">
+                    <h2>Performance Metrics</h2>
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <h3>Average Score</h3>
+                                <i class="fas fa-chart-bar"></i>
                             </div>
-                            <div class="text-2xl font-bold">82%</div>
-                            <p class="text-xs text-gray-500">+2.5% from last month</p>
+                            <div class="metric-value">82%</div>
+                            <p class="metric-trend">+2.5% from last month</p>
                         </div>
 
-                        <div class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                            <div class="flex items-center justify-between space-y-0 pb-2">
-                                <h3 class="text-sm font-medium">Total Students</h3>
-                                <i class="fas fa-users text-gray-400"></i>
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <h3>Total Students</h3>
+                                <i class="fas fa-users"></i>
                             </div>
-                            <div class="text-2xl font-bold">{{totalStudents}}</div>
-                            <p class="text-xs text-gray-500">Across {{totalClasses}} classes</p>
+                            <div class="metric-value">{{totalStudents}}</div>
+                            <p class="metric-trend">Across {{totalClasses}} classes</p>
                         </div>
 
-                        <div class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                            <div class="flex items-center justify-between space-y-0 pb-2">
-                                <h3 class="text-sm font-medium">Completion Rate</h3>
-                                <i class="fas fa-chart-line text-gray-400"></i>
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <h3>Completion Rate</h3>
+                                <i class="fas fa-chart-line"></i>
                             </div>
-                            <div class="text-2xl font-bold">91.8%</div>
-                            <p class="text-xs text-gray-500">+4.3% from last month</p>
+                            <div class="metric-value">91.8%</div>
+                            <p class="metric-trend">+4.3% from last month</p>
                         </div>
 
-                        <div class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                            <div class="flex items-center justify-between space-y-0 pb-2">
-                                <h3 class="text-sm font-medium">Active Classes</h3>
-                                <i class="fas fa-users-class text-gray-400"></i>
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <h3>Active Classes</h3>
+                                <i class="fas fa-users-class"></i>
                             </div>
-                            <div class="text-2xl font-bold">{{totalClasses}}</div>
-                            <p class="text-xs text-gray-500">BSIT 3A, 3B, 3C</p>
+                            <div class="metric-value">{{totalClasses}}</div>
+                            <p class="metric-trend">BSIT 3A, 3B, 3C</p>
                         </div>
                     </div>
                 </section>
 
-                <!-- On Going Assessments -->
-                <section class="mb-8">
-                    <h2 class="text-lg font-semibold mb-4">On Going Assessments</h2>
-                    <div class="grid gap-4 md:grid-cols-3">
-                        <div *ngFor="let classData of filterAssessments()"
-                            class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                            <div class="font-semibold mb-4">{{classData.title}} - {{classData.classes[0].className}}
-                            </div>
-                            <div class="space-y-4">
-                                <div>
-                                    <div class="space-y-2">
-                                        <div class="flex justify-between text-sm">
-                                            <span class="font-medium">Progress</span>
-                                            <span class="text-gray-600">{{classData.progress | number:'1.0-0'}}%</span>
-                                        </div>
-                                        <div class="h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                                            <div class="h-full bg-blue-600 rounded-full transition-all duration-300"
-                                                [style.width]="classData.progress + '%'">
-                                            </div>
-                                        </div>
+
+                <section class="ongoing-section">
+                    <h2>On Going Assessments</h2>
+                    <div class="ongoing-grid">
+                        <div *ngFor="let classData of filterAssessments()" class="ongoing-card">
+                            <div class="ongoing-title">{{classData.title}} - {{classData.classes[0].className}}</div>
+                            <div class="ongoing-content">
+                                <div class="progress-container">
+                                    <div class="progress-header">
+                                        <span>Progress</span>
+                                        <span>{{classData.progress | number:'1.0-0'}}%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" [style.width]="classData.progress + '%'"></div>
                                     </div>
                                 </div>
-                                <div class="flex justify-between text-sm">
+                                <div class="ongoing-stats">
                                     <span>Students: {{classData.totalStudents}}</span>
                                     <span>Completion: {{classData.progress | number:'1.0-0'}}%</span>
                                 </div>
@@ -95,17 +88,14 @@
                     </div>
                 </section>
 
-                <!-- Assessment Sections -->
-                <div class="space-y-8">
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <div class="relative flex-1 max-w-sm">
-                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                            <input type="text" placeholder="Search assessments"
-                                class="w-full pl-10 p-2.5 rounded-lg bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-shadow"
+                <div class="assessment-container">
+                    <div class="filter-section">
+                        <div class="search-container">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Search assessments" class="search-input"
                                 [value]="searchTerm" (input)="onSearch($event)" />
                         </div>
-                        <select [(ngModel)]="sortBy"
-                            class="w-full sm:w-[180px] p-2.5 rounded-lg bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-shadow">
+                        <select [(ngModel)]="sortBy" class="sort-select">
                             <option value="date">Date</option>
                             <option value="name">Name</option>
                             <option value="score">Score</option>
@@ -113,105 +103,90 @@
                         </select>
                     </div>
 
-                    <section>
-                        <h2 class="text-xl font-semibold mb-4">My Assessments</h2>
-                        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                            <div *ngIf="filterOwnAssessments().length === 0"
-                                class="col-span-full flex flex-col items-center justify-center p-8 shadow">
-                                <i class="fas fa-clipboard-list text-gray-400 text-4xl mb-3"></i>
-                                <h1 *ngIf="searchTerm == ''" class="text-lg font-medium text-gray-900">No assessments
-                                    found</h1>
-                                <h1 *ngIf="searchTerm !== ''" class="text-lg font-medium text-gray-900">No assessments
-                                    found "{{searchTerm}}"</h1>
-                                <p class="text-gray-500 text-sm">Try creating a new assessment or enter the correct
-                                    title.
-                                </p>
+                    <section class="my-assessments">
+                        <h2>My Assessments</h2>
+                        <div class="assessments-grid">
+                            <div *ngIf="filterOwnAssessments().length === 0" class="empty-state">
+                                <i class="fas fa-clipboard-list"></i>
+                                <h1 *ngIf="searchTerm == ''">No assessments found</h1>
+                                <h1 *ngIf="searchTerm !== ''">No assessments found "{{searchTerm}}"</h1>
+                                <p>Try creating a new assessment or enter the correct title.</p>
                             </div>
+
                             <div *ngFor="let assessment of filterOwnAssessments().slice(0, showAll ? undefined : 6)"
-                                class="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
-                                <div class="p-6 space-y-6">
-                                    <!-- Header -->
-                                    <div class="flex items-center gap-4">
-                                        <div
-                                            class="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white font-medium">
+                                class="assessment-card">
+                                <div class="assessment-content">
+
+                                    <div class="assessment-header">
+                                        <div class="assessment-avatar">
                                             {{assessment.title.substring(0,2).toUpperCase()}}
                                         </div>
-                                        <div>
-                                            <h3 class="text-lg font-semibold">{{assessment.title}}</h3>
-                                            <p class="text-sm text-gray-500">Created: {{assessment.createdAt | date}}
-                                            </p>
+                                        <div class="assessment-info">
+                                            <h3>{{assessment.title}}</h3>
+                                            <p>Created: {{assessment.createdAt | date}}</p>
                                         </div>
                                     </div>
 
-                                    <!-- Stats -->
-                                    <div class="grid grid-cols-2 gap-4 text-sm">
-                                        <div class="flex items-center gap-2 text-gray-600">
+
+                                    <div class="assessment-stats">
+                                        <div class="stat-item">
                                             <i class="fas fa-list-ol"></i>
                                             <span>{{assessment.totalQuestions}} questions</span>
                                         </div>
-                                        <div class="flex items-center gap-2 text-gray-600">
+                                        <div class="stat-item">
                                             <i class="fas fa-star"></i>
                                             <span>{{assessment.totalPoints}} points</span>
                                         </div>
-                                        <div class="flex items-center gap-2 text-gray-600">
+                                        <div class="stat-item">
                                             <i class="fas fa-file-alt"></i>
                                             <span class="capitalize">{{assessment.status}}</span>
                                         </div>
-                                        <div class="flex items-center gap-2 text-gray-600">
+                                        <div class="stat-item">
                                             <i class="fas fa-layer-group"></i>
                                             <span>{{getTypeCount(assessment)}} types</span>
                                         </div>
                                     </div>
 
-                                    <div class="relative">
-                                        <div class="flex flex-wrap gap-2">
+                                    <div class="types-container">
+                                        <div class="types-list">
                                             <span *ngFor="let type of getQuestionTypes(assessment).slice(0, 1)"
-                                                class="px-2 py-1 text-xs rounded-full bg-blue-50 text-blue-600">
+                                                class="type-tag">
                                                 {{type}}
                                             </span>
 
                                             <button *ngIf="getQuestionTypes(assessment).length > 1"
                                                 (click)="toggleTypeDropdown(assessment.id); $event.stopPropagation();"
-                                                class="px-2 py-1 text-xs rounded-full bg-gray-50 text-gray-600 hover:bg-gray-100">
+                                                class="more-types">
                                                 +{{getQuestionTypes(assessment).length - 1}} more
                                             </button>
                                         </div>
 
-                                        <div *ngIf="activeDropdown === assessment.id"
-                                            class="absolute left-0 z-50 mt-2 p-2 min-w-[200px] rounded-lg bg-white shadow-lg shadow-gray-200/80"
-                                            style="top: 100%; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
-                                            <div class="flex flex-wrap gap-2">
+                                        <div *ngIf="activeDropdown === assessment.id" class="types-dropdown">
+                                            <div class="types-grid">
                                                 <span *ngFor="let type of getQuestionTypes(assessment)"
-                                                    class="px-2 py-1 text-xs rounded-full bg-blue-50 text-blue-600">
+                                                    class="type-tag">
                                                     {{type}}
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="flex gap-3 pt-2">
-                                        <button
-                                            class="flex-1 px-4 py-2.5 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">
-                                            Assign
-                                        </button>
-                                        <button
-                                            class="flex-1 px-4 py-2.5 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                                            Edit
-                                        </button>
+                                    <div class="action-buttons">
+                                        <button class="assign-button">Assign</button>
+                                        <button class="edit-button">Edit</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </section>
 
-                    <div *ngIf="filterOwnAssessments().length > 6" class="flex items-center justify-center mt-6 gap-2">
-                        <div class="h-[1px] bg-gray-200 w-full max-w-[100px]"></div>
-                        <button (click)="showAll = !showAll"
-                            class="text-gray-500 hover:text-gray-700 text-sm flex items-center gap-2 transition-colors">
+                    <div *ngIf="filterOwnAssessments().length > 6" class="show-more">
+                        <div class="divider"></div>
+                        <button (click)="showAll = !showAll" class="show-more-button">
                             {{ showAll ? 'Show Less' : 'Show More' }}
                             <i class="fas" [class.fa-chevron-down]="!showAll" [class.fa-chevron-up]="showAll"></i>
                         </button>
-                        <div class="h-[1px] bg-gray-200 w-full max-w-[100px]"></div>
+                        <div class="divider"></div>
                     </div>
                 </div>
             </div>

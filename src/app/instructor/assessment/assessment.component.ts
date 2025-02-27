@@ -182,9 +182,10 @@ export class AssessmentComponent {
     };
     return colors[difficulty as keyof typeof colors];
   }
-
-  toggleSidebar(): void {
-    this.isSidebarOpen = !this.isSidebarOpen;
+  toggleSidebar() {
+    if (this.sidebar) {
+      this.sidebar.toggleSidebar();
+    }
   }
 
   getQuestionTypes(assessment: any): string[] {

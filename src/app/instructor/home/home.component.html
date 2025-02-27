@@ -2,7 +2,6 @@
     <div class="flex">
         <app-sidebar></app-sidebar>
         <div class="flex-1 ml-0 md:ml-20">
-
             <header class="bg-white shadow-sm">
                 <div class="max-w-7xl mx-auto py-2 md:py-4 px-3 md:px-4 sm:px-6 lg:px-8">
                     <div class="flex items-center justify-between">
@@ -15,103 +14,82 @@
                 </div>
             </header>
 
-
-
-            <!-- Welcome Section -->
-            <div class="bg-white mt-3 md:mt-5">
-                <div class="px-4 md:px-3 py-3 md:py-4 ml-2 md:ml-8">
-                    <div class="flex items-center md:gap-4">
-                        <div>
-                            <h1 class="text-2xl md:text-4xl font-bold">Welcome Back, {{username}}</h1>
-                            <p class="text-gray-500 text-sm md:text-l">Here's what's happening in your classes today.
-                            </p>
-                        </div>
+            <div class="welcome-section">
+                <div class="welcome-container">
+                    <div class="welcome-content">
+                        <h1>Welcome Back, {{username}}</h1>
+                        <p>Here's what's happening in your classes today.</p>
                     </div>
                 </div>
             </div>
 
-            <main class="p-4 md:p-6 space-y-4 md:space-y-6 max-w-7xl mx-auto">
-                <!-- Metric Cards -->
-                <div class="grid grid-cols-3 gap-2 md:gap-4">
-                    <div class="card bg-white p-3 md:p-6 rounded-lg shadow">
-                        <div class="flex flex-col items-center justify-center">
-                            <i class="fas fa-users text-blue-600 text-lg md:text-3xl mb-1 md:mb-2"></i>
-                            <h3 class="text-[10px] md:text-sm font-medium text-gray-500 text-center">TOTAL STUDENTS</h3>
-                            <p class="text-sm md:text-2xl font-bold">{{totalStudents}}</p>
+            <main class="main-content">
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-content">
+                            <i class="fas fa-users metric-icon"></i>
+                            <h3>TOTAL STUDENTS</h3>
+                            <p>{{totalStudents}}</p>
                         </div>
                     </div>
 
-                    <div class="card bg-white p-3 md:p-6 rounded-lg shadow">
-                        <div class="flex flex-col items-center justify-center">
-                            <i class="fas fa-clipboard-list text-blue-600 text-lg md:text-3xl mb-1 md:mb-2"></i>
-                            <h3 class="text-[10px] md:text-sm font-medium text-gray-500 text-center">ACTIVE ASSESSMENTS
-                            </h3>
-                            <p class="text-sm md:text-2xl font-bold">{{totalActiveAssessments}}</p>
+                    <div class="metric-card">
+                        <div class="metric-content">
+                            <i class="fas fa-clipboard-list metric-icon"></i>
+                            <h3>ACTIVE ASSESSMENTS</h3>
+                            <p>{{totalActiveAssessments}}</p>
                         </div>
                     </div>
 
-                    <div class="card bg-white p-3 md:p-6 rounded-lg shadow">
-                        <div class="flex flex-col items-center justify-center">
-                            <i class="fas fa-book text-blue-600 text-lg md:text-3xl mb-1 md:mb-2"></i>
-                            <h3 class="text-[10px] md:text-sm font-medium text-gray-500 text-center">TOTAL CLASSES</h3>
-                            <p class="text-sm md:text-2xl font-bold">{{totalClasses}}</p>
+                    <div class="metric-card">
+                        <div class="metric-content">
+                            <i class="fas fa-book metric-icon"></i>
+                            <h3>TOTAL CLASSES</h3>
+                            <p>{{totalClasses}}</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Assessment Progress Section -->
-                <div class="card bg-white p-4 md:p-6 rounded-lg shadow">
-                    <h2 class="text-sm font-semibold mb-3 md:mb-4 text-gray-500">
-                        ON GOING ASSESSMENT PROGRESS BAR
-                    </h2>
-                    <div class="space-y-3 md:space-y-4">
-                        <div *ngFor="let assessment of onGoingAssessments" class="flex items-center gap-3 md:gap-4">
-                            <div class="w-6 md:w-8 h-6 md:h-8 rounded-full bg-blue-600"></div>
-                            <div class="flex-grow">
-                                <div class="flex flex-col sm:flex-row sm:justify-between mb-2">
-                                    <span class="font-medium text-sm md:text-base">{{assessment.title}}</span>
-                                    <span class="text-xs md:text-sm text-gray-500">
-                                        {{assessment.classes[0].className}}
-                                    </span>
+                <div class="assessment-card">
+                    <h2>ON GOING ASSESSMENT PROGRESS BAR</h2>
+                    <div class="assessment-list">
+                        <div *ngFor="let assessment of onGoingAssessments" class="assessment-item">
+                            <div class="assessment-icon"></div>
+                            <div class="assessment-details">
+                                <div class="assessment-header">
+                                    <span class="assessment-title">{{assessment.title}}</span>
+                                    <span class="assessment-class">{{assessment.classes[0].className}}</span>
                                 </div>
-                                <div class="progress-bar bg-gray-200 rounded-full h-2">
-                                    <div class="progress-value bg-black h-full rounded-full transition-all duration-300"
-                                        [style.width.%]="calculateProgress(assessment)">
-                                    </div>
+                                <div class="progress-bar">
+                                    <div class="progress-value" [style.width.%]="calculateProgress(assessment)"></div>
                                 </div>
-                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <div class="assessment-footer">
                                     <span>Progress: {{calculateProgress(assessment) | number:'1.0-0'}}%</span>
                                     <span>Due: {{assessment.dueDate | date}} {{assessment.dueTime}}</span>
                                 </div>
                             </div>
                         </div>
-                        <div *ngIf="onGoingAssessments.length === 0"
-                            class="text-center text-gray-500 text-xl italic p-3">
+                        <div *ngIf="onGoingAssessments.length === 0" class="no-assessments">
                             There is currently no on going assessments, you may schedule one now.
-
                         </div>
                     </div>
                 </div>
 
-
-
-
-                <!-- Performance Charts -->
-                <section>
-                    <h2 class="text-xl md:text-2xl font-semibold mb-4 md:mb-6">Performance Chart</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                        <div class="card bg-white p-4 md:p-6 rounded-lg shadow">
-                            <h3 class="font-semibold mb-3 md:mb-4 text-sm md:text-base">Class Performance Overview</h3>
-                            <div class="chart-container h-[300px] md:h-[350px]">
+                <section class="performance-section">
+                    <h2>Performance Chart</h2>
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <h3>Class Performance Overview</h3>
+                            <div class="chart-container">
                                 <ng-container *ngIf="barChartData">
                                     <canvas [data]="barChartData" [options]="barChartOptions" [type]="'bar'" baseChart>
                                     </canvas>
                                 </ng-container>
                             </div>
                         </div>
-                        <div class="card bg-white p-4 md:p-6 rounded-lg shadow">
-                            <h3 class="font-semibold mb-3 md:mb-4 text-sm md:text-base">Grade Distribution</h3>
-                            <div class="chart-container h-[250px] md:h-[350px] flex items-center justify-center">
+                        <div class="chart-card">
+                            <h3>Grade Distribution</h3>
+                            <div class="chart-container">
                                 <canvas baseChart [data]="pieChartData" [options]="pieChartOptions" [type]="'pie'">
                                 </canvas>
                             </div>
