@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { FormControl, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormControl, ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
 import { Title } from '@angular/platform-browser';
@@ -9,16 +9,25 @@ import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
   loginForm: FormGroup;
   errorMessage: string = '';
+  formError: string = '';
   loading: boolean = false;
   clicked = false;
   rememberMe: boolean = false;
+  showPassword = false;
+  confirmPassword: string = '';
+  email: string = '';
+  password: string = '';
+  name: string = '';
+  
+
+  activeTab: string = 'login';
 
   constructor(
     private router: Router,
@@ -49,24 +58,21 @@ export class LoginComponent {
     }
   }
 
-  userLogin(): void {
+  handleLoginSubmit(): void {
     if (this.loginForm.valid) {
       this.clicked = true;
       this.loading = true;
   
       // Create a data object to pass to the service
-      const { email, password, rememberMe } = this.loginForm.value;
+      const { email, password} = this.loginForm.value;
   
       // Pass the data object to the authService
-      const loginData = { email, password, rememberMe };
+      const loginData = { email, password };
   
       this.authService.userLogin(loginData).subscribe({
         next: (response: any) => {
           // Login success: store the JWT token and navigate to home
           this.authService.setToken(response.jwt);
-          if (rememberMe) {
-            localStorage.setItem('rememberedEmail', email);
-          }
 
           const userRole = this.authService.getUserRole();
 
@@ -121,5 +127,20 @@ export class LoginComponent {
     this.loginForm.patchValue({ password: '' });
     this.loading = false;
     this.clicked = false;
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+
+  handleSignupSubmit(event: Event): void {
+    event.preventDefault();
+    // Add your signup logic here
+    if (this.password === this.confirmPassword) {
+      // Handle signup
+      console.log('Signup:', { name: this.name, email: this.email, password: this.password });
+    } else {
+      this.formError = 'Passwords do not match';
+    }
   }
 }

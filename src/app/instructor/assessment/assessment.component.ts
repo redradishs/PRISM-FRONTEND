@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 interface AssessmentCard {
   title: string;
@@ -220,6 +220,12 @@ export class AssessmentComponent {
 
   goToGenerate() {
     this.router.navigate(['/instructor/generate']);
+  }
+
+  navigateToResult(id: string) {
+    this.router.navigate(['/instructor/result'], {
+      state: {assessmentId: id} 
+    });
   }
 
 }

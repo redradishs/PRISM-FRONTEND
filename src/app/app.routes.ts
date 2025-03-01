@@ -10,6 +10,7 @@ import { TakeAssessmentComponent } from './instructor/take-assessment/take-asses
 import { TestComponent } from './adons/test/test.component';
 import { UhomeComponent } from './user/uhome/uhome.component';
 import { ResultComponent } from './instructor/result/result.component';
+import { ComponentTestingComponent } from './component-testing/component-testing.component';
 
 export const routes: Routes = [
     {path: '', redirectTo: 'login', pathMatch: 'full'},
@@ -26,6 +27,7 @@ export const routes: Routes = [
     {path: 'instructor/result', component: ResultComponent },
     //user routes
     {path: 'user/dashboard', component:  UhomeComponent},
+    {path: 'pagetest', component:  ComponentTestingComponent},
 
 
 

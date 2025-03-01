@@ -68,22 +68,25 @@
                     <h2>On Going Assessments</h2>
                     <div class="ongoing-grid">
                         <div *ngFor="let classData of filterAssessments()" class="ongoing-card">
-                            <div class="ongoing-title">{{classData.title}} - {{classData.classes[0].className}}</div>
-                            <div class="ongoing-content">
-                                <div class="progress-container">
-                                    <div class="progress-header">
-                                        <span>Progress</span>
-                                        <span>{{classData.progress | number:'1.0-0'}}%</span>
+                            <a (click)="navigateToResult(classData._id)" class="cursor-pointer">
+                                <div class="ongoing-title">{{classData.title}} - {{classData.classes[0].className}}
+                                </div>
+                                <div class="ongoing-content">
+                                    <div class="progress-container">
+                                        <div class="progress-header">
+                                            <span>Progress</span>
+                                            <span>{{classData.progress | number:'1.0-0'}}%</span>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" [style.width]="classData.progress + '%'"></div>
+                                        </div>
                                     </div>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" [style.width]="classData.progress + '%'"></div>
+                                    <div class="ongoing-stats">
+                                        <span>Students: {{classData.totalStudents}}</span>
+                                        <span>Completion: {{classData.progress | number:'1.0-0'}}%</span>
                                     </div>
                                 </div>
-                                <div class="ongoing-stats">
-                                    <span>Students: {{classData.totalStudents}}</span>
-                                    <span>Completion: {{classData.progress | number:'1.0-0'}}%</span>
-                                </div>
-                            </div>
+                            </a>
                         </div>
                     </div>
                 </section>

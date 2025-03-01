@@ -12,19 +12,18 @@
             </div>
 
             <!-- Login Form -->
-            <form *ngIf="activeTab === 'login'" [formGroup]="loginForm" (submit)="handleLoginSubmit()"
-                class="login-form">
+            <form *ngIf="activeTab === 'login'" (submit)="handleLoginSubmit($event)" class="login-form">
                 <div class="form-group">
                     <label class="form-label">Email</label>
-                    <input type="email" formControlName="email" class="form-input"
-                        placeholder="XXXXX@gordoncollege.edu.ph" required />
+                    <input type="email" [(ngModel)]="email" name="email" class="form-input" placeholder="m@example.com"
+                        required />
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Password</label>
                     <div class="password-group">
                         <div class="password-input-wrapper">
-                            <input [type]="showPassword ? 'text' : 'password'" formControlName="password"
+                            <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password"
                                 class="form-input" placeholder="••••••••" required />
                             <button type="button" (click)="togglePasswordVisibility()" class="password-toggle">
                                 <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>

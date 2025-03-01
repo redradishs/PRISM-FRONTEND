@@ -1,7 +1,7 @@
 <div class="min-h-screen bg-gray-50">
     <div class="flex">
-        <app-sidebar></app-sidebar>
-        <div class="flex-1 ml-0 md:ml-20">
+        <app-sidebar [class.mobile-sidebar]="isMobile"></app-sidebar>
+        <div class="flex-1 ml-0 md:ml-20 max-w-full overflow-x-hidden">
             <!-- Header -->
             <header class="bg-white shadow-sm">
                 <div class="max-w-7xl mx-auto py-2 md:py-4 px-3 md:px-4 sm:px-6 lg:px-8">
@@ -60,12 +60,13 @@
                     </div>
                 </div>
 
-                <!-- Complete Result List Section -->
+
                 <div class="result-card">
                     <div class="result-header">
                         <div class="header-title">
                             <i class="fas fa-user"></i>
-                            <h2>Complete Result List</h2>
+                            <!-- <h2>Complete Result List</h2> -->
+                            <h2>{{className}} - {{classCode}}</h2>
                         </div>
                         <div class="search-container">
                             <input type="text" [(ngModel)]="searchTerm" placeholder="Search students"
@@ -73,35 +74,38 @@
                         </div>
                     </div>
 
-                    <table class="result-table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Block</th>
-                                <th>Score</th>
-                                <th>Performance</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let student of currentStudents">
-                                <td>{{student.name}}</td>
-                                <td>{{student.block}}</td>
-                                <td>{{student.score}}%</td>
-                                <td>
-                                    <div class="performance-container">
-                                        <div class="progress-bar">
-                                            <div class="progress-fill" [style.width]="getProgressWidth(student.score)">
+                    <div class="table-container">
+                        <table class="result-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Block</th>
+                                    <th>Score</th>
+                                    <th>Performance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let student of classResult">
+                                    <td>{{student.name}}</td>
+                                    <td>{{student.block}} A</td>
+                                    <td>{{student.score}}/{{student.totalScore}}</td>
+                                    <td>
+                                        <div class="performance-container">
+                                            <div class="progress-bar">
+                                                <div class="progress-fill"
+                                                    [style.width]="getProgressWidth(student.score)">
+                                                </div>
                                             </div>
+                                            <span
+                                                [class]="'performance-status ' + student.performance.toLowerCase().replace(' ', '-')">
+                                                {{student.performance}}
+                                            </span>
                                         </div>
-                                        <span
-                                            [class]="'performance-status ' + student.performance.toLowerCase().replace(' ', '-')">
-                                            {{student.performance}}
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
                     <div class="pagination">
                         <button (click)="handlePrevPage()" [disabled]="currentPage === 1" class="pagination-button">
@@ -115,58 +119,56 @@
                     </div>
                 </div>
 
-                <!-- Detailed Analysis Section -->
                 <div class="analysis-section">
-                    <!-- Question Analysis -->
                     <div class="question-card">
                         <div class="question-header">
                             <h2>Detailed Question Analysis</h2>
                         </div>
-                        <table class="question-table">
-                            <thead>
-                                <tr>
-                                    <th>Question</th>
-                                    <th>Correct</th>
-                                    <th>Incorrect</th>
-                                    <th>Success Rate</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let item of questionData">
-                                    <td>{{item.question}}</td>
-                                    <td>{{item.correct}}</td>
-                                    <td>{{item.incorrect}}</td>
-                                    <td>
-                                        <div class="success-rate">
-                                            <div class="rate-bar">
-                                                <div class="rate-fill" [style.width]="item.successRate + '%'"></div>
+                        <div class="table-responsive">
+                            <table class="question-table">
+                                <thead>
+                                    <tr>
+                                        <th>Question</th>
+                                        <th>Correct</th>
+                                        <th>Incorrect</th>
+                                        <th>Success Rate</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of itemAnalysis">
+                                        <td>{{item.questionText}}</td>
+                                        <td>{{item.correctAttempts}}</td>
+                                        <td>{{item.incorrectAttempts}}</td>
+                                        <td>
+                                            <div class="success-rate">
+                                                <div class="rate-bar">
+                                                    <div class="rate-fill" [style.width]="item.performanceRate + '%'">
+                                                    </div>
+                                                </div>
+                                                <span>{{item.performanceRate}}%</span>
                                             </div>
-                                            <span>{{item.successRate}}%</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
-                    <!-- Performance Distribution -->
                     <div class="grid gap-6 md:grid-cols-2">
-                        <!-- Top Students -->
                         <div class="student-card">
                             <h3>Top Performing Students</h3>
                             <div class="student-list">
-                                <div *ngFor="let student of topStudents" class="student-item">
+                                <div *ngFor="let student of topPerforming" class="student-item">
                                     <span>{{student.name}}</span>
                                     <span class="score">{{student.score}}%</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Struggling Students -->
                         <div class="student-card">
                             <h3>Struggling Students</h3>
                             <div class="student-list">
-                                <div *ngFor="let student of strugglingStudents" class="student-item">
+                                <div *ngFor="let student of leastPerforming" class="student-item">
                                     <span>{{student.name}}</span>
                                     <span class="score struggling">{{student.score}}%</span>
                                 </div>

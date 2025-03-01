@@ -2,6 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, HostListener, ViewChild, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
+import { ApiService } from '../../services/api.service';
+import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 interface Student {
   id: number;
@@ -29,7 +32,6 @@ export class ResultComponent implements OnInit {
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
   isMobile = window.innerWidth < 768;
   sidebarOpen = !this.isMobile;
-
   @HostListener('window:resize')
   onResize() {
     const wasDesktop = !this.isMobile;
@@ -39,10 +41,108 @@ export class ResultComponent implements OnInit {
     }
   }
 
+  assessmentId: string = '';
+  classOverview: any = {
+    totalStudents: 0,
+    averageScore: 0,
+    highestScore: 0,
+    lowestScore: 0
+  };
+  itemAnalysis: any[] = [];
+  topPerforming: Student[] = [];
+  leastPerforming: Student[] = [];
+
   searchTerm: string = '';
   currentPage: number = 1;
   itemsPerPage: number = 9;
   activeTab: string = 'results';
+  classResult: any[] = [];
+  className: string = '';
+  classCode: string = '';
+  assessmentTitle: string = '';
+
+  constructor(private api: ApiService, private auth: AuthService, private router: Router) {}
+
+  ngOnInit(): void {
+    const state = history.state as { assessmentId: string };
+    
+    if (state && state.assessmentId) {
+      this.assessmentId = state.assessmentId;
+      this.getResultOverview(this.assessmentId);
+      this.getItemAnalysis(this.assessmentId);
+      this.getStudentPerformance(this.assessmentId);
+      this.getClassResult(this.assessmentId);
+      console.log('Assessment ID:', this.assessmentId);
+    } else {
+      console.log("Could not find the assessment ID");
+      this.router.navigate(['/instructor/assessment']);
+    }
+  }
+
+  getResultOverview(id: string) {
+    this.api.getClassOverview(this.assessmentId).subscribe({
+      next: (resp: any) => {
+        this.classOverview = resp.data;
+        this.assessmentTitle = resp.data.assessmentTitle;
+        if (resp.data.classes && resp.data.classes.length > 0) {
+          this.className = resp.data.classes[0].className;
+          this.classCode = resp.data.classes[0].classCode;
+        }
+        console.log('Assessment Title:', this.assessmentTitle);
+        console.log('Class Code:', this.classCode);
+        console.log('Class Overview:', this.classOverview);
+      },
+      error: (error) => {
+        console.error('Error getting class overview:', error);
+      }
+    });
+  }
+
+  getItemAnalysis(id: string) {
+    this.api.getQuestionAnalysis(this.assessmentId).subscribe(({
+      next: (resp: any) => {
+        this.itemAnalysis = resp.data;
+        console.log('Item Analysis:', this.itemAnalysis);
+      }, error: (error) => {
+        console.error('Error getting item analysis:', error);
+      }
+    }))
+  }
+
+  getStudentPerformance(id: string) {
+    this.api.getTopandLowPerformers(this.assessmentId).subscribe(({
+      next: (resp: any) => {
+        this.topPerforming = resp.data.topPerformers;
+        this.leastPerforming = resp.data.lowestPerformers;
+        console.log('Top Performing Students:', this.topPerforming);
+        console.log('Least Performing Students:', this.leastPerforming);
+      }, error: (error) => {
+        console.error('Error getting student performance:', error);
+      }
+    }))
+  }
+
+  getClassResult(id: string) {
+    this.api.getClassScore(this.assessmentId).subscribe(({
+      next: (resp: any) => {
+        console.log('Class Result:', resp.data);
+        this.classResult = resp.data;
+      }, error: (error) => {
+        console.error('Error getting class result:', error);
+      } 
+      }))
+  }
+
+
+
+
+
+
+
+
+
+
+
 
   studentsData: Student[] = [
     { id: 1, name: "Johnny Johny Doe", block: "3A", score: 99, performance: "Excellent" },
@@ -64,26 +164,11 @@ export class ResultComponent implements OnInit {
     "Students Struggled Most with understanding each Layer specifically the 3rd Layer",
   ];
 
-  classOverview = {
-    totalStudents: 50,
-    averageScore: 78,
-    highestScore: 90,
-    lowestScore: 45,
-  };
-
   scoreDistribution = [
     { range: "90-100", percentage: 30, color: "#36A2EB" },
   ];
 
-  constructor() {
 
-  }
-
-  ngOnInit(): void {
-    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-    //Add 'implements OnInit' to the class.
-    
-  }
 
   toggleSidebar() {
     if (this.sidebar) {

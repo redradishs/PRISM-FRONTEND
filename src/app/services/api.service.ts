@@ -108,5 +108,25 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/getMyAssessments/${id}`);
   }
   
+  //result page instructor 
+
+  getClassOverview(id: string){
+    return this.http.get(`${this.apiUrl}/getAssessmentResult/${id}`);
+  }
+
+  getQuestionAnalysis(id: string) {
+    return this.http.get(`${this.apiUrl}/getQuestionAnalysis/${id}`);
+  }
+
+  getTopandLowPerformers(id: string) {
+    return this.http.get(`${this.apiUrl}/rankStudentAssessment/${id}`);
+  }
+
+  getClassScore(id: string) {
+    return this.http.get(`${this.apiUrl}/getClassScoreResult/${id}`);
+  }
+
+
+  
 
 }
