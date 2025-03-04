@@ -9,7 +9,8 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = 'http://localhost:8000/user';
+  // private baseUrl = 'http://localhost:8000/user';
+  private baseUrl = 'https://prismcdn.onrender.com/user';
   private tokenKey = 'jwt';
   private currentUserSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
