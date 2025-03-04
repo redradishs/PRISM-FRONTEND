@@ -1,12 +1,17 @@
 {
   "name": "prism-frontend",
   "version": "0.0.0",
+  "engines": {
+    "node": "20.11.1",
+    "npm": "10.2.4"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "vercel-build": "npm install --legacy-peer-deps && npm run build"
   },
   "private": true,
   "dependencies": {
@@ -26,7 +31,7 @@
     "lucide-angular": "^0.476.0",
     "mammoth": "^1.9.0",
     "ng2-charts": "^8.0.0",
-    "pdfjs-dist": "^4.10.38",
+    "pdfjs-dist": "^3.11.174",
     "postcss": "^8.5.1",
     "rxjs": "~7.8.0",
     "sweetalert2": "^11.16.0",
@@ -46,12 +51,6 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "rimraf": "^5.0.5",
     "typescript": "~5.6.2"
-  },
-  "overrides": {
-    "pdfjs-dist": {
-      "web-streams-polyfill": "^3.0.3"
-    }
   }
 }
