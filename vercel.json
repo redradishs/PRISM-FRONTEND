@@ -1,14 +1,13 @@
 {
   "version": 2,
-  "buildCommand": "npm run vercel-build",
-  "installCommand": "npm install --legacy-peer-deps",
   "builds": [
     {
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
+        "buildCommand": "npm run build",
         "outputDirectory": "dist/prism_frontend/browser",
-        "nodeVersion": "20.11.1"
+        "installCommand": "npm install --legacy-peer-deps"
       }
     }
   ],
