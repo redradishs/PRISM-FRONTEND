@@ -1,0 +1,16 @@
+name = "prism-frontend"
+compatibility_date = "2024-03-04"
+
+[site]
+bucket = "./dist/prism-frontend"
+
+[build]
+command = "npm run build"
+watch_dir = "src"
+
+[build.upload]
+format = "service-worker"
+
+[env.production]
+route = ""
+zone_id = ""
