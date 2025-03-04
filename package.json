@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -26,8 +26,6 @@
     "lucide-angular": "^0.476.0",
     "mammoth": "^1.9.0",
     "ng2-charts": "^8.0.0",
-    "pdf-lib": "^1.17.1",
-    "pdf2json": "^3.1.5",
     "pdfjs-dist": "^4.10.38",
     "postcss": "^8.5.1",
     "rxjs": "~7.8.0",
@@ -48,6 +46,12 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "rimraf": "^5.0.5",
     "typescript": "~5.6.2"
+  },
+  "overrides": {
+    "pdfjs-dist": {
+      "web-streams-polyfill": "^3.0.3"
+    }
   }
 }
