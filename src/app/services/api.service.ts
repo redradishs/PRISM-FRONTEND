@@ -14,7 +14,8 @@ interface AIResponse {
   providedIn: 'root'
 })
 export class ApiService {
-  apiUrl = 'http://localhost:8000/api';
+  // apiUrl = 'http://localhost:8000/api';
+  apiUrl = 'https://prismcdn.onrender.com';
   aiUrl = 'https://redprismai.vercel.app'
 
   constructor(private http: HttpClient) { }
