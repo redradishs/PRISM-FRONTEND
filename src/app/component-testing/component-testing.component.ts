@@ -1,73 +1,85 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import * as mammoth from 'mammoth';
+
+// Declare the global pdfjsLib variable
+declare const pdfjsLib: any;
 
 @Component({
   selector: 'app-component-testing',
-  imports: [CommonModule, FormsModule],
   templateUrl: './component-testing.component.html',
-  styleUrl: './component-testing.component.css'
+  styleUrls: ['./component-testing.component.css'],
+  standalone: true,
+  imports: [CommonModule]
 })
 export class ComponentTestingComponent {
-  activeTab: 'login' | 'signup' = 'login';
-  name: string = '';
-  email: string = '';
-  password: string = '';
-  confirmPassword: string = '';
-  showPassword: boolean = false;
-  formError: string = '';
-  loading: boolean = false;
-  user: any; // Replace with actual user type
+  extractedText: string = '';
   error: string = '';
-  rememberMe: boolean = false;
 
-  constructor(private router: Router) {
-    // Check if user is logged in
-    if (this.user) {
-      this.router.navigate(['/dashboard']);
+  async onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    this.error = '';
+    this.extractedText = '';
+
+    try {
+      if (file.type === 'application/pdf') {
+        await this.extractPdfText(file);
+      } else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+        await this.extractDocxText(file);
+      } else {
+        this.error = 'Please select a PDF or DOCX file.';
+      }
+    } catch (error: any) {
+      console.error('Error extracting text:', error);
+      this.error = error.message || 'Error extracting text from file. Please try again.';
     }
   }
 
-  handleLoginSubmit(event: Event) {
-    event.preventDefault();
-    if (!this.email.trim()) {
-      this.formError = 'Email is required';
-      return;
+  private async extractPdfText(file: File): Promise<void> {
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const typedArray = new Uint8Array(arrayBuffer);
+      
+      // Load the PDF document
+      const pdfDoc = await pdfjsLib.getDocument({ data: typedArray }).promise;
+      let text = '';
+      
+      // Extract text from each page
+      for (let i = 1; i <= pdfDoc.numPages; i++) {
+        const page = await pdfDoc.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items
+          .map((item: any) => item.str)
+          .join(' ');
+        text += `Page ${i}:\n${pageText}\n\n`;
+      }
+      
+      if (!text.trim()) {
+        throw new Error('No text could be extracted from the PDF. The file might be scanned or protected.');
+      }
+      
+      this.extractedText = text;
+    } catch (error: any) {
+      console.error('PDF extraction error:', error);
+      throw new Error('Failed to extract text from PDF. Please make sure the file is not corrupted or password protected.');
     }
-    if (!this.password) {
-      this.formError = 'Password is required';
-      return;
-    }
-    // Call login function here
   }
 
-  handleSignupSubmit(event: Event) {
-    event.preventDefault();
-    if (!this.name.trim()) {
-      this.formError = 'Name is required';
-      return;
+  private async extractDocxText(file: File) {
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const result = await mammoth.extractRawText({ arrayBuffer });
+      
+      if (!result.value.trim()) {
+        throw new Error('No text could be extracted from the DOCX file.');
+      }
+      
+      this.extractedText = result.value;
+    } catch (error: any) {
+      console.error('DOCX extraction error:', error);
+      throw new Error('Failed to extract text from DOCX file. Please make sure the file is not corrupted.');
     }
-    if (!this.email.trim()) {
-      this.formError = 'Email is required';
-      return;
-    }
-    if (!this.password) {
-      this.formError = 'Password is required';
-      return;
-    }
-    if (this.password.length < 8) {
-      this.formError = 'Password must be at least 8 characters';
-      return;
-    }
-    if (this.password !== this.confirmPassword) {
-      this.formError = 'Passwords do not match';
-      return;
-    }
-    // Call signup function here
-  }
-
-  togglePasswordVisibility() {
-    this.showPassword = !this.showPassword;
   }
 }

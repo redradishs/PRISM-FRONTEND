@@ -24,6 +24,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "pdf.worker.mjs",
+                "input": "src",
+                "output": "/"
               }
             ],
             "styles": [
@@ -82,6 +87,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "pdf.worker.mjs",
+                "input": "src",
+                "output": "/"
               }
             ],
             "styles": [

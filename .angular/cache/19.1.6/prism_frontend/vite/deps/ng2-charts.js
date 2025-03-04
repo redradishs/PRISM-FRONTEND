@@ -1,9 +1,4 @@
 import {
-  Chart,
-  defaults,
-  registerables
-} from "./chunk-PQ4GVEZ7.js";
-import {
   Directive,
   ElementRef,
   EventEmitter,
@@ -19,12 +14,17 @@ import {
   ɵɵdefineDirective,
   ɵɵdefineInjectable,
   ɵɵdirectiveInject
-} from "./chunk-IXO6XEPJ.js";
+} from "./chunk-GOTZTROC.js";
 import {
   BehaviorSubject,
   distinctUntilChanged
 } from "./chunk-ZSY7TSMJ.js";
-import "./chunk-WDMUDEB6.js";
+import {
+  Chart,
+  defaults,
+  registerables
+} from "./chunk-NYUHGP3I.js";
+import "./chunk-RXHPGQPJ.js";
 
 // node_modules/lodash-es/_freeGlobal.js
 var freeGlobal = typeof global == "object" && global && global.Object === Object && global;
