@@ -13,7 +13,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   errorMessage: string = '';
   formError: string = '';
@@ -37,16 +37,15 @@ export class LoginComponent {
     private title: Title
   ) {
     this.loginForm = this.formBuilder.group({
-      email: new FormControl('', [
+      email: ['', [
         Validators.required,
-        Validators.pattern('\\d{8}@gordoncollege\\.edu\\.ph')
-      ]),
-      password: new FormControl('', [
+        Validators.pattern('^[0-9]{9}@gordoncollege\\.edu\\.ph$')
+      ]],
+      password: ['', [
         Validators.required,
         Validators.minLength(5),
         Validators.maxLength(50)
-      ]),
-      rememberMe: new FormControl(false)
+      ]]
     });
   }
 
@@ -59,28 +58,53 @@ export class LoginComponent {
   }
 
   handleLoginSubmit(): void {
-    if (this.loginForm.valid) {
-      this.clicked = true;
-      this.loading = true;
+    if (this.loginForm.invalid) {
+      Object.keys(this.loginForm.controls).forEach(key => {
+        const control = this.loginForm.get(key);
+        control?.markAsTouched();
+      });
 
-      const { email, password} = this.loginForm.value;
+      // Check specific validation errors
+      const emailControl = this.loginForm.get('email');
+      if (emailControl?.errors) {
+        if (emailControl.errors['required']) {
+          this.formError = 'Email is required';
+        } else if (emailControl.errors['pattern']) {
+          this.formError = 'Please enter a valid Gordon College email (e.g., 12345678@gordoncollege.edu.ph)';
+        }
+        return;
+      }
 
-      const loginData = { email, password };
-  
-      this.authService.userLogin(loginData).subscribe({
-        next: (response: any) => {
-          this.authService.setToken(response.jwt);
+      if (this.loginForm.get('password')?.errors) {
+        this.formError = 'Password is required';
+        return;
+      }
 
-          const userRole = this.authService.getUserRole();
+      return;
+    }
 
-          Swal.fire({
-            title: 'Login Successful',
-            text: 'You have successfully logged in!',
-            icon: 'success',
-            confirmButtonText: 'OK',
-             confirmButtonColor: '#4CAF50'
-          });
-    if (userRole === 'admin') {
+    this.clicked = true;
+    this.loading = true;
+    this.formError = '';
+
+    const { email, password } = this.loginForm.value;
+    const loginData = { email, password };
+
+    this.authService.userLogin(loginData).subscribe({
+      next: (response: any) => {
+        this.authService.setToken(response.jwt);
+        const userRole = this.authService.getUserRole();
+
+        Swal.fire({
+          title: 'Login Successful',
+          text: 'You have successfully logged in!',
+          icon: 'success',
+          confirmButtonText: 'OK',
+          confirmButtonColor: '#4CAF50'
+        });
+
+
+        if (userRole === 'admin') {
           this.router.navigate(['/admin-dashboard']);
         } else if (userRole === 'instructor') {
           this.router.navigate(['instructor/dashboard']);
@@ -89,36 +113,14 @@ export class LoginComponent {
         } else {
           this.router.navigate(['/home']);
         }
-        },
-        error: (err) => {
-          this.errorMessage = 'Invalid Email or Password';
-          Swal.fire({
-            title: 'Error',
-            text: this.errorMessage,
-            icon: 'error',
-            confirmButtonText: 'OK',
-            confirmButtonColor: '#FF5733'
-          });
-          this.resetFormState();
-        },
-        complete: () => {
-          this.loading = false;
-
-          this.clicked = false;
-        }
-      });
-    } else {
-      this.errorMessage = 'Please fill in all fields';
-      Swal.fire({
-        title: 'Error',
-        text: this.errorMessage,
-        icon: 'error',
-        confirmButtonText: 'OK',
-        confirmButtonColor: '#FF5733' 
-      });
-    }
+      },
+      error: (err) => {
+        this.formError = 'Invalid Email or Password';
+        this.loading = false;
+        this.clicked = false;
+      }
+    });
   }
-
 
   private resetFormState(): void {
     this.loginForm.patchValue({ password: '' });
@@ -126,17 +128,13 @@ export class LoginComponent {
     this.clicked = false;
   }
 
-  private validateEmail(email: string): boolean {
-    const emailRegex = /^\d{8}@gordoncollege\.edu\.ph$/;
-    return emailRegex.test(email);
-  }
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
   }
 
   validateGordonEmail(email: string): boolean {
-    const gordonEmailPattern = /^\d{8}@gordoncollege\.edu\.ph$/;
+    const gordonEmailPattern = /^\d{9}@gordoncollege\.edu\.ph$/;
     return gordonEmailPattern.test(email);
   }
 
