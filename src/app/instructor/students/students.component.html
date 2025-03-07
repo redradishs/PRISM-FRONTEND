@@ -1,7 +1,7 @@
 <div class="min-h-screen bg-gray-50">
     <div class="flex">
-        <app-sidebar></app-sidebar>
-        <div class="flex-1 ml-0 md:ml-20">
+        <app-sidebar [class.mobile-sidebar]="isMobile"></app-sidebar>
+        <div class="flex-1 ml-0 md:ml-20 max-w-full overflow-x-hidden">
             <header class="bg-white shadow-sm">
                 <div class="max-w-7xl mx-auto py-2 md:py-4 px-3 md:px-4 sm:px-6 lg:px-8">
                     <div class="flex items-center justify-between">
@@ -15,7 +15,6 @@
             </header>
 
             <div class="main-content">
-                <!-- upper part and export section -->
                 <div class="course-header">
                     <div class="select-wrapper">
                         <select [(ngModel)]="selectedClass" (ngModelChange)="onClassSelect()" class="class-select">
@@ -36,7 +35,6 @@
                     {{selectedClass?.classCode ? '- ' + selectedClass.classCode : ''}}
                 </h1>
 
-                <!-- Metric Cards -->
                 <div class="metrics-grid">
                     <div class="metric-card">
                         <h3>PERFORMANCE</h3>
@@ -52,7 +50,7 @@
                     </div>
                 </div>
 
-                <!-- Search and Actions -->
+
                 <div class="actions-bar">
                     <div class="search-container">
                         <i class="fas fa-search search-icon"></i>
@@ -69,13 +67,12 @@
                     </div>
                 </div>
 
-                <!-- Table -->
                 <div class="table-container">
                     <table class="students-table">
                         <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Student ID</th>
+                                <th>Email</th>
                                 <th>Block</th>
                                 <th>Accuracy</th>
                                 <th class="actions-column">Actions</th>
