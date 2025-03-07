@@ -25,6 +25,7 @@ export class LoginComponent {
   email: string = '';
   password: string = '';
   name: string = '';
+  role: string = '';
   
 
   activeTab: string = 'login';
@@ -38,8 +39,7 @@ export class LoginComponent {
     this.loginForm = this.formBuilder.group({
       email: new FormControl('', [
         Validators.required,
-        Validators.email,
-        Validators.maxLength(50)
+        Validators.pattern('\\d{8}@gordoncollege\\.edu\\.ph')
       ]),
       password: new FormControl('', [
         Validators.required,
@@ -51,7 +51,7 @@ export class LoginComponent {
   }
 
   ngOnInit(): void {
-    this.title.setTitle('Login - PasaBuy');
+    this.title.setTitle('PRISM | Login');
     const storedEmail = localStorage.getItem('rememberedEmail');
     if (storedEmail) {
       this.loginForm.patchValue({ email: storedEmail });
@@ -62,16 +62,13 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       this.clicked = true;
       this.loading = true;
-  
-      // Create a data object to pass to the service
+
       const { email, password} = this.loginForm.value;
-  
-      // Pass the data object to the authService
+
       const loginData = { email, password };
   
       this.authService.userLogin(loginData).subscribe({
         next: (response: any) => {
-          // Login success: store the JWT token and navigate to home
           this.authService.setToken(response.jwt);
 
           const userRole = this.authService.getUserRole();
@@ -90,7 +87,7 @@ export class LoginComponent {
         } else if (userRole === 'student') {
           this.router.navigate(['/student-dashboard']);
         } else {
-          this.router.navigate(['/home']); // Fallback route
+          this.router.navigate(['/home']);
         }
         },
         error: (err) => {
@@ -121,7 +118,7 @@ export class LoginComponent {
       });
     }
   }
-  
+
 
   private resetFormState(): void {
     this.loginForm.patchValue({ password: '' });
@@ -129,18 +126,90 @@ export class LoginComponent {
     this.clicked = false;
   }
 
+  private validateEmail(email: string): boolean {
+    const emailRegex = /^\d{8}@gordoncollege\.edu\.ph$/;
+    return emailRegex.test(email);
+  }
+
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
   }
 
+  validateGordonEmail(email: string): boolean {
+    const gordonEmailPattern = /^\d{8}@gordoncollege\.edu\.ph$/;
+    return gordonEmailPattern.test(email);
+  }
+
   handleSignupSubmit(event: Event): void {
     event.preventDefault();
-    // Add your signup logic here
+
+    if (!this.validateGordonEmail(this.email)) {
+      Swal.fire({
+        title: 'Invalid Email',
+        text: 'Please use your Gordon College EDU Mail',
+        icon: 'error',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#FF5733'
+      });
+      return;
+    }
+
+    if (!this.email || !this.password || !this.confirmPassword || !this.name || !this.role) {
+      Swal.fire({
+        title: 'Error',
+        text: 'Please fill in all required fields',
+        icon: 'error',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#FF5733'
+      });
+      return;
+    }
+
     if (this.password === this.confirmPassword) {
-      // Handle signup
-      console.log('Signup:', { name: this.name, email: this.email, password: this.password });
+      const data = {
+        email: this.email,
+        password: this.password,
+        name: this.name,
+        role: this.role
+      }
+      this.authService.userSignUp(data).subscribe({
+        next: (resp: any) => {
+
+          Swal.fire({
+            title: 'Success!',
+            text: 'Account created successfully. Please login.',
+            icon: 'success',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#4CAF50'
+          });
+
+          this.activeTab = 'login';
+
+          this.email = '';
+          this.password = '';
+          this.confirmPassword = '';
+          this.name = '';
+          this.role = '';
+        }, 
+        error: (error) => {
+          console.log(error);
+          Swal.fire({
+            title: 'Error',
+            text: 'Failed to create account. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#FF5733'
+          });
+        }
+      });
     } else {
-      this.formError = 'Passwords do not match';
+      Swal.fire({
+        title: 'Error',
+        text: 'Passwords do not match',
+        icon: 'error',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#FF5733'
+      });
     }
   }
 }

@@ -2,16 +2,18 @@
     <div class="card-container fade-in">
         <!-- Left Side -->
         <div class="auth-form-container">
-            <h1 class="greeting-title">Welcome Back!</h1>
-            <h2 class="greeting-subtitle">Login to your account</h2>
-            <p class="greeting-text">Enter your email below to login to your account</p>
+            <div *ngIf="activeTab === 'login'">
+                <h1 class="greeting-title">Welcome Back!</h1>
+                <h2 class="greeting-subtitle">Login to your account</h2>
+                <p class="greeting-text">Enter your email below to login to your account</p>
+            </div>
 
-            <!-- Error Message -->
+
             <div *ngIf="formError" class="error-message">
                 <p>{{ formError }}</p>
             </div>
 
-            <!-- Login Form -->
+
             <form *ngIf="activeTab === 'login'" [formGroup]="loginForm" (submit)="handleLoginSubmit()"
                 class="login-form">
                 <div class="form-group">
@@ -22,17 +24,10 @@
 
                 <div class="form-group">
                     <label class="form-label">Password</label>
-                    <div class="password-group">
-                        <div class="password-input-wrapper">
-                            <input [type]="showPassword ? 'text' : 'password'" formControlName="password"
-                                class="form-input" placeholder="••••••••" required />
-                            <button type="button" (click)="togglePasswordVisibility()" class="password-toggle">
-                                <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-                            </button>
-                        </div>
-                        <a href="/forgot-password" class="forgot-password">Forgot your password?</a>
-                    </div>
+                    <input type="password" formControlName="password" placeholder="********" class="form-input"
+                        required />
                 </div>
+
 
                 <button type="submit" [disabled]="loading" class="submit-button">
                     <i *ngIf="loading" class="fas fa-spinner spinner"></i>
@@ -55,7 +50,11 @@
                 </p>
             </form>
 
-            <!-- Signup Form -->
+            <div *ngIf="activeTab === 'signup'">
+                <h1 class="greeting-title">We are glad to have you here!</h1>
+                <h2 class="greeting-subtitle">Signup</h2>
+                <p class="greeting-text">Fill in the details below to signup your account</p>
+            </div>
             <form *ngIf="activeTab === 'signup'" (submit)="handleSignupSubmit($event)" class="form-group">
                 <div class="form-group">
                     <label class="form-label">Full name</label>
@@ -85,6 +84,14 @@
                     <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" class="form-input"
                         placeholder="Confirm your password" required />
                 </div>
+                <div class="form-group">
+                    <label class="form-label">Role</label>
+                    <select name="role" class="form-input" [(ngModel)]="role" required>
+                        <option value="" disabled selected>Select a role</option>
+                        <option value="student">Student</option>
+                        <option value="instructor">Instructor</option>
+                    </select>
+                </div>
 
                 <button type="submit" [disabled]="loading" class="submit-button">
                     {{ loading ? 'Creating account...' : 'Create account' }}
@@ -101,7 +108,7 @@
             </form>
         </div>
 
-        <!-- Right Side -->
+
         <div class="brand-container">
             <div class="brand-content">
                 <h1 class="brand-title">PRISM</h1>
@@ -111,6 +118,7 @@
                     <p class="tagline-secondary">
                         Where precision meets potential, and every evaluation shapes excellence
                     </p>
+                    <p class="tagline-secondary">V1.20</p>
                 </div>
             </div>
         </div>

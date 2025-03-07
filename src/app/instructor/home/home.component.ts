@@ -6,8 +6,10 @@ import { ChartConfiguration } from 'chart.js';
 import { SidebarComponent } from "../../adons/sidebar/sidebar.component";
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
+import { Router, RouterLink } from '@angular/router';
 
 interface AssessmentProgress {
+  id: string;
   assessmentId: string;
   title: string;
   startDate: string;
@@ -40,7 +42,8 @@ interface AssessmentProgress {
     CommonModule,
     BaseChartDirective,
     SidebarComponent,
-    SidebarComponent
+    SidebarComponent,
+    RouterLink
 ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
@@ -58,7 +61,7 @@ export class HomeComponent implements OnInit {
   @HostListener('window:resize')
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
 
-  constructor(private api: ApiService, private auth: AuthService) {
+  constructor(private api: ApiService, private auth: AuthService, private router: Router) {
   }
 
   ngOnInit() {
@@ -136,7 +139,12 @@ export class HomeComponent implements OnInit {
     })
   }
 
+  gotoAssessment(_id: string){
+    this.router.navigate(['/instructor/result'], {
+      state: {assessmentId: _id}
+    })
 
+  }
 
 
 

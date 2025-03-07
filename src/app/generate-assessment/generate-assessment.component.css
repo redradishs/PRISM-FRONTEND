@@ -1,0 +1,147 @@
+/* General styles for the assessment container */
+.assessment-container {
+    background-color: white;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    padding: 24px; /* Padding around the container */
+    margin-bottom: 16px; /* Space below the container */
+}
+
+/* Section title styles */
+.section-title {
+    font-size: 1.5rem; /* Font size for section titles */
+    font-weight: 600; /* Bold text */
+    margin-bottom: 16px; /* Space below the title */
+}
+
+/* Form section styles */
+.form-section {
+    margin-bottom: 24px; /* Space below the form section */
+}
+
+/* Form group styles */
+.form-group {
+    margin-bottom: 16px; /* Space below each form group */
+}
+
+/* Label styles */
+.form-label {
+    font-size: 0.875rem; /* Font size for labels */
+    font-weight: 500; /* Medium weight */
+    margin-bottom: 8px; /* Space below the label */
+    display: block; /* Block display for labels */
+}
+
+/* Input and select styles */
+.form-input {
+    width: 100%; /* Full width */
+    padding: 10px; /* Padding inside the input */
+    border: 1px solid #ccc; /* Border color */
+    border-radius: 4px; /* Rounded corners */
+}
+
+/* Button styles */
+.tab-button {
+    flex: 1; /* Flex-grow to fill space */
+    padding: 10px; /* Padding inside the button */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    background-color: #f0f0f0; /* Background color */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.tab-button:hover {
+    background-color: #e0e0e0; /* Darker shade on hover */
+}
+
+/* Generate button styles */
+.generate-button {
+    width: 100%; /* Full width */
+    padding: 10px; /* Padding inside the button */
+    background-color: #000; /* Black background */
+    color: white; /* White text */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.generate-button:hover {
+    background-color: #333; /* Darker shade on hover */
+}
+
+/* AI content styles */
+.ai-content {
+    background-color: #fff; /* White background */
+    border-radius: 8px; /* Rounded corners */
+    padding: 24px; /* Padding inside the AI content */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Small shadow */
+}
+
+/* Description styles */
+.description {
+    color: #666; /* Gray text */
+    margin-bottom: 16px; /* Space below the description */
+}
+
+/* Question card styles */
+.question-cards {
+    display: flex;
+    flex-direction: column; /* Stack question cards vertically */
+    gap: 16px; /* Space between question cards */
+}
+
+.question-card {
+    background-color: #fff; /* White background */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Small shadow */
+    padding: 16px; /* Padding inside the card */
+}
+
+/* Card header styles */
+.card-header {
+    display: flex; /* Flexbox for header */
+    justify-content: space-between; /* Space between title and delete button */
+    align-items: center; /* Center items vertically */
+}
+
+/* Question title styles */
+.question-title {
+    font-size: 1rem; /* Font size for question title */
+    font-weight: 500; /* Medium weight */
+}
+
+/* Delete button styles */
+.delete-button {
+    background: none; /* No background */
+    border: none; /* No border */
+    color: red; /* Red text */
+    cursor: pointer; /* Pointer cursor */
+}
+
+/* Card content styles */
+.card-content {
+    margin-top: 12px; /* Space above card content */
+}
+
+/* Question text styles */
+.question-text {
+    margin-bottom: 8px; /* Space below question text */
+}
+
+/* Answer text styles */
+.answer-text {
+    color: #666; /* Gray text */
+}
+
+/* Option styles */
+.options {
+    margin-top: 8px; /* Space above options */
+}
+
+.option {
+    display: flex; /* Flexbox for options */
+    align-items: center; /* Center items vertically */
+    margin-bottom: 4px; /* Space below each option */
+} 

@@ -25,29 +25,35 @@
 
             <main class="main-content">
                 <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-content">
-                            <i class="fas fa-users metric-icon"></i>
-                            <h3>TOTAL STUDENTS</h3>
-                            <p>{{totalStudents}}</p>
+                    <a [routerLink]="['/instructor/students']">
+                        <div class="metric-card">
+                            <div class="metric-content">
+                                <i class="fas fa-users metric-icon"></i>
+                                <h3>TOTAL STUDENTS</h3>
+                                <p>{{totalStudents}}</p>
+                            </div>
                         </div>
-                    </div>
+                    </a>
 
-                    <div class="metric-card">
-                        <div class="metric-content">
-                            <i class="fas fa-clipboard-list metric-icon"></i>
-                            <h3>ACTIVE ASSESSMENTS</h3>
-                            <p>{{totalActiveAssessments}}</p>
+                    <a [routerLink]="['/instructor/assessment']">
+                        <div class="metric-card">
+                            <div class="metric-content">
+                                <i class="fas fa-clipboard-list metric-icon"></i>
+                                <h3>ACTIVE ASSESSMENTS</h3>
+                                <p>{{totalActiveAssessments}}</p>
+                            </div>
                         </div>
-                    </div>
+                    </a>
 
-                    <div class="metric-card">
-                        <div class="metric-content">
-                            <i class="fas fa-book metric-icon"></i>
-                            <h3>TOTAL CLASSES</h3>
-                            <p>{{totalClasses}}</p>
+                    <a [routerLink]="['/instructor/students']">
+                        <div class="metric-card">
+                            <div class="metric-content">
+                                <i class="fas fa-book metric-icon"></i>
+                                <h3>TOTAL CLASSES</h3>
+                                <p>{{totalClasses}}</p>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
 
                 <div class="assessment-card">
@@ -55,7 +61,7 @@
                     <div class="assessment-list">
                         <div *ngFor="let assessment of onGoingAssessments" class="assessment-item">
                             <div class="assessment-icon"></div>
-                            <div class="assessment-details">
+                            <div (click)="gotoAssessment(assessment.id)" class="assessment-details">
                                 <div class="assessment-header">
                                     <span class="assessment-title">{{assessment.title}}</span>
                                     <span class="assessment-class">{{assessment.classes[0].className}}</span>
