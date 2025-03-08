@@ -15,7 +15,8 @@ interface AIResponse {
 })
 export class ApiService {
   // apiUrl = 'http://localhost:8000/api';
-  apiUrl = 'https://prismcdn.onrender.com/api';
+  // apiUrl = 'https://prismcdn.onrender.com/api';
+  apiUrl = 'https://prismapi2.onrender.com/api';
   aiUrl = 'https://redprismai.vercel.app'
 
   constructor(private http: HttpClient) { }
