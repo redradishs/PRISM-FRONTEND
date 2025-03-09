@@ -14,44 +14,51 @@
                 </div>
             </header>
 
-            <div class="welcome-section">
-                <div class="welcome-container">
-                    <div class="welcome-content">
-                        <h1>Welcome Back, {{username}}</h1>
-                        <p>Here's what's happening in your classes today.</p>
-                    </div>
-                </div>
-            </div>
 
             <main class="main-content">
+
+                <div class="welcome-section mt-4 md:mt-6">
+                    <div class="welcome-content px-4 md:px-4">
+                        <h1>Welcome Back, {{this.username}}</h1>
+                        <p>Here's what's happening with your assessments today.</p>
+                    </div>
+                </div>
+
+
+
+
+
                 <div class="metrics-grid">
                     <a [routerLink]="['/instructor/students']">
-                        <div class="metric-card">
-                            <div class="metric-content">
-                                <i class="fas fa-users metric-icon"></i>
-                                <h3>TOTAL STUDENTS</h3>
-                                <p>{{totalStudents}}</p>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <h3 class="stat-title">Total Students</h3>
+                                <i class="fas fa-file-alt text-primary"></i>
                             </div>
+                            <div class="stat-value">3</div>
+                            <p class="stat-subtitle">across {{totalClasses}} classes</p>
                         </div>
                     </a>
 
                     <a [routerLink]="['/instructor/assessment']">
-                        <div class="metric-card">
-                            <div class="metric-content">
-                                <i class="fas fa-clipboard-list metric-icon"></i>
-                                <h3>ACTIVE ASSESSMENTS</h3>
-                                <p>{{totalActiveAssessments}}</p>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <h3 class="stat-title">Active Assessments</h3>
+                                <i class="fas fa-clipboard-list text-primary"></i>
                             </div>
+                            <div class="stat-value">{{totalActiveAssessments}}</div>
+                            <p class="stat-subtitle">2 due this week</p>
                         </div>
                     </a>
 
                     <a [routerLink]="['/instructor/students']">
-                        <div class="metric-card">
-                            <div class="metric-content">
-                                <i class="fas fa-book metric-icon"></i>
-                                <h3>TOTAL CLASSES</h3>
-                                <p>{{totalClasses}}</p>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <h3 class="stat-title">Total Classes</h3>
+                                <i class="fas fa-book text-primary"></i>
                             </div>
+                            <div class="stat-value">{{totalClasses}}</div>
+                            <p class="stat-subtitle">with {{totalStudents}} students</p>
                         </div>
                     </a>
                 </div>

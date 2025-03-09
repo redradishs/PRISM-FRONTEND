@@ -1,0 +1,157 @@
+<div class="min-h-screen bg-gray-50">
+    <div class="flex">
+        <app-sidebar></app-sidebar>
+        <div class="flex-1 ml-0 md:ml-20 max-w-full overflow-x-hidden">
+            <header class="bg-white shadow-sm">
+                <div class="max-w-7xl mx-auto py-2 md:py-4 px-3 md:px-4 sm:px-6 lg:px-8">
+                    <div class="flex items-center justify-between">
+                        <h1 class="text-xl md:text-2xl font-semibold text-gray-900">Classes</h1>
+                        <button *ngIf="isMobile" (click)="toggleSidebar()"
+                            class="p-1.5 md:p-2 rounded-md hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-bars w-5 md:w-6 h-5 md:h-6"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <main class="main-content">
+                <div class="content-wrapper">
+
+                    <div class="title-section">
+                        <h1>My Classes</h1>
+                        <p>Manage your enrolled classes and applications</p>
+                    </div>
+
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <h3 class="stat-title">Total Classes</h3>
+                                <i class="fas fa-book text-primary"></i>
+                            </div>
+                            <div class="stat-value">{{enrolledClasses.length}}</div>
+                            <p class="stat-subtitle">Currently enrolled</p>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <h3 class="stat-title">Pending Applications</h3>
+                                <i class="fas fa-clock text-primary"></i>
+                            </div>
+                            <div class="stat-value">{{pendingApplications.length}}</div>
+                            <p class="stat-subtitle">Awaiting approval</p>
+                        </div>
+                    </div>
+
+                    <div *ngIf="showSuccessAlert" class="alert success">
+                        <i class="fas fa-check-circle"></i>
+                        <div class="alert-content">
+                            <h4>Application Submitted</h4>
+                            <p>Your class application has been submitted successfully. You can track its status in the
+                                Pending Applications section.</p>
+                        </div>
+                    </div>
+
+                    <div class="search-apply-section">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="search" [(ngModel)]="searchQuery" placeholder="Search classes..."
+                                class="search-input">
+                        </div>
+                        <div class="apply-box">
+                            <input type="text" [(ngModel)]="classCode" placeholder="Enter class code"
+                                class="class-code-input">
+                            <button (click)="handleApplyByCode()" class="apply-btn">
+                                Apply
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="tabs-container">
+                        <div class="tab-buttons">
+                            <button [class.active]="activeTab === 'enrolled'" (click)="setActiveTab('enrolled')"
+                                class="tab-button">
+                                Enrolled Classes
+                            </button>
+                            <button [class.active]="activeTab === 'pending'" (click)="setActiveTab('pending')"
+                                class="tab-button">
+                                Pending Applications
+                            </button>
+                        </div>
+
+                        <div *ngIf="activeTab === 'enrolled'" class="tab-content">
+                            <div class="content-header">
+                                <h2>Enrolled Classes</h2>
+                                <p>Classes you are currently enrolled in</p>
+                            </div>
+
+                            <table class="classes-table">
+                                <thead>
+                                    <tr>
+                                        <th>Class Code</th>
+                                        <th>Class Name</th>
+                                        <th>Instructor</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let classItem of filteredEnrolled">
+                                        <td>{{classItem.code}}</td>
+                                        <td>{{classItem.name}}</td>
+                                        <td>{{classItem.instructor}}</td>
+                                        <td>
+                                            <span class="badge approved">
+                                                {{classItem.status === 'approved' ? 'Approved' : classItem.status}}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a [routerLink]="['/classes', classItem.id]" class="view-details">
+                                                <i class="fas fa-eye"></i>
+                                                View Details
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+
+                            <div *ngIf="filteredEnrolled.length === 0" class="empty-state">
+                                <i class="fas fa-book"></i>
+                                <h3>No classes found</h3>
+                                <p>Try adjusting your search or apply for new classes.</p>
+                            </div>
+                        </div>
+
+                        <!-- Pending Applications Tab Content -->
+                        <div *ngIf="activeTab === 'pending'" class="tab-content">
+                            <!-- Similar structure as enrolled classes -->
+                            <!-- ... -->
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+
+
+<div *ngIf="showApplicationDialog" class="dialog-overlay">
+    <div class="dialog">
+        <div class="dialog-header">
+            <h2>Apply for Class</h2>
+            <p>Submit your application for class code: {{classCode}}</p>
+        </div>
+        <div class="dialog-content">
+            <!-- Dialog form content -->
+        </div>
+        <div class="dialog-footer">
+            <button (click)="showApplicationDialog = false" class="button-secondary">
+                Cancel
+            </button>
+            <button (click)="handleSubmitApplication()" class="button-primary">
+                Submit Application
+            </button>
+        </div>
+    </div>
+</div>

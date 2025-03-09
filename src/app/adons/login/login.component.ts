@@ -105,11 +105,11 @@ export class LoginComponent implements OnInit {
 
 
         if (userRole === 'admin') {
-          this.router.navigate(['/admin-dashboard']);
+          this.router.navigate(['/admin/dashboard']);
         } else if (userRole === 'instructor') {
           this.router.navigate(['instructor/dashboard']);
         } else if (userRole === 'student') {
-          this.router.navigate(['/student-dashboard']);
+          this.router.navigate(['/student/dashboard']);
         } else {
           this.router.navigate(['/home']);
         }

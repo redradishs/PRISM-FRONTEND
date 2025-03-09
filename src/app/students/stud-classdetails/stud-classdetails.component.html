@@ -1,0 +1,150 @@
+<div class="min-h-screen bg-gray-50">
+    <div class="flex">
+        <app-sidebar [class.mobile-sidebar]="isMobile"></app-sidebar>
+        <div class="flex-1 ml-0 md:ml-20 max-w-full overflow-x-hidden">
+            <header class="bg-white shadow-sm">
+                <div class="max-w-7xl mx-auto py-2 md:py-4 px-3 md:px-4 sm:px-6 lg:px-8">
+                    <div class="flex items-center justify-between">
+                        <h1 class="text-xl md:text-2xl font-semibold text-gray-900">Classes</h1>
+                        <button *ngIf="isMobile" (click)="toggleSidebar()"
+                            class="p-1.5 md:p-2 rounded-md hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-bars w-5 md:w-6 h-5 md:h-6"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <main class="main-content">
+                <div class="content-wrapper">
+
+                    <div class="class-header">
+                        <div class="class-info">
+                            <h1>{{classData.name}}</h1>
+                            <p>{{classData.code}} • {{classData.schedule}}</p>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn-secondary">Contact Instructor</button>
+                            <button class="btn-primary">View Syllabus</button>
+                        </div>
+                    </div>
+
+                    <div class="details-card">
+                        <div class="details-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Instructor</span>
+                                <span class="detail-value">{{classData.instructor}}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Schedule</span>
+                                <span class="detail-value">{{classData.schedule}}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Location</span>
+                                <span class="detail-value">{{classData.location}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tabs-header">
+                        <button [class.active]="activeTab === 'assessments'" (click)="setActiveTab('assessments')"
+                            class="tab-button">
+                            Assessments
+                        </button>
+                        <button [class.active]="activeTab === 'announcements'" (click)="setActiveTab('announcements')"
+                            class="tab-button">
+                            Announcements
+                        </button>
+                        <button [class.active]="activeTab === 'resources'" (click)="setActiveTab('resources')"
+                            class="tab-button">
+                            Resources
+                        </button>
+                    </div>
+
+                    <div *ngIf="activeTab === 'announcements'" class="content-card">
+                        <div class="card-header">
+                            <h2>Announcements</h2>
+                            <p>Important updates from your instructor</p>
+                        </div>
+                        <div class="announcements-list">
+                            <div *ngFor="let announcement of classData.announcements" class="announcement-item">
+                                <div class="announcement-header">
+                                    <h3>{{announcement.title}}</h3>
+                                    <span>{{announcement.date}}</span>
+                                </div>
+                                <p>{{announcement.content}}</p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div *ngIf="activeTab === 'assessments'" class="content-card">
+                        <div class="card-header">
+                            <h2>Assessments</h2>
+                            <p>Track your progress on quizzes, assignments, and exams</p>
+                        </div>
+                        <table class="assessment-table">
+                            <thead>
+                                <tr>
+                                    <th>Assessment</th>
+                                    <th>Due Date</th>
+                                    <th>Status</th>
+                                    <th class="text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let assessment of classData.assessments">
+                                    <td>{{assessment.title}}</td>
+                                    <td>{{assessment.dueDate}}</td>
+                                    <td>
+                                        <span class="status-badge" [class]="getStatusClass(assessment.status)">
+                                            {{assessment.status}}
+                                        </span>
+                                    </td>
+                                    <td class="text-right">
+                                        <button class="btn-secondary btn-sm">View</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div *ngIf="activeTab === 'resources'" class="content-card">
+                        <div class="card-header">
+                            <h2>Resources</h2>
+                            <p>Access lecture materials, assignments, and additional resources</p>
+                        </div>
+                        <table class="resource-table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Type</th>
+                                    <th>Date Added</th>
+                                    <th class="text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let resource of classData.resources">
+                                    <td>{{resource.title}}</td>
+                                    <td>
+                                        <span class="resource-badge" [class]="getResourceTypeClass(resource.type)">
+                                            {{resource.type}}
+                                        </span>
+                                    </td>
+                                    <td>{{resource.date}}</td>
+                                    <td class="text-right">
+                                        <button class="btn-secondary btn-sm">
+                                            <i class="fas fa-download mr-2"></i>
+                                            Download
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+
+
+        </div>
+    </div>
+</div>

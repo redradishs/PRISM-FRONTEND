@@ -8,9 +8,11 @@ import { ProfileComponent } from './instructor/profile/profile.component';
 import { GenerateAssessmentComponent } from './instructor/generate-assessment/generate-assessment.component';
 import { TakeAssessmentComponent } from './instructor/take-assessment/take-assessment.component';
 import { TestComponent } from './adons/test/test.component';
-import { UhomeComponent } from './user/uhome/uhome.component';
 import { ResultComponent } from './instructor/result/result.component';
 import { ComponentTestingComponent } from './component-testing/component-testing.component';
+import { StudHomeComponent } from './students/stud-home/stud-home.component';
+import { StudClassesComponent } from './students/stud-classes/stud-classes.component';
+import { StudClassDetailsComponent } from './students/stud-classdetails/stud-classdetails.component';
 
 export const routes: Routes = [
     {path: '', redirectTo: 'login', pathMatch: 'full'},
@@ -26,8 +28,10 @@ export const routes: Routes = [
     {path: 'instructor/takeassessment', component: TakeAssessmentComponent },
     {path: 'instructor/result', component: ResultComponent },
     //user routes
-    {path: 'user/dashboard', component:  UhomeComponent},
     {path: 'pagetest', component:  ComponentTestingComponent},
+    {path: 'student/dashboard', component: StudHomeComponent},
+    {path: 'student/classes', component:  StudClassesComponent},
+    {path: 'student/classes/details', component:  StudClassDetailsComponent},
 
 
 

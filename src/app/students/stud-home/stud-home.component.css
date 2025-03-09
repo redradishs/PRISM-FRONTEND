@@ -1,0 +1,144 @@
+.main-content {
+  flex: 1;
+  padding: 1.5rem;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Welcome Section */
+.welcome-section h1 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #111827;
+
+}
+
+.welcome-section p {
+  color: #6b7280;
+}
+
+.stats-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.stat-card {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.5rem;
+}
+
+.stat-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.stat-subtitle {
+  font-size: 0.75rem;
+  color: rgb(107, 114, 128);
+}
+
+.main-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .main-grid {
+    grid-template-columns: repeat(7, 1fr);
+  }
+}
+
+.assessment-card {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+@media (min-width: 768px) {
+  .assessment-card {
+    grid-column: span 4;
+  }
+}
+
+.performance-card {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+@media (min-width: 768px) {
+  .performance-card {
+    grid-column: span 3;
+  }
+}
+
+.card-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.card-description {
+  font-size: 0.875rem;
+  color: rgb(107, 114, 128);
+  margin-bottom: 1rem;
+}
+
+/* Tabs */
+.tabs-container {
+  border-bottom: 1px solid hsl(var(--border));
+  margin-bottom: 1rem;
+}
+
+.tabs-list {
+  display: flex;
+}
+
+.tab-button {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.tab-button.active {
+  border-bottom: 2px solid hsl(var(--primary));
+}
+
+.tab-content {
+  margin-top: 1rem;
+}
+
+.space-y-4 > * + * {
+  margin-top: 1rem;
+}

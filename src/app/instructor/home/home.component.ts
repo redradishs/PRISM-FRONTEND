@@ -1,5 +1,4 @@
 import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
-import { HeaderComponent } from "../../adons/header/header.component";
 import { CommonModule } from '@angular/common';
 import { NgChartsConfiguration, BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';

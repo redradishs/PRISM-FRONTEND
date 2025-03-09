@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [CommonModule, RouterLinkActive],
+  imports: [CommonModule, RouterLinkActive, RouterLink],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css'
 })
@@ -15,20 +16,61 @@ export class SidebarComponent {
   isMobile = false;
   private resizeListener: () => void = () => {};
   username: string = '';
+  currentRoute: string = '';
+  role: string = '';
+  navItems: any[] = [];
 
   constructor(private auth: AuthService, private router: Router){
     this.auth.getCurrentUser().subscribe((user) => {
+      this.role = user.role;
       this.username = user.name;
+      this.navItemSet();
+    })
+
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe((event:any) =>{
+      this.currentRoute = event.url;
     })
   }
 
-  navItems = [
+  instructorNav = [
     { icon: 'fas fa-home', label: 'Home', id: 'home', route: '/instructor/dashboard' },
     { icon: 'fas fa-users', label: 'Students', id: 'students', route: '/instructor/students' },
     { icon: 'fas fa-tasks', label: 'Assessment', id: 'assessment', route: '/instructor/assessment' },
     { icon: 'fas fa-star', label: 'Generate', id: 'Generate', route: '/instructor/generate' },
     { icon: 'fas fa-user', label: 'Profile', id: 'profile', route: '/instructor/profile' }
   ];
+  
+  userNav = [
+    { icon: 'fas fa-home', label: 'Home', id: 'home', route: '/student/dashboard' },
+    { icon: 'fas fa-book', label: 'Class', id: 'classes', route: '/student/classes' },
+    
+  ];
+
+  adminNav = [
+    { icon: 'fas fa-home', label: 'Home', id: 'home', route: '/admin/dashboard' },
+    { icon: 'fas fa-users', label: 'Users', id: 'users', route: '/admin/users' },
+  ]
+
+  private navItemSet(): void {
+    switch (this.role.toLowerCase()) {
+      case 'instructor':
+        this.navItems = this.instructorNav;
+        break;
+      case 'student':
+        this.navItems = this.userNav;
+        break;
+      case 'admin':
+        this.navItems = this.adminNav;
+        break;
+      default:
+        this.navItems = [];
+        break;
+    }
+  }
+
+  isRouteActive(route: string): boolean {
+    return this.currentRoute.startsWith(route);
+  }
 
   ngOnInit() {
     this.checkMobile();
@@ -69,12 +111,17 @@ export class SidebarComponent {
 
   getNavItemClasses(itemId: string): string {
     return `w-full flex items-center p-3 my-1 rounded-lg transition-colors relative group
-            ${this.selectedTab === itemId ? 'bg-blue-600 text-white' : 'hover:bg-gray-800'} 
+            ${this.selectedTab === itemId ? 'bg-gray-600 text-white' : 'hover:bg-gray-800'} 
             ${!this.isExpanded ? 'justify-center' : ''}`;
   }
 
   getLogoutButtonClasses(): string {
     return `w-full flex items-center p-3 rounded-lg hover:bg-gray-800 transition-colors 
             ${!this.isExpanded ? 'justify-center' : ''}`;
+  }
+
+  logout() {
+    this.auth.logout();
+    this.router.navigate(['/login']);
   }
 }

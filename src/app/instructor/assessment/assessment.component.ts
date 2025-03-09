@@ -166,11 +166,6 @@ export class AssessmentComponent {
     );
   }
 
-  classPerformance: ClassPerformance[] = [
-    { name: "BSIT 3A", averageScore: 85, totalStudents: 45, completionRate: 92 },
-    { name: "BSIT 3B", averageScore: 78, totalStudents: 42, completionRate: 88 },
-    { name: "BSIT 3C", averageScore: 82, totalStudents: 38, completionRate: 95 },
-  ];
 
   assessments: any[] = [];
 

@@ -29,6 +29,7 @@ interface AIResponse {
     }
   };
   message: string;
+  rawResponse: string
   questions: string;
 }
 
@@ -154,7 +155,13 @@ export class GenerateAssessmentComponent {
 
   private handleGeneratedQuestions(response: AIResponse): void {
     if (!response.success) {
-      this.errorMessage = 'Failed to generate questions';
+      const message = response.rawResponse;
+      this.errorMessage = `${message} please add additional instructions or upload your document and i will help you generate your questions.`|| 'Failed to generate questions';
+      return;
+    }
+    if(!response.questions || response.questions.length === 0) {
+      const message = response.rawResponse;
+      this.errorMessage = `${message} please add additional instructions or upload your document and i will help you generate your questions.`|| 'Failed to generate questions';
       return;
     }
     
@@ -230,7 +237,7 @@ export class GenerateAssessmentComponent {
       .map(type => typeMapping[type as keyof typeof typeMapping])
       .join(', ');
 
-    return `Generate ${this.aiGeneration.questionCount} ${this.aiGeneration.difficulty} ${this.aiGeneration.topic}.
+    return `Generate ${this.aiGeneration.difficulty} ${this.aiGeneration.topic}.
     Question types: ${selectedTypesText}
     Additional instructions: ${this.aiGeneration.instructions || 'None'};`;
   }
