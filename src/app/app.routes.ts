@@ -13,6 +13,8 @@ import { ComponentTestingComponent } from './component-testing/component-testing
 import { StudHomeComponent } from './students/stud-home/stud-home.component';
 import { StudClassesComponent } from './students/stud-classes/stud-classes.component';
 import { StudClassDetailsComponent } from './students/stud-classdetails/stud-classdetails.component';
+import { StudTakeexamComponent } from './students/stud-takeexam/stud-takeexam.component';
+import { StudHistoryComponent } from './students/stud-history/stud-history.component';
 
 export const routes: Routes = [
     {path: '', redirectTo: 'login', pathMatch: 'full'},
@@ -32,6 +34,8 @@ export const routes: Routes = [
     {path: 'student/dashboard', component: StudHomeComponent},
     {path: 'student/classes', component:  StudClassesComponent},
     {path: 'student/classes/details', component:  StudClassDetailsComponent},
+    {path: 'student/assessment/take', component:  StudTakeexamComponent},
+    {path: 'student/history', component:  StudHistoryComponent},
 
 
 

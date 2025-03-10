@@ -44,7 +44,7 @@
                         <h3>ADMITTED</h3>
                         <div class="metric-value">{{admittedCount}}</div>
                     </div>
-                    <div class="metric-card">
+                    <div (click)="togglePendingModal()" class="metric-card">
                         <h3>PENDING</h3>
                         <div class="metric-value">{{pendingCount}}</div>
                     </div>
@@ -58,6 +58,9 @@
                             (input)="onSearch($event)" />
                     </div>
                     <div class="button-group">
+                        <button class="add-button" (click)="togglePendingModal()">
+                            Pending
+                        </button>
                         <button class="add-button">
                             Add user <i class="fas fa-plus"></i>
                         </button>
@@ -121,6 +124,58 @@
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" *ngIf="showPendingModal" (click)="togglePendingModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <div class="header-content">
+                <h2>Pending Admission Requests</h2>
+                <div class="auto-admit-toggle">
+                    <label class="toggle-label">
+                        <span>Auto Admission</span>
+                        <div class="toggle-switch">
+                            <input type="checkbox" [(ngModel)]="autoAdmission" (change)="toggleAutoAdmission()">
+                            <span class="toggle-slider"></span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+            <button class="close-button" (click)="togglePendingModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <table class="pending-table">
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Email</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let request of pendingRequests">
+                        <td>{{request.studentName}}</td>
+                        <td>{{request.email}}</td>
+                        <td class="actions-cell">
+                            <button class="approve-button" (click)="approveRequest(request)">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="reject-button" (click)="rejectRequest(request)">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="pendingRequests.length === 0">
+                        <td colspan="4" class="empty-state">
+                            No pending requests
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

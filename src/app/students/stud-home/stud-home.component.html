@@ -17,20 +17,20 @@
 
             <main class="main-content">
                 <div class="content-wrapper">
-                    <!-- Welcome Section -->
+
                     <div class="welcome-section">
-                        <h1>Welcome Back, Red Red Red</h1>
+                        <h1>Welcome Back, {{username}}</h1>
                         <p>Here's what's happening with your assessments today.</p>
                     </div>
 
-                    <!-- Stats Cards -->
+
                     <div class="stats-grid">
                         <div class="stat-card">
                             <div class="stat-header">
                                 <h3 class="stat-title">Upcoming Assessments</h3>
                                 <i class="fas fa-file-alt text-primary"></i>
                             </div>
-                            <div class="stat-value">3</div>
+                            <div class="stat-value">{{totalUpcomingAssessments}}</div>
                             <p class="stat-subtitle">2 due this week</p>
                         </div>
 
@@ -39,35 +39,61 @@
                                 <h3 class="stat-title">Completed Assessments</h3>
                                 <i class="fas fa-check-circle text-primary"></i>
                             </div>
-                            <div class="stat-value">7</div>
+                            <div class="stat-value">{{totalCompletedAssessments}}</div>
                             <p class="stat-subtitle">+2 from last month</p>
                         </div>
 
-                        <div class="stat-card">
+                        <div [routerLink]="['/student/classes']" class="stat-card">
                             <div class="stat-header">
                                 <h3 class="stat-title">Joined Classes</h3>
                                 <i class="fas fa-book text-primary"></i>
                             </div>
-                            <div class="stat-value">4</div>
+                            <div class="stat-value">{{totalClasses}}</div>
                             <p class="stat-subtitle">Across 2 semesters</p>
                         </div>
                     </div>
 
-                    <!-- Main Grid -->
+
                     <div class="main-grid">
-                        <!-- Ongoing Assessments Card -->
+
                         <div class="assessment-card">
-                            <h3 class="card-title">Ongoing Assessments</h3>
+                            <h3 class="card-title">Ongoing Assessments ({{totalActiveAssessments}})</h3>
                             <p class="card-description">Track your progress on current assessments</p>
 
-                            <!-- Assessment Items -->
-                            <div class="space-y-4">
-                                <!-- Add your assessment items here -->
-                                <!-- You'll need to create components or use *ngFor for these -->
+                            <div class="ongoing-list">
+                                <div *ngFor="let assessment of onGoingAssessments" class="ongoing-card">
+                                    <div class="ongoing-header">
+                                        <div class="ongoing-title-section">
+                                            <div class="ongoing-icon">
+                                                <i class="fas fa-file-alt"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="ongoing-title">{{assessment.title}}</h4>
+                                                <p class="ongoing-code">{{assessment.courseCode || 'No Code'}}</p>
+                                            </div>
+                                        </div>
+                                        <span class="ongoing-status"
+                                            [class.status-progress]="assessment.status === 'ongoing'"
+                                            [class.status-started]="assessment.status === 'started'"
+                                            [class.status-pending]="assessment.status === 'not_started'">
+                                            {{assessment.status === 'ongoing' ? 'In Progress' :
+                                            assessment.status === 'started' ? 'Started' : 'Not Started'}}
+                                        </span>
+                                    </div>
+
+                                    <div class="ongoing-footer">
+                                        <span>Due: {{assessment.endDate | date:'MMM d, yyyy HH:mm'}}</span>
+                                    </div>
+                                </div>
+
+                                <a routerLink="/student/history" class="view-all">
+                                    View All Assessments
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
                             </div>
                         </div>
 
-                        <!-- Performance Overview Card -->
+
                         <div class="performance-card">
                             <h3 class="card-title">Performance Overview</h3>
                             <p class="card-description">Your assessment scores and progress</p>
@@ -85,13 +111,37 @@
                                 </div>
                             </div>
 
-                            <!-- Tab Content -->
                             <div [ngSwitch]="activeTab">
                                 <div *ngSwitchCase="'upcoming'" class="space-y-4">
-                                    <!-- Add upcoming assessments content -->
+                                    <p *ngIf="upcomingAssessments.length === 0" class="text-center text-gray-500">No
+                                        upcoming assessments</p>
+                                    <div *ngFor="let assessment of upcomingAssessments" class="ongoing-card">
+                                        <div class="upcoming-card">
+                                            <div>
+                                                <p class="ongoing-title">{{assessment.title}}</p>
+                                                <p class="ongoing-code">{{assessment.courseCode || 'No Code'}}</p>
+                                            </div>
+                                            <span class="upcoming-due">Due: {{assessment.endDate | date:'MMM d,
+                                                yyyy HH:mm'}}</span>
+
+                                        </div>
+                                    </div>
                                 </div>
                                 <div *ngSwitchCase="'completed'" class="space-y-4">
-                                    <!-- Add completed assessments content -->
+                                    <p *ngIf="completedAssessments.length === 0" class="text-center text-gray-500">No
+                                        completed assessments</p>
+                                    <div *ngFor="let assessment of completedAssessments" class="ongoing-card">
+                                        <div class="upcoming-card">
+                                            <div>
+                                                <p class="ongoing-title">{{assessment.title}}</p>
+                                                <p class="ongoing-code">{{assessment.courseCode || 'No Code'}}</p>
+                                            </div>
+                                            <span class="upcoming-due">Due: {{assessment.endDate | date:'MMM d,
+                                                yyyy HH:mm'}}</span>
+
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>

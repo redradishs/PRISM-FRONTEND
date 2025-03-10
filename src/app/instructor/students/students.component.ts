@@ -25,6 +25,18 @@ interface ClassDetails {
     totalPending: number;
   };
   admitted: StudentInfo[];
+  pending: {
+    _id: string;
+    name: string;
+    email: string;
+  }[];
+}
+
+export interface PendingRequest {
+  id: string;
+  studentName: string;
+  email: string;
+  requestDate?: Date;
 }
 
 @Component({
@@ -61,6 +73,24 @@ export class StudentsComponent {
 
   currentStudentsInfo: StudentInfo[] = [];
   filteredStudents: StudentInfo[] = [];
+
+  showPendingModal = false;
+  pendingRequests: PendingRequest[] = [
+    {
+      id: '1',
+      studentName: 'John Doe',
+      email: 'john.doe@example.com',
+      requestDate: new Date('2024-03-20')
+    },
+    {
+      id: '2',
+      studentName: 'Jane Smith',
+      email: 'jane.smith@example.com',
+      requestDate: new Date('2024-03-19')
+    }
+  ];
+
+  autoAdmission = false;
 
   constructor(private api: ApiService, private auth: AuthService) {
 
@@ -104,7 +134,16 @@ export class StudentsComponent {
     this.pendingCount = classData.stats.totalPending;
     this.currentStudentsInfo = classData.admitted;
     this.filteredStudents = classData.admitted;
+  
+  this.pendingRequests = classData.pending.map(student => ({
+    id: student._id,
+    studentName: student.name,
+    email: student.email
+  }));
+  
     this.searchTerm = '';
+
+
   }
 
   onClassSelect() {
@@ -116,15 +155,6 @@ export class StudentsComponent {
   
   
 
-
-
-  students: Student[] = [
-    { name: "Johnny Johny Doe", studentId: "20221234", block: "3A", accuracy: 99 },
-    { name: "Alexa John Doe", studentId: "20221234", block: "3A", accuracy: 97 },
-    { name: "Jane Does", studentId: "20221234", block: "3A", accuracy: 97 },
-    { name: "Allison Jones Does", studentId: "20221234", block: "3A", accuracy: 65 },
-    { name: "Jane Ruppert Doe", studentId: "20221234", block: "3A", accuracy: 47 },
-  ];
 
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
@@ -167,6 +197,54 @@ export class StudentsComponent {
 
   nextPage() {
     this.currentPage = Math.min(this.totalPages, this.currentPage + 1);
+  }
+
+  togglePendingModal() {
+    this.showPendingModal = !this.showPendingModal;
+  }
+
+  approveRequest(student: any) {
+    console.log(student);
+    const data = {
+      instructorId: this.userId,
+      studentId: student.id,
+      classCode: this.selectedClass.classCode,
+      action: 'accept'
+    }
+    this.api.approve(data).subscribe({
+      next: (resp: any) => {
+        console.log(resp);
+        this.pendingRequests = this.pendingRequests.filter(req => req.id !== student.id);
+        this.updateDisplayedData(this.selectedClass);
+      },
+      error: (err) => {
+        console.log(err);
+      }
+    })
+  }
+
+  rejectRequest(student: any) {
+    console.log(student);
+    const data = {
+      instructorId: this.userId,
+      studentId: student.id,
+      classCode: this.selectedClass.classCode,
+      action: 'decline'
+    }
+    this.api.approve(data).subscribe({
+      next: (resp: any) => {
+        console.log(resp);
+        this.pendingRequests = this.pendingRequests.filter(req => req.id !== student.id);
+        this.updateDisplayedData(this.selectedClass);
+      },
+      error: (err) => {
+        console.log(err);
+      }
+    })
+  }
+
+  toggleAutoAdmission() {
+    console.log('Auto admission:', this.autoAdmission);
   }
 
 }

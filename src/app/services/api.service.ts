@@ -16,7 +16,7 @@ interface AIResponse {
 export class ApiService {
   // apiUrl = 'http://localhost:8000/api';
   // apiUrl = 'https://prismcdn.onrender.com/api';
-  apiUrl = 'https://prismapi2.onrender.com/api';
+  apiUrl = 'https://prismapi2.onrender.com/instructor';
   aiUrl = 'https://redprismai.vercel.app'
 
   constructor(private http: HttpClient) { }
@@ -89,6 +89,12 @@ export class ApiService {
 
   createAssessment(data: any) {
     return this.http.post(`${this.apiUrl}/createAssessment`, data);
+  }
+
+  //students page
+
+  approve(data: any) {
+    return this.http.post(`${this.apiUrl}/approve`, data)
   }
 
 

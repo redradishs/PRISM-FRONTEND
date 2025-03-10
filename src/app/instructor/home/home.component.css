@@ -48,8 +48,7 @@
 
 .metrics-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.5rem;
+    gap: 1.5rem;
 }
 
 .stat-card {
@@ -239,7 +238,12 @@
     justify-content: center;
 }
 
+
 @media (min-width: 768px) {
+    .metrics-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
     .welcome-content h1 {
         font-size: 2rem;     
         margin-bottom: 0.5rem;
@@ -251,10 +255,6 @@
 
     .main-content {
         padding: 1.5rem;
-    }
-
-    .metrics-grid {
-        gap: 1rem;
     }
 
     .metric-card {

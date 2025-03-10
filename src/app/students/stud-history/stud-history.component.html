@@ -1,0 +1,160 @@
+<div class="min-h-screen bg-gray-50">
+    <div class="flex">
+        <app-sidebar></app-sidebar>
+        <div class="flex-1 ml-0 md:ml-20">
+            <header class="bg-white shadow-sm">
+                <div class="max-w-7xl mx-auto py-2 md:py-4 px-3 md:px-4 sm:px-6 lg:px-8">
+                    <div class="flex items-center justify-between">
+                        <h1 class="text-xl md:text-2xl font-semibold text-gray-900">History</h1>
+                        <button *ngIf="isMobile" (click)="toggleSidebar()"
+                            class="p-1.5 md:p-2 rounded-md hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-bars w-5 md:w-6 h-5 md:h-6"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="page-container">
+
+                <!-- Performance Overview Cards -->
+                <div class="performance-grid">
+                    <div class="stat-card">
+                        <div class="stat-title">Total Assessments</div>
+                        <div class="stat-value">{{performanceMetrics.totalAssessments}}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Average Score</div>
+                        <div class="stat-value">{{performanceMetrics.averageScore.toFixed(1)}}%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Highest Score</div>
+                        <div class="stat-value">{{performanceMetrics.highestScore}}%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Certificates Earned</div>
+                        <div class="stat-value">{{certificatesCount}}</div>
+                    </div>
+                </div>
+
+                <!-- Search and Filters -->
+                <div class="filters-container">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="search" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange()"
+                            placeholder="Search assessments...">
+                    </div>
+
+                    <div class="sort-dropdown">
+                        <button class="sort-button" (click)="toggleSortMenu()">
+                            <i class="fas fa-sliders-h"></i>
+                            Sort by: {{sortBy | titlecase}}
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="sort-menu" *ngIf="showSortMenu">
+                            <button (click)="setSortBy('date')">Date {{getSortIndicator('date')}}</button>
+                            <button (click)="setSortBy('score')">Score {{getSortIndicator('score')}}</button>
+                            <button (click)="setSortBy('title')">Title {{getSortIndicator('title')}}</button>
+                            <button (click)="setSortBy('course')">Course {{getSortIndicator('course')}}</button>
+                            <hr>
+                            <button (click)="toggleSortOrder()">
+                                {{sortOrder === 'asc' ? 'Descending Order' : 'Ascending Order'}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Assessment Tabs -->
+                <div class="tabs">
+                    <button *ngFor="let tab of tabs; let i = index" [class.active]="selectedTabIndex === i"
+                        (click)="onTabChange(i)">
+                        {{tab}}
+                    </button>
+                </div>
+
+                <!-- Assessment Cards -->
+                <div class="assessment-grid" *ngIf="filteredAssessments.length > 0">
+                    <div class="assessment-card" *ngFor="let assessment of paginatedAssessments">
+                        <div class="card-header">
+                            <span class="assessment-type">{{assessment.type | titlecase}}</span>
+                            <button class="star-button" (click)="toggleStarred(assessment.id)">
+                                <i class="fas" [class.fa-star]="assessment.starred"
+                                    [class.fa-star-o]="!assessment.starred"></i>
+                            </button>
+                        </div>
+
+                        <h3 class="assessment-title">{{assessment.title}}</h3>
+                        <p class="course-info">{{assessment.courseCode}}: {{assessment.courseName}}</p>
+
+                        <div class="assessment-details">
+                            <div class="detail-item">
+                                <span class="label">Date</span>
+                                <span class="value">{{assessment.date}}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Score</span>
+                                <span class="value">{{assessment.score}}%</span>
+                            </div>
+                        </div>
+
+                        <div class="score-comparison">
+                            <div class="progress-label">
+                                <span>Class Average</span>
+                                <span>{{assessment.classAverage}}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" [style.width.%]="assessment.classAverage"></div>
+                            </div>
+
+                            <div class="progress-label">
+                                <span>Your Score</span>
+                                <span>{{assessment.score}}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" [style.width.%]="assessment.score"></div>
+                            </div>
+                        </div>
+
+                        <div class="card-actions">
+                            <button *ngIf="assessment.certificate" class="certificate-button">
+                                <i class="fas fa-download"></i>
+                                Certificate
+                            </button>
+                            <button class="details-button" (click)="openDetailsDialog(assessment)">
+                                <i class="fas fa-eye"></i>
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state" *ngIf="filteredAssessments.length === 0">
+                    <i class="fas fa-file-alt"></i>
+                    <h3>No assessments found</h3>
+                    <p>Try adjusting your search or filter criteria.</p>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" *ngIf="totalPages > 1">
+                    <span class="pagination-info">
+                        Showing {{(currentPage - 1) * itemsPerPage + 1}} to
+                        {{Math.min(currentPage * itemsPerPage, filteredAssessments.length)}} of
+                        {{filteredAssessments.length}} assessments
+                    </span>
+                    <div class="pagination-controls">
+                        <button (click)="prevPage()" [disabled]="currentPage === 1">
+                            <i class="fas fa-chevron-left"></i>
+                            Previous
+                        </button>
+                        <button (click)="nextPage()" [disabled]="currentPage === totalPages">
+                            Next
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>

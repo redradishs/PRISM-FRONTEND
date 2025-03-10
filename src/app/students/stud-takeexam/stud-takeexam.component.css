@@ -1,0 +1,388 @@
+/* Layout */
+.page-container {
+  min-height: 100vh;
+  background-color: rgb(249 250 251);
+}
+
+/* Header */
+.header {
+  display: flex;
+  height: 4rem;
+  align-items: center;
+  gap: 1rem;
+  background-color: white;
+  padding: 0 1rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.header-title {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.header-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.action-button:hover {
+  background-color: rgb(249 250 251);
+}
+
+/* Timer Bar */
+.timer-container {
+  margin: 0.5rem 1rem;
+}
+
+.timer-bar {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(254 243 199);
+  border: 1px solid rgb(253 230 138);
+  color: rgb(146 64 14);
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.timer-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.timer-icon-container {
+  background-color: rgb(254 243 199);
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+}
+
+.timer-icon {
+  color: rgb(217 119 6);
+}
+
+.timer-text {
+  font-weight: 500;
+}
+
+.question-counter {
+  background-color: rgb(254 243 199);
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+}
+
+/* Main Content Layout */
+.main-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.questions-panel-wrapper {
+  grid-column: span 1;
+}
+
+.questions-panel {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+}
+
+/* Progress Bar */
+.progress-container {
+  width: 100%;
+  height: 0.25rem;
+  background-color: rgb(243 244 246);
+  border-radius: 9999px;
+  margin-bottom: 1rem;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: black;
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+.panel-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.answer-status {
+  font-size: 0.875rem;
+  color: rgb(75 85 99);
+}
+
+.question-buttons-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.question-button {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  background-color: white;
+}
+
+.question-button.current {
+  background-color: black;
+  color: white;
+}
+
+.question-button.answered {
+  background-color: rgb(240 253 244);
+  color: rgb(22 163 74);
+}
+
+/* Question Content */
+.question-content {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.question-header {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.question-type {
+  color: rgb(75 85 99);
+}
+
+.flag-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.question-body {
+  padding: 1.5rem;
+}
+
+.question-container {
+  padding: 0.75rem;
+}
+
+.question-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.question-title {
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+/* Multiple Choice & True/False Options */
+.options-container, .true-false-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.option-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+}
+
+.option-item:hover {
+  background-color: rgb(249 250 251);
+}
+
+.option-label {
+  flex: 1;
+  cursor: pointer;
+}
+
+/* True/False Specific */
+.true-false-container {
+  display: flex;
+  gap: 1rem;
+}
+
+.true-false-option {
+  flex: 1;
+}
+
+/* Short Answer */
+.answer-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.answer-textarea {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.answer-textarea:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: rgb(156 163 175);
+  border-color: rgb(156 163 175);
+}
+
+.word-limit {
+  color: rgb(75 85 99);
+  font-size: 0.875rem;
+}
+
+/* Enumeration */
+.enumeration-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.enumeration-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.item-number {
+  font-size: 0.875rem;
+  font-weight: 500;
+  width: 1.5rem;
+}
+
+.enumeration-input {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.enumeration-input:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: rgb(156 163 175);
+  border-color: rgb(156 163 175);
+}
+
+/* Navigation */
+.navigation-footer {
+  padding: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.nav-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.nav-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.prev-button:hover:not(:disabled) {
+  background-color: rgb(249 250 251);
+}
+
+.next-button {
+  background-color: rgb(17 24 39);
+  color: white;
+}
+
+.next-button:hover:not(:disabled) {
+  background-color: rgb(31 41 55);
+}
+
+/* Responsive Design */
+@media (min-width: 768px) {
+  .main-content {
+    grid-template-columns: 1fr 3fr;
+  }
+
+  .questions-panel-wrapper {
+    grid-column: span 1;
+  }
+
+  .timer-bar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .legend {
+    display: block;
+  }
+}
+
+@media (max-width: 767px) {
+  .legend {
+    display: none;
+  }
+}
+
+/* Form Elements */
+.radio-input {
+  height: 1rem;
+  width: 1rem;
+}
+
+/* If you need custom radio styling */
+.radio-input {
+  appearance: none;
+  background-color: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 50%;
+  height: 1rem;
+  width: 1rem;
+  cursor: pointer;
+}
+
+.radio-input:checked {
+  background-color: #000;
+  border-color: #000;
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");
+}
+
+.radio-input:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+}

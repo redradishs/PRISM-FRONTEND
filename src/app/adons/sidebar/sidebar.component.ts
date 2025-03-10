@@ -43,6 +43,8 @@ export class SidebarComponent {
   userNav = [
     { icon: 'fas fa-home', label: 'Home', id: 'home', route: '/student/dashboard' },
     { icon: 'fas fa-book', label: 'Class', id: 'classes', route: '/student/classes' },
+    { icon: 'fas fa-history', label: 'History', id: 'history', route: '/student/history' },
+    { icon: 'fas fa-user', label: 'Profile', id: 'profile', route: '/student/profile' },
     
   ];
 

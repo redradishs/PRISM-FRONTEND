@@ -1,0 +1,161 @@
+<div class="page-container">
+    <header class="header">
+        <div class="header-title">{{assessmentData.title}}</div>
+        <div class="header-actions">
+            <button class="action-button">
+                <i class="fas fa-save"></i>
+                Save
+            </button>
+            <button class="action-button">
+                <i class="fas fa-times"></i>
+                Exit
+            </button>
+        </div>
+    </header>
+
+    <div class="timer-container">
+        <div class="timer-bar">
+            <div class="timer-content">
+                <div class="timer-icon-container">
+                    <i class="fas fa-clock timer-icon"></i>
+                </div>
+                <span class="font-medium">Time: {{formatTime(timeRemaining)}}</span>
+            </div>
+            <div class="question-counter">
+                Question {{currentQuestionIndex + 1}} of {{assessmentData.totalQuestions}}
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 p-4">
+        <!-- Questions Panel with progress bar -->
+        <div class="md:col-span-1">
+            <div class="bg-white rounded-lg shadow-sm p-4">
+                <!-- Progress Bar -->
+                <div class="w-full bg-gray-100 rounded-full h-1 mb-4">
+                    <div class="bg-black h-1 rounded-full"
+                        [style.width]="(getAnsweredCount() / assessmentData.totalQuestions * 100) + '%'"></div>
+                </div>
+
+                <h2 class="text-lg font-semibold">Questions</h2>
+                <p class="text-sm text-gray-600">{{getAnsweredCount()}} of {{assessmentData.totalQuestions}} answered
+                </p>
+
+                <div class="grid grid-cols-5 gap-2 mt-4">
+                    <button *ngFor="let i of [].constructor(15); let idx = index" [class]="'w-10 h-10 rounded-md flex items-center justify-center shadow-sm ' + 
+                        (idx === currentQuestionIndex ? 'bg-black text-white' : 
+                        (answers[idx+1] ? 'bg-green-50 text-green-600' : 'bg-white'))" (click)="goToQuestion(idx)">
+                        {{idx + 1}}
+                    </button>
+                </div>
+
+                <!-- Legend - hidden on mobile -->
+                <div class="hidden md:block mt-4 space-y-2 text-sm">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span>Answered</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-black"></div>
+                        <span>Current</span>
+                    </div>
+                </div>
+
+                <button class="w-full mt-4 bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 shadow-sm">
+                    Submit Assessment
+                </button>
+            </div>
+        </div>
+
+        <!-- Question Content -->
+        <div class="md:col-span-3">
+            <div class="bg-white rounded-lg shadow-sm">
+                <div class="p-4 border-b flex justify-between items-center">
+                    <div>
+                        <h2 class="question-header">Question {{currentQuestionIndex + 1}}</h2>
+                        <p class="question-type">{{getQuestionType(currentQuestion.type)}}</p>
+                    </div>
+                </div>
+
+                <div class="p-6">
+                    <div class="question-container">
+                        <!-- Multiple Choice Question -->
+                        <div *ngIf="currentQuestion.type === 'multiple-choice'" class="question-section">
+                            <h3 class="question-title">{{currentQuestion.text}}</h3>
+                            <div class="options-container">
+                                <div *ngFor="let option of currentQuestion.options" class="option-item">
+                                    <input type="radio" [id]="'option-' + option.id"
+                                        [name]="'question-' + currentQuestion.id" [value]="option.id"
+                                        [(ngModel)]="answers[currentQuestion.id]" class="radio-input">
+                                    <label [for]="'option-' + option.id" class="option-label">
+                                        {{option.text}}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- True/False Question -->
+                        <div *ngIf="currentQuestion.type === 'true-false'" class="question-section">
+                            <h3 class="question-title">{{currentQuestion.text}}</h3>
+                            <div class="true-false-container">
+                                <div class="true-false-option">
+                                    <label class="option-item">
+                                        <input type="radio" [name]="'question-' + currentQuestion.id" [value]="true"
+                                            [(ngModel)]="answers[currentQuestion.id]" class="radio-input">
+                                        <span>True</span>
+                                    </label>
+                                </div>
+                                <div class="true-false-option">
+                                    <label class="option-item">
+                                        <input type="radio" [name]="'question-' + currentQuestion.id" [value]="false"
+                                            [(ngModel)]="answers[currentQuestion.id]" class="radio-input">
+                                        <span>False</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Short Answer Question -->
+                        <div *ngIf="currentQuestion.type === 'short-answer'" class="question-section">
+                            <h3 class="question-title">{{currentQuestion.text}}</h3>
+                            <div class="answer-container">
+                                <textarea [(ngModel)]="answers[currentQuestion.id]" rows="6" class="answer-textarea"
+                                    placeholder="Type your answer here...">
+                                </textarea>
+                                <p class="word-limit">Word limit: {{currentQuestion.wordLimit}} words</p>
+                            </div>
+                        </div>
+
+                        <!-- Enumeration Question -->
+                        <div *ngIf="currentQuestion.type === 'enumeration'" class="question-section">
+                            <h3 class="question-title">{{currentQuestion.text}}</h3>
+                            <div class="enumeration-container">
+                                <div *ngFor="let i of [].constructor(currentQuestion.answerCount); let idx = index"
+                                    class="enumeration-item">
+                                    <span class="item-number">{{idx + 1}}.</span>
+                                    <input type="text" [(ngModel)]="answers[currentQuestion.id][idx]"
+                                        class="enumeration-input" placeholder="Enter answer...">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="navigation-footer">
+                    <button (click)="previousQuestion()" [disabled]="currentQuestionIndex === 0"
+                        class="nav-button prev-button">
+                        <i class="fas fa-arrow-left"></i>
+                        Previous
+                    </button>
+                    <button (click)="nextQuestion()"
+                        [disabled]="currentQuestionIndex === assessmentData.totalQuestions - 1"
+                        class="nav-button next-button">
+                        Next
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
