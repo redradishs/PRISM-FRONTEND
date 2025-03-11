@@ -15,7 +15,7 @@ import { StudClassesComponent } from './students/stud-classes/stud-classes.compo
 import { StudClassDetailsComponent } from './students/stud-classdetails/stud-classdetails.component';
 import { StudTakeexamComponent } from './students/stud-takeexam/stud-takeexam.component';
 import { StudHistoryComponent } from './students/stud-history/stud-history.component';
-
+import { CreateAssessmentComponent } from './instructor/create-assessment/create-assessment.component';
 export const routes: Routes = [
     {path: '', redirectTo: 'login', pathMatch: 'full'},
     {path: 'login', component: LoginComponent},
@@ -26,9 +26,10 @@ export const routes: Routes = [
     {path: 'instructor/students', component: StudentsComponent },
     {path: 'instructor/assessment', component: AssessmentComponent },
     {path: 'instructor/profile', component: ProfileComponent },
-    {path: 'instructor/generate', component: GenerateAssessmentComponent },
+    {path: 'instructor/create', component: GenerateAssessmentComponent },
     {path: 'instructor/takeassessment', component: TakeAssessmentComponent },
     {path: 'instructor/result', component: ResultComponent },
+    {path: 'instructor/generate', component: CreateAssessmentComponent },
     //user routes
     {path: 'pagetest', component:  ComponentTestingComponent},
     {path: 'student/dashboard', component: StudHomeComponent},

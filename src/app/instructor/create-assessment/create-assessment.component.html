@@ -1,0 +1,494 @@
+<div class="min-h-screen bg-gray-50">
+    <div class="flex">
+        <app-sidebar></app-sidebar>
+        <div class="flex-1 ml-0 md:ml-20">
+            <header class="bg-white shadow-sm">
+                <div class="max-w-7xl mx-auto py-2 md:py-4 px-3 md:px-4 sm:px-6 lg:px-8">
+                    <div class="flex items-center justify-between">
+                        <h1 class="text-xl md:text-2xl font-semibold text-gray-900">Generate</h1>
+                        <button *ngIf="isMobile" (click)="toggleSidebar()"
+                            class="p-1.5 md:p-2 rounded-md hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-bars w-5 md:w-6 h-5 md:h-6"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+
+            <div class="katamat-container">
+
+                <div class="genggengg">
+                    <div class="oknato-header">
+                        <div class="oknato-icon-wrapper">
+                            <i class="fas fa-book-open oknato-icon"></i>
+                        </div>
+                        <div class="oknato-header-content">
+                            <h1>Create Assessment</h1>
+                            <p>Use AI to generate assessment questions</p>
+                        </div>
+                    </div>
+
+                    <div class="publish-container">
+                        <button class="publish-button" (click)="publishAssessment()">
+                            <i class="fas fa-paper-plane"></i>
+                            Publish
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Basic Information Form -->
+                <div class="basicform-container">
+                    <div class="basicform-header">
+                        <h2>Basic Information</h2>
+                        <p>Set up the general parameters for your assessment</p>
+                    </div>
+
+                    <div class="basicform-content">
+                        <div class="basicform-grid-2">
+                            <div class="basicform-field">
+                                <label for="title">Title</label>
+                                <input id="title" [(ngModel)]="assessmentData.title" type="text" class="basicform-input"
+                                    placeholder="Enter assessment title">
+                            </div>
+
+                            <div class="basicform-field">
+                                <label for="category">Subject/Category</label>
+                                <select id="category" class="basicform-select" [(ngModel)]="assessmentData.category">
+                                    <option value="" disabled selected>Select a category</option>
+                                    <option value="math">Mathematics</option>
+                                    <option value="science">Science</option>
+                                    <option value="english">English</option>
+                                    <option value="history">History</option>
+                                    <option value="programming">Programming</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="basicform-grid-3">
+                            <div class="basicform-field">
+                                <label for="time">Time Limit (minutes)</label>
+                                <input id="time" type="number" class="basicform-input" placeholder="60"
+                                    [(ngModel)]="assessmentData.timelimit">
+                            </div>
+
+                            <div class="basicform-field">
+                                <label for="score">Passing Score (%)</label>
+                                <input id="score" type="number" class="basicform-input" placeholder="75"
+                                    [(ngModel)]="assessmentData.passingScore">
+                            </div>
+
+                            <div class="basicform-field">
+                                <label for="attempts">Maximum Attempts</label>
+                                <input id="attempts" type="number" class="basicform-input" placeholder="1"
+                                    [(ngModel)]="assessmentData.maxAttempts">
+                            </div>
+                        </div>
+                    </div>
+
+                    <span class="error-message">{{ errorMessage }}</span>
+                </div>
+
+
+                <!-- Generate Forms Section -->
+                <div class="genform-container">
+                    <div class="genform-header">
+                        <div class="genform-title-group">
+                            <div class="genform-title-wrapper">
+                                <h2>Generate Questions</h2>
+                                <span class="genform-ai-badge">
+
+                                    PRISM AI
+                                </span>
+                            </div>
+                            <p>Let PRISM AI help you create questions based on your topic and requirements</p>
+                        </div>
+                    </div>
+
+                    <div class="genform-content">
+                        <!-- Topic Input -->
+                        <div class="genform-field">
+                            <label for="topic">Topic</label>
+                            <textarea id="topic" placeholder="Enter your topic or learning objectives"
+                                class="genform-textarea" [(ngModel)]="aiGeneration.topic"></textarea>
+                        </div>
+
+                        <!-- Difficulty and Questions Count -->
+                        <div class="genform-row">
+                            <div class="genform-field">
+                                <label for="difficulty">Difficulty</label>
+                                <select id="difficulty" class="genform-select" [(ngModel)]="aiGeneration.difficulty">
+                                    <option value="easy">Easy</option>
+                                    <option value="medium" selected>Medium</option>
+                                    <option value="hard">Hard</option>
+                                </select>
+                            </div>
+                            <div class="genform-field">
+                                <label for="questionCount">Number of Questions</label>
+                                <input type="number" id="questionCount" class="genform-input" placeholder="5" min="1"
+                                    max="20" [(ngModel)]="aiGeneration.questionCount">
+                            </div>
+                        </div>
+
+                        <!-- Question Types -->
+                        <div class="genform-field">
+                            <label>Question Types</label>
+                            <div class="genform-checkbox-grid">
+                                <!-- Multiple Choice -->
+                                <label class="genform-checkbox-item">
+                                    <input type="checkbox" [checked]="isTypeSelected('mc')" (change)="toggleType('mc')">
+                                    <div class="genform-checkbox-content">
+                                        <div class="genform-checkbox-header">
+                                            <i class="fas fa-file-text text-indigo-600"></i>
+                                            <span class="checkbox-label">Multiple Choice</span>
+                                        </div>
+                                        <p>Questions with several options</p>
+                                    </div>
+                                </label>
+
+                                <!-- Enumeration -->
+                                <label class="genform-checkbox-item">
+                                    <input type="checkbox" [checked]="isTypeSelected('enum')"
+                                        (change)="toggleType('enum')">
+                                    <div class="genform-checkbox-content">
+                                        <div class="genform-checkbox-header">
+                                            <i class="fas fa-list text-purple-600"></i>
+                                            <span class="checkbox-label">Enumeration</span>
+                                        </div>
+                                        <p>List-based answers</p>
+                                    </div>
+                                </label>
+
+                                <!-- Short Answer -->
+                                <label class="genform-checkbox-item">
+                                    <input type="checkbox" [checked]="isTypeSelected('sa')" (change)="toggleType('sa')">
+                                    <div class="genform-checkbox-content">
+                                        <div class="genform-checkbox-header">
+                                            <i class="fas fa-comment text-pink-600"></i>
+                                            <span class="checkbox-label">Short Answer</span>
+                                        </div>
+                                        <p>Brief text responses</p>
+                                    </div>
+                                </label>
+
+                                <!-- True/False -->
+                                <label class="genform-checkbox-item">
+                                    <input type="checkbox" [checked]="isTypeSelected('tf')" (change)="toggleType('tf')">
+                                    <div class="genform-checkbox-content">
+                                        <div class="genform-checkbox-header">
+                                            <i class="fas fa-check text-green-600"></i>
+                                            <span class="checkbox-label">True/False</span>
+                                        </div>
+                                        <p>Binary choice questions</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Additional Instructions -->
+                        <div class="genform-field">
+                            <label for="instructions">Additional Instructions</label>
+                            <textarea id="instructions"
+                                placeholder="Enter any specific instructions or context for the AI"
+                                class="genform-textarea" [(ngModel)]="aiGeneration.instructions"></textarea>
+                        </div>
+
+                        <div *ngIf="generated" class="genform-instructions">
+                            <span>PRISM has successfully generated your questions, please check the questions below and
+                                edit it to your liking.</span>
+                        </div>
+
+
+                        <!-- Generate Button -->
+                        <div class="genform-actions">
+                            <button class="genform-generate-btn" (click)="generateNow()" [disabled]="isGenerating">
+                                <i class="fas fa-sparkles"></i>
+                                <span *ngIf="!isGenerating">Generate Questions</span>
+                                <span *ngIf="isGenerating">Generating...</span>
+                            </button>
+                        </div>
+
+                        <span class="error-message">{{ errorMessage }}</span>
+
+                    </div>
+                </div>
+
+
+
+                <!-- Assessment Questions Section -->
+                <div class="inix-assessment-header">
+                    <div class="inix-title-group">
+                        <h2>Assessment Questions</h2>
+                        <p>Review and edit your generated questions</p>
+                    </div>
+                    <button class="inix-add-button" (click)="showAddDialog = true">
+                        <i class="fas fa-plus"></i>
+                        Add Question
+                    </button>
+                </div>
+
+                <!-- Question Type Cards -->
+                <div class="cardhehe-grid">
+                    <!-- Multiple Choice Card -->
+                    <div class="cardhehe-item cardhehe-multiple-choice">
+                        <div class="cardhehe-content">
+                            <div class="cardhehe-icon">
+                                <i class="fas fa-file-text"></i>
+                            </div>
+                            <div class="cardhehe-text">
+                                <h3>Multiple Choice Questions</h3>
+                                <div class="cardhehe-badges">
+                                    <span class="cardhehe-badge">{{ getQuestionTypeCount('multiple-choice') }}
+                                        questions</span>
+                                    <span class="cardhehe-badge">
+                                        {{ getTotalPointsByType('multiple-choice') }}
+                                        {{ getPointLabel('multiple-choice') }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enumeration Card -->
+                    <div class="cardhehe-item cardhehe-enumeration">
+                        <div class="cardhehe-content">
+                            <div class="cardhehe-icon">
+                                <i class="fas fa-list"></i>
+                            </div>
+                            <div class="cardhehe-text">
+                                <h3>Enumeration Questions</h3>
+                                <div class="cardhehe-badges">
+                                    <span class="cardhehe-badge">{{ getQuestionTypeCount('enumeration') }}
+                                        questions</span>
+                                    <span class="cardhehe-badge">
+                                        {{ getTotalPointsByType('enumeration') }}
+                                        {{ getPointLabel('enumeration') }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Short Answer Card -->
+                    <div class="cardhehe-item cardhehe-short-answer">
+                        <div class="cardhehe-content">
+                            <div class="cardhehe-icon">
+                                <i class="fas fa-comment"></i>
+                            </div>
+                            <div class="cardhehe-text">
+                                <h3>Short Answer Questions</h3>
+                                <div class="cardhehe-badges">
+                                    <span class="cardhehe-badge">{{ getQuestionTypeCount('short-answer') }}
+                                        questions</span>
+                                    <span class="cardhehe-badge">
+                                        {{ getTotalPointsByType('short-answer') }}
+                                        {{ getPointLabel('short-answer') }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- True/False Card -->
+                    <div class="cardhehe-item cardhehe-true-false">
+                        <div class="cardhehe-content">
+                            <div class="cardhehe-icon">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="cardhehe-text">
+                                <h3>True/False Questions</h3>
+                                <div class="cardhehe-badges">
+                                    <span class="cardhehe-badge">
+                                        {{ getQuestionTypeCount('true-false') }} questions
+                                    </span>
+                                    <span class="cardhehe-badge">
+                                        {{ getTotalPointsByType('true-false') }}
+                                        {{ getPointLabel('true-false') }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Question Examples Section -->
+                <div class="qtype-container">
+                    <!-- Multiple Choice Questions -->
+                    <div class="qtype-card" *ngFor="let question of getQuestionsByType('multiple-choice')">
+                        <div class="qtype-header">
+                            <div class="qtype-badge-group">
+                                <span class="qtype-number">Question {{ question.id }}</span>
+                                <span class="qtype-points">{{ question.points }} points</span>
+                            </div>
+                            <div class="qtype-actions">
+                                <button class="qtype-btn" (click)="toggleEdit(question.id)">
+                                    <i class="fas" [ngClass]="isEditing(question.id) ? 'fa-check' : 'fa-edit'"></i>
+                                </button>
+                                <button class="qtype-btn qtype-btn-delete" (click)="deleteQuestion(question.id)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="qtype-content">
+                            <textarea class="qtype-question-edit" [(ngModel)]="question.question"
+                                [readonly]="!isEditing(question.id)" rows="2">
+                            </textarea>
+                            <div class="qtype-options">
+                                <div class="qtype-option" *ngFor="let opt of question.options | keyvalue">
+                                    <input type="radio" [name]="'q' + question.id"
+                                        [id]="'q' + question.id + '-' + opt.key" [checked]="opt.key === question.answer"
+                                        (click)="isEditing(question.id) && (question.answer = opt.key)">
+                                    <input *ngIf="isEditing(question.id)" type="text"
+                                        [(ngModel)]="question.options![opt.key]" class="qtype-option-edit">
+                                    <label *ngIf="!isEditing(question.id)" [for]="'q' + question.id + '-' + opt.key">
+                                        {{ question.options ? opt.value : '' }}
+                                    </label>
+                                    <span class="qtype-correct-badge" *ngIf="opt.key === question.answer">Correct</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enumeration Questions -->
+                    <div class="qtype-card" *ngFor="let question of getQuestionsByType('enumeration')">
+                        <div class="qtype-header">
+                            <div class="qtype-badge-group">
+                                <span class="qtype-number">Question {{ question.id }}</span>
+                                <span class="qtype-points">{{ question.points }} points</span>
+                            </div>
+                            <div class="qtype-actions">
+                                <button class="qtype-btn" (click)="toggleEdit(question.id)">
+                                    <i class="fas" [ngClass]="isEditing(question.id) ? 'fa-check' : 'fa-edit'"></i>
+                                </button>
+                                <button class="qtype-btn qtype-btn-delete" (click)="deleteQuestion(question.id)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="qtype-content">
+                            <textarea class="qtype-question-edit" [(ngModel)]="question.question"
+                                [readonly]="!isEditing(question.id)" rows="2">
+                            </textarea>
+                            <div class="qtype-enum-answers">
+                                <div class="qtype-enum-item"
+                                    *ngFor="let answer of isArray(question.answer) ? question.answer : []; let i = index">
+                                    <span class="qtype-enum-number">{{ i + 1 }}.</span>
+                                    <input type="text" [ngModel]="getEnumAnswer(question.answer, i)"
+                                        (ngModelChange)="setEnumAnswer(question, i, $event)"
+                                        [readonly]="!isEditing(question.id)" class="qtype-enum-edit">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Short Answer Questions -->
+                    <div class="qtype-card" *ngFor="let question of getQuestionsByType('short-answer')">
+                        <div class="qtype-header">
+                            <div class="qtype-badge-group">
+                                <span class="qtype-number">Question {{ question.id }}</span>
+                                <span class="qtype-points">{{ question.points }} points</span>
+                            </div>
+                            <div class="qtype-actions">
+                                <button class="qtype-btn" (click)="toggleEdit(question.id)">
+                                    <i class="fas" [ngClass]="isEditing(question.id) ? 'fa-check' : 'fa-edit'"></i>
+                                </button>
+                                <button class="qtype-btn qtype-btn-delete" (click)="deleteQuestion(question.id)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="qtype-content">
+                            <textarea class="qtype-question-edit" [(ngModel)]="question.question"
+                                [readonly]="!isEditing(question.id)" rows="2">
+                            </textarea>
+                            <div class="qtype-answer-box">
+                                <p>{{ question.answer }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- True/False Questions -->
+                    <div class="qtype-card" *ngFor="let question of getQuestionsByType('true-false')">
+                        <div class="qtype-header">
+                            <div class="qtype-badge-group">
+                                <span class="qtype-number">Question {{ question.id }}</span>
+                                <span class="qtype-points">{{ question.points }} points</span>
+                            </div>
+                            <div class="qtype-actions">
+                                <button class="qtype-btn" (click)="toggleEdit(question.id)">
+                                    <i class="fas" [ngClass]="isEditing(question.id) ? 'fa-check' : 'fa-edit'"></i>
+                                </button>
+                                <button class="qtype-btn qtype-btn-delete" (click)="deleteQuestion(question.id)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="qtype-content">
+                            <textarea class="qtype-question-edit" [(ngModel)]="question.question"
+                                [readonly]="!isEditing(question.id)" rows="2">
+                            </textarea>
+                            <div class="qtype-options">
+                                <div class="qtype-option">
+                                    <input type="radio" [name]="'q' + question.id" [id]="'q' + question.id + '-true'"
+                                        [checked]="question.answer === 'True'"
+                                        (click)="isEditing(question.id) && (question.answer = 'True')">
+                                    <label [for]="'q' + question.id + '-true'">True</label>
+                                    <span class="qtype-correct-badge" *ngIf="question.answer === 'True'">Correct</span>
+                                </div>
+                                <div class="qtype-option">
+                                    <input type="radio" [name]="'q' + question.id" [id]="'q' + question.id + '-false'"
+                                        [checked]="question.answer === 'False'"
+                                        (click)="isEditing(question.id) && (question.answer = 'False')">
+                                    <label [for]="'q' + question.id + '-false'">False</label>
+                                    <span class="qtype-correct-badge" *ngIf="question.answer === 'False'">Correct</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+
+<div class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50" *ngIf="showAddDialog">
+    <div class="bg-white rounded-lg p-6 w-96">
+        <h3 class="text-lg font-semibold mb-4">Add New Question</h3>
+
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Question Type</label>
+                <select [(ngModel)]="newQuestion.type" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                    <option value="multiple-choice">Multiple Choice</option>
+                    <option value="true-false">True/False</option>
+                    <option value="enumeration">Enumeration</option>
+                    <option value="short-answer">Short Answer</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Number of Questions</label>
+                <input type="number" [(ngModel)]="newQuestion.count" min="1" max="20"
+                    class="w-full border border-gray-300 rounded-md px-3 py-2">
+            </div>
+        </div>
+
+        <div class="mt-6 flex justify-end space-x-3">
+            <button (click)="showAddDialog = false"
+                class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                Cancel
+            </button>
+            <button (click)="addNewQuestions()"
+                class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                Add Questions
+            </button>
+        </div>
+    </div>
+</div>

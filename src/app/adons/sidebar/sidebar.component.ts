@@ -101,6 +101,16 @@ export class SidebarComponent {
     this.isExpanded = !this.isExpanded;
   }
 
+  getInitials(): string {
+    if(!this.username) return 'PR';
+    return this.username
+    .split(' ')
+    .map(name => name.charAt(0))
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+  }
+
   setSelectedTab(tabId: string) {
     this.selectedTab = tabId;
   }
@@ -111,12 +121,12 @@ export class SidebarComponent {
             ${this.isMobile && !this.isExpanded ? '-translate-x-full' : ''}`;
   }
 
-  getNavItemClasses(itemId: string): string {
+  getNavItemClasses(itemRoute: string): string {
     return `w-full flex items-center p-3 my-1 rounded-lg transition-colors relative group
-            ${this.selectedTab === itemId ? 'bg-gray-600 text-white' : 'hover:bg-gray-800'} 
+            ${this.currentRoute.startsWith(itemRoute) ? 'bg-violet-800 text-white' : 'hover:bg-violet-800'} 
             ${!this.isExpanded ? 'justify-center' : ''}`;
   }
-
+  
   getLogoutButtonClasses(): string {
     return `w-full flex items-center p-3 rounded-lg hover:bg-gray-800 transition-colors 
             ${!this.isExpanded ? 'justify-center' : ''}`;
@@ -125,5 +135,9 @@ export class SidebarComponent {
   logout() {
     this.auth.logout();
     this.router.navigate(['/login']);
+  }
+
+  isActive(route: string): boolean {
+    return this.router.url === route;
   }
 }

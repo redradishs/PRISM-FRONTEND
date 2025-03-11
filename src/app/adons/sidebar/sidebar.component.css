@@ -20,3 +20,17 @@
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 300ms;
   }
+
+nav {
+    background: linear-gradient(180deg, 
+        rgb(67, 20, 103) 0%,    /* darker violet */
+        rgb(49, 46, 129) 50%,   /* indigo-900 */
+        rgb(88, 28, 135) 100%   /* violet-800 */
+    );
+    height: 100%;
+}
+
+.active {
+    background-color: rgba(138, 43, 226, 0.1); /* Light violet background */
+    color: white; /* Change text color if needed */
+}

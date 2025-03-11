@@ -14,79 +14,214 @@
                 </div>
             </header>
 
-
-            <main class="main-content">
-
-                <div class="welcome-section mt-4 md:mt-6">
-                    <div class="welcome-content px-4 md:px-4">
-                        <h1>Welcome Back, {{this.username}}</h1>
-                        <p>Here's what's happening with your assessments today.</p>
+            <main class="p-5">
+                <div class="welcome-section">
+                    <div class="welcome-content">
+                        <div class="welcome-text">
+                            <h1>Welcome Back, {{username}}</h1>
+                            <p>Here's what's happening with your assessments today.</p>
+                            <div class="welcome-buttons">
+                                <button class="btn-create" [routerLink]="['/instructor/generate']">Create
+                                    Assessment</button>
+                                <button class="btn-view" [routerLink]="['/instructor/assessment']">View Reports</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
 
-
-
-
-                <div class="metrics-grid">
-                    <a [routerLink]="['/instructor/students']">
-                        <div class="stat-card">
-                            <div class="stat-header">
-                                <h3 class="stat-title">Total Students</h3>
-                                <i class="fas fa-file-alt text-primary"></i>
+                <div class="tabs">
+                    <div [routerLink]="['/instructor/students']" class="card1">
+                        <div class="card-content">
+                            <p class="card-title">Total Students</p>
+                            <div class="card-numbers">
+                                <h1>{{totalStudents}}</h1>
+                                <p>across {{totalClasses}} classes</p>
                             </div>
-                            <div class="stat-value">{{totalStudents}}</div>
-                            <p class="stat-subtitle">across {{totalClasses}} classes</p>
+                            <p class="card-status positive">+1 this week</p>
                         </div>
-                    </a>
+                        <div class="card-icon blue">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
 
-                    <a [routerLink]="['/instructor/assessment']">
-                        <div class="stat-card">
-                            <div class="stat-header">
-                                <h3 class="stat-title">Active Assessments</h3>
-                                <i class="fas fa-clipboard-list text-primary"></i>
+                    <div [routerLink]="['/instructor/assessment']" class="card2">
+                        <div class="card-content">
+                            <p class="card-title">Active Assessments</p>
+                            <div class="card-numbers">
+                                <h1>{{totalActiveAssessments}}</h1>
+                                <p>2 due this week</p>
                             </div>
-                            <div class="stat-value">{{totalActiveAssessments}}</div>
-                            <p class="stat-subtitle">2 due this week</p>
+                            <p class="card-status">On track</p>
                         </div>
-                    </a>
+                        <div class="card-icon purple">
+                            <i class="fas fa-book"></i>
+                        </div>
+                    </div>
 
-                    <a [routerLink]="['/instructor/students']">
-                        <div class="stat-card">
-                            <div class="stat-header">
-                                <h3 class="stat-title">Total Classes</h3>
-                                <i class="fas fa-book text-primary"></i>
+                    <div [routerLink]="['/instructor/students']" class="card3">
+                        <div class="card-content">
+                            <p class="card-title">Total Classes</p>
+                            <div class="card-numbers">
+                                <h1>{{totalClasses}}</h1>
+                                <p>with {{totalStudents}} students</p>
                             </div>
-                            <div class="stat-value">{{totalClasses}}</div>
-                            <p class="stat-subtitle">with {{totalStudents}} students</p>
+                            <p class="card-status">All active</p>
                         </div>
-                    </a>
+                        <div class="card-icon pink">
+                            <i class="fas fa-table-cells"></i>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="assessment-card">
-                    <h2>ON GOING ASSESSMENT PROGRESS BAR</h2>
-                    <div class="assessment-list">
-                        <div *ngFor="let assessment of onGoingAssessments" class="assessment-item">
-                            <div class="assessment-icon"></div>
-                            <div (click)="gotoAssessment(assessment.id)" class="assessment-details">
-                                <div class="assessment-header">
-                                    <span class="assessment-title">{{assessment.title}}</span>
-                                    <span class="assessment-class">{{assessment.classes[0].className}}</span>
-                                </div>
+
+                <div class="assessments">
+                    <div class="assessments-header">
+                        <h1>Ongoing Assessments</h1>
+                        <button class="view-all">View All <i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    <div class="assessments-list">
+                        <div *ngFor="let ass of onGoingAssessments" class="assessment-card">
+                            <div class="assessment-icon blue">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <div (click)="gotoAssessment(ass.id)" class="assessment-content">
+                                <h2>{{ass.title}}</h2>
+                                <p class="course">{{ass.classes[0].className}}</p>
                                 <div class="progress-bar">
-                                    <div class="progress-value" [style.width.%]="calculateProgress(assessment)"></div>
+                                    <div class="progress" [style.width.%]="calculateProgress(ass)"></div>
                                 </div>
-                                <div class="assessment-footer">
-                                    <span>Progress: {{calculateProgress(assessment) | number:'1.0-0'}}%</span>
-                                    <span>Due: {{assessment.dueDate | date}} {{assessment.dueTime}}</span>
+                                <div class="assessment-info">
+                                    <p class="due-date">Due: {{ass.dueDate | date}} {{ass.dueTime}}</p>
+                                    <p class="progress-text">Progress: {{calculateProgress(ass) |
+                                        number:'1.0-0'}}%</p>
                                 </div>
                             </div>
                         </div>
-                        <div *ngIf="onGoingAssessments.length === 0" class="no-assessments">
-                            There is currently no on going assessments, you may schedule one now.
-                        </div>
                     </div>
                 </div>
+
+
+                <div class="student-perf">
+                    <div class="header-section">
+                        <div>
+                            <h1>Student Performance</h1>
+                            <p>Overview of student assessment results</p>
+                        </div>
+                        <button class="export-btn">Export Data</button>
+                    </div>
+
+                    <table class="student-table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Assessments Completed</th>
+                                <th>Average Score</th>
+                                <th>Progress</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="hatdog-row">
+                                <td>
+                                    <div class="student-info">
+                                        <div class="avatar">JD</div>
+                                        <div class="student-details">
+                                            <div class="student-name">John Doe</div>
+                                            <div class="student-email">johbndjkddj</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="completion">2 / 3</span>
+                                </td>
+                                <td>
+                                    <div class="score-section">
+                                        <span class="score">85%</span>
+                                        <span class="badge good">Good</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="progress-bar">
+                                        <div class="progress" style="width: 67%; background-color: #f59e0b;"></div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="action-btn"><i class="fas fa-file-alt"></i></button>
+                                        <button class="action-btn"><i class="fas fa-ellipsis-h"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="hatdog-row">
+                                <td>
+                                    <div class="student-info">
+                                        <div class="avatar">JD</div>
+                                        <div class="student-details">
+                                            <div class="student-name">John Doe</div>
+                                            <div class="student-email">johbndjkddj</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="completion">2 / 3</span>
+                                </td>
+                                <td>
+                                    <div class="score-section">
+                                        <span class="score">85%</span>
+                                        <span class="badge good">Good</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="progress-bar">
+                                        <div class="progress" style="width: 67%; background-color: #f59e0b;"></div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="action-btn"><i class="fas fa-file-alt"></i></button>
+                                        <button class="action-btn"><i class="fas fa-ellipsis-h"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr class="hatdog-row">
+                                <td>
+                                    <div class="student-info">
+                                        <div class="avatar">JD</div>
+                                        <div class="student-details">
+                                            <div class="student-name">John Doe</div>
+                                            <div class="student-email">johbndjkddj</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="completion">2 / 3</span>
+                                </td>
+                                <td>
+                                    <div class="score-section">
+                                        <span class="score">85%</span>
+                                        <span class="badge good">Good</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="progress-bar">
+                                        <div class="progress" style="width: 67%; background-color: #f59e0b;"></div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="action-btn"><i class="fas fa-file-alt"></i></button>
+                                        <button class="action-btn"><i class="fas fa-ellipsis-h"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
 
                 <section class="performance-section">
                     <h2>Performance Chart</h2>
@@ -109,7 +244,9 @@
                         </div>
                     </div>
                 </section>
+
             </main>
+
         </div>
     </div>
 </div>

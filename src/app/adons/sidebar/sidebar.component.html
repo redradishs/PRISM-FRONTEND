@@ -2,7 +2,7 @@
 </div>
 
 <nav [class]="getSidebarClasses()">
-    <div class="flex flex-col h-full bg-gray-900">
+    <div class="flex flex-col h-full">
         <div class="flex flex-col items-center py-8">
             <button (click)="toggleSidebar()" class="p-2 mb-8 rounded-full hover:bg-gray-800 transition-colors">
                 <i class="fas fa-bars w-6 h-6 text-white"></i>
@@ -10,7 +10,7 @@
 
             <div class="relative group">
                 <div class="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center">
-                    <span class="text-white">AD</span>
+                    <span class="text-white">{{getInitials()}}</span>
                 </div>
                 <div *ngIf="!isExpanded"
                     class="absolute left-full ml-4 px-2 py-1 bg-gray-800 rounded-md text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
@@ -21,8 +21,8 @@
         </div>
 
         <div class="flex-1 w-full px-4">
-            <button *ngFor="let item of navItems" [routerLink]="item.route" [class]="getNavItemClasses(item.id)"
-                routerLinkActive #rla="routerLinkActive" [class.bg-gray-600]="rla.isActive">
+            <button *ngFor="let item of navItems" [routerLink]="item.route" [class]="getNavItemClasses(item.route)"
+                routerLinkActive="bg-violet-200 text-white" #rla="routerLinkActive">
                 <i [class]="item.icon + ' w-6 h-6 text-white transition-colors duration-200'"></i>
                 <span *ngIf="isExpanded" class="text-sm ml-3 text-white">{{item.label}}</span>
                 <div *ngIf="!isExpanded"
