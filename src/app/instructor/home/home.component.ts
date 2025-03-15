@@ -131,7 +131,6 @@ export class HomeComponent implements OnInit {
     this.api.getOngoingAssessments(this.userId).subscribe((resp: any) => {
       try {
         this.onGoingAssessments = resp.data;
-        console.log('Ongoing assessments:', JSON.stringify(this.onGoingAssessments, null, 2));
       } catch (error) {
         console.error('Error getting ongoing assessments:', error);
       }

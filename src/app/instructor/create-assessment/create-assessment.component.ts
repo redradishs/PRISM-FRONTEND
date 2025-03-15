@@ -127,6 +127,11 @@ export class CreateAssessmentComponent implements OnInit {
       return;
     }
 
+    if(Number(this.aiGeneration.questionCount) > 50) {
+      this.errorMessage = 'You have unlimited generation of questions. PRISM recommends to generate maximum of 50 questions per request.';
+      return;
+    }
+
     // 2. Initialize generation process
     this.isGenerating = true;
     this.errorMessage = null;
@@ -332,6 +337,10 @@ export class CreateAssessmentComponent implements OnInit {
         .reduce((sum, q) => sum + (q.points || 0), 0);
   }
 
+  getTotalQuestions(): number {
+    return this.questions.length;
+  }
+
   getPointLabel(type: string): string {
     const totalPoints = this.getTotalPointsByType(type);
 
@@ -457,5 +466,6 @@ export class CreateAssessmentComponent implements OnInit {
       this.errorMessage = `${errorMsg}. Please try again.`;
     }
   }
+
 }
 
