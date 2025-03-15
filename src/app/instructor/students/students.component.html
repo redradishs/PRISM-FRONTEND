@@ -25,9 +25,15 @@
                         <div *ngIf="isLoading" class="loading-text">Loading classes...</div>
                         <div *ngIf="error" class="error-text">{{error}}</div>
                     </div>
-                    <button class="export-button">
-                        Export List <i class="fas fa-download"></i>
-                    </button>
+
+                    <div class="button-group">
+                        <button class="outline-button">
+                            <i class="fas fa-download"></i> Export List
+                        </button>
+                        <button class="primary-button">
+                            <i class="fas fa-plus"></i> Create Class
+                        </button>
+                    </div>
                 </div>
 
                 <h1 class="class-title">
@@ -36,17 +42,35 @@
                 </h1>
 
                 <div class="metrics-grid">
-                    <div class="metric-card">
-                        <h3>PERFORMANCE</h3>
-                        <div class="metric-value">87%</div>
+                    <div class="metric-card c1">
+                        <div>
+                            <h3>PERFORMANCE</h3>
+                            <div class="metric-value">87%</div>
+                            <p class="text-sm text-gray-500 mt-2">Performance of this class</p>
+                        </div>
+                        <div class="card-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
                     </div>
                     <div class="metric-card">
-                        <h3>ADMITTED</h3>
-                        <div class="metric-value">{{admittedCount}}</div>
+                        <div>
+                            <h3>ADMITTED</h3>
+                            <div class="metric-value">{{admittedCount}}</div>
+                            <p class="text-sm text-gray-500 mt-2">Active in this class</p>
+                        </div>
+                        <div class="card-icon">
+                            <i class="fas fa-user-check"></i>
+                        </div>
                     </div>
                     <div (click)="togglePendingModal()" class="metric-card">
-                        <h3>PENDING</h3>
-                        <div class="metric-value">{{pendingCount}}</div>
+                        <div>
+                            <h3>PENDING</h3>
+                            <div class="metric-value">{{pendingCount}}</div>
+                            <p class="text-sm text-gray-500 mt-2">Pending admission requests</p>
+                        </div>
+                        <div class="card-icon">
+                            <i class="fas fa-user-clock"></i>
+                        </div>
                     </div>
                 </div>
 
@@ -58,14 +82,15 @@
                             (input)="onSearch($event)" />
                     </div>
                     <div class="button-group">
-                        <button class="add-button" (click)="togglePendingModal()">
-                            Pending
+                        <button class="secondary-button" (click)="togglePendingModal()">
+                            <i class="fas fa-clock"></i> Pending
+                            <span class="badge" *ngIf="pendingCount > 0">{{pendingCount}}</span>
                         </button>
-                        <button class="add-button">
-                            Add user <i class="fas fa-plus"></i>
+                        <button class="primary-button">
+                            <i class="fas fa-user-plus"></i> Add User
                         </button>
-                        <button class="export-button">
-                            Export
+                        <button class="outline-button">
+                            <i class="fas fa-download"></i> Export
                         </button>
                     </div>
                 </div>
@@ -99,8 +124,8 @@
                                 </td>
                             </tr>
                             <tr *ngFor="let student of currentStudents">
-                                <td>{{student.name}}</td>
-                                <td>{{student.email}}</td>
+                                <td class="font-semibold">{{student.name}}</td>
+                                <td class="font-semibold">{{student.email}}</td>
                                 <td>{{student.block}}A</td>
                                 <td>{{student.accuracy}}99%</td>
                                 <td class="actions-cell">

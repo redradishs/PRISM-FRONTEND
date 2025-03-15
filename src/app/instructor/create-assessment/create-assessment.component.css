@@ -213,6 +213,20 @@
     border-right: 8px solid #f199dc;
 }
 
+.genform-warning {
+    text-align: center;
+    background-color: rgb(246, 236, 218);
+    color: rgb(105, 80, 33);
+    padding: 1rem;
+    border-radius: 1rem;
+    border-left: 5px solid rgb(231, 181, 89);
+}
+
+
+.genform-warning li {
+    margin-bottom: 0.5rem;
+}
+
 .genform-header {
     padding: 1.5rem;
     border-bottom: 1px solid #e5e7eb;
@@ -450,16 +464,18 @@
     justify-content: center;
     gap: 0.5rem;
     padding: 0.875rem;
-    background-color: #111827;
+    background: linear-gradient(135deg, #7779fc 0%, #774ed8 100%); 
     color: white;
     border-radius: 0.75rem;
     font-size: 0.875rem;
     font-weight: 500;
-    transition: background-color 0.2s;
+    transition: background-color 1s, scale 0.7s;
+    cursor: pointer;
 }
 
 .genform-generate-btn:hover {
-    background-color: #1f2937;
+    background: linear-gradient(135deg, #7275ff 0%, #6f3fe1 100%); 
+    scale: 1.0090;
 }
 
 /* Responsive adjustments */

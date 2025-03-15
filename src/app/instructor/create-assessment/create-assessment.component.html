@@ -31,7 +31,7 @@
                     <div class="publish-container">
                         <button class="publish-button" (click)="publishAssessment()">
                             <i class="fas fa-paper-plane"></i>
-                            Publish
+                            Save
                         </button>
                     </div>
                 </div>
@@ -85,7 +85,7 @@
                         </div>
                     </div>
 
-                    <span class="error-message">{{ errorMessage }}</span>
+                    <span class="error-message">{{ basicInfoError }}</span>
                 </div>
 
 
@@ -105,7 +105,7 @@
                     </div>
 
                     <div class="genform-content">
-                        <!-- Topic Input -->
+
                         <div class="genform-field">
                             <label for="topic">Topic</label>
                             <textarea id="topic" placeholder="Enter your topic or learning objectives"
@@ -193,12 +193,19 @@
                         </div>
 
                         <div *ngIf="generated" class="genform-instructions">
-                            <span>PRISM has successfully generated your questions, please check the questions below and
-                                edit it to your liking.</span>
+                            <span>PRISM has successfully generated your questions, please review the generated questions
+                                below.</span>
                         </div>
 
+                        <div *ngIf="isGenerating" class="genform-warning">
+                            <ul>
+                                <li> PRISM will not generate questions that pertain to violence, hate speech, or any
+                                    form of discrimination.</li>
+                                <li> PRISM might generate questions that are not related to the topic, best to review
+                                    the questions</li>
+                            </ul>
+                        </div>
 
-                        <!-- Generate Button -->
                         <div class="genform-actions">
                             <button class="genform-generate-btn" (click)="generateNow()" [disabled]="isGenerating">
                                 <i class="fas fa-sparkles"></i>
@@ -434,17 +441,17 @@
                             <div class="qtype-options">
                                 <div class="qtype-option">
                                     <input type="radio" [name]="'q' + question.id" [id]="'q' + question.id + '-true'"
-                                        [checked]="question.answer === 'True'"
-                                        (click)="isEditing(question.id) && (question.answer = 'True')">
+                                        [checked]="question.answer === 'true'"
+                                        (click)="isEditing(question.id) && (question.answer = 'true')">
                                     <label [for]="'q' + question.id + '-true'">True</label>
-                                    <span class="qtype-correct-badge" *ngIf="question.answer === 'True'">Correct</span>
+                                    <span class="qtype-correct-badge" *ngIf="question.answer === 'true'">Correct</span>
                                 </div>
                                 <div class="qtype-option">
                                     <input type="radio" [name]="'q' + question.id" [id]="'q' + question.id + '-false'"
-                                        [checked]="question.answer === 'False'"
-                                        (click)="isEditing(question.id) && (question.answer = 'False')">
+                                        [checked]="question.answer === 'false'"
+                                        (click)="isEditing(question.id) && (question.answer = 'false')">
                                     <label [for]="'q' + question.id + '-false'">False</label>
-                                    <span class="qtype-correct-badge" *ngIf="question.answer === 'False'">Correct</span>
+                                    <span class="qtype-correct-badge" *ngIf="question.answer === 'false'">Correct</span>
                                 </div>
                             </div>
                         </div>

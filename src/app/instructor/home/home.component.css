@@ -415,11 +415,7 @@
     transition: border-color 0.3s ease, border-width 0.3s ease, transform 0.2s ease;
 }
 
-.student-perf:hover {
-    border-left: 1px solid #6366f1;
-    border-right: 5px solid #6366f1;
-    transform: scale(1.02);
-}
+
 
 
 .header-section {

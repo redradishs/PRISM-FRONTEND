@@ -34,7 +34,7 @@ interface AIQuestion {
     C: string;
     D: string;
   };
-  answer: string;
+  answer: string | boolean | string[];
 }
 
 interface Question {
@@ -104,6 +104,7 @@ export class CreateAssessmentComponent implements OnInit {
     type: 'multiple-choice',
     count: 1
   };
+  basicInfoError: string | null = null;
 
   constructor(private api: ApiService, private router: Router, private auth: AuthService) {}
 
@@ -116,7 +117,6 @@ export class CreateAssessmentComponent implements OnInit {
     })
   }
 
-
   generateNow() {
     if(!this.aiGeneration.topic) {
       this.errorMessage = 'Please enter a topic';
@@ -126,30 +126,91 @@ export class CreateAssessmentComponent implements OnInit {
       this.errorMessage = 'Please select at least one question type';
       return;
     }
+
+    // 2. Initialize generation process
     this.isGenerating = true;
     this.errorMessage = null;
     this.generated = false;
 
-    const prompt = this.promptMaker();
+    // 3. Set up batch processing variables
+    const questionsPerBatch = 5;  // Generate 5 questions at a time
+    const totalQuestions = Number(this.aiGeneration.questionCount);
+    let questionsGenerated = 0;
+    let retryAttempts = 0;
+    const maxRetries = 2;  // Maximum number of retries if generation fails
 
-    this.api.generateQuizAssessment(
-      Number(this.aiGeneration.questionCount),
-      this.aiGeneration.difficulty as 'easy' | 'medium' | 'hard',
-      prompt 
-    ).subscribe({
-      next: (response: any) => {
-        this.handleGeneratedQuestions(response);
-        this.isGenerating = false;
-        this.generated = true;
-      },
-      error: (error: any) => {
-        console.error('Error generating assessment', error);
-        this.errorMessage = 'An error occurred while generating the assessment';
-        this.isGenerating = false;
-      }
-    })
+    // 4. Function to generate one batch of questions
+    const generateQuestionBatch = () => {
+      const questionsToGenerate = Math.min(questionsPerBatch, totalQuestions - questionsGenerated);
+      
+      // Generate the questions
+      this.api.generateQuizAssessment(
+        questionsToGenerate,
+        this.aiGeneration.difficulty as 'easy' | 'medium' | 'hard',
+        this.promptMaker()
+      ).subscribe({
+        next: (response: any) => {
+          if (response.success) {
+            this.handleGeneratedQuestions(response);
+            questionsGenerated += questionsToGenerate;
+            retryAttempts = 0;
+
+            if (questionsGenerated < totalQuestions) {
+              generateQuestionBatch();  
+            } else {
+              this.isGenerating = false;
+              this.generated = true;
+            }
+          } else {
+            this.handleGenerationFailure('Generation failed', retryAttempts, maxRetries, generateQuestionBatch);
+          }
+        },
+        error: (error: any) => {
+          this.handleGenerationFailure('Error during generation', retryAttempts, maxRetries, generateQuestionBatch);
+          console.error('Generation error:', error);
+        }
+      });
+    };
+
+    this.handleGenerationFailure = this.handleGenerationFailure.bind(this);
+
+    generateQuestionBatch();
   }
 
+
+  
+  // generateNow() {
+  //   if(!this.aiGeneration.topic) {
+  //     this.errorMessage = 'Please enter a topic';
+  //     return;
+  //   }
+  //   if(this.selectedTypes.length === 0) {
+  //     this.errorMessage = 'Please select at least one question type';
+  //     return;
+  //   }
+  //   this.isGenerating = true;
+  //   this.errorMessage = null;
+  //   this.generated = false;
+
+  //   const prompt = this.promptMaker();
+
+  //   this.api.generateQuizAssessment(
+  //     Number(this.aiGeneration.questionCount),
+  //     this.aiGeneration.difficulty as 'easy' | 'medium' | 'hard',
+  //     prompt 
+  //   ).subscribe({
+  //     next: (response: any) => {
+  //       this.handleGeneratedQuestions(response);
+  //       this.isGenerating = false;
+  //       this.generated = true;
+  //     },
+  //     error: (error: any) => {
+  //       console.error('Error generating assessment', error);
+  //       this.errorMessage = 'An error occurred while generating the assessment';
+  //       this.isGenerating = false;
+  //     }
+  //   })
+  // }
 
   private promptMaker() {
     const typeMapping = {
@@ -173,7 +234,8 @@ export class CreateAssessmentComponent implements OnInit {
       'multiple choice': 'multiple-choice',
       'short answer': 'short-answer',
       'enumeration': 'enumeration',
-      'true/false': 'true-false'
+      'true/false': 'true-false',
+      'true-false': 'true-false'
     };
     return typeMap[aiType.toLowerCase()] || aiType;
   }
@@ -190,25 +252,25 @@ export class CreateAssessmentComponent implements OnInit {
       return;
     }
     
-
     try {
       const questions = response.questions;
       
       if (Array.isArray(questions)) {
         questions.forEach((question: AIQuestion) => {
-          const formattedQuestion = {
+          const formattedQuestion: Question = {
             type: this.mapQuestionType(question.type),
             id: this.nextId++,
             question: question.question,
-            options: question.type === 'multiple choice' ? {
+            options: question.type.toLowerCase() === 'multiple choice' ? {
               A: question.options?.A || '',
               B: question.options?.B || '',
               C: question.options?.C || '',
               D: question.options?.D || ''
             } : undefined,
-            answer: question.answer,
-            difficulty: question.difficulty,
-            points: 1 
+            answer: question.type.toLowerCase() === 'true/false' ? 
+              String(question.answer) :
+              question.answer,
+            points: 1
           };
 
           if (formattedQuestion.type === 'multiple-choice' && question.options) {
@@ -227,7 +289,7 @@ export class CreateAssessmentComponent implements OnInit {
 
           // For true/false, set the answer
           if (formattedQuestion.type === 'true-false') {
-            this.trueFalseAnswer = question.answer.toLowerCase();
+            this.trueFalseAnswer = String(question.answer).toLowerCase();
           }
 
           this.questions.push(formattedQuestion);
@@ -271,8 +333,9 @@ export class CreateAssessmentComponent implements OnInit {
   }
 
   getPointLabel(type: string): string {
-    const points = Number(this.getTotalPointsByType(type));
-    return points === 1 ? 'point' : 'points';
+    const totalPoints = this.getTotalPointsByType(type);
+
+    return totalPoints === 1 ? 'point' : 'points';
   }
 
   isArray(value: any): value is string[] {
@@ -338,7 +401,7 @@ export class CreateAssessmentComponent implements OnInit {
 
   publishAssessment() {
     if(this.assessmentData.title === '' || this.assessmentData.category === '' || this.assessmentData.timelimit === '' || this.assessmentData.passingScore === '' || this.assessmentData.maxAttempts === '') {
-      this.errorMessage = 'Please fill in all fields';
+      this.basicInfoError = 'Please fill in all fields';
       return;
     }
 
@@ -381,6 +444,18 @@ export class CreateAssessmentComponent implements OnInit {
         console.error('Error creating assessment', error);
       }
     })
+  }
+
+  private handleGenerationFailure(errorMsg: string, retryAttempts: number, maxRetries: number, generateQuestionBatch: () => void) {
+    if (retryAttempts < maxRetries) {
+      // Try again
+      retryAttempts++;
+      console.log(`Retrying... Attempt ${retryAttempts} of ${maxRetries}`);
+      generateQuestionBatch();
+    } else {
+      this.isGenerating = false;
+      this.errorMessage = `${errorMsg}. Please try again.`;
+    }
   }
 }
 

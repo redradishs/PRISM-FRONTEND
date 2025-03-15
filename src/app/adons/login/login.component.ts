@@ -15,6 +15,7 @@ import { AuthService } from '../../services/auth.service';
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
+  signupForm: FormGroup;
   errorMessage: string = '';
   formError: string = '';
   loading: boolean = false;
@@ -47,10 +48,20 @@ export class LoginComponent implements OnInit {
         Validators.maxLength(50)
       ]]
     });
+
+    this.signupForm = this.formBuilder.group({
+      email: ['', [Validators.required, Validators.pattern('^[0-9]{9}@gordoncollege\\.edu\\.ph$')]],
+      password: ['', [Validators.required, Validators.minLength(5)]],
+      confirmPassword: ['', Validators.required],
+      name: ['', Validators.required],
+      role: ['', Validators.required]
+    });
   }
 
   ngOnInit(): void {
     this.title.setTitle('PRISM | Login');
+    
+    // Check remembered email
     const storedEmail = localStorage.getItem('rememberedEmail');
     if (storedEmail) {
       this.loginForm.patchValue({ email: storedEmail });
@@ -209,5 +220,11 @@ export class LoginComponent implements OnInit {
         confirmButtonColor: '#FF5733'
       });
     }
+  }
+
+  // Add password match validator
+  private passwordMatchValidator(g: FormGroup) {
+    return g.get('password')?.value === g.get('confirmPassword')?.value
+      ? null : {'mismatch': true};
   }
 }
