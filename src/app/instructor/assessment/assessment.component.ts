@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 
 interface AssessmentCard {
   title: string;
@@ -47,8 +48,8 @@ export class AssessmentComponent {
   activeDropdown: string | null = null;
   showAll: boolean = false;
 
-  constructor(private api: ApiService, private auth: AuthService, private router: Router) {
-
+  constructor(private api: ApiService, private auth: AuthService, private router: Router, private titleService: Title) {
+    this.titleService.setTitle('PRISM | Assessments');
   }
 
   ngOnInit(): void {

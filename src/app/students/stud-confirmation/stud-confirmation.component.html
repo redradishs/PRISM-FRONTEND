@@ -1,0 +1,137 @@
+<div class="min-h-screen bg-gray-50">
+    <div class="flex">
+        <app-sidebar></app-sidebar>
+        <div class="flex-1 ml-0 md:ml-20">
+            <header class="bg-white shadow-sm">
+                <div class="max-w-7xl mx-auto py-2 md:py-4 px-3 md:px-4 sm:px-6 lg:px-8">
+                    <div class="flex items-center justify-between">
+                        <h1 class="text-xl md:text-2xl font-semibold text-gray-900">Confirmation</h1>
+                        <button *ngIf="isMobile" (click)="toggleSidebar()"
+                            class="p-1.5 md:p-2 rounded-md hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-bars w-5 md:w-6 h-5 md:h-6"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="center-body flex-1">
+                <div class="lagayan">
+
+                    <div class="conf-header">
+                        <div class="conf-header-title">
+                            <i class="fa-solid fa-file"></i>
+                            <div>
+                                <h1>Assessment Confirmation Page</h1>
+                                <p>Please review the information below before entering the assessment</p>
+                            </div>
+                        </div>
+
+                        <div class="conf-header-info">
+
+                            <p> <i class="fa-solid fa-clock"></i> {{confirmationData.timeLimit}} Minutes</p>
+                            <p><i class="fa-solid fa-book"></i>{{confirmationData.questionCount}} Questions</p>
+                            <p><i class="fa-solid fa-star"></i>{{confirmationData.totalPoints}} Points</p>
+
+                        </div>
+                    </div>
+
+                    <div class="conf-body">
+                        <div class="body-left">
+                            <h2><i class="fa-solid fa-circle-info"></i> Assessment Details</h2>
+
+                            <div class="body-left-info">
+                                <div class="divider full-width">
+                                    <p>Title</p>
+                                    <h3>{{confirmationData.title}}</h3>
+                                </div>
+
+                                <div class="flex-row">
+                                    <div class="divider">
+                                        <p>Type</p>
+                                        <div class="exam-type">Exam</div>
+                                    </div>
+                                    <div class="divider">
+                                        <p>Attempts</p>
+                                        <h3>1 of 1 remaining</h3>
+                                    </div>
+                                </div>
+
+                                <div class="divider full-width">
+                                    <p>Due Date</p>
+                                    <h3>{{confirmationData.dueDate}}</h3>
+                                </div>
+
+                                <div *ngIf="confirmationData.instructor.name" class="divider full-width">
+                                    <p>Instructor</p>
+                                    <h3>Professor {{confirmationData.instructor.name || 'Unknown Instructor'}}</h3>
+                                </div>
+
+                                <div class="divider full-width">
+                                    <p>Status</p>
+                                    <h3>{{confirmationData.status || 'Unknown Status'}}</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="body-right">
+                            <h2><i class="fa-solid fa-user"></i> Student Information</h2>
+
+                            <div class="student-info">
+                                <div class="student-info-header">
+                                    <img [src]="'https://ui-avatars.com/api/?name=' + (confirmationData.student.name || 'Student') + '&background=6366f1&color=fff&length=2'"
+                                        alt="Student Profile" class="profile-image">
+                                    <div class="student-info-details">
+                                        <h3>{{confirmationData.student.name}}</h3>
+                                        <p>{{confirmationData.student.email}}</p>
+                                        <div class="student-details">
+                                            <span>ID: {{confirmationData.student.email.split('@')[0]}}</span>
+                                            <span>BSIT 3A</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="important-notes">
+                                <h3><i class="fa-solid fa-triangle-exclamation"></i> Important Notes</h3>
+                                <ul>
+                                    <li><i class="fa-solid fa-xmark"></i> Do not refesh or navigate away when you enter
+                                        the assessment page.
+                                    </li>
+                                    <li><i class="fa-solid fa-xmark"></i> Do not open other tabs or applications during
+                                        the assessment</li>
+                                    <li><i class="fa-solid fa-xmark"></i> Copying or sharing assessment content is
+                                        strictly
+                                        prohibited</li>
+                                    <li><i class="fa-solid fa-check"></i> Your answers are automatically saved as you
+                                        click the next button.</li>
+                                    <li><i class="fa-solid fa-check"></i> You can review and change your answers before
+                                        final
+                                        submission</li>
+                                    <li><i class="fa-solid fa-check"></i> The assessment page will be monitored any tab
+                                        switching, screenshots, and keyboard combinations will be monitored.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="academic-integrity">
+                        <h3><i class="fa-solid fa-shield-halved"></i> Academic Integrity Pledge</h3>
+                        <p>I understand that this assessment is to be completed individually. I will not give or receive
+                            unauthorized assistance during this assessment. I acknowledge that any violation of academic
+                            integrity may result in zero assessment score.</p>
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="agree" (change)="toggleAgreement()">
+                            <label for="agree">I agree to the terms and conditions of this assessment</label>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn-cancel" (click)="cancel()">Cancel</button>
+                        <button class="btn-enter" [disabled]="!isAgreed">Enter Assessment</button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

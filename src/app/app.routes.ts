@@ -16,31 +16,30 @@ import { StudClassDetailsComponent } from './students/stud-classdetails/stud-cla
 import { StudTakeexamComponent } from './students/stud-takeexam/stud-takeexam.component';
 import { StudHistoryComponent } from './students/stud-history/stud-history.component';
 import { CreateAssessmentComponent } from './instructor/create-assessment/create-assessment.component';
+
 export const routes: Routes = [
-    {path: '', redirectTo: 'login', pathMatch: 'full'},
-    {path: 'login', component: LoginComponent},
-    {path: 'signup', component: SignupComponent},
-
-    //instructor routes
-    {path: 'instructor/dashboard', component: HomeComponent },
-    {path: 'instructor/students', component: StudentsComponent },
-    {path: 'instructor/assessment', component: AssessmentComponent },
-    {path: 'instructor/profile', component: ProfileComponent },
-    {path: 'instructor/create', component: GenerateAssessmentComponent },
-    {path: 'instructor/takeassessment', component: TakeAssessmentComponent },
-    {path: 'instructor/result', component: ResultComponent },
-    {path: 'instructor/generate', component: CreateAssessmentComponent },
-    //user routes
-    {path: 'pagetest', component:  ComponentTestingComponent},
-    {path: 'student/dashboard', component: StudHomeComponent},
-    {path: 'student/classes', component:  StudClassesComponent},
-    {path: 'student/classes/details', component:  StudClassDetailsComponent},
-    {path: 'student/assessment/take', component:  StudTakeexamComponent},
-    {path: 'student/history', component:  StudHistoryComponent},
+    { path: '', redirectTo: 'login', pathMatch: 'full' },
+    { path: 'login', component: LoginComponent },
+    { path: 'signup', component: SignupComponent },
 
 
+    {
+        path: 'instructor',
+        loadChildren: () => import('./instructor.routes')
+            .then(m => m.INSTRUCTOR_ROUTES)
+    },
 
-    //admin routes
-    {path: 'test', component: TestComponent },
-    {path: '**', redirectTo: 'login'}
+    {
+        path: 'student',
+        loadChildren: () => import('./student.routes')
+            .then(m => m.STUDENT_ROUTES)
+    },
+
+    {
+        path: 'admin',
+        loadChildren: () => import('./admin.routes')
+            .then(m => m.ADMIN_ROUTES)
+    },
+
+    { path: '**', redirectTo: 'login' }
 ];

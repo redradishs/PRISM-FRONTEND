@@ -3,6 +3,7 @@ import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 
 // Define question types for better type checking
 interface Question {
@@ -44,6 +45,7 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
   showSubmitDialog = false;
   timerInterval: any;
   saveTimeout: any;
+  currentWordCount: number = 0;
   
   // Mock data - Replace with actual data from your service
   assessmentData: AssessmentData = {
@@ -100,9 +102,9 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
     ]
   };
 
-  constructor(private router: Router) {
-    // Convert minutes to seconds for timer
+  constructor(private router: Router, private titleService: Title) {
     this.timeRemaining = this.assessmentData.timeLimit * 60;
+    this.titleService.setTitle('PRISM | Take Assessment');
   }
 
   // Getters
@@ -218,5 +220,11 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
 
   openSubmitDialog() {
     this.showSubmitDialog = true;
+  }
+
+  countWords(event: any): void {
+    const text = event.target.value || '';
+    const words = text.trim().split(/\s+/).filter((word: string) => word.length > 0);
+    this.currentWordCount = words.length;
   }
 }

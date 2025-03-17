@@ -2,6 +2,7 @@ import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
 import { CommonModule } from '@angular/common';
+import { Title } from '@angular/platform-browser';
 
 interface ClassData {
   id: number;
@@ -65,7 +66,8 @@ export class StudClassDetailsComponent implements OnInit {
     }
   }
 
-  constructor(private route: ActivatedRoute) {
+  constructor(private route: ActivatedRoute, private titleService: Title) {
+    this.titleService.setTitle('PRISM | Classes');
     this.classData = {
       id: 1,
       code: "CS401",

@@ -5,6 +5,7 @@ import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 
 interface Student {
   id: number;
@@ -61,7 +62,9 @@ export class ResultComponent implements OnInit {
   classCode: string = '';
   assessmentTitle: string = '';
 
-  constructor(private api: ApiService, private auth: AuthService, private router: Router) {}
+  constructor(private api: ApiService, private auth: AuthService, private router: Router, private titleService: Title) {
+    this.titleService.setTitle('PRISM | Result');
+  }
 
   ngOnInit(): void {
     const state = history.state as { assessmentId: string };

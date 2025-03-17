@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { Title } from '@angular/platform-browser';
 
 interface AIResponse {
   success: boolean;
@@ -106,7 +107,9 @@ export class CreateAssessmentComponent implements OnInit {
   };
   basicInfoError: string | null = null;
 
-  constructor(private api: ApiService, private router: Router, private auth: AuthService) {}
+  constructor(private api: ApiService, private router: Router, private auth: AuthService, private titleService: Title) {
+    this.titleService.setTitle('PRISM | Create');
+  }
 
   ngOnInit(): void {
     this.auth.getCurrentUser().subscribe((user: any) => {

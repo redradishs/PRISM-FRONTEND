@@ -4,7 +4,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { StudentService } from '../../services/student.service';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-stud-home',
@@ -35,8 +36,8 @@ export class StudHomeComponent {
     this.isMobile = window.innerWidth < 768;
   }
 
-  constructor(private auth: AuthService, private api: StudentService) {
-
+  constructor(private auth: AuthService, private api: StudentService, private titleService: Title, private router: Router) {
+    this.titleService.setTitle('PRISM | Dashboard');
   }
 
   ngOnInit(): void {
@@ -72,5 +73,12 @@ export class StudHomeComponent {
 
   setActiveTab(tab: string) {
     this.activeTab = tab;
+  }
+
+  gotoAssessments(id: string) {
+    this.router.navigate(['/student/confirmation'], {
+      state: { assessmentId: id }
+    });
+    console.log("I received this id", id);
   }
 }

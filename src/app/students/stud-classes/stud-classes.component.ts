@@ -3,6 +3,7 @@ import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 
 interface Class {
   id: number;
@@ -42,6 +43,10 @@ export class StudClassesComponent implements OnInit {
   classCode = '';
   showSuccessAlert = false;
   showApplicationDialog = false;
+
+  constructor(private titleService: Title) {
+    this.titleService.setTitle('PRISM | Classes');
+  }
 
   enrolledClasses: Class[] = [
     {

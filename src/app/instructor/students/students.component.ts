@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
+import { Title } from '@angular/platform-browser';
 
 interface Student {
   name: string;
@@ -92,8 +93,8 @@ export class StudentsComponent {
 
   autoAdmission = false;
 
-  constructor(private api: ApiService, private auth: AuthService) {
-
+  constructor(private api: ApiService, private auth: AuthService, private titleService: Title) {
+    this.titleService.setTitle('PRISM | Students');
   }
   
 

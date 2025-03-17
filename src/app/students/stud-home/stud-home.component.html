@@ -17,41 +17,67 @@
 
             <main class="main-content">
                 <div class="content-wrapper">
-
                     <div class="welcome-section">
-                        <h1>Welcome Back, {{username}}</h1>
-                        <p>Here's what's happening with your assessments today.</p>
-                    </div>
-
-
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-header">
-                                <h3 class="stat-title">Upcoming Assessments</h3>
-                                <i class="fas fa-file-alt text-primary"></i>
+                        <div class="welcome-content">
+                            <div class="welcome-text">
+                                <h1>Welcome Back, {{username}}</h1>
+                                <p>Here's what's happening with your assessments today.</p>
+                                <div class="welcome-buttons">
+                                    <button class="btn-create" [routerLink]="['/student/classes']">My Classes</button>
+                                    <button class="btn-view" [routerLink]="['/student/history']">View
+                                        Reports</button>
+                                </div>
                             </div>
-                            <div class="stat-value">{{totalUpcomingAssessments}}</div>
-                            <p class="stat-subtitle">2 due this week</p>
-                        </div>
-
-                        <div class="stat-card">
-                            <div class="stat-header">
-                                <h3 class="stat-title">Completed Assessments</h3>
-                                <i class="fas fa-check-circle text-primary"></i>
-                            </div>
-                            <div class="stat-value">{{totalCompletedAssessments}}</div>
-                            <p class="stat-subtitle">+2 from last month</p>
-                        </div>
-
-                        <div [routerLink]="['/student/classes']" class="stat-card">
-                            <div class="stat-header">
-                                <h3 class="stat-title">Joined Classes</h3>
-                                <i class="fas fa-book text-primary"></i>
-                            </div>
-                            <div class="stat-value">{{totalClasses}}</div>
-                            <p class="stat-subtitle">Across 2 semesters</p>
                         </div>
                     </div>
+
+
+
+
+                    <div class="tabs">
+                        <div class="card1">
+                            <div class="card-content">
+                                <p class="card-title">Upcoming Assessments</p>
+                                <div class="card-numbers">
+                                    <h1>{{totalUpcomingAssessments}}</h1>
+                                    <p>across {{totalClasses}} classes</p>
+                                </div>
+                                <p class="card-status positive">+1 this week</p>
+                            </div>
+                            <div class="card-icon blue">
+                                <i class="fas fa-file"></i>
+                            </div>
+                        </div>
+
+                        <div class="card2">
+                            <div class="card-content">
+                                <p class="card-title">Completed Assessments</p>
+                                <div class="card-numbers">
+                                    <h1>{{totalCompletedAssessments}}</h1>
+                                    <p>2 due this week</p>
+                                </div>
+                                <p class="card-status">On track</p>
+                            </div>
+                            <div class="card-icon purple">
+                                <i class="fas fa-book"></i>
+                            </div>
+                        </div>
+
+                        <div [routerLink]="['/student/classes']" class="card3">
+                            <div class="card-content">
+                                <p class="card-title">Joined Classes</p>
+                                <div class="card-numbers">
+                                    <h1>{{totalClasses}}</h1>
+                                    <p>with students</p>
+                                </div>
+                                <p class="card-status">All active</p>
+                            </div>
+                            <div class="card-icon pink">
+                                <i class="fas fa-table-cells"></i>
+                            </div>
+                        </div>
+                    </div>
+
 
 
                     <div class="main-grid">
@@ -61,7 +87,8 @@
                             <p class="card-description">Track your progress on current assessments</p>
 
                             <div class="ongoing-list">
-                                <div *ngFor="let assessment of onGoingAssessments" class="ongoing-card">
+                                <div (click)="gotoAssessments(assessment.assignedAssessmentId)"
+                                    *ngFor="let assessment of onGoingAssessments" class="ongoing-card">
                                     <div class="ongoing-header">
                                         <div class="ongoing-title-section">
                                             <div class="ongoing-icon">

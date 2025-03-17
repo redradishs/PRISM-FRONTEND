@@ -3,6 +3,7 @@ import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
+import { Title } from '@angular/platform-browser';
 
 interface Assessment {
   id: number;
@@ -141,7 +142,9 @@ export class StudHistoryComponent implements OnInit {
   showSortMenu = false;
   tabs = ['All', 'Exams', 'Quizzes', 'Assignments', 'Projects', 'Starred', 'Certificates'];
 
-  constructor(private dialog: MatDialog) {}
+  constructor(private dialog: MatDialog, private titleService: Title) {
+    this.titleService.setTitle('PRISM | History');
+  }
 
   ngOnInit() {
     this.calculateMetrics();

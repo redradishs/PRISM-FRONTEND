@@ -6,6 +6,7 @@ import { SidebarComponent } from "../../adons/sidebar/sidebar.component";
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 
 interface AssessmentProgress {
   id: string;
@@ -60,7 +61,8 @@ export class HomeComponent implements OnInit {
   @HostListener('window:resize')
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
 
-  constructor(private api: ApiService, private auth: AuthService, private router: Router) {
+  constructor(private api: ApiService, private auth: AuthService, private router: Router, private titleService: Title) {
+    this.titleService.setTitle('PRISM | Home');
   }
 
   ngOnInit() {
