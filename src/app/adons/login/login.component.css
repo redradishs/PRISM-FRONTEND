@@ -101,23 +101,25 @@ h1 {
 
 .password-input {
     position: relative;
+    display: flex;
+    align-items: center;
 }
 
 .password-input input {
     width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 1rem;
+    padding-right: 2.5rem;
 }
 
 .password-input i {
     position: absolute;
     right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #666;
     cursor: pointer;
+    color: #6b7280;
+    transition: color 0.2s;
+}
+
+.password-input i:hover {
+    color: #4b5563;
 }
 
 select.form-input {

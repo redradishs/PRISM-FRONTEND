@@ -25,9 +25,10 @@
                 <div class="form-group">
                     <label for="password">Password</label>
                     <div class="password-input">
-                        <input type="password" id="password" formControlName="password"
+                        <input [type]="showPassword ? 'text' : 'password'" id="password" formControlName="password"
                             [ngClass]="{'invalid': loginForm.get('password')?.touched && loginForm.get('password')?.invalid}" />
-                        <i class="far fa-eye-slash"></i>
+                        <i class="far" [class.fa-eye]="showPassword" [class.fa-eye-slash]="!showPassword"
+                            (click)="togglePasswordVisibility()"></i>
                     </div>
                 </div>
 
@@ -74,9 +75,11 @@
                 <div class="form-group">
                     <label for="password">Password</label>
                     <div class="password-input">
-                        <input type="password" id="password" formControlName="password"
-                            [ngClass]="{'invalid': loginForm.get('password')?.touched && loginForm.get('password')?.invalid}" />
-                        <i class="far fa-eye-slash"></i>
+                        <input [type]="showPassword ? 'text' : 'password'" id="signup-password"
+                            formControlName="password"
+                            [ngClass]="{'invalid': signupForm.get('password')?.touched && signupForm.get('password')?.invalid}" />
+                        <i class="far" [class.fa-eye]="showPassword" [class.fa-eye-slash]="!showPassword"
+                            (click)="togglePasswordVisibility()"></i>
                     </div>
                 </div>
 

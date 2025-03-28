@@ -1,5 +1,5 @@
 import { Component, ViewChild, HostListener } from '@angular/core';
-import { SidebarComponent } from "../../adons/sidebar/sidebar.component";
+import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
@@ -23,12 +23,11 @@ interface ClassPerformance {
   completionRate: number;
 }
 
-
 @Component({
   selector: 'app-assessment',
-  imports: [SidebarComponent, CommonModule, FormsModule],
+  imports: [SidebarComponent, CommonModule, FormsModule, RouterLink],
   templateUrl: './assessment.component.html',
-  styleUrl: './assessment.component.css'
+  styleUrl: './assessment.component.css',
 })
 export class AssessmentComponent {
   isSidebarOpen = false;
@@ -48,13 +47,18 @@ export class AssessmentComponent {
   activeDropdown: string | null = null;
   showAll: boolean = false;
 
-  constructor(private api: ApiService, private auth: AuthService, private router: Router, private titleService: Title) {
+  constructor(
+    private api: ApiService,
+    private auth: AuthService,
+    private router: Router,
+    private titleService: Title
+  ) {
     this.titleService.setTitle('PRISM | Assessments');
   }
 
   ngOnInit(): void {
     this.auth.getCurrentUser().subscribe((user) => {
-      if(user) {
+      if (user) {
         this.userId = user.id;
         this.getTotalStudents(this.userId);
         this.getTotalClasses(this.userId);
@@ -63,7 +67,7 @@ export class AssessmentComponent {
       } else {
         console.log('No user found');
       }
-    })
+    });
   }
 
   getTotalStudents(id: string) {
@@ -73,8 +77,8 @@ export class AssessmentComponent {
       },
       error: (error) => {
         console.log(error);
-      }
-    })
+      },
+    });
   }
 
   getTotalClasses(id: string) {
@@ -84,8 +88,8 @@ export class AssessmentComponent {
       },
       error: (error) => {
         console.log(error);
-      }
-    })
+      },
+    });
   }
 
   loadAssessments(id: string) {
@@ -97,14 +101,15 @@ export class AssessmentComponent {
           progress: this.calculateProgress(assessment),
           totalStudents: assessment.classes[0].stats.totalStudents,
           submittedCount: assessment.classes[0].stats.submitted,
-          gradedCount: assessment.classes[0].stats.graded
+          gradedCount: assessment.classes[0].stats.graded,
         }));
         this.isLoading = false;
-      }, error: (error) => {
+      },
+      error: (error) => {
         console.log(error);
         this.isLoading = false;
-      }
-    })
+      },
+    });
   }
 
   getownAssessments(id: string) {
@@ -113,18 +118,19 @@ export class AssessmentComponent {
       next: (resp: any) => {
         this.ownAssessments = resp.data;
         this.isLoading = false;
-      }, error: (error) => {
+      },
+      error: (error) => {
         console.log(error);
         this.isLoading = false;
-      }
-    })
+      },
+    });
   }
 
   calculateProgress(assessment: any) {
     const stats = assessment.classes[0].stats;
     return stats.totalStudents > 0
-    ? (stats.submitted / stats.totalStudents) * 100
-    : 0;
+      ? (stats.submitted / stats.totalStudents) * 100
+      : 0;
   }
 
   onSearch(event: any): void {
@@ -140,14 +146,18 @@ export class AssessmentComponent {
   filterAssessments() {
     if (!this.searchTerm) return this.assessments;
     const search = this.searchTerm.toLowerCase();
-    return this.assessments.filter(assessment => assessment.title.toLowerCase().includes(search));
+    return this.assessments.filter((assessment) =>
+      assessment.title.toLowerCase().includes(search)
+    );
   }
 
   sortAssessments() {
     this.assessments.sort((a, b) => {
       switch (this.sortBy) {
         case 'date':
-          return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
+          return (
+            new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+          );
         case 'title':
           return a.title.localeCompare(b.title);
         case 'progress':
@@ -160,21 +170,20 @@ export class AssessmentComponent {
 
   filterOwnAssessments() {
     if (!this.searchTerm) return this.ownAssessments;
-    
+
     const search = this.searchTerm.toLowerCase();
-    return this.ownAssessments.filter(assessment => 
+    return this.ownAssessments.filter((assessment) =>
       assessment.title.toLowerCase().includes(search)
     );
   }
-
 
   assessments: any[] = [];
 
   getDifficultyColor(difficulty: string): string {
     const colors = {
-      Easy: "bg-green-100 text-green-700",
-      Medium: "bg-yellow-100 text-yellow-700",
-      Hard: "bg-red-100 text-red-700",
+      Easy: 'bg-green-100 text-green-700',
+      Medium: 'bg-yellow-100 text-yellow-700',
+      Hard: 'bg-red-100 text-red-700',
     };
     return colors[difficulty as keyof typeof colors];
   }
@@ -185,10 +194,12 @@ export class AssessmentComponent {
   }
 
   getQuestionTypes(assessment: any): string[] {
-    Object.entries(assessment.questionTypes)
-      .map(([type, count]) => `${type} (${count})`);
-    return Object.entries(assessment.questionTypes)
-      .map(([type, count]) => `${type} (${count})`);
+    Object.entries(assessment.questionTypes).map(
+      ([type, count]) => `${type} (${count})`
+    );
+    return Object.entries(assessment.questionTypes).map(
+      ([type, count]) => `${type} (${count})`
+    );
   }
 
   getTypeCount(assessment: any): number {
@@ -220,8 +231,7 @@ export class AssessmentComponent {
 
   navigateToResult(id: string) {
     this.router.navigate(['/instructor/result'], {
-      state: {assessmentId: id} 
+      state: { assessmentId: id },
     });
   }
-
 }

@@ -18,28 +18,31 @@ import { StudHistoryComponent } from './students/stud-history/stud-history.compo
 import { CreateAssessmentComponent } from './instructor/create-assessment/create-assessment.component';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'login', pathMatch: 'full' },
-    { path: 'login', component: LoginComponent },
-    { path: 'signup', component: SignupComponent },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
+  { path: 'signup', component: SignupComponent },
 
+  {
+    path: 'instructor',
+    loadChildren: () =>
+      import('./instructor.routes').then((m) => m.INSTRUCTOR_ROUTES),
+  },
 
-    {
-        path: 'instructor',
-        loadChildren: () => import('./instructor.routes')
-            .then(m => m.INSTRUCTOR_ROUTES)
-    },
+  {
+    path: 'student',
+    loadChildren: () =>
+      import('./student.routes').then((m) => m.STUDENT_ROUTES),
+  },
 
-    {
-        path: 'student',
-        loadChildren: () => import('./student.routes')
-            .then(m => m.STUDENT_ROUTES)
-    },
+  {
+    path: 'admin',
+    loadChildren: () => import('./admin.routes').then((m) => m.ADMIN_ROUTES),
+  },
+  {
+    path: 'test',
+    component: TestComponent,
+  },
+  { path: 'component-testing', component: ComponentTestingComponent },
 
-    {
-        path: 'admin',
-        loadChildren: () => import('./admin.routes')
-            .then(m => m.ADMIN_ROUTES)
-    },
-
-    { path: '**', redirectTo: 'login' }
+  { path: '**', redirectTo: 'login' },
 ];

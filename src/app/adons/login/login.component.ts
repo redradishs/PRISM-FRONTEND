@@ -1,7 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { FormControl, ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
+import {
+  FormControl,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+  FormsModule,
+} from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
 import { Title } from '@angular/platform-browser';
@@ -11,7 +18,7 @@ import { AuthService } from '../../services/auth.service';
   selector: 'app-login',
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrl: './login.component.css',
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
@@ -27,7 +34,7 @@ export class LoginComponent implements OnInit {
   password: string = '';
   name: string = '';
   role: string = '';
-  
+  showPasswword = false;
 
   activeTab: string = 'login';
 
@@ -38,29 +45,41 @@ export class LoginComponent implements OnInit {
     private title: Title
   ) {
     this.loginForm = this.formBuilder.group({
-      email: ['', [
-        Validators.required,
-        Validators.pattern('^[0-9]{9}@gordoncollege\\.edu\\.ph$')
-      ]],
-      password: ['', [
-        Validators.required,
-        Validators.minLength(5),
-        Validators.maxLength(50)
-      ]]
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern('^[0-9]{9}@gordoncollege\\.edu\\.ph$'),
+        ],
+      ],
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(5),
+          Validators.maxLength(50),
+        ],
+      ],
     });
 
     this.signupForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.pattern('^[0-9]{9}@gordoncollege\\.edu\\.ph$')]],
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern('^[0-9]{9}@gordoncollege\\.edu\\.ph$'),
+        ],
+      ],
       password: ['', [Validators.required, Validators.minLength(5)]],
       confirmPassword: ['', Validators.required],
       name: ['', Validators.required],
-      role: ['', Validators.required]
+      role: ['', Validators.required],
     });
   }
 
   ngOnInit(): void {
     this.title.setTitle('PRISM | Login');
-    
+
     // Check remembered email
     const storedEmail = localStorage.getItem('rememberedEmail');
     if (storedEmail) {
@@ -70,7 +89,7 @@ export class LoginComponent implements OnInit {
 
   handleLoginSubmit(): void {
     if (this.loginForm.invalid) {
-      Object.keys(this.loginForm.controls).forEach(key => {
+      Object.keys(this.loginForm.controls).forEach((key) => {
         const control = this.loginForm.get(key);
         control?.markAsTouched();
       });
@@ -81,7 +100,8 @@ export class LoginComponent implements OnInit {
         if (emailControl.errors['required']) {
           this.formError = 'Email is required';
         } else if (emailControl.errors['pattern']) {
-          this.formError = 'Please enter a valid Gordon College email (e.g., 12345678@gordoncollege.edu.ph)';
+          this.formError =
+            'Please enter a valid Gordon College email (e.g., 12345678@gordoncollege.edu.ph)';
         }
         return;
       }
@@ -111,9 +131,8 @@ export class LoginComponent implements OnInit {
           text: 'You have successfully logged in!',
           icon: 'success',
           confirmButtonText: 'OK',
-          confirmButtonColor: '#4CAF50'
+          confirmButtonColor: '#4CAF50',
         });
-
 
         if (userRole === 'admin') {
           this.router.navigate(['/admin/dashboard']);
@@ -129,7 +148,7 @@ export class LoginComponent implements OnInit {
         this.formError = 'Invalid Email or Password';
         this.loading = false;
         this.clicked = false;
-      }
+      },
     });
   }
 
@@ -138,7 +157,6 @@ export class LoginComponent implements OnInit {
     this.loading = false;
     this.clicked = false;
   }
-
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
@@ -158,18 +176,24 @@ export class LoginComponent implements OnInit {
         text: 'Please use your Gordon College EDU Mail',
         icon: 'error',
         confirmButtonText: 'OK',
-        confirmButtonColor: '#FF5733'
+        confirmButtonColor: '#FF5733',
       });
       return;
     }
 
-    if (!this.email || !this.password || !this.confirmPassword || !this.name || !this.role) {
+    if (
+      !this.email ||
+      !this.password ||
+      !this.confirmPassword ||
+      !this.name ||
+      !this.role
+    ) {
       Swal.fire({
         title: 'Error',
         text: 'Please fill in all required fields',
         icon: 'error',
         confirmButtonText: 'OK',
-        confirmButtonColor: '#FF5733'
+        confirmButtonColor: '#FF5733',
       });
       return;
     }
@@ -179,17 +203,16 @@ export class LoginComponent implements OnInit {
         email: this.email,
         password: this.password,
         name: this.name,
-        role: this.role
-      }
+        role: this.role,
+      };
       this.authService.userSignUp(data).subscribe({
         next: (resp: any) => {
-
           Swal.fire({
             title: 'Success!',
             text: 'Account created successfully. Please login.',
             icon: 'success',
             confirmButtonText: 'OK',
-            confirmButtonColor: '#4CAF50'
+            confirmButtonColor: '#4CAF50',
           });
 
           this.activeTab = 'login';
@@ -199,7 +222,7 @@ export class LoginComponent implements OnInit {
           this.confirmPassword = '';
           this.name = '';
           this.role = '';
-        }, 
+        },
         error: (error) => {
           console.log(error);
           Swal.fire({
@@ -207,9 +230,9 @@ export class LoginComponent implements OnInit {
             text: 'Failed to create account. Please try again.',
             icon: 'error',
             confirmButtonText: 'OK',
-            confirmButtonColor: '#FF5733'
+            confirmButtonColor: '#FF5733',
           });
-        }
+        },
       });
     } else {
       Swal.fire({
@@ -217,14 +240,18 @@ export class LoginComponent implements OnInit {
         text: 'Passwords do not match',
         icon: 'error',
         confirmButtonText: 'OK',
-        confirmButtonColor: '#FF5733'
+        confirmButtonColor: '#FF5733',
       });
     }
   }
 
-  // Add password match validator
   private passwordMatchValidator(g: FormGroup) {
     return g.get('password')?.value === g.get('confirmPassword')?.value
-      ? null : {'mismatch': true};
+      ? null
+      : { mismatch: true };
+  }
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
   }
 }

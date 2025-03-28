@@ -48,11 +48,10 @@ export class ApiService {
   }
 
   // Generate quiz assessment
-  generateQuizAssessment(numberOfQuestions: number, difficulty: 'easy' | 'medium' | 'hard', topic: string) {
-    const content = `Generate a ${difficulty} quiz with ${numberOfQuestions} questions about ${topic}`;
+  generateQuizAssessment(numberOfQuestions: number, difficulty: 'easy' | 'medium' | 'hard', prompt: string) {
     return this.http.post<AIResponse>(`${this.aiUrl}/instructorplus`, {
-      role: 'system',
-      content: content
+        role: 'system',
+        content: prompt
     });
   }
   

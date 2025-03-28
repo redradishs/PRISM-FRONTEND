@@ -28,8 +28,8 @@
                         </div>
                     </div>
 
-                    <div class="publish-container">
-                        <button class="publish-button" (click)="publishAssessment()">
+                    <div *ngIf="questions.length > 0 && assessmentData.title !== ''" class="publish-container">
+                        <button class="publish-button" (click)="confirmPublish()">
                             <i class="fas fa-paper-plane"></i>
                             Save
                         </button>
@@ -54,12 +54,14 @@
                             <div class="basicform-field">
                                 <label for="category">Subject/Category</label>
                                 <select id="category" class="basicform-select" [(ngModel)]="assessmentData.category">
-                                    <option value="" disabled selected>Select a category</option>
-                                    <option value="math">Mathematics</option>
-                                    <option value="science">Science</option>
-                                    <option value="english">English</option>
-                                    <option value="history">History</option>
-                                    <option value="programming">Programming</option>
+                                    <option value="" disabled>Select a category</option>
+                                    <option value="technical" selected>Technical & Programming</option>
+                                    <option value="stem">STEM</option>
+                                    <option value="business">Business & Management</option>
+                                    <option value="humanities">Humanities & Social Sciences</option>
+                                    <option value="language">Language & Communication</option>
+                                    <option value="professional">Professional Development</option>
+                                    <option value="general">General Education</option>
                                 </select>
                             </div>
                         </div>
@@ -192,18 +194,84 @@
                                 class="genform-textarea" [(ngModel)]="aiGeneration.instructions"></textarea>
                         </div>
 
-                        <div *ngIf="generated" class="genform-instructions">
-                            <span>PRISM has successfully generated your questions, please review the generated questions
-                                below.</span>
-                        </div>
+                        <div>
+                            <div *ngIf="!isGenerating && !showUploadSection" class="shower"
+                                (click)="toggleUploadSection()">
+                                <span>UPLOAD A DOCUMENT</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
 
-                        <div *ngIf="isGenerating" class="genform-warning">
-                            <ul>
-                                <li> PRISM will not generate questions that pertain to violence, hate speech, or any
-                                    form of discrimination.</li>
-                                <li> PRISM might generate questions that are not related to the topic, best to review
-                                    the questions</li>
-                            </ul>
+                            <!-- for the upload document -->
+                            <div class="upload-sections" [class.show]="showUploadSection">
+                                <div class="genform-field">
+                                    <div class="upload-actions">
+                                        <label for="instructions">Upload Document <span class="file-info"
+                                                *ngIf="!isMobile && selectedFileName">
+                                                Uploaded: {{ selectedFileName }}
+                                            </span></label>
+
+                                        <button (click)="deleteFile()">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+
+
+                                    <div class="file-upload-wrapper">
+                                        <label for="document" class="file-upload-label">
+                                            <div class="upload-left">
+                                                <i class="fas fa-cloud-upload-alt"></i>
+                                            </div>
+                                            <div class="upload-right">
+                                                <div *ngIf="!selectedFileName" class="upload-content">
+                                                    <span class="upload-text">Choose PDF or DOCX file</span>
+                                                    <span class="upload-hint">Maximum file size: 10MB</span>
+                                                    <span class="upload-hintplus">You can only upload one file at a
+                                                        time,
+                                                        after
+                                                        generating you may upload another reference for new set of
+                                                        questions.</span>
+                                                </div>
+
+                                                <div *ngIf="selectedFileName" class="upload-content">
+                                                    <span class="upload-text">Click here to change the Uploaded
+                                                        File</span>
+                                                    <span class="upload-hint">Current: {{ selectedFileName }}</span>
+                                                    <span class="upload-hintplus">You can only upload one file at a
+                                                        time,
+                                                        after
+                                                        generating you may upload another reference for new set of
+                                                        questions.</span>
+                                                    <span class="upload-hintplus tip">By uploading a document, PRISM
+                                                        will
+                                                        use the content of the document to generate questions.</span>
+                                                </div>
+                                                <span class="file-info" *ngIf="isMobile && selectedFileName">
+                                                    Selected: {{ selectedFileName }}
+                                                </span>
+                                            </div>
+                                        </label>
+                                        <input type="file" id="document" class="file-upload-input"
+                                            (change)="onFileSelected($event)" accept=".pdf,.docx" />
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div *ngIf="generated" class="genform-instructions">
+                                <span>PRISM has successfully generated your questions, please review the generated
+                                    questions
+                                    below.</span>
+                            </div>
+
+                            <div *ngIf="isGenerating" class="genform-warning">
+                                <ul>
+                                    <li> PRISM will not generate questions that pertain to violence, hate speech, or any
+                                        form of discrimination.</li>
+                                    <li> PRISM might generate questions that are not related to the topic, best to
+                                        review
+                                        the questions</li>
+                                </ul>
+                            </div>
                         </div>
 
                         <div class="genform-actions">

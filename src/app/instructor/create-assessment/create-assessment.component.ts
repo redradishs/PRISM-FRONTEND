@@ -8,6 +8,10 @@ import { ApiService } from '../../services/api.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { Title } from '@angular/platform-browser';
+import Swal from 'sweetalert2';
+import * as mammoth from 'mammoth';
+
+declare const pdfjsLib: any;
 
 interface AIResponse {
   success: boolean;
@@ -106,6 +110,9 @@ export class CreateAssessmentComponent implements OnInit {
     count: 1
   };
   basicInfoError: string | null = null;
+  extractedText: string = '';
+  selectedFileName: string = '';
+  showUploadSection = false;
 
   constructor(private api: ApiService, private router: Router, private auth: AuthService, private titleService: Title) {
     this.titleService.setTitle('PRISM | Create');
@@ -135,7 +142,7 @@ export class CreateAssessmentComponent implements OnInit {
       return;
     }
 
-    // 2. Initialize generation process
+    this.showUploadSection = false;
     this.isGenerating = true;
     this.errorMessage = null;
     this.generated = false;
@@ -145,26 +152,31 @@ export class CreateAssessmentComponent implements OnInit {
     const totalQuestions = Number(this.aiGeneration.questionCount);
     let questionsGenerated = 0;
     let retryAttempts = 0;
-    const maxRetries = 2;  // Maximum number of retries if generation fails
+    const maxRetries = 2;
 
     // 4. Function to generate one batch of questions
     const generateQuestionBatch = () => {
-      const questionsToGenerate = Math.min(questionsPerBatch, totalQuestions - questionsGenerated);
+      const remainingQuestions = totalQuestions - questionsGenerated;
+      if (remainingQuestions <= 0) {
+        this.isGenerating = false;
+        this.generated = true;
+        return;
+      }
+
+      const questionsToGenerate = Math.min(questionsPerBatch, remainingQuestions);
       
-      // Generate the questions
       this.api.generateQuizAssessment(
         questionsToGenerate,
         this.aiGeneration.difficulty as 'easy' | 'medium' | 'hard',
-        this.promptMaker()
+        this.promptMaker(questionsToGenerate)
       ).subscribe({
         next: (response: any) => {
           if (response.success) {
             this.handleGeneratedQuestions(response);
             questionsGenerated += questionsToGenerate;
-            retryAttempts = 0;
 
             if (questionsGenerated < totalQuestions) {
-              generateQuestionBatch();  
+              generateQuestionBatch();
             } else {
               this.isGenerating = false;
               this.generated = true;
@@ -181,60 +193,45 @@ export class CreateAssessmentComponent implements OnInit {
     };
 
     this.handleGenerationFailure = this.handleGenerationFailure.bind(this);
-
     generateQuestionBatch();
   }
 
-
-  
-  // generateNow() {
-  //   if(!this.aiGeneration.topic) {
-  //     this.errorMessage = 'Please enter a topic';
-  //     return;
-  //   }
-  //   if(this.selectedTypes.length === 0) {
-  //     this.errorMessage = 'Please select at least one question type';
-  //     return;
-  //   }
-  //   this.isGenerating = true;
-  //   this.errorMessage = null;
-  //   this.generated = false;
-
-  //   const prompt = this.promptMaker();
-
-  //   this.api.generateQuizAssessment(
-  //     Number(this.aiGeneration.questionCount),
-  //     this.aiGeneration.difficulty as 'easy' | 'medium' | 'hard',
-  //     prompt 
-  //   ).subscribe({
-  //     next: (response: any) => {
-  //       this.handleGeneratedQuestions(response);
-  //       this.isGenerating = false;
-  //       this.generated = true;
-  //     },
-  //     error: (error: any) => {
-  //       console.error('Error generating assessment', error);
-  //       this.errorMessage = 'An error occurred while generating the assessment';
-  //       this.isGenerating = false;
-  //     }
-  //   })
-  // }
-
-  private promptMaker() {
+  private promptMaker(batchSize: number) {
     const typeMapping = {
-      mc: 'Multiple Choice',
-      sa: 'Short Answer',
-      tf: 'True/False',
-      enum: 'Enumeration',
+        mc: 'Multiple Choice',
+        sa: 'Short Answer',
+        tf: 'True/False',
+        enum: 'Enumeration',
     }
 
     const selectedTypesText = this.selectedTypes
-    .map(type => typeMapping[type as keyof typeof typeMapping])
-    .join(', ');
+        .map(type => typeMapping[type as keyof typeof typeMapping])
+        .join(', ');
 
-    return `Generate ${this.aiGeneration.difficulty} questions for ${this.aiGeneration.topic}.
-    Question types: ${selectedTypesText}
-    Additional instructions: ${this.aiGeneration.instructions || 'None'};`;
+    if (this.extractedText && this.extractedText.trim()) {
+        return [
+            "IMPORTANT: You are a strict question generator. Follow these instructions EXACTLY:",
+            `1. Generate exactly ${batchSize} ${this.aiGeneration.difficulty} difficulty questions.`,
+            `2. Only use these question types: ${selectedTypesText}.`,
+            `3. Focus ONLY on content that matches these criteria: ${this.aiGeneration.instructions || 'None'}.`,
+            "",
+            "STRICT RULES:",
+            "- Generate questions ONLY about topics explicitly mentioned in the instructions",
+            "- If a topic isn't directly related to the instructions, DO NOT create questions about it",
+            "- Ignore any content in the document that doesn't match the instructions",
+            "- Quality over quantity: If you cannot generate the requested number of questions while staying on topic, generate fewer questions",
+            "",
+            "Document content for reference:",
+            this.extractedText.trim()
+        ].join("\n");
+    }
+      
+    return [
+        `Topic: ${this.aiGeneration.topic}`,
+        `1. Generate ${batchSize} ${this.aiGeneration.difficulty} difficulty questions`,
+        `2. Use only these question types: ${selectedTypesText}`,
+        `3. Additional requirements: ${this.aiGeneration.instructions || 'None'}`
+    ].join('\n');
   }
 
   private mapQuestionType(aiType: string): string {
@@ -460,7 +457,6 @@ export class CreateAssessmentComponent implements OnInit {
 
   private handleGenerationFailure(errorMsg: string, retryAttempts: number, maxRetries: number, generateQuestionBatch: () => void) {
     if (retryAttempts < maxRetries) {
-      // Try again
       retryAttempts++;
       console.log(`Retrying... Attempt ${retryAttempts} of ${maxRetries}`);
       generateQuestionBatch();
@@ -468,6 +464,135 @@ export class CreateAssessmentComponent implements OnInit {
       this.isGenerating = false;
       this.errorMessage = `${errorMsg}. Please try again.`;
     }
+  }
+
+  confirmPublish() {
+    const title = this.assessmentData.title;
+    Swal.fire({
+        title: 'Save Assessment title?',
+        text: `Are you sure you want to save ${title}?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, save it!',
+        cancelButtonText: 'No, keep editing',
+        confirmButtonColor: '#6366f1',  
+        cancelButtonColor: '#8b5cf6',   
+        customClass: {
+            confirmButton: 'swal2-confirm',
+            cancelButton: 'swal2-cancel'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            this.publishAssessment();
+            this.assessmentData = {
+                title: '',
+                category: '',
+                timelimit: '60',
+                passingScore: '70',
+                maxAttempts: '1',
+            };
+
+            this.aiGeneration = {
+                topic: '',
+                difficulty: 'medium',
+                questionCount: '5',
+                instructions: '',
+            };
+
+            this.questions = [];
+            this.selectedTypes = [];
+            this.extractedText = '';
+            this.selectedFileName = '';
+            this.showUploadSection = false;
+            this.generated = false;
+            this.errorMessage = null;
+            this.basicInfoError = null;
+            this.nextId = 1;
+        }
+    });
+  }
+
+  //for the upload document function 
+  async onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (!file) return;
+    this.onFileSelected(file);
+    this.errorMessage = '';
+    this.extractedText = '';
+    this.selectedFileName = file.name;
+
+    console.log("File selected:", file);
+    console.log("File type:", file.type);
+    console.log("File name:", file.name);
+
+    try {
+      if (file.type === 'application/pdf') {
+        await this.extractPdfText(file);
+      } else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+        await this.extractDocxText(file);
+      } else {
+        this.errorMessage = 'Please select a PDF or DOCX file.';
+      }
+    } catch (error: any) {
+      console.error('Error extracting text:', error);
+      this.errorMessage = error.message || 'Error extracting text from file. Please try again.';
+    }
+  }
+
+  private async extractPdfText(file: File): Promise<void> {
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const typedArray = new Uint8Array(arrayBuffer);
+      
+      const pdfDoc = await pdfjsLib.getDocument({ data: typedArray }).promise;
+      let text = '';
+      
+      // Extract text from each page
+      for (let i = 1; i <= pdfDoc.numPages; i++) {
+        const page = await pdfDoc.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items
+          .map((item: any) => item.str)
+          .join(' ');
+        text += `Page ${i}:\n${pageText}\n\n`;
+      }
+      
+      if (!text.trim()) {
+        throw new Error('No text could be extracted from the PDF. The file might be scanned or protected.');
+      }
+      
+      this.extractedText = text;
+      console.log("Extracted text:", this.extractedText);
+    } catch (error: any) {
+      console.error('PDF extraction error:', error);
+      throw new Error('Failed to extract text from PDF. Please make sure the file is not corrupted or password protected.');
+    }
+  }
+
+  private async extractDocxText(file: File) {
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const result = await mammoth.extractRawText({ arrayBuffer });
+      
+      if (!result.value.trim()) {
+        throw new Error('No text could be extracted from the DOCX file.');
+      }
+      
+      this.extractedText = result.value;
+      console.log("Extracted text:", this.extractedText);
+    } catch (error: any) {
+      console.error('DOCX extraction error:', error);
+      throw new Error('Failed to extract text from DOCX file. Please make sure the file is not corrupted.');
+    }
+  }
+
+  toggleUploadSection() {
+    this.showUploadSection = !this.showUploadSection;
+  }
+
+  deleteFile() {
+    this.selectedFileName = '';
+    this.extractedText = '';
   }
 
 }
