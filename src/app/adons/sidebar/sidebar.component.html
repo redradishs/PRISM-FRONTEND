@@ -9,8 +9,9 @@
             </button>
 
             <div class="relative group">
-                <div class="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center">
-                    <span class="text-white">{{getInitials()}}</span>
+                <div
+                    class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20">
+                    <span class="text-white font-semibold">{{getInitials()}}</span>
                 </div>
                 <div *ngIf="!isExpanded"
                     class="absolute left-full ml-4 px-2 py-1 bg-gray-800 rounded-md text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
