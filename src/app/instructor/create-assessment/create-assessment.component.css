@@ -512,7 +512,6 @@
   }
 }
 
-/* Basic Form Styles */
 .basicform-container {
   background: white;
   border-radius: 0.75rem;
@@ -528,7 +527,6 @@
   text-align: center;
   color: #dc2626;
   font-size: 1rem;
-  margin-top: 1rem;
 }
 
 .error-message {
@@ -1138,7 +1136,7 @@
   max-height: 500px;
   opacity: 1;
   margin-top: 1rem;
-  margin-bottom: 1rem;
+
   visibility: visible;
 }
 

@@ -114,6 +114,14 @@ export class ApiService {
   getOwnAssessments(id: string){
     return this.http.get(`${this.apiUrl}/getMyAssessments/${id}`);
   }
+
+  getSpecifiedClasses(id:string) {
+    return this.http.get(`${this.apiUrl}/getInstructorClasses/${id}`);
+  }
+
+  assignAssessment(data: any) {
+    return this.http.post(`${this.apiUrl}/assign`, data);
+  }
   
   //result page instructor 
 

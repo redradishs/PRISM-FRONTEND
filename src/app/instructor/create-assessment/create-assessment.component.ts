@@ -22,10 +22,10 @@ interface AIResponse {
       API_OWNER: string;
       company: string;
       API: string;
-    }
+    };
   };
   message: string;
-  rawResponse: string
+  rawResponse: string;
   questions: string;
 }
 
@@ -61,12 +61,13 @@ interface NewQuestion {
   selector: 'app-create-assessment',
   imports: [CommonModule, SidebarComponent, FormsModule],
   templateUrl: './create-assessment.component.html',
-  styleUrl: './create-assessment.component.css'
+  styleUrl: './create-assessment.component.css',
 })
 export class CreateAssessmentComponent implements OnInit {
   isMobile = window.innerWidth < 768;
   @HostListener('window:resize')
-  @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
+  @ViewChild(SidebarComponent)
+  sidebar!: SidebarComponent;
   toggleSidebar() {
     if (this.sidebar) {
       this.sidebar.toggleSidebar();
@@ -82,14 +83,14 @@ export class CreateAssessmentComponent implements OnInit {
     timelimit: '60',
     passingScore: '70',
     maxAttempts: '1',
-  }
+  };
 
   aiGeneration = {
     topic: '',
     difficulty: 'medium',
     questionCount: '5',
     instructions: '',
-  }
+  };
   userId: number = 0;
   multipleChoiceOptions: string[] = Array(4).fill('');
   enumerationItems: string[] = Array(5).fill('');
@@ -107,38 +108,47 @@ export class CreateAssessmentComponent implements OnInit {
   showAddDialog = false;
   newQuestion: NewQuestion = {
     type: 'multiple-choice',
-    count: 1
+    count: 1,
   };
   basicInfoError: string | null = null;
   extractedText: string = '';
   selectedFileName: string = '';
   showUploadSection = false;
 
-  constructor(private api: ApiService, private router: Router, private auth: AuthService, private titleService: Title) {
+  constructor(
+    private api: ApiService,
+    private router: Router,
+    private auth: AuthService,
+    private titleService: Title
+  ) {
     this.titleService.setTitle('PRISM | Create');
   }
 
   ngOnInit(): void {
-    this.auth.getCurrentUser().subscribe((user: any) => {
-      this.userId = user.id;
-      console.log(this.userId);
-    }, (error: any) => {
-      console.error('Error getting current user', error);
-    })
+    this.auth.getCurrentUser().subscribe(
+      (user: any) => {
+        this.userId = user.id;
+        console.log(this.userId);
+      },
+      (error: any) => {
+        console.error('Error getting current user', error);
+      }
+    );
   }
 
   generateNow() {
-    if(!this.aiGeneration.topic) {
+    if (!this.aiGeneration.topic) {
       this.errorMessage = 'Please enter a topic';
       return;
     }
-    if(this.selectedTypes.length === 0) {
+    if (this.selectedTypes.length === 0) {
       this.errorMessage = 'Please select at least one question type';
       return;
     }
 
-    if(Number(this.aiGeneration.questionCount) > 50) {
-      this.errorMessage = 'You have unlimited generation of questions. PRISM recommends to generate maximum of 50 questions per request.';
+    if (Number(this.aiGeneration.questionCount) > 50) {
+      this.errorMessage =
+        'You have unlimited generation of questions. PRISM recommends to generate maximum of 50 questions per request.';
       return;
     }
 
@@ -148,7 +158,7 @@ export class CreateAssessmentComponent implements OnInit {
     this.generated = false;
 
     // 3. Set up batch processing variables
-    const questionsPerBatch = 5;  // Generate 5 questions at a time
+    const questionsPerBatch = 5; // Generate 5 questions at a time
     const totalQuestions = Number(this.aiGeneration.questionCount);
     let questionsGenerated = 0;
     let retryAttempts = 0;
@@ -163,33 +173,48 @@ export class CreateAssessmentComponent implements OnInit {
         return;
       }
 
-      const questionsToGenerate = Math.min(questionsPerBatch, remainingQuestions);
-      
-      this.api.generateQuizAssessment(
-        questionsToGenerate,
-        this.aiGeneration.difficulty as 'easy' | 'medium' | 'hard',
-        this.promptMaker(questionsToGenerate)
-      ).subscribe({
-        next: (response: any) => {
-          if (response.success) {
-            this.handleGeneratedQuestions(response);
-            questionsGenerated += questionsToGenerate;
+      const questionsToGenerate = Math.min(
+        questionsPerBatch,
+        remainingQuestions
+      );
 
-            if (questionsGenerated < totalQuestions) {
-              generateQuestionBatch();
+      this.api
+        .generateQuizAssessment(
+          questionsToGenerate,
+          this.aiGeneration.difficulty as 'easy' | 'medium' | 'hard',
+          this.promptMaker(questionsToGenerate)
+        )
+        .subscribe({
+          next: (response: any) => {
+            if (response.success) {
+              this.handleGeneratedQuestions(response);
+              questionsGenerated += questionsToGenerate;
+
+              if (questionsGenerated < totalQuestions) {
+                generateQuestionBatch();
+              } else {
+                this.isGenerating = false;
+                this.generated = true;
+              }
             } else {
-              this.isGenerating = false;
-              this.generated = true;
+              this.handleGenerationFailure(
+                'Generation failed',
+                retryAttempts,
+                maxRetries,
+                generateQuestionBatch
+              );
             }
-          } else {
-            this.handleGenerationFailure('Generation failed', retryAttempts, maxRetries, generateQuestionBatch);
-          }
-        },
-        error: (error: any) => {
-          this.handleGenerationFailure('Error during generation', retryAttempts, maxRetries, generateQuestionBatch);
-          console.error('Generation error:', error);
-        }
-      });
+          },
+          error: (error: any) => {
+            this.handleGenerationFailure(
+              'Error during generation',
+              retryAttempts,
+              maxRetries,
+              generateQuestionBatch
+            );
+            console.error('Generation error:', error);
+          },
+        });
     };
 
     this.handleGenerationFailure = this.handleGenerationFailure.bind(this);
@@ -198,39 +223,41 @@ export class CreateAssessmentComponent implements OnInit {
 
   private promptMaker(batchSize: number) {
     const typeMapping = {
-        mc: 'Multiple Choice',
-        sa: 'Short Answer',
-        tf: 'True/False',
-        enum: 'Enumeration',
-    }
+      mc: 'Multiple Choice',
+      sa: 'Short Answer',
+      tf: 'True/False',
+      enum: 'Enumeration',
+    };
 
     const selectedTypesText = this.selectedTypes
-        .map(type => typeMapping[type as keyof typeof typeMapping])
-        .join(', ');
+      .map((type) => typeMapping[type as keyof typeof typeMapping])
+      .join(', ');
 
     if (this.extractedText && this.extractedText.trim()) {
-        return [
-            "IMPORTANT: You are a strict question generator. Follow these instructions EXACTLY:",
-            `1. Generate exactly ${batchSize} ${this.aiGeneration.difficulty} difficulty questions.`,
-            `2. Only use these question types: ${selectedTypesText}.`,
-            `3. Focus ONLY on content that matches these criteria: ${this.aiGeneration.instructions || 'None'}.`,
-            "",
-            "STRICT RULES:",
-            "- Generate questions ONLY about topics explicitly mentioned in the instructions",
-            "- If a topic isn't directly related to the instructions, DO NOT create questions about it",
-            "- Ignore any content in the document that doesn't match the instructions",
-            "- Quality over quantity: If you cannot generate the requested number of questions while staying on topic, generate fewer questions",
-            "",
-            "Document content for reference:",
-            this.extractedText.trim()
-        ].join("\n");
+      return [
+        'IMPORTANT: You are a strict question generator. Follow these instructions EXACTLY:',
+        `1. Generate exactly ${batchSize} ${this.aiGeneration.difficulty} difficulty questions.`,
+        `2. Only use these question types: ${selectedTypesText}.`,
+        `3. Focus ONLY on content that matches these criteria: ${
+          this.aiGeneration.instructions || 'None'
+        }.`,
+        '',
+        'STRICT RULES:',
+        '- Generate questions ONLY about topics explicitly mentioned in the instructions',
+        "- If a topic isn't directly related to the instructions, DO NOT create questions about it",
+        "- Ignore any content in the document that doesn't match the instructions",
+        '- Quality over quantity: If you cannot generate the requested number of questions while staying on topic, generate fewer questions',
+        '',
+        'Document content for reference:',
+        this.extractedText.trim(),
+      ].join('\n');
     }
-      
+
     return [
-        `Topic: ${this.aiGeneration.topic}`,
-        `1. Generate ${batchSize} ${this.aiGeneration.difficulty} difficulty questions`,
-        `2. Use only these question types: ${selectedTypesText}`,
-        `3. Additional requirements: ${this.aiGeneration.instructions || 'None'}`
+      `Topic: ${this.aiGeneration.topic}`,
+      `1. Generate ${batchSize} ${this.aiGeneration.difficulty} difficulty questions`,
+      `2. Use only these question types: ${selectedTypesText}`,
+      `3. Additional requirements: ${this.aiGeneration.instructions || 'None'}`,
     ].join('\n');
   }
 
@@ -238,9 +265,9 @@ export class CreateAssessmentComponent implements OnInit {
     const typeMap: { [key: string]: string } = {
       'multiple choice': 'multiple-choice',
       'short answer': 'short-answer',
-      'enumeration': 'enumeration',
+      enumeration: 'enumeration',
       'true/false': 'true-false',
-      'true-false': 'true-false'
+      'true-false': 'true-false',
     };
     return typeMap[aiType.toLowerCase()] || aiType;
   }
@@ -248,47 +275,61 @@ export class CreateAssessmentComponent implements OnInit {
   private handleGeneratedQuestions(response: AIResponse): void {
     if (!response.success) {
       const message = response.rawResponse;
-      this.errorMessage = `${message} please add additional instructions or upload your document and i will help you generate your questions.`|| 'Failed to generate questions';
+      this.errorMessage =
+        `${message} please add additional instructions or upload your document and i will help you generate your questions.` ||
+        'Failed to generate questions';
       return;
     }
-    if(!response.questions || response.questions.length === 0) {
+    if (!response.questions || response.questions.length === 0) {
       const message = response.rawResponse;
-      this.errorMessage = `${message} please add additional instructions or upload your document and i will help you generate your questions.`|| 'Failed to generate questions';
+      this.errorMessage =
+        `${message} please add additional instructions or upload your document and i will help you generate your questions.` ||
+        'Failed to generate questions';
       return;
     }
-    
+
     try {
       const questions = response.questions;
-      
+
       if (Array.isArray(questions)) {
         questions.forEach((question: AIQuestion) => {
           const formattedQuestion: Question = {
             type: this.mapQuestionType(question.type),
             id: this.nextId++,
             question: question.question,
-            options: question.type.toLowerCase() === 'multiple choice' ? {
-              A: question.options?.A || '',
-              B: question.options?.B || '',
-              C: question.options?.C || '',
-              D: question.options?.D || ''
-            } : undefined,
-            answer: question.type.toLowerCase() === 'true/false' ? 
-              String(question.answer) :
-              question.answer,
-            points: 1
+            options:
+              question.type.toLowerCase() === 'multiple choice'
+                ? {
+                    A: question.options?.A || '',
+                    B: question.options?.B || '',
+                    C: question.options?.C || '',
+                    D: question.options?.D || '',
+                  }
+                : undefined,
+            answer:
+              question.type.toLowerCase() === 'true/false'
+                ? String(question.answer)
+                : question.answer,
+            points: 1,
           };
 
-          if (formattedQuestion.type === 'multiple-choice' && question.options) {
+          if (
+            formattedQuestion.type === 'multiple-choice' &&
+            question.options
+          ) {
             this.multipleChoiceOptions = [
               question.options.A,
               question.options.B,
               question.options.C,
-              question.options.D
+              question.options.D,
             ];
           }
 
           // For enumeration, set the enumeration items
-          if (formattedQuestion.type === 'enumeration' && Array.isArray(question.answer)) {
+          if (
+            formattedQuestion.type === 'enumeration' &&
+            Array.isArray(question.answer)
+          ) {
             this.enumerationItems = question.answer;
           }
 
@@ -324,7 +365,7 @@ export class CreateAssessmentComponent implements OnInit {
   }
 
   getQuestionsByType(type: string): Question[] {
-    return this.questions.filter(q => q.type === type);
+    return this.questions.filter((q) => q.type === type);
   }
 
   getQuestionTypeCount(type: string): number {
@@ -333,8 +374,8 @@ export class CreateAssessmentComponent implements OnInit {
 
   getTotalPointsByType(type: string): number {
     return this.questions
-        .filter(q => q.type === type)
-        .reduce((sum, q) => sum + (q.points || 0), 0);
+      .filter((q) => q.type === type)
+      .reduce((sum, q) => sum + (q.points || 0), 0);
   }
 
   getTotalQuestions(): number {
@@ -352,16 +393,16 @@ export class CreateAssessmentComponent implements OnInit {
   }
 
   deleteQuestion(questionId: number) {
-    this.questions = this.questions.filter(q => q.id !== questionId);
+    this.questions = this.questions.filter((q) => q.id !== questionId);
     // Renumber remaining questions
     this.questions = this.questions.map((q, index) => ({
       ...q,
-      id: index + 1
+      id: index + 1,
     }));
   }
 
   editQuestion(questionId: number) {
-    const question = this.questions.find(q => q.id === questionId);
+    const question = this.questions.find((q) => q.id === questionId);
     if (question) {
       // Set question for editing (you can implement modal/form logic here)
       console.log('Editing question:', question);
@@ -369,7 +410,8 @@ export class CreateAssessmentComponent implements OnInit {
   }
 
   toggleEdit(questionId: number) {
-    this.editingQuestionId = this.editingQuestionId === questionId ? null : questionId;
+    this.editingQuestionId =
+      this.editingQuestionId === questionId ? null : questionId;
   }
 
   isEditing(questionId: number): boolean {
@@ -382,51 +424,91 @@ export class CreateAssessmentComponent implements OnInit {
 
   setEnumAnswer(question: Question, index: number, value: string): void {
     if (Array.isArray(question.answer)) {
-        question.answer[index] = value;
+      question.answer[index] = value;
     }
   }
 
   addNewQuestions() {
     const startId = this.questions.length + 1;
-    for(let i = 0; i < this.newQuestion.count; i++) {
+    for (let i = 0; i < this.newQuestion.count; i++) {
       const question: Question = {
         id: startId + i,
         type: this.newQuestion.type,
         question: '',
         points: 1,
-        answer: this.newQuestion.type === 'true-false' ? 'True' : 
-                this.newQuestion.type === 'enumeration' ? [] : '',
-        options: this.newQuestion.type === 'multiple-choice' ? {
-          A: '',
-          B: '',
-          C: '',
-          D: ''
-        } : undefined
+        answer:
+          this.newQuestion.type === 'true-false'
+            ? 'True'
+            : this.newQuestion.type === 'enumeration'
+            ? []
+            : '',
+        options:
+          this.newQuestion.type === 'multiple-choice'
+            ? {
+                A: '',
+                B: '',
+                C: '',
+                D: '',
+              }
+            : undefined,
       };
       this.questions.push(question);
     }
     this.showAddDialog = false;
   }
 
+  confirmPublish() {
+    const title = this.assessmentData.title;
+    Swal.fire({
+      title: 'Save Assessment title?',
+      text: `Are you sure you want to save ${title}?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, save it!',
+      cancelButtonText: 'No, keep editing',
+      confirmButtonColor: '#6366f1',
+      cancelButtonColor: '#8b5cf6',
+      customClass: {
+        confirmButton: 'swal2-confirm',
+        cancelButton: 'swal2-cancel',
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.publishAssessment();
+      }
+    });
+  }
+
   publishAssessment() {
-    if(this.assessmentData.title === '' || this.assessmentData.category === '' || this.assessmentData.timelimit === '' || this.assessmentData.passingScore === '' || this.assessmentData.maxAttempts === '') {
+    if (
+      this.assessmentData.title === '' ||
+      this.assessmentData.category === '' ||
+      this.assessmentData.timelimit === '' ||
+      this.assessmentData.passingScore === '' ||
+      this.assessmentData.maxAttempts === ''
+    ) {
       this.basicInfoError = 'Please fill in all fields';
       return;
     }
 
-    const format = this.questions.map(q => {
+    const format = this.questions.map((q) => {
       const base = {
         type: q.type,
         questionText: q.question,
         correctAnswer: q.answer,
         points: q.points,
-        options: []
+        options: [],
       };
 
-      if(q.type === 'multiple-choice' && q.options) {
+      if (q.type === 'multiple-choice' && q.options) {
         return {
           ...base,
-          options: [q.options['A'], q.options['B'], q.options['C'], q.options['D']]
+          options: [
+            q.options['A'],
+            q.options['B'],
+            q.options['C'],
+            q.options['D'],
+          ],
         };
       }
 
@@ -441,21 +523,67 @@ export class CreateAssessmentComponent implements OnInit {
       totalPoints: format.length,
       createdBy: this.userId,
       status: 'draft',
-    }
-
-    console.log("Ito yung data ng assessments", assessmentData);
+    };
 
     this.api.createAssessment(assessmentData).subscribe({
       next: (resp: any) => {
-        console.log("Response ng assessment", resp);
+        console.log('Response ng assessment', resp);
+        Swal.fire({
+          title: 'Success!',
+          text: `${assessmentData.title} has been successfully created!`,
+          icon: 'success',
+          confirmButtonColor: '#6366f1',
+          customClass: {
+            confirmButton: 'swal2-confirm'
+          }
+        }).then(() => {
+          this.assessmentData = {
+            title: '',
+            category: '',
+            timelimit: '60',
+            passingScore: '70',
+            maxAttempts: '1',
+          };
+
+          this.aiGeneration = {
+            topic: '',
+            difficulty: 'medium',
+            questionCount: '5',
+            instructions: '',
+          };
+
+          this.questions = [];
+          this.selectedTypes = [];
+          this.extractedText = '';
+          this.selectedFileName = '';
+          this.showUploadSection = false;
+          this.generated = false;
+          this.errorMessage = null;
+          this.basicInfoError = null;
+          this.nextId = 1;
+        });
       },
       error: (error: any) => {
         console.error('Error creating assessment', error);
+        Swal.fire({
+          title: 'Error!',
+          text: 'Failed to create assessment. Please try again.',
+          icon: 'error',
+          confirmButtonColor: '#6366f1',
+          customClass: {
+            confirmButton: 'swal2-confirm'
+          }
+        });
       }
-    })
+    });
   }
 
-  private handleGenerationFailure(errorMsg: string, retryAttempts: number, maxRetries: number, generateQuestionBatch: () => void) {
+  private handleGenerationFailure(
+    errorMsg: string,
+    retryAttempts: number,
+    maxRetries: number,
+    generateQuestionBatch: () => void
+  ) {
     if (retryAttempts < maxRetries) {
       retryAttempts++;
       console.log(`Retrying... Attempt ${retryAttempts} of ${maxRetries}`);
@@ -466,53 +594,7 @@ export class CreateAssessmentComponent implements OnInit {
     }
   }
 
-  confirmPublish() {
-    const title = this.assessmentData.title;
-    Swal.fire({
-        title: 'Save Assessment title?',
-        text: `Are you sure you want to save ${title}?`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, save it!',
-        cancelButtonText: 'No, keep editing',
-        confirmButtonColor: '#6366f1',  
-        cancelButtonColor: '#8b5cf6',   
-        customClass: {
-            confirmButton: 'swal2-confirm',
-            cancelButton: 'swal2-cancel'
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            this.publishAssessment();
-            this.assessmentData = {
-                title: '',
-                category: '',
-                timelimit: '60',
-                passingScore: '70',
-                maxAttempts: '1',
-            };
-
-            this.aiGeneration = {
-                topic: '',
-                difficulty: 'medium',
-                questionCount: '5',
-                instructions: '',
-            };
-
-            this.questions = [];
-            this.selectedTypes = [];
-            this.extractedText = '';
-            this.selectedFileName = '';
-            this.showUploadSection = false;
-            this.generated = false;
-            this.errorMessage = null;
-            this.basicInfoError = null;
-            this.nextId = 1;
-        }
-    });
-  }
-
-  //for the upload document function 
+  //for the upload document function
   async onFileSelected(event: any) {
     const file = event.target.files[0];
     if (!file) return;
@@ -521,21 +603,25 @@ export class CreateAssessmentComponent implements OnInit {
     this.extractedText = '';
     this.selectedFileName = file.name;
 
-    console.log("File selected:", file);
-    console.log("File type:", file.type);
-    console.log("File name:", file.name);
+    console.log('File selected:', file);
+    console.log('File type:', file.type);
+    console.log('File name:', file.name);
 
     try {
       if (file.type === 'application/pdf') {
         await this.extractPdfText(file);
-      } else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+      } else if (
+        file.type ===
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      ) {
         await this.extractDocxText(file);
       } else {
         this.errorMessage = 'Please select a PDF or DOCX file.';
       }
     } catch (error: any) {
       console.error('Error extracting text:', error);
-      this.errorMessage = error.message || 'Error extracting text from file. Please try again.';
+      this.errorMessage =
+        error.message || 'Error extracting text from file. Please try again.';
     }
   }
 
@@ -543,11 +629,10 @@ export class CreateAssessmentComponent implements OnInit {
     try {
       const arrayBuffer = await file.arrayBuffer();
       const typedArray = new Uint8Array(arrayBuffer);
-      
+
       const pdfDoc = await pdfjsLib.getDocument({ data: typedArray }).promise;
       let text = '';
-      
-      // Extract text from each page
+
       for (let i = 1; i <= pdfDoc.numPages; i++) {
         const page = await pdfDoc.getPage(i);
         const textContent = await page.getTextContent();
@@ -556,16 +641,20 @@ export class CreateAssessmentComponent implements OnInit {
           .join(' ');
         text += `Page ${i}:\n${pageText}\n\n`;
       }
-      
+
       if (!text.trim()) {
-        throw new Error('No text could be extracted from the PDF. The file might be scanned or protected.');
+        throw new Error(
+          'No text could be extracted from the PDF. The file might be scanned or protected.'
+        );
       }
-      
+
       this.extractedText = text;
-      console.log("Extracted text:", this.extractedText);
+      console.log('Extracted text:', this.extractedText);
     } catch (error: any) {
       console.error('PDF extraction error:', error);
-      throw new Error('Failed to extract text from PDF. Please make sure the file is not corrupted or password protected.');
+      throw new Error(
+        'Failed to extract text from PDF. Please make sure the file is not corrupted or password protected.'
+      );
     }
   }
 
@@ -573,16 +662,18 @@ export class CreateAssessmentComponent implements OnInit {
     try {
       const arrayBuffer = await file.arrayBuffer();
       const result = await mammoth.extractRawText({ arrayBuffer });
-      
+
       if (!result.value.trim()) {
         throw new Error('No text could be extracted from the DOCX file.');
       }
-      
+
       this.extractedText = result.value;
-      console.log("Extracted text:", this.extractedText);
+      console.log('Extracted text:', this.extractedText);
     } catch (error: any) {
       console.error('DOCX extraction error:', error);
-      throw new Error('Failed to extract text from DOCX file. Please make sure the file is not corrupted.');
+      throw new Error(
+        'Failed to extract text from DOCX file. Please make sure the file is not corrupted.'
+      );
     }
   }
 
@@ -594,6 +685,4 @@ export class CreateAssessmentComponent implements OnInit {
     this.selectedFileName = '';
     this.extractedText = '';
   }
-
 }
-

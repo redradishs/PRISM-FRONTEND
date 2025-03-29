@@ -6,6 +6,7 @@ import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { Title } from '@angular/platform-browser';
+import Swal from 'sweetalert2';
 
 interface AssessmentCard {
   title: string;
@@ -21,6 +22,14 @@ interface ClassPerformance {
   averageScore: number;
   totalStudents: number;
   completionRate: number;
+}
+
+interface ClassData {
+    _id: string;
+    classCode: string;
+    className: string;
+    block?: string;
+    year?: string;
 }
 
 @Component({
@@ -46,6 +55,12 @@ export class AssessmentComponent {
   ownAssessments: any[] = [];
   activeDropdown: string | null = null;
   showAll: boolean = false;
+  showAssignModal = false;
+  assignData: any;
+  classes: ClassData[] = [];
+  isDropdownOpen = false;
+  searchClass = '';
+  filteredClasses: any[] = [];
 
   constructor(
     private api: ApiService,
@@ -64,10 +79,39 @@ export class AssessmentComponent {
         this.getTotalClasses(this.userId);
         this.loadAssessments(this.userId);
         this.getownAssessments(this.userId);
+        this.getClassessDetails(this.userId);
+        this.filteredClasses = this.classes;
+
+        this.assignData = {
+          assessmentId: '',
+          classCodes: [] as string[],
+          startDate: '',
+          dueDate: '',
+          dueTime: '23:59',
+          timeLimit: 60,
+          instructions: '',
+          file: '',
+          createdBy: this.userId
+      };
+
+
       } else {
         console.log('No user found');
       }
     });
+  }
+
+
+  getClassessDetails(id: string) {
+    this.api.getSpecifiedClasses(id).subscribe({
+      next: (resp: any) => {
+        this.classes = resp.data;
+        console.log(this.classes);
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    })
   }
 
   getTotalStudents(id: string) {
@@ -116,7 +160,7 @@ export class AssessmentComponent {
     this.isLoading = true;
     this.api.getOwnAssessments(this.userId).subscribe({
       next: (resp: any) => {
-        this.ownAssessments = resp.data;
+        this.ownAssessments = resp.data.sort((a: any, b:any) => new Date (b.createdAt).getTime() - new Date (a.createdAt).getTime())
         this.isLoading = false;
       },
       error: (error) => {
@@ -233,5 +277,134 @@ export class AssessmentComponent {
     this.router.navigate(['/instructor/result'], {
       state: { assessmentId: id },
     });
+  }
+
+  openAssignModal(assessmentId: string) {
+    this.assignData.assessmentId = assessmentId;
+    this.showAssignModal = true;
+  }
+
+  closeAssignModal() {
+    this.showAssignModal = false;
+    // Reset form
+    this.assignData = {
+      assessmentId: '',
+      classCodes: [],
+      startDate: '',
+      dueDate: '',
+      dueTime: '23:59',
+      timeLimit: 60,
+      instructions: '',
+      file: '',
+      createdBy: ''
+    };
+  }
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.assignData.file = file.name;
+    }
+  }
+
+  assignAssessment() {
+    if (!this.assignData.classCodes.length) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Please select at least one class'
+        });
+        return;
+    }
+
+    this.isLoading = true;
+    this.api.assignAssessment(this.assignData).subscribe({
+        next: (resp: any) => {
+            if (resp.message === 'Assessment assigned successfully.') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Assessment assigned successfully'
+                });
+                this.closeAssignModal();
+                this.loadAssessments(this.userId);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: resp.message || 'Failed to assign assessment'
+                });
+            }
+        },
+        error: (error) => {
+            console.error('Error assigning assessment:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message || 'Failed to assign assessment'
+            });
+        },
+        complete: () => {
+            this.isLoading = false;
+        }
+    });
+  }
+
+  getClassName(code: string): string {
+    const classItem = this.classes.find(c => c.classCode === code);
+    if (classItem) {
+      return `${classItem.className} (${classItem.classCode})`;
+    }
+    return code;
+  }
+
+  removeClass(code: string): void {
+    this.assignData.classCodes = this.assignData.classCodes.filter((c: string) => c !== code);
+  }
+
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+    if (this.isDropdownOpen) {
+      this.filterClasses();
+    }
+  }
+
+  filterClasses() {
+    if (!this.searchClass.trim()) {
+      this.filteredClasses = [...this.classes];
+      return;
+    }
+
+    const searchTerm = this.searchClass.toLowerCase().trim();
+    this.filteredClasses = this.classes.filter(c => 
+      c.className.toLowerCase().includes(searchTerm) ||
+      c.classCode.toLowerCase().includes(searchTerm) ||
+      (c.block && c.block.toLowerCase().includes(searchTerm)) ||
+      (c.year && c.year.toLowerCase().includes(searchTerm))
+    );
+  }
+
+  isClassSelected(code: string): boolean {
+    return this.assignData.classCodes.includes(code);
+  }
+
+  toggleClass(code: string) {
+    const index = this.assignData.classCodes.indexOf(code);
+    if (index === -1) {
+      this.assignData.classCodes.push(code);
+    } else {
+      this.assignData.classCodes.splice(index, 1);
+    }
+  }
+
+  getCurrentDateTime(): string {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    return now.toISOString().slice(0, 16);
+  }
+
+  getMinDueDate(): string {
+    const startDate = this.assignData.startDate ? new Date(this.assignData.startDate) : new Date();
+    return startDate.toISOString().split('T')[0];
   }
 }

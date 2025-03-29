@@ -23,14 +23,21 @@
 
 nav {
     background: linear-gradient(180deg, 
-        rgb(67, 20, 103) 0%,    /* darker violet */
-        rgb(49, 46, 129) 50%,   /* indigo-900 */
-        rgb(88, 28, 135) 100%   /* violet-800 */
+        rgb(109, 40, 217) 0%,   
+        rgb(79, 70, 229) 50%,     
+        rgb(124, 58, 237) 100%    
     );
     height: 100%;
 }
 
 .active {
-    background-color: rgba(138, 43, 226, 0.1); /* Light violet background */
-    color: white; /* Change text color if needed */
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.text-white {
+    opacity: 0.95;
 }

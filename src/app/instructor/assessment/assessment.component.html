@@ -186,7 +186,8 @@
                                     </div>
 
                                     <div class="action-buttons">
-                                        <button class="assign-button">Assign</button>
+                                        <button class="assign-button"
+                                            (click)="openAssignModal(assessment._id)">Assign</button>
                                         <button class="edit-button">Edit</button>
                                     </div>
                                 </div>
@@ -204,6 +205,107 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add this at the bottom of your template -->
+<div class="modal" [class.show]="showAssignModal">
+    <div class="modal-overlay" (click)="closeAssignModal()"></div>
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2>Assign Assessment</h2>
+            <button class="close-button" (click)="closeAssignModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <form (ngSubmit)="assignAssessment()" #assignForm="ngForm">
+                <div class="form-group">
+                    <label>Class Codes</label>
+                    <div class="checkbox-dropdown">
+                        <div class="dropdown-header" (click)="toggleDropdown()">
+                            <span>{{assignData.classCodes.length ? (assignData.classCodes.length + ' classes selected')
+                                : 'Select Classes'}}</span>
+                            <i class="fas" [class.fa-chevron-down]="!isDropdownOpen"
+                                [class.fa-chevron-up]="isDropdownOpen"></i>
+                        </div>
+
+                        <div class="dropdown-content" *ngIf="isDropdownOpen">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" [(ngModel)]="searchClass" [ngModelOptions]="{standalone: true}"
+                                    placeholder="Search classes" (input)="filterClasses()">
+                            </div>
+
+                            <div class="checkbox-list">
+                                <label class="checkbox-item" *ngFor="let class of filteredClasses">
+                                    <input type="checkbox" [checked]="isClassSelected(class.classCode)"
+                                        (change)="toggleClass(class.classCode)">
+                                    <span>{{class.classCode}} - {{class.className}}
+                                        {{class.block && class.year ? '(' + class.block + ' ' + class.year + ')' : ''}}
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="selected-classes" *ngIf="assignData.classCodes.length > 0">
+                        <div class="selected-class" *ngFor="let code of assignData.classCodes">
+                            <span>{{getClassName(code)}}</span>
+                            <button type="button" class="delete-btn" (click)="removeClass(code)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Start Date & Time</label>
+                        <input type="datetime-local" [(ngModel)]="assignData.startDate" name="startDate"
+                            [min]="getCurrentDateTime()" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Due Date</label>
+                        <input type="date" [(ngModel)]="assignData.dueDate" name="dueDate" [min]="getMinDueDate()"
+                            required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Due Time</label>
+                        <input type="time" [(ngModel)]="assignData.dueTime" name="dueTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Time Limit (minutes)</label>
+                        <input type="number" [(ngModel)]="assignData.timeLimit" name="timeLimit" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Instructions</label>
+                    <textarea [(ngModel)]="assignData.instructions" name="instructions" rows="4" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Guidelines File (Optional)</label>
+                    <div class="file-input">
+                        <input type="file" (change)="onFileSelected($event)" accept=".pdf,.doc,.docx">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>{{assignData.file || 'Choose a file'}}</span>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="cancel-button" (click)="closeAssignModal()">Cancel</button>
+                    <button type="submit" class="assign-button" [disabled]="!assignForm.valid">
+                        Assign
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
