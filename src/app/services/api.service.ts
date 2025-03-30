@@ -11,15 +11,15 @@ interface AIResponse {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ApiService {
   // apiUrl = 'http://localhost:8000/api';
   // apiUrl = 'https://prismcdn.onrender.com/api';
   apiUrl = 'https://prismapi2.onrender.com/instructor';
-  aiUrl = 'https://redprismai.vercel.app'
+  aiUrl = 'https://redprismai.vercel.app';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   // The AI CONTENT GENERATION STARTS HERE
 
@@ -27,7 +27,7 @@ export class ApiService {
   generateAssessment(content: string) {
     const data: AIPromptRequest = {
       role: 'system',
-      content: content
+      content: content,
     };
     return this.http.post(`${this.aiUrl}/instructor`, data);
   }
@@ -36,7 +36,7 @@ export class ApiService {
   generateAssessmentPlus(content: string) {
     const data: AIPromptRequest = {
       role: 'system',
-      content: content
+      content: content,
     };
     return this.http.post(`${this.aiUrl}/instructorplus`, data);
   }
@@ -48,20 +48,24 @@ export class ApiService {
   }
 
   // Generate quiz assessment
-  generateQuizAssessment(numberOfQuestions: number, difficulty: 'easy' | 'medium' | 'hard', prompt: string) {
+  generateQuizAssessment(
+    numberOfQuestions: number,
+    difficulty: 'easy' | 'medium' | 'hard',
+    prompt: string
+  ) {
     return this.http.post<AIResponse>(`${this.aiUrl}/instructorplus`, {
-        role: 'system',
-        content: prompt
+      role: 'system',
+      content: prompt,
     });
   }
-  
+
   // Generate performance evaluation
   generatePerformanceEvaluation(studentData: string) {
     const content = `Analyze and evaluate the following student performance data: ${studentData}`;
     return this.generateAssessmentPlus(content);
   }
 
-  // The AI CONTENT GENERATION ENDS HERE 
+  // The AI CONTENT GENERATION ENDS HERE
 
   //normal api calls here, starts with dashboard
   getInstructorTotalStudents(id: string) {
@@ -69,7 +73,9 @@ export class ApiService {
   }
 
   getActiveAssessments(id: string) {
-    return this.http.get(`${this.apiUrl}/getInstructorTotalActiveAssessments/${id}`);
+    return this.http.get(
+      `${this.apiUrl}/getInstructorTotalActiveAssessments/${id}`
+    );
   }
 
   getTotalClassess(id: string) {
@@ -80,10 +86,6 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/getOnGoingAssessments/${id}`);
   }
 
-
-
-
-
   //  starts with generateAssessmentPage
 
   createAssessment(data: any) {
@@ -93,9 +95,8 @@ export class ApiService {
   //students page
 
   approve(data: any) {
-    return this.http.post(`${this.apiUrl}/approve`, data)
+    return this.http.post(`${this.apiUrl}/approve`, data);
   }
-
 
   // Student assessment page
 
@@ -111,21 +112,21 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/getAssessments/${id}`);
   }
 
-  getOwnAssessments(id: string){
+  getOwnAssessments(id: string) {
     return this.http.get(`${this.apiUrl}/getMyAssessments/${id}`);
   }
 
-  getSpecifiedClasses(id:string) {
+  getSpecifiedClasses(id: string) {
     return this.http.get(`${this.apiUrl}/getInstructorClasses/${id}`);
   }
 
   assignAssessment(data: any) {
     return this.http.post(`${this.apiUrl}/assign`, data);
   }
-  
-  //result page instructor 
 
-  getClassOverview(id: string){
+  //result page instructor
+
+  getClassOverview(id: string) {
     return this.http.get(`${this.apiUrl}/getAssessmentResult/${id}`);
   }
 
@@ -140,8 +141,4 @@ export class ApiService {
   getClassScore(id: string) {
     return this.http.get(`${this.apiUrl}/getClassScoreResult/${id}`);
   }
-
-
-  
-
 }

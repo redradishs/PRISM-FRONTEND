@@ -48,7 +48,23 @@
                                 <div class="flex-row">
                                     <div class="divider">
                                         <p>Type</p>
-                                        <div class="exam-type">Exam</div>
+                                        <div [ngClass]="[
+                                            'assessment-type',
+                                            confirmationData.type === 'exam' ? 'type-exam' : '',
+                                            confirmationData.type === 'quiz' ? 'type-quiz' : '',
+                                            confirmationData.type === 'practice' ? 'type-practice' : '',
+                                            confirmationData.type === 'pretest' ? 'type-pretest' : '',
+                                            confirmationData.type === 'posttest' ? 'type-posttest' : ''
+                                        ]">
+                                            <i class="fa-solid" [ngClass]="{
+                                                'fa-file-lines': confirmationData.type === 'exam',
+                                                'fa-question': confirmationData.type === 'quiz',
+                                                'fa-dumbbell': confirmationData.type === 'practice',
+                                                'fa-hourglass-start': confirmationData.type === 'pretest',
+                                                'fa-hourglass-end': confirmationData.type === 'posttest'
+                                            }"></i>
+                                            {{(confirmationData.type || 'exam').toUpperCase()}}
+                                        </div>
                                     </div>
                                     <div class="divider">
                                         <p>Attempts</p>
@@ -68,7 +84,19 @@
 
                                 <div class="divider full-width">
                                     <p>Status</p>
-                                    <h3>{{confirmationData.status || 'Unknown Status'}}</h3>
+                                    <div [ngClass]="[
+                                        'status-badge',
+                                        confirmationData.status === 'scheduled' ? 'status-scheduled' : '',
+                                        confirmationData.status === 'ongoing' ? 'status-ongoing' : '',
+                                        confirmationData.status === 'completed' ? 'status-completed' : ''
+                                    ]">
+                                        <i class="fa-solid" [ngClass]="{
+                                            'fa-calendar': confirmationData.status === 'scheduled',
+                                            'fa-play': confirmationData.status === 'ongoing',
+                                            'fa-check': confirmationData.status === 'completed'
+                                        }"></i>
+                                        {{(confirmationData.status || 'Unknown Status').toUpperCase()}}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -126,7 +154,11 @@
 
                     <div class="action-buttons">
                         <button class="btn-cancel" (click)="cancel()">Cancel</button>
-                        <button class="btn-enter" [disabled]="!isAgreed">Enter Assessment</button>
+                        <button class="btn-enter" *ngIf="!hasStarted" [disabled]="!isAgreed" (click)="enter()">Enter
+                            Assessment</button>
+                        <button class="btn-enter" *ngIf="hasStarted && !hasCompleted" (click)="continue()">Continue
+                            Assessment</button>
+                        <button class="btn-enter" *ngIf="hasCompleted" (click)="continue()">View Result</button>
                     </div>
 
                 </div>

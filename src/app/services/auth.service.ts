@@ -1,4 +1,8 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+} from '@angular/common/http';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { BehaviorSubject, catchError, Observable, throwError } from 'rxjs';
 import { isLocalStorageAvailable } from '../shared/environment.utils';
@@ -6,16 +10,22 @@ import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   // private baseUrl = 'http://localhost:8000/user';
   // private baseUrl = 'https://prismcdn.onrender.com/user';
   private baseUrl = 'https://prismapi2.onrender.com/user';
   private tokenKey = 'jwt';
-  private currentUserSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  private currentUserSubject: BehaviorSubject<any> = new BehaviorSubject<any>(
+    null
+  );
 
-  constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: Object, private router: Router) {
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private router: Router
+  ) {
     if (isPlatformBrowser(this.platformId)) {
       const token = this.getToken();
       if (token) {
@@ -26,15 +36,15 @@ export class AuthService {
   }
 
   userLogin(data: any): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/login`, data).pipe(
-      catchError(this.handleError)
-    );
+    return this.http
+      .post<any>(`${this.baseUrl}/login`, data)
+      .pipe(catchError(this.handleError));
   }
 
   userSignUp(data: any): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/signup`, data).pipe(
-      catchError(this.handleError)
-    );
+    return this.http
+      .post<any>(`${this.baseUrl}/signup`, data)
+      .pipe(catchError(this.handleError));
   }
 
   private handleError(error: HttpErrorResponse) {
@@ -81,7 +91,7 @@ export class AuthService {
     const token = this.getToken();
     return new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     });
   }
 

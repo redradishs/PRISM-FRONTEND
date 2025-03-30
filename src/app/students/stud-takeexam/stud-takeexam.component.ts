@@ -1,130 +1,229 @@
-import { Component, HostListener, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  ViewChild,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
 import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
+import { IntegrityMonitoringService } from '../../services/integrity-monitoring.service';
+import { Subscription } from 'rxjs';
+import { StudentService } from '../../services/student.service';
+import { AuthService } from '../../services/auth.service';
 
 // Define question types for better type checking
 interface Question {
-  id: number;
+  id: string;
   type: 'multiple-choice' | 'true-false' | 'short-answer' | 'enumeration';
   text: string;
-  options?: { id: string; text: string; }[];
+  options?: string[];
   correctAnswer?: boolean | string;
   wordLimit?: number;
   answerCount?: number;
 }
 
 interface AssessmentData {
-  id: number;
   title: string;
-  courseCode: string;
-  courseName: string;
-  instructor: string;
-  timeLimit: number; // in minutes
   totalQuestions: number;
-  instructions: string;
   questions: Question[];
+  startTime: string;
+  remainingSeconds: number;
+  hasStarted: boolean;
 }
 
 @Component({
   selector: 'app-stud-takeexam',
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './stud-takeexam.component.html',
-  styleUrl: './stud-takeexam.component.css'
+  styleUrl: './stud-takeexam.component.css',
 })
 export class StudTakeexamComponent implements OnInit, OnDestroy {
   isMobile = window.innerWidth < 768;
   @HostListener('window:resize')
-  @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
+  @ViewChild(SidebarComponent)
+  sidebar!: SidebarComponent;
   showInstructions = true;
   currentQuestionIndex = 0;
-  answers: { [key: number]: any } = {};
+  answers: { [key: string]: string[] } = {};
   timeRemaining: number;
   showSubmitDialog = false;
   timerInterval: any;
   saveTimeout: any;
   currentWordCount: number = 0;
-  
-  // Mock data - Replace with actual data from your service
+  userId: string = '';
+  assignedAssessmentId: string = '';
+
+  //academic-integration import
+  cheatingCount = 0;
+  cheatMessage: string | null = null;
+  private subscriptions: Subscription[] = [];
+
   assessmentData: AssessmentData = {
-    id: 1,
-    title: "Midterm Exam: Advanced Programming Concepts",
-    courseCode: "CS401",
-    courseName: "Advanced Programming Concepts",
-    instructor: "Dr. Parker",
-    timeLimit: 90,
-    totalQuestions: 15,
-    instructions: "This exam consists of multiple choice, true/false, and short answer questions. You have 90 minutes to complete the exam.",
-    questions: [
-      {
-        id: 1,
-        type: "multiple-choice",
-        text: "Which design pattern is used to create an object without exposing the creation logic?",
-        options: [
-          { id: "a", text: "Factory Pattern" },
-          { id: "b", text: "Singleton Pattern" },
-          { id: "c", text: "Observer Pattern" },
-          { id: "d", text: "Decorator Pattern" }
-        ]
-      },
-      {
-        id: 2,
-        type: "multiple-choice",
-        text: "Which of the following is NOT a principle of object-oriented programming?",
-        options: [
-          { id: "a", text: "Encapsulation" },
-          { id: "b", text: "Inheritance" },
-          { id: "c", text: "Normalization" },
-          { id: "d", text: "Polymorphism" }
-        ]
-      },
-      {
-        id: 3,
-        type: "true-false",
-        text: "In Java, a class can extend multiple classes.",
-        correctAnswer: false
-      },
-      {
-        id: 4,
-        type: "true-false",
-        text: "The Singleton pattern ensures that a class has only one instance.",
-        correctAnswer: true
-      },
-      {
-        id: 5,
-        type: "short-answer",
-        text: "Explain the difference between overloading and overriding methods in object-oriented programming.",
-        wordLimit: 100
-      }
-      // ... Add more questions as needed
-    ]
+    title: '',
+    totalQuestions: 0,
+    questions: [],
+    startTime: '',
+    remainingSeconds: 0,
+    hasStarted: false,
   };
 
-  constructor(private router: Router, private titleService: Title) {
-    this.timeRemaining = this.assessmentData.timeLimit * 60;
+  // Pagination properties
+  currentPage = 0;
+  questionsPerPage = 15;
+
+  constructor(
+    private router: Router,
+    private titleService: Title,
+    private is: IntegrityMonitoringService,
+    private api: StudentService,
+    private auth: AuthService
+  ) {
+    this.timeRemaining = this.assessmentData.remainingSeconds;
     this.titleService.setTitle('PRISM | Take Assessment');
+
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation?.extras.state) {
+      this.assignedAssessmentId = navigation.extras.state['assessmentId'];
+      console.log('I received this id', this.assignedAssessmentId);
+    } else {
+      console.error('No assessment ID provided');
+      this.router.navigate(['/student/dashboard']);
+      return;
+    }
   }
 
   // Getters
   get currentQuestion(): Question {
-    return this.assessmentData.questions[this.currentQuestionIndex];
+    return (
+      this.assessmentData.questions[this.currentQuestionIndex] || {
+        id: '',
+        type: 'multiple-choice',
+        text: 'Loading question...',
+        options: [],
+      }
+    );
+  }
+
+  // Computed property for total pages
+  get totalPages(): number {
+    return Math.ceil(
+      this.assessmentData.totalQuestions / this.questionsPerPage
+    );
+  }
+
+  // Get questions for current page
+  getVisibleQuestions(): Question[] {
+    const start = this.currentPage * this.questionsPerPage;
+    const end = Math.min(
+      start + this.questionsPerPage,
+      this.assessmentData.totalQuestions
+    );
+    return this.assessmentData.questions.slice(start, end);
+  }
+
+  // Get the actual question index from the visible index
+  getQuestionIndex(visibleIndex: number): number {
+    return this.currentPage * this.questionsPerPage + visibleIndex;
   }
 
   // Lifecycle hooks
   ngOnInit() {
     this.startTimer();
     this.initializeAnswers();
+
+    this.auth.getCurrentUser().subscribe((user) => {
+      this.userId = user.id;
+      this.getData();
+    });
+
+    this.subscriptions.push(
+      this.is.cheatingCount$.subscribe((count) => {
+        this.cheatingCount = count;
+      })
+    );
+
+    this.subscriptions.push(
+      this.is.cheatMessage$.subscribe((message) => {
+        this.cheatMessage = message;
+        console.log(this.cheatMessage);
+      })
+    );
   }
 
   ngOnDestroy() {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
+
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
     }
     if (this.saveTimeout) {
       clearTimeout(this.saveTimeout);
     }
+  }
+
+  getData() {
+    this.api
+      .getAssessmentData(this.assignedAssessmentId, this.userId)
+      .subscribe({
+        next: (resp: any) => {
+          console.log('Assessment data received:', resp);
+
+          if (resp.data) {
+            const apiData = resp.data;
+
+            const mappedQuestions: Question[] = apiData.questions.map(
+              (q: any) => {
+                return {
+                  id: q._id,
+                  type: q.type,
+                  text: q.question,
+                  options: q.options || [],
+                  answerCount:
+                    q.type === 'enumeration'
+                      ? q.question.toLowerCase().includes('three')
+                        ? 3
+                        : q.question.toLowerCase().includes('two')
+                        ? 2
+                        : q.question.toLowerCase().includes('four')
+                        ? 4
+                        : 3
+                      : undefined,
+                  wordLimit: q.type === 'short-answer' ? 250 : undefined,
+                };
+              }
+            );
+
+            this.assessmentData = {
+              title: apiData.title,
+              totalQuestions: apiData.totalQuestions,
+              questions: mappedQuestions,
+              startTime: apiData.startTime,
+              remainingSeconds: apiData.remainingSeconds || 60 * 0,
+              hasStarted: apiData.hasStarted,
+            };
+
+            // Initialize the timer with the remaining seconds
+            this.timeRemaining = this.assessmentData.remainingSeconds;
+
+            // Initialize answers for enumeration questions
+            this.initializeAnswers();
+
+            // Start the timer
+            this.startTimer();
+          }
+        },
+        error: (error) => {
+          console.error('Error getting assessment data:', error);
+        },
+      });
+  }
+
+  getViolationHistory(): string {
+    return this.is.getViolationHistory();
   }
 
   startExam() {
@@ -147,15 +246,16 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    return `${hours.toString().padStart(2, '0')}:${minutes
+      .toString()
+      .padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }
 
   // Answer handling
   private initializeAnswers() {
-    // Initialize enumeration answers as arrays
-    this.assessmentData.questions.forEach(question => {
+    this.assessmentData.questions.forEach((question) => {
       if (question.type === 'enumeration') {
-        this.answers[question.id] = Array(question.answerCount).fill('');
+        this.answers[question.id] = Array(question.answerCount || 3).fill('');
       }
     });
   }
@@ -165,12 +265,14 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
   }
 
   // Helper functions
-  getQuestionType(type: 'multiple-choice' | 'true-false' | 'short-answer' | 'enumeration'): string {
+  getQuestionType(
+    type: 'multiple-choice' | 'true-false' | 'short-answer' | 'enumeration'
+  ): string {
     const types = {
       'multiple-choice': 'Multiple Choice',
-      'true-false': 'True/False', 
+      'true-false': 'True/False',
       'short-answer': 'Short Answer',
-      'enumeration': 'Enumeration'
+      enumeration: 'Enumeration',
     };
     return types[type];
   }
@@ -188,13 +290,23 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
     }
   }
 
-  goToQuestion(index: number) {
-    if (index >= 0 && index < this.assessmentData.totalQuestions) {
-      this.currentQuestionIndex = index;
+  changePage(pageNumber: number): void {
+    if (pageNumber >= 0 && pageNumber < this.totalPages) {
+      this.currentPage = pageNumber;
     }
   }
 
-  // Submit assessment
+  goToQuestion(index: number) {
+    if (index >= 0 && index < this.assessmentData.totalQuestions) {
+      this.currentQuestionIndex = index;
+
+      const targetPage = Math.floor(index / this.questionsPerPage);
+      if (targetPage !== this.currentPage) {
+        this.changePage(targetPage);
+      }
+    }
+  }
+
   submitAssessment() {
     console.log('Submitting answers:', this.answers);
     this.router.navigate(['/student/assessment-complete']);
@@ -210,11 +322,13 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
     this.isMobile = window.innerWidth < 768;
   }
 
-  getQuestionButtonClass(index: number, questionId: number): string {
+  getQuestionButtonClass(index: number, questionId: string): string {
     return `p-2 rounded text-sm ${
-      this.currentQuestionIndex === index ? 'bg-blue-600 text-white' : 
-      this.answers[questionId] ? 'bg-green-50 border-green-500' : 
-      'bg-white border'
+      this.currentQuestionIndex === index
+        ? 'bg-blue-600 text-white'
+        : this.answers[questionId]
+        ? 'bg-green-50 border-green-500'
+        : 'bg-white border'
     }`;
   }
 
@@ -222,9 +336,115 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
     this.showSubmitDialog = true;
   }
 
+  confirmSubmit() {
+    this.showSubmitDialog = false;
+
+    // Prepare the submission data
+    const submissionData = {
+      assignedAssessmentId: this.assignedAssessmentId,
+      studentId: this.userId,
+      answers: this.formatAnswersForSubmission(),
+      timeSpent: this.calculateTimeSpent(),
+      violationCount: this.cheatingCount,
+      violationDetails: this.is.getViolations(),
+    };
+
+    this.api.submitAssessment(submissionData).subscribe({
+      next: (resp: any) => {
+        console.log('Assessment submitted successfully');
+
+        // Clear violation data from storage
+        localStorage.removeItem('violations');
+        sessionStorage.removeItem('violations');
+
+        // Reset the integrity monitoring service
+        this.is.resetViolations();
+
+        // Navigate to completion page
+        this.router.navigate(['/student/assessment-complete']);
+      },
+      error: (error) => {
+        console.error('Error submitting assessment:', error);
+      },
+    });
+
+    console.log('Submission data:', submissionData);
+  }
+
+  // Helper method to format answers for submission
+  private formatAnswersForSubmission() {
+    const formattedAnswers = [];
+
+    for (const questionId in this.answers) {
+      if (this.answers.hasOwnProperty(questionId)) {
+        const question = this.assessmentData.questions.find(
+          (q) => q.id === questionId
+        );
+
+        if (question) {
+          let formattedAnswer;
+
+          // Format the answer based on question type
+          switch (question.type) {
+            case 'multiple-choice':
+              // Handle both string and array types
+              const index = this.answers[questionId];
+              if (index !== undefined && index !== null) {
+                const indexValue = Array.isArray(index) ? index[0] : index;
+                formattedAnswer = String.fromCharCode(
+                  65 + parseInt(String(indexValue))
+                ); // A, B, C, D...
+              }
+              break;
+
+            case 'true-false':
+              // Convert to string first, then compare
+              const answer = this.answers[questionId];
+              const answerStr = Array.isArray(answer)
+                ? String(answer[0])
+                : String(answer);
+              formattedAnswer =
+                answerStr.toLowerCase() === 'true' ? 'True' : 'False';
+              break;
+
+            case 'enumeration':
+              // Convert array of answers to lowercase
+              formattedAnswer = this.answers[questionId].map((ans: string) =>
+                ans.trim().toLowerCase()
+              );
+              break;
+
+            case 'short-answer':
+            default:
+              // Use answer as is
+              formattedAnswer = this.answers[questionId];
+              break;
+          }
+
+          formattedAnswers.push({
+            questionId: questionId,
+            givenAnswer: formattedAnswer,
+          });
+        }
+      }
+    }
+
+    return formattedAnswers;
+  }
+
+  // Calculate time spent on the assessment
+  private calculateTimeSpent() {
+    const totalSeconds = this.assessmentData.remainingSeconds;
+    const remainingSeconds = this.timeRemaining;
+    return totalSeconds - remainingSeconds;
+  }
+
   countWords(event: any): void {
     const text = event.target.value || '';
-    const words = text.trim().split(/\s+/).filter((word: string) => word.length > 0);
+    const words = text
+      .trim()
+      .split(/\s+/)
+      .filter((word: string) => word.length > 0);
     this.currentWordCount = words.length;
   }
 }
