@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './adons/login/login.component';
-import { SignupComponent } from './adons/signup/signup.component';
 import { HomeComponent } from './instructor/home/home.component';
 import { StudentsComponent } from './instructor/students/students.component';
 import { AssessmentComponent } from './instructor/assessment/assessment.component';
@@ -16,11 +15,14 @@ import { StudClassDetailsComponent } from './students/stud-classdetails/stud-cla
 import { StudTakeexamComponent } from './students/stud-takeexam/stud-takeexam.component';
 import { StudHistoryComponent } from './students/stud-history/stud-history.component';
 import { CreateAssessmentComponent } from './instructor/create-assessment/create-assessment.component';
+import { VerifyComponent } from './adons/verify/verify.component';
+import { ForgotComponent } from './adons/forgot/forgot.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
-  { path: 'signup', component: SignupComponent },
+  { path: 'verify-email', component: VerifyComponent},
+  { path: 'forgot-password', component: ForgotComponent},
 
   {
     path: 'instructor',

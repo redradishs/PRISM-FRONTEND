@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import {
   FormControl,
   ReactiveFormsModule,
@@ -16,7 +16,7 @@ import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
@@ -35,6 +35,7 @@ export class LoginComponent implements OnInit {
   name: string = '';
   role: string = '';
   showPasswword = false;
+  pendingVerificationUserId: string = '';
 
   activeTab: string = 'login';
 
@@ -49,7 +50,7 @@ export class LoginComponent implements OnInit {
         '',
         [
           Validators.required,
-          Validators.pattern('^[0-9]{9}@gordoncollege\\.edu\\.ph$'),
+          Validators.pattern('^\\d+@gordoncollege\\.edu\\.ph$'),
         ],
       ],
       password: [
@@ -67,7 +68,7 @@ export class LoginComponent implements OnInit {
         '',
         [
           Validators.required,
-          Validators.pattern('^[0-9]{9}@gordoncollege\\.edu\\.ph$'),
+          Validators.pattern('^\\d+@gordoncollege\\.edu\\.ph$'),
         ],
       ],
       password: ['', [Validators.required, Validators.minLength(5)]],
@@ -120,10 +121,38 @@ export class LoginComponent implements OnInit {
 
     const { email, password } = this.loginForm.value;
     const loginData = { email, password };
+    
+    console.log('About to call login API with:', loginData);
 
     this.authService.userLogin(loginData).subscribe({
       next: (response: any) => {
-        this.authService.setToken(response.jwt);
+
+        if (response.data?.needsVerification) {
+          this.loading = false;
+          this.clicked = false;
+
+          this.pendingVerificationUserId = response.data.userId;
+          sessionStorage.setItem('pendingVerificationUserId', response.data.userId);
+        
+          console.log('Stored User ID:', sessionStorage.getItem('pendingVerificationUserId'));
+      
+          Swal.fire({
+            title: 'Verification Required',
+            text: response.message || 'Please verify your email before logging in.',
+            icon: 'info',
+            confirmButtonText: 'Verify Now',
+            confirmButtonColor: '#1976D2',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              console.log('Navigating to verify-email page');
+              this.router.navigate(['/verify-email']);
+            }
+          });
+        
+          return;
+        }
+        
+        this.authService.setToken(response.data.jwt);
         const userRole = this.authService.getUserRole();
 
         Swal.fire({
@@ -131,9 +160,10 @@ export class LoginComponent implements OnInit {
           text: 'You have successfully logged in!',
           icon: 'success',
           confirmButtonText: 'OK',
-          confirmButtonColor: '#4CAF50',
+          confirmButtonColor: '#1976D2',
         });
 
+        // Redirect based on role
         if (userRole === 'admin') {
           this.router.navigate(['/admin/dashboard']);
         } else if (userRole === 'instructor') {
@@ -145,10 +175,39 @@ export class LoginComponent implements OnInit {
         }
       },
       error: (err) => {
+        console.error('Login error:', err);
+        
+        if (err.status === 403 && err.error && err.error.data && err.error.data.needsVerification) {
+          this.loading = false;
+          this.clicked = false;
+          
+          this.pendingVerificationUserId = err.error.data.userId;
+          sessionStorage.setItem('pendingVerificationUserId', err.error.data.userId);
+          
+          console.log('Stored User ID from error:', sessionStorage.getItem('pendingVerificationUserId'));
+          Swal.fire({
+            title: 'Verification Required',
+            text: err.error.message || 'Please verify your email before logging in.',
+            icon: 'info',
+            confirmButtonText: 'Verify Now',
+            confirmButtonColor: '#1976D2',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              console.log('Navigating to verify-email page');
+              this.router.navigate(['/verify-email']);
+            }
+          });
+          
+          return;
+        }
+        
         this.formError = 'Invalid Email or Password';
         this.loading = false;
         this.clicked = false;
       },
+      complete: () => {
+        console.log('Login request completed');
+      }
     });
   }
 
@@ -163,12 +222,22 @@ export class LoginComponent implements OnInit {
   }
 
   validateGordonEmail(email: string): boolean {
-    const gordonEmailPattern = /^\d{9}@gordoncollege\.edu\.ph$/;
+    const gordonEmailPattern = /^\d+@gordoncollege\.edu\.ph$/;
     return gordonEmailPattern.test(email);
   }
 
   handleSignupSubmit(event: Event): void {
     event.preventDefault();
+    console.log(this.signupForm.value);
+
+    const formValues = this.signupForm.value;
+    this.email = formValues.email;
+    this.password = formValues.password;
+    this.confirmPassword = formValues.confirmPassword;
+    this.name = formValues.name;
+    this.role = formValues.role;
+
+    console.log("Email to validate:", this.email);
 
     if (!this.validateGordonEmail(this.email)) {
       Swal.fire({
@@ -205,29 +274,55 @@ export class LoginComponent implements OnInit {
         name: this.name,
         role: this.role,
       };
+
+      this.loading = true;
       this.authService.userSignUp(data).subscribe({
         next: (resp: any) => {
-          Swal.fire({
-            title: 'Success!',
-            text: 'Account created successfully. Please login.',
-            icon: 'success',
-            confirmButtonText: 'OK',
-            confirmButtonColor: '#4CAF50',
-          });
+          this.loading = false;
+          console.log('Signup response:', resp);
 
-          this.activeTab = 'login';
+          if(resp.remarks === 'Success') {
+            if (resp.data && resp.data.userId) {
+              sessionStorage.setItem('pendingVerificationUserId', resp.data.userId);
+              console.log('Stored User ID from signup:', sessionStorage.getItem('pendingVerificationUserId'));
+            }
 
+            Swal.fire({
+              title: "Success!",
+              text: resp.message || "Account created successfully. Please verify your email.",
+              icon: 'success',
+              confirmButtonText: 'Verify Now',
+              confirmButtonColor: '#1976D2',
+            }).then((result) => {
+              if (result.isConfirmed) {
+                console.log('Navigating to verify-email page');
+                this.router.navigate(['/verify-email']);
+              }
+            });
+          } else {
+            Swal.fire({
+              title: 'Success!',
+              text: 'Account created successfully. Please login.',
+              icon: 'success',
+              confirmButtonText: 'OK',
+              confirmButtonColor: '#1976D2',
+            });
+            this.activeTab = 'login';
+          }
+        
           this.email = '';
           this.password = '';
           this.confirmPassword = '';
           this.name = '';
           this.role = '';
+          this.signupForm.reset();
         },
         error: (error) => {
-          console.log(error);
+          this.loading = false;
+          console.error('Signup error:', error);
           Swal.fire({
             title: 'Error',
-            text: 'Failed to create account. Please try again.',
+            text: error.error?.message || 'Failed to create account. Please try again.',
             icon: 'error',
             confirmButtonText: 'OK',
             confirmButtonColor: '#FF5733',

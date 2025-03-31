@@ -38,14 +38,12 @@ export class AuthService {
   userLogin(data: any): Observable<any> {
     return this.http
       .post<any>(`${this.baseUrl}/login`, data)
-      .pipe(catchError(this.handleError));
   }
 
   userSignUp(data: any): Observable<any> {
     return this.http
       .post<any>(`${this.baseUrl}/signup`, data)
-      .pipe(catchError(this.handleError));
-  }
+  } 
 
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'An unknown error occurred!';
@@ -142,4 +140,30 @@ export class AuthService {
   isAdmin(): boolean {
     return this.getUserRole() === 'admin';
   }
+
+  verifyEmail(userId: string, code: string): Observable<any> {
+    return this.http
+      .post<any>(`${this.baseUrl}/verify-email`, { userId, code })
+  }
+
+  resendVerificationCode(userId: string): Observable<any> {
+    return this.http
+      .post<any>(`${this.baseUrl}/resend-verification`, { userId })
+  }
+
+  requestPasswordReset(email: string): Observable<any> {
+    return this.http
+      .post<any>(`${this.baseUrl}/forgot-password`, { email })
+  }
+
+  verifyResetCode(data: any): Observable<any> {
+    return this.http
+      .post<any>(`${this.baseUrl}/verify-reset-code`, data)
+  }
+
+  resetPassword(data: any): Observable<any> {
+    return this.http
+      .post<any>(`${this.baseUrl}/reset-password`, data)
+  }
+
 }

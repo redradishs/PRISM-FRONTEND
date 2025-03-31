@@ -1,0 +1,70 @@
+<div class="piper">
+    <div class="login-section">
+        <div class="login-container">
+            <div class="logo">
+                <img src="prism_logo.png" alt="Logo" width="60">
+            </div>
+
+            <h1 class="wb">Verify Your Email</h1>
+            <p class="subtitle">We've sent a verification code to your email. Please enter it below to complete your
+                registration.</p>
+
+            <form [formGroup]="verificationForm" (ngSubmit)="onSubmit()">
+                <div class="form-group">
+                    <label for="code">Verification Code</label>
+                    <input type="text" id="code" formControlName="code" placeholder="Enter 6-digit code" maxlength="6"
+                        [ngClass]="{'invalid': verificationForm.get('code')?.touched && verificationForm.get('code')?.invalid}" />
+                </div>
+
+                <div class="show-err">
+                    <p class="error-message mb-3" *ngIf="errorMessage">{{ errorMessage }}</p>
+                </div>
+
+                <button type="submit" class="sign-in-btn" [disabled]="verificationForm.invalid || isLoading">
+                    <span *ngIf="!isLoading">Verify Email</span>
+                    <span *ngIf="isLoading">Verifying...</span>
+                </button>
+
+                <div class="form-options">
+                    <p>Didn't receive the code?</p>
+                    <a href="javascript:void(0)" (click)="resendCode()" class="forgot-password">Resend Code</a>
+                </div>
+
+                <p class="create-account">
+                    <a routerLink="/login" class="auth-link">Back to Login</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Branding Section -->
+    <div class="branding-section">
+        <div class="branding-content">
+            <div class="img">
+                <img src="prism_logo.png" alt="Logo" width="120">
+            </div>
+            <h2 class="prism-logo">PRISM</h2>
+            <h3>Elevate Your Assessment Journey</h3>
+            <p class="tagline">Where precision meets potential, and every evaluation shapes excellence</p>
+
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-shield-alt"></i>
+                    <p>Enhanced Security</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-user-check"></i>
+                    <p>Verified Access</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-lock"></i>
+                    <p>Data Protection</p>
+                </div>
+            </div>
+
+            <div class="version">
+                Version 1.20 • © 2025 PRISM ICTe Solutions
+            </div>
+        </div>
+    </div>
+</div>

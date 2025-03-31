@@ -1,0 +1,166 @@
+<div class="piper">
+    <div class="login-section">
+        <div class="login-container">
+            <div class="logo">
+                <img src="prism_logo.png" alt="Logo" width="60">
+            </div>
+
+            <!-- Step 1: Request Password Reset -->
+            <div *ngIf="currentStep === 1">
+                <h1 class="wb">Reset Your Password</h1>
+                <p class="subtitle">Enter your email address below and we'll send you a verification code.</p>
+
+                <form [formGroup]="forgotForm" (ngSubmit)="onSubmit()">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" formControlName="email" placeholder="xxxxx@gordoncollege.edu.ph"
+                            [ngClass]="{'invalid': forgotForm.get('email')?.touched && forgotForm.get('email')?.invalid}" />
+                        <div *ngIf="forgotForm.get('email')?.touched && forgotForm.get('email')?.errors?.['required']"
+                            class="error-message">
+                            Email is required
+                        </div>
+                        <div *ngIf="forgotForm.get('email')?.touched && forgotForm.get('email')?.errors?.['email']"
+                            class="error-message">
+                            Please enter a valid email
+                        </div>
+                    </div>
+
+                    <div class="show-err">
+                        <p class="error-message mb-3" *ngIf="errorMessage">{{ errorMessage }}</p>
+                    </div>
+
+                    <button type="submit" class="sign-in-btn" [disabled]="forgotForm.invalid || isLoading">
+                        <span *ngIf="!isLoading">Send Verification Code</span>
+                        <span *ngIf="isLoading">Sending...</span>
+                    </button>
+
+                    <p class="create-account">
+                        <a routerLink="/login" class="auth-link">Back to Login</a>
+                    </p>
+                </form>
+            </div>
+
+            <!-- Step 2: Verify Code -->
+            <div *ngIf="currentStep === 2">
+                <h1 class="wb">Verify Code</h1>
+                <p class="subtitle">Enter the 6-digit verification code sent to your email.</p>
+
+                <form [formGroup]="verifyForm" (ngSubmit)="onSubmit()">
+                    <div class="form-group">
+                        <label for="code">Verification Code</label>
+                        <input type="text" id="code" formControlName="code" placeholder="Enter 6-digit code"
+                            maxlength="6"
+                            [ngClass]="{'invalid': verifyForm.get('code')?.touched && verifyForm.get('code')?.invalid}" />
+                        <div *ngIf="verifyForm.get('code')?.touched && verifyForm.get('code')?.errors?.['required']"
+                            class="error-message">
+                            Verification code is required
+                        </div>
+                        <div *ngIf="verifyForm.get('code')?.touched && (verifyForm.get('code')?.errors?.['minlength'] || verifyForm.get('code')?.errors?.['maxlength'])"
+                            class="error-message">
+                            Code must be 6 digits
+                        </div>
+                    </div>
+
+                    <div class="show-err">
+                        <p class="error-message mb-3" *ngIf="errorMessage">{{ errorMessage }}</p>
+                    </div>
+
+                    <button type="submit" class="sign-in-btn" [disabled]="verifyForm.invalid || isLoading">
+                        <span *ngIf="!isLoading">Verify Code</span>
+                        <span *ngIf="isLoading">Verifying...</span>
+                    </button>
+
+                    <div class="form-options">
+                        <p>Didn't receive the code?</p>
+                        <a href="javascript:void(0)" (click)="resendCode()" class="forgot-password">Resend Code</a>
+                    </div>
+
+                    <p class="create-account">
+                        <a href="javascript:void(0)" (click)="goBack()" class="auth-link">Back</a>
+                    </p>
+                </form>
+            </div>
+
+            <!-- Step 3: Reset Password -->
+            <div *ngIf="currentStep === 3">
+                <h1 class="wb">Set New Password</h1>
+                <p class="subtitle">Create a new password for your account.</p>
+
+                <form [formGroup]="resetForm" (ngSubmit)="onSubmit()">
+                    <div class="form-group">
+                        <label for="password">New Password</label>
+                        <input type="password" id="password" formControlName="password" placeholder="Enter new password"
+                            [ngClass]="{'invalid': resetForm.get('password')?.touched && resetForm.get('password')?.invalid}" />
+                        <div *ngIf="resetForm.get('password')?.touched && resetForm.get('password')?.errors?.['required']"
+                            class="error-message">
+                            Password is required
+                        </div>
+                        <div *ngIf="resetForm.get('password')?.touched && resetForm.get('password')?.errors?.['minlength']"
+                            class="error-message">
+                            Password must be at least 8 characters
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" formControlName="confirmPassword"
+                            placeholder="Confirm new password"
+                            [ngClass]="{'invalid': resetForm.get('confirmPassword')?.touched && resetForm.get('confirmPassword')?.invalid}" />
+                        <div *ngIf="resetForm.get('confirmPassword')?.touched && resetForm.get('confirmPassword')?.errors?.['required']"
+                            class="error-message">
+                            Please confirm your password
+                        </div>
+                        <div *ngIf="resetForm.get('confirmPassword')?.touched && resetForm.get('confirmPassword')?.errors?.['passwordMismatch']"
+                            class="error-message">
+                            Passwords do not match
+                        </div>
+                    </div>
+
+                    <div class="show-err">
+                        <p class="error-message mb-3" *ngIf="errorMessage">{{ errorMessage }}</p>
+                    </div>
+
+                    <button type="submit" class="sign-in-btn" [disabled]="resetForm.invalid || isLoading">
+                        <span *ngIf="!isLoading">Reset Password</span>
+                        <span *ngIf="isLoading">Resetting...</span>
+                    </button>
+
+                    <p class="create-account">
+                        <a href="javascript:void(0)" (click)="goBack()" class="auth-link">Back</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Branding Section -->
+    <div class="branding-section">
+        <div class="branding-content">
+            <div class="img">
+                <img src="prism_logo.png" alt="Logo" width="120">
+            </div>
+            <h2 class="prism-logo">PRISM</h2>
+            <h3>Elevate Your Assessment Journey</h3>
+            <p class="tagline">Where precision meets potential, and every evaluation shapes excellence</p>
+
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-key"></i>
+                    <p>Secure Recovery</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-envelope"></i>
+                    <p>Email Verification</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-user-shield"></i>
+                    <p>Account Protection</p>
+                </div>
+            </div>
+
+            <div class="version">
+                Version 1.20 • © 2025 PRISM ICTe Solutions
+            </div>
+        </div>
+    </div>
+</div>
