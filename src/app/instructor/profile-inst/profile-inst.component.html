@@ -1,0 +1,288 @@
+<div class="min-h-screen bg-gray-50">
+    <div class="flex">
+        <app-sidebar></app-sidebar>
+        <div class="flex-1 ml-0 md:ml-20">
+            <header class="bg-white shadow-sm">
+                <div class="max-w-7xl mx-auto py-2 md:py-4 px-3 md:px-4 sm:px-6 lg:px-8">
+                    <div class="flex items-center justify-between">
+                        <h1 class="text-xl md:text-2xl font-semibold text-gray-900">Profile</h1>
+                        <button *ngIf="isMobile" (click)="toggleSidebar()"
+                            class="p-1.5 md:p-2 rounded-md hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-bars w-5 md:w-6 h-5 md:h-6"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="main-content">
+                <div class="profile-content">
+                    <!-- Profile Header -->
+                    <div class="profile-header">
+                        <div class="header-background"></div>
+                        <div class="profile-card">
+                            <div class="profile-info">
+                                <div class="avatar-container">
+                                    <div class="avatar">
+                                        <img [src]="profile.avatarUrl" [alt]="profile.name">
+                                        <div class="avatar-overlay">
+                                            <i class="fas fa-camera"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="profile-details">
+                                    <div class="name-role">
+                                        <h2>{{profile.name}}</h2>
+                                        <div class="email">
+                                            <i class="fas fa-at"></i>
+                                            <span>{{profile.email}}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="role-badges">
+                                        <span class="badge instructor-badge">
+                                            <i class="fas fa-users"></i>
+                                            Instructor
+                                        </span>
+                                    </div>
+
+                                    <div class="profile-meta">
+                                        <div class="meta-item">
+                                            <span class="label">Employee ID:</span>
+                                            <span class="value">{{profile.employeeId}}</span>
+                                        </div>
+                                        <div class="meta-item">
+                                            <span class="label">Joined:</span>
+                                            <span class="value">{{profile.dateJoined}}</span>
+                                        </div>
+                                        <div class="meta-item">
+                                            <span class="label">Last Active:</span>
+                                            <span class="value">{{profile.lastActive}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="profile-actions">
+                                    <button class="edit-button" (click)="toggleEditing()">
+                                        <i class="fas" [ngClass]="{'fa-save': isEditing, 'fa-edit': !isEditing}"></i>
+                                        <span>{{isEditing ? 'Save Changes' : 'Edit Profile'}}</span>
+                                    </button>
+                                    <button class="logout-button" (click)="logout()">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                        <span>Logout</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personal Information Tab -->
+                    <div class="tabs-container">
+                        <div class="tabs-header">
+                            <button class="tab-button" [ngClass]="{'active': activeTab === 'personal'}"
+                                (click)="setActiveTab('personal')">
+                                <i class="fas fa-user"></i>
+                                <span>Personal Information</span>
+                            </button>
+                            <button class="tab-button" [ngClass]="{'active': activeTab === 'security'}"
+                                (click)="setActiveTab('security')">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Change Password</span>
+                            </button>
+                            <button class="tab-button" [ngClass]="{'active': activeTab === 'activity'}"
+                                (click)="setActiveTab('activity')">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Teaching Overview</span>
+                            </button>
+                        </div>
+
+                        <!-- Personal Information Tab -->
+                        <div class="tab-content" *ngIf="activeTab === 'personal'">
+                            <div class="grid-layout">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="fte"><i class="fas fa-user icon"></i> Personal Information</h3>
+                                        <p>Update your personal details and contact information</p>
+                                    </div>
+                                    <div class="card-body">
+                                        <form class="form-grid">
+                                            <div class="form-group">
+                                                <label for="fullName">Full Name</label>
+                                                <input type="text" id="fullName" [(ngModel)]="profile.name"
+                                                    name="fullName">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="email">Email Address</label>
+                                                <input type="email" id="email" [(ngModel)]="profile.email" name="email">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="phone">Phone Number</label>
+                                                <input type="tel" id="phone" [(ngModel)]="profile.phone" name="phone"
+                                                    placeholder="Enter phone number">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="alternateEmail">Alternate Email (Optional)</label>
+                                                <input type="email" id="alternateEmail"
+                                                    [(ngModel)]="profile.alternateEmail" name="alternateEmail"
+                                                    placeholder="Enter alternate email">
+                                            </div>
+                                            <div class="form-group full-width">
+                                                <label for="bio">Bio / About Me</label>
+                                                <textarea id="bio" [(ngModel)]="profile.bio" name="bio"
+                                                    placeholder="Tell us about yourself"></textarea>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button class="save-button" (click)="savePersonalInfo()">Save Changes</button>
+                                    </div>
+                                </div>
+
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3><i class="fas fa-users icon"></i> Professional Information</h3>
+                                        <p>Your teaching details and department information</p>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-grid">
+                                            <div class="form-group">
+                                                <label for="department">Department</label>
+                                                <input type="text" id="department" [(ngModel)]="profile.department"
+                                                    name="department">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="position">Position</label>
+                                                <input type="text" id="position" [(ngModel)]="profile.position"
+                                                    name="position">
+                                            </div>
+                                            <div class="form-group full-width">
+                                                <label for="specialization">Areas of Specialization</label>
+                                                <input type="text" id="specialization"
+                                                    placeholder="e.g., Database Systems, Web Development">
+                                            </div>
+                                        </div>
+
+                                        <div class="performance-summary">
+                                            <h4>Teaching Summary</h4>
+                                            <div class="stats-grid">
+                                                <div class="stat-card">
+                                                    <div class="stat-value">{{profile.classesManaged}}</div>
+                                                    <div class="stat-label">Classes Managed</div>
+                                                </div>
+                                                <div class="stat-card">
+                                                    <div class="stat-value">{{profile.assessmentsCreated}}</div>
+                                                    <div class="stat-label">Assessments Created</div>
+                                                </div>
+                                                <div class="stat-card">
+                                                    <div class="stat-value">{{profile.totalStudents}}</div>
+                                                    <div class="stat-label">Total Students</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button class="view-button">Manage Teaching Schedule</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Change Password Tab -->
+                        <div class="tab-content" *ngIf="activeTab === 'security'">
+                            <div class="grid-layout">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3><i class="fas fa-key icon"></i> Change Password</h3>
+                                        <p>Update your password to keep your account secure</p>
+                                    </div>
+                                    <div class="card-body">
+                                        <form class="password-form">
+                                            <div class="form-group">
+                                                <label for="currentPassword">Current Password</label>
+                                                <div class="password-input">
+                                                    <input [type]="showCurrentPassword ? 'text' : 'password'"
+                                                        id="currentPassword" placeholder="Enter current password">
+                                                    <button type="button" class="toggle-password"
+                                                        (click)="togglePasswordVisibility('current')">
+                                                        <i class="fas"
+                                                            [ngClass]="{'fa-eye': !showCurrentPassword, 'fa-eye-slash': showCurrentPassword}"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="newPassword">New Password</label>
+                                                <div class="password-input">
+                                                    <input [type]="showNewPassword ? 'text' : 'password'"
+                                                        id="newPassword" placeholder="Enter new password">
+                                                    <button type="button" class="toggle-password"
+                                                        (click)="togglePasswordVisibility('new')">
+                                                        <i class="fas"
+                                                            [ngClass]="{'fa-eye': !showNewPassword, 'fa-eye-slash': showNewPassword}"></i>
+                                                    </button>
+                                                </div>
+                                                <p class="password-hint">Password must be at least 8 characters and
+                                                    include
+                                                    uppercase, lowercase, number, and special character.</p>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="confirmPassword">Confirm New Password</label>
+                                                <div class="password-input">
+                                                    <input [type]="showConfirmPassword ? 'text' : 'password'"
+                                                        id="confirmPassword" placeholder="Confirm new password">
+                                                    <button type="button" class="toggle-password"
+                                                        (click)="togglePasswordVisibility('confirm')">
+                                                        <i class="fas"
+                                                            [ngClass]="{'fa-eye': !showConfirmPassword, 'fa-eye-slash': showConfirmPassword}"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button class="update-button" (click)="updatePassword()">Update
+                                            Password</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Teaching Overview Tab -->
+                        <div class="tab-content" *ngIf="activeTab === 'activity'">
+                            <div class="grid-layout">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3><i class="fas fa-chart-bar"></i> Teaching Overview</h3>
+                                        <p>Your teaching performance and class statistics</p>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="performance-overview">
+                                            <div class="stats-grid">
+                                                <div class="stat-card">
+                                                    <div class="stat-value">{{profile.classesManaged}}</div>
+                                                    <div class="stat-label">Classes Managed</div>
+                                                </div>
+                                                <div class="stat-card">
+                                                    <div class="stat-value">{{profile.assessmentsCreated}}</div>
+                                                    <div class="stat-label">Assessments Created</div>
+                                                </div>
+                                                <div class="stat-card">
+                                                    <div class="stat-value">{{profile.totalStudents}}</div>
+                                                    <div class="stat-label">Total Students</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button class="view-button">View Detailed Analytics</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>

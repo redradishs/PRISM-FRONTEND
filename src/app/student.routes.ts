@@ -5,6 +5,7 @@ import { StudClassDetailsComponent } from './students/stud-classdetails/stud-cla
 import { StudTakeexamComponent } from './students/stud-takeexam/stud-takeexam.component';
 import { StudHistoryComponent } from './students/stud-history/stud-history.component';
 import { StudConfirmationComponent } from './students/stud-confirmation/stud-confirmation.component';
+import { ProfileComponent } from './students/profile/profile.component';
 
 export const STUDENT_ROUTES: Routes = [
     { path: 'dashboard', component: StudHomeComponent },
@@ -12,5 +13,6 @@ export const STUDENT_ROUTES: Routes = [
     { path: 'classes/details', component: StudClassDetailsComponent },
     { path: 'assessment/take', component: StudTakeexamComponent },
     { path: 'history', component: StudHistoryComponent },
+    { path: 'profile', component: ProfileComponent },
     { path: 'confirmation', component: StudConfirmationComponent }
 ]; 

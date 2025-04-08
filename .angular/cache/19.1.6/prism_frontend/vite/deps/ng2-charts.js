@@ -1,9 +1,4 @@
 import {
-  Chart,
-  defaults,
-  registerables
-} from "./chunk-OX635AXN.js";
-import {
   Directive,
   ElementRef,
   EventEmitter,
@@ -20,6 +15,11 @@ import {
   ɵɵdefineInjectable,
   ɵɵdirectiveInject
 } from "./chunk-3VA5WE5I.js";
+import {
+  Chart,
+  defaults,
+  registerables
+} from "./chunk-OX635AXN.js";
 import {
   BehaviorSubject,
   distinctUntilChanged

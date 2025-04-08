@@ -3,7 +3,6 @@ import { LoginComponent } from './adons/login/login.component';
 import { HomeComponent } from './instructor/home/home.component';
 import { StudentsComponent } from './instructor/students/students.component';
 import { AssessmentComponent } from './instructor/assessment/assessment.component';
-import { ProfileComponent } from './instructor/profile/profile.component';
 import { GenerateAssessmentComponent } from './instructor/generate-assessment/generate-assessment.component';
 import { TakeAssessmentComponent } from './instructor/take-assessment/take-assessment.component';
 import { TestComponent } from './adons/test/test.component';
