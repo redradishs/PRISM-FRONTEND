@@ -1,27 +1,28 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
-
+import { ApiService } from '../../services/api.service';
+import { AuthService } from '../../services/auth.service';
+import Swal from 'sweetalert2';
 
 interface StudentProfile {
-  id: string;
+  _id: string;
   name: string;
   email: string;
-  role: 'student';
+  role: string;
+  createdAt: string;
+  updatedAt: string;
+  studentId?: string;
+  program?: string;
+  year?: string;
+  block?: string;
+  bio?: string;
+  phone?: string;
   avatarUrl?: string;
-  phone?: string; // Added property
-  alternateEmail?: string; // Added property
-  dateJoined: string;
-  lastActive: string;
-  studentId: string;
-  program: string;
-  year: number;
-  block: string;
   assessmentsTaken: number;
   averageScore: number;
   completionRate: number;
-  bio?: string; // Added property
 }
 
 interface Assessment {
@@ -40,17 +41,43 @@ interface SubjectPerformance {
   completionRate: number;
 }
 
+interface ProfileChanges {
+  name?: string;
+  email?: string;
+  phone?: string;
+  avatarUrl?: string;
+  bio?: string;
+  program?: string;
+  yearLevel?: string;
+  block?: string;
+}
 
-
+interface PasswordData {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
 
 @Component({
   selector: 'app-profile',
   imports: [CommonModule, FormsModule, ReactiveFormsModule, SidebarComponent],
   templateUrl: './profile.component.html',
-  styleUrl: './profile.component.css'
+  styleUrls: ['./profile.component.css']
 })
-export class ProfileComponent {
-  profile: StudentProfile;
+export class ProfileComponent implements OnInit {
+  profile: StudentProfile = {
+    _id: '',
+    name: '',
+    email: '',
+    role: 'student',
+    createdAt: '',
+    updatedAt: '',
+    assessmentsTaken: 0,
+    averageScore: 0,
+    completionRate: 0
+  };
+
+  isLoading = true;
   isEditing = false;
   showCurrentPassword = false;
   showNewPassword = false;
@@ -58,25 +85,9 @@ export class ProfileComponent {
   activeTab = 'personal';
   isMobile = false;
 
-  // Mock data
-  private studentProfile: StudentProfile = {
-    id: 'user-123',
-    name: 'Frederick Anicas',
-    email: '123456789@gordoncollege.edu.ph',
-    role: 'student',
-    avatarUrl: '/placeholder.svg?text=FA',
-    phone: '+63 912 345 6789',
-    dateJoined: 'September 1, 2023',
-    lastActive: 'Today at 10:45 AM',
-    studentId: '202210004',
-    program: 'Bachelor of Science in Information Technology',
-    year: 3,
-    block: 'A',
-    assessmentsTaken: 12,
-    averageScore: 92,
-    completionRate: 100,
-    bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec gravida, sapien sed consectetur placerat, nisi neque faucibus velit, id cursus nisi neque vel neque. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed faucibus, diam in consectetur lobortis, lectus purus ullamcorper velit, at semper sapien est vel velit.',
-  };
+  //userprofile
+  userId: string = '';
+  private originalProfile: StudentProfile | null = null;
 
   recentAssessments: Assessment[] = [
     {
@@ -123,13 +134,80 @@ export class ProfileComponent {
     { id: '3', name: 'Web Development', score: 92, completionRate: 100 },
   ];
 
-  constructor() {
-    this.profile = this.studentProfile;
+  // Password related properties
+  passwordData: PasswordData = {
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  };
+
+  constructor(private api: ApiService, private auth: AuthService) {
   }
 
   ngOnInit(): void {
     this.checkMobile();
     window.addEventListener('resize', () => this.checkMobile());
+
+    this.auth.getCurrentUser().subscribe({
+      next: (user) => {
+        if (user?.id) {
+          this.userId = user.id;
+          this.loadProfile();
+        } else {
+          console.error('No user ID found');
+        }
+      },
+      error: (error) => {
+        console.error('Error getting current user:', error);
+      }
+    });
+  }
+
+  loadProfile(): void {
+    this.isLoading = true;
+    this.auth.getCurrentProfile(this.userId).subscribe({
+      next: (resp: any) => {
+        if (resp?.data) {
+          this.profile = {
+            ...this.profile,
+            program: resp.data.program || '',
+            year: resp.data.yearLevel || '',
+            block: resp.data.block || '',
+            ...resp.data
+          };
+          this.originalProfile = { ...this.profile };
+        }
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading profile:', error);
+        this.profile = {
+          ...this.profile,
+          program: 'BSIT',
+          year: '1',
+          block: 'A'
+        };
+        this.isLoading = false;
+      }
+    });
+  }
+
+  private handleError(message: string): void {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: message
+    });
+  }
+
+  getInitials(name: string): string {
+    if (!name) return '';
+    return name
+      .split(' ')
+      .slice(0, 2)
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase();
   }
 
   checkMobile(): void {
@@ -159,23 +237,132 @@ export class ProfileComponent {
   }
 
   savePersonalInfo(): void {
-    // Handle saving personal info
-    console.log('Saving personal info');
-    this.isEditing = false;
+    if (!this.originalProfile || !this.profile) {
+        this.handleError('Profile data is not available');
+        return;
+    }
+
+    const changes: ProfileChanges = {};
+
+    if (this.profile.program !== this.originalProfile.program) {
+        changes.program = this.profile.program;
+    }
+
+    if (this.profile.year !== this.originalProfile.year) {
+        changes.yearLevel = this.profile.year;
+    }
+
+    if (this.profile.block !== this.originalProfile.block) {
+        changes.block = this.profile.block;
+    }
+
+    if (this.profile.bio !== this.originalProfile.bio) {
+        changes.bio = this.profile.bio;
+    }
+
+    // Only make API call if there are changes
+    if (Object.keys(changes).length > 0) {
+        Swal.fire({
+            title: 'Saving changes...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        this.auth.updateProfile(this.userId, changes).subscribe({
+            next: (response) => {
+                this.originalProfile = { ...this.profile };
+                this.isEditing = false;
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Profile updated successfully',
+                    timer: 1500
+                });
+            },
+            error: (error) => {
+                console.error('Error updating profile:', error);
+                if (this.originalProfile) {
+                    this.profile = { ...this.originalProfile };
+                }
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to update profile. Please try again.'
+                });
+            }
+        });
+    } else {
+        Swal.fire({
+            icon: 'info',
+            title: 'No Changes',
+            text: 'No changes were made to save',
+            timer: 1500
+        });
+        this.isEditing = false;
+    }
   }
 
   updatePassword(): void {
-    // Handle password update
-    console.log('Updating password');
+    if (!this.passwordData.currentPassword || !this.passwordData.newPassword || !this.passwordData.confirmPassword) {
+      this.handleError('All password fields are required');
+      return;
+    }
+
+    if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
+      this.handleError('New passwords do not match');
+      return;
+    }
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(this.passwordData.newPassword)) {
+      this.handleError('Password does not meet requirements');
+      return;
+    }
+
+    Swal.fire({
+      title: 'Updating password...',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    this.auth.changePassword(this.userId, this.passwordData).subscribe({
+      next: () => {
+        // Reset form
+        this.passwordData = {
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        };
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Success!',
+          text: 'Password updated successfully',
+          timer: 1500
+        });
+      },
+      error: (error) => {
+        console.error('Error updating password:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.response?.message || 'Failed to update password'
+        });
+      }
+    });
   }
 
   logout(): void {
-    // Handle logout
-    console.log('Logging out...');
+    this.auth.logout();
   }
 
   toggleSidebar(): void {
-    // Handle sidebar toggle
     console.log('Toggling sidebar');
   }
 }

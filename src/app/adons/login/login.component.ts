@@ -36,6 +36,8 @@ export class LoginComponent implements OnInit {
   role: string = '';
   showPasswword = false;
   pendingVerificationUserId: string = '';
+  showConfirmPassword = false;
+  isCoordinator: string = '';
 
   activeTab: string = 'login';
 
@@ -86,6 +88,15 @@ export class LoginComponent implements OnInit {
     if (storedEmail) {
       this.loginForm.patchValue({ email: storedEmail });
     }
+
+    this.signupForm = this.formBuilder.group({
+      name: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required],
+      confirmPassword: ['', Validators.required],
+      role: ['', Validators.required],
+      isCoordinator: ['no'] // default value is 'no'
+    });
   }
 
   handleLoginSubmit(): void {
@@ -217,8 +228,12 @@ export class LoginComponent implements OnInit {
     this.clicked = false;
   }
 
-  togglePasswordVisibility() {
-    this.showPassword = !this.showPassword;
+  togglePasswordVisibility(field: 'password' | 'confirm' = 'password'): void {
+    if (field === 'password') {
+      this.showPassword = !this.showPassword;
+    } else if (field === 'confirm') {
+      this.showConfirmPassword = !this.showConfirmPassword;
+    }
   }
 
   validateGordonEmail(email: string): boolean {
@@ -236,44 +251,19 @@ export class LoginComponent implements OnInit {
     this.confirmPassword = formValues.confirmPassword;
     this.name = formValues.name;
     this.role = formValues.role;
-
-    console.log("Email to validate:", this.email);
-
-    if (!this.validateGordonEmail(this.email)) {
-      Swal.fire({
-        title: 'Invalid Email',
-        text: 'Please use your Gordon College EDU Mail',
-        icon: 'error',
-        confirmButtonText: 'OK',
-        confirmButtonColor: '#FF5733',
-      });
-      return;
-    }
-
-    if (
-      !this.email ||
-      !this.password ||
-      !this.confirmPassword ||
-      !this.name ||
-      !this.role
-    ) {
-      Swal.fire({
-        title: 'Error',
-        text: 'Please fill in all required fields',
-        icon: 'error',
-        confirmButtonText: 'OK',
-        confirmButtonColor: '#FF5733',
-      });
-      return;
-    }
+    this.isCoordinator = formValues.isCoordinator; 
 
     if (this.password === this.confirmPassword) {
+
       const data = {
         email: this.email,
         password: this.password,
         name: this.name,
         role: this.role,
+        isCoordinator: formValues.isCoordinator 
       };
+
+      console.log('Signup payload:', data); 
 
       this.loading = true;
       this.authService.userSignUp(data).subscribe({
@@ -337,6 +327,16 @@ export class LoginComponent implements OnInit {
         confirmButtonText: 'OK',
         confirmButtonColor: '#FF5733',
       });
+    }
+  }
+
+  onRoleChange(event: any) {
+    const role = event.target.value;
+    if (role === 'instructor') {
+      this.signupForm.get('isCoordinator')?.enable();
+    } else {
+      this.signupForm.get('isCoordinator')?.disable();
+      this.signupForm.get('isCoordinator')?.setValue('no');
     }
   }
 

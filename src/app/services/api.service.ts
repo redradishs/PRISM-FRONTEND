@@ -141,4 +141,9 @@ export class ApiService {
   getClassScore(id: string) {
     return this.http.get(`${this.apiUrl}/getClassScoreResult/${id}`);
   }
+
+  //profile page instructor
+  getTeachingSummary(id: string) {
+    return this.http.get(`${this.apiUrl}/instructorstats/${id}`);
+  }
 }

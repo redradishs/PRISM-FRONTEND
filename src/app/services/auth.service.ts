@@ -9,6 +9,14 @@ import { isLocalStorageAvailable } from '../shared/environment.utils';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 
+interface ProfileChanges {
+  department?: string;
+  position?: string;
+  phone?: string;
+  alternateEmail?: string;
+  bio?: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -164,6 +172,19 @@ export class AuthService {
   resetPassword(data: any): Observable<any> {
     return this.http
       .post<any>(`${this.baseUrl}/reset-password`, data)
+  }
+
+  //profile page instructor
+  getCurrentProfile(id: string) {
+      return this.http.get(`${this.baseUrl}/profile/${id}`)
+    }
+
+  changePassword(id: string, data: any) {
+    return this.http.put(`${this.baseUrl}/profile/change-password/${id}`, data)
+  }
+
+  updateProfile(userId: string, changes: ProfileChanges) {
+    return this.http.put(`${this.baseUrl}/profile/update/${userId}`, changes);
   }
 
 }

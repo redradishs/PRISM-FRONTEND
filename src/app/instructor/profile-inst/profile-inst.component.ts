@@ -1,7 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
+import { ApiService } from '../../services/api.service';
+import { AuthService } from '../../services/auth.service';
+import Swal from 'sweetalert2';
 
 interface InstructorProfile {
   id: string;
@@ -20,6 +24,7 @@ interface InstructorProfile {
   totalStudents: number;
   alternateEmail?: string; // Added property
   bio?: string; // Added property
+  isCoordinator: 'yes' | 'no'; // Update type to match backend
 }
 
 interface Assessment {
@@ -39,40 +44,51 @@ interface ClassPerformance {
   completionRate: number;
 }
 
+// Add this interface for tracking changes
+interface ProfileChanges {
+  department?: string;
+  position?: string;
+  phone?: string;
+  alternateEmail?: string;
+  bio?: string;
+  isCoordinator?: 'yes' | 'no';
+}
+
+interface PasswordData {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
 @Component({
   selector: 'app-profile-inst',
   imports: [CommonModule, FormsModule, ReactiveFormsModule, SidebarComponent],
   templateUrl: './profile-inst.component.html',
   styleUrls: ['./profile-inst.component.css']
 })
-export class ProfileInstComponent {
-  profile: InstructorProfile;
-  isEditing = false;
+export class ProfileInstComponent implements OnInit {
+  profile: any;
+  teachingSummary = {
+    classCounts: 0,
+    assessmentCounts: 0,
+    studentCounts: 0,
+  }
+  userId: string = '';
+  activeTab = 'personal';
+  isMobile = false;
+  
+  // Password related properties
   showCurrentPassword = false;
   showNewPassword = false;
   showConfirmPassword = false;
-  activeTab = 'personal';
-  isMobile = false;
-
-  // Mock data
-  private instructorProfile: InstructorProfile = {
-    id: 'user-456',
-    name: 'Prof. Asher James',
-    email: 'asher.james@gordoncollege.edu.ph',
-    role: 'instructor',
-    avatarUrl: '/placeholder.svg?text=AJ',
-    phone: '+63 912 345 6789',
-    dateJoined: 'January 15, 2020',
-    lastActive: 'Today at 11:30 AM',
-    employeeId: 'EMP-2020-0123',
-    department: 'College of Computer Studies',
-    position: 'Assistant Professor',
-    classesManaged: 3,
-    assessmentsCreated: 15,
-    totalStudents: 120,
-    alternateEmail: '', // Initialize with empty string
-    bio: '', // Initialize with empty string
+  passwordData: PasswordData = {
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
   };
+
+  // Add property to store original profile data
+  private originalProfile: InstructorProfile | null = null;
 
   recentAssessments: Assessment[] = [
     {
@@ -116,23 +132,49 @@ export class ProfileInstComponent {
     { id: '3', name: 'BSIT 3C', students: 45, avgScore: 88, completionRate: 90 },
   ];
 
-  constructor() {
-    this.profile = this.instructorProfile;
+  constructor(private api: ApiService, private auth: AuthService, private router: Router) {
   }
 
   ngOnInit(): void {
     this.checkMobile();
     window.addEventListener('resize', () => this.checkMobile());
+
+    this.auth.getCurrentUser().subscribe((user) => {
+      this.userId = user.id;
+      this.getProfile(this.userId);
+      this.getTeachingSummary(this.userId); 
+      console.log('User ID:', this.userId);
+      });
+  }
+
+  // Modify getProfile to store original data
+  getProfile(id: string) {
+    this.auth.getCurrentProfile(this.userId).subscribe({
+      next: (resp: any) => {
+        this.profile = resp.data;
+        this.originalProfile = { ...resp.data };
+        console.log(resp.data);
+      },
+      error: (error) => {
+        console.error('Error fetching profile:', error);
+      }
+    });
+  }
+
+  getTeachingSummary(id: string) {
+    this.api.getTeachingSummary(this.userId).subscribe({
+      next: (resp: any) => {
+        this.teachingSummary = resp.data;
+      },
+      error: (error) => {
+        console.error('Error fetching teaching summary:', error);
+      }
+      });
   }
 
   checkMobile(): void {
     this.isMobile = window.innerWidth < 768;
   }
-
-  toggleEditing(): void {
-    this.isEditing = !this.isEditing;
-  }
-
   togglePasswordVisibility(field: 'current' | 'new' | 'confirm'): void {
     switch (field) {
       case 'current':
@@ -151,24 +193,229 @@ export class ProfileInstComponent {
     this.activeTab = tab;
   }
 
+  // Update the save method
   savePersonalInfo(): void {
-    // Handle saving personal info
-    console.log('Saving personal info');
-    this.isEditing = false;
+    if (!this.originalProfile || !this.profile) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Profile data is not available'
+        });
+        return;
+    }
+
+    const changes: ProfileChanges = {};
+
+    if (this.profile.department !== undefined && 
+        this.profile.department !== this.originalProfile.department) {
+        changes.department = this.profile.department;
+    }
+    
+    if (this.profile.position !== undefined && 
+        this.profile.position !== this.originalProfile.position) {
+        changes.position = this.profile.position;
+    }
+    
+    if (this.profile.phone !== undefined && 
+        this.profile.phone !== this.originalProfile.phone) {
+        changes.phone = this.profile.phone;
+    }
+    
+    if (this.profile.alternateEmail !== undefined && 
+        this.profile.alternateEmail !== this.originalProfile.alternateEmail) {
+        changes.alternateEmail = this.profile.alternateEmail;
+    }
+    
+    if (this.profile.bio !== undefined && 
+        this.profile.bio !== this.originalProfile.bio) {
+        changes.bio = this.profile.bio;
+    }
+    
+    if (this.profile.isCoordinator !== undefined && 
+        this.profile.isCoordinator !== this.originalProfile.isCoordinator) {
+        changes.isCoordinator = this.profile.isCoordinator || 'no';
+    }
+
+    // Only make API call if there are changes
+    if (Object.keys(changes).length > 0) {
+        // Show loading state
+        Swal.fire({
+            title: 'Saving changes...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        this.auth.updateProfile(this.userId, changes).subscribe({
+            next: (response) => {
+                this.originalProfile = { ...this.profile };
+        
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Profile updated successfully',
+                    timer: 1500
+                });
+            },
+            error: (error) => {
+                console.error('Error updating profile:', error);
+                if (this.originalProfile) {
+                    this.profile = { ...this.originalProfile };
+                    this.profile.isCoordinator = this.originalProfile?.isCoordinator ?? 'no';
+                }
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to update profile. Please try again.'
+                });
+            }
+        });
+    } else {
+        Swal.fire({
+            icon: 'info',
+            title: 'No Changes',
+            text: 'No changes were made to save',
+            timer: 1500
+        });
+
+    }
   }
 
   updatePassword(): void {
-    // Handle password update
-    console.log('Updating password');
+    if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Password Mismatch',
+            text: 'New password and confirmation do not match'
+        });
+        return;
+    }
+
+    Swal.fire({
+        title: 'Updating password...',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    this.auth.changePassword(this.userId, this.passwordData).subscribe({
+        next: (response) => {
+            this.passwordData = {
+                currentPassword: '',
+                newPassword: '',
+                confirmPassword: ''
+            };
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Password updated successfully',
+                timer: 1500
+            });
+        },
+        error: (error) => {
+            console.error('Error updating password:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.error.message || 'Failed to update password'
+            });
+        }
+    });
   }
 
   logout(): void {
-    // Handle logout
-    console.log('Logging out...');
+    this.auth.logout();
   }
 
   toggleSidebar(): void {
     // Handle sidebar toggle
     console.log('Toggling sidebar');
+  }
+
+  onCoordinatorToggle(event: Event): void {
+    const checkbox = event.target as HTMLInputElement;
+    if (this.profile) {
+        this.profile.isCoordinator = checkbox.checked ? 'yes' : 'no';
+        this.savePersonalInfo();
+    }
+  }
+
+  getCoordinatorStatus(): string {
+    if (!this.profile) return 'Not set';
+    return this.profile.isCoordinator === 'yes' ? 
+        'Yes, I want to be a coordinator' : 
+        'No, not at this time';
+  }
+
+  getCoordinatorStatusLabel(): string {
+    if (!this.profile) return 'Not Available';
+    
+    switch (this.profile.coordinatorStatus) {
+        case 'PENDING':
+            return 'Application Pending';
+        case 'APPROVED':
+            return 'Coordinator Active';
+        case 'REJECTED':
+            return 'Application Rejected';
+        default:
+            return this.profile.isCoordinator === 'yes' ? 
+                'Applied for Coordinator Position' : 
+                'Not Applied';
+    }
+  }
+
+  getCoordinatorStatusMessage(): string {
+    if (!this.profile) return '';
+
+    switch (this.profile.coordinatorStatus) {
+        case 'PENDING':
+            return 'Your application is currently under review.';
+        case 'APPROVED':
+            return 'You are currently serving as a coordinator.';
+        case 'REJECTED':
+            return 'Your application was not approved. You may reapply after 30 days.';
+        default:
+            return this.profile.isCoordinator === 'yes' ?
+                'Your request to become a coordinator has been submitted.' :
+                'Toggle the switch to apply for a coordinator position.';
+    }
+  }
+
+  getStatusClass(): string {
+    if (!this.profile) return '';
+
+    switch (this.profile.coordinatorStatus) {
+        case 'PENDING':
+            return 'status-pending';
+        case 'APPROVED':
+            return 'status-approved';
+        case 'REJECTED':
+            return 'status-rejected';
+        default:
+            return '';
+    }
+  }
+
+  onCoordinatorChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    if (this.profile) {
+        this.profile.isCoordinator = select.value as 'yes' | 'no';
+        this.savePersonalInfo();
+    }
+  }
+
+  getInitials(name: string): string {
+    if (!name) return '';
+    return name
+        .split(' ')
+        .slice(0, 2)
+        .map(word => word.charAt(0))
+        .join('')
+        .toUpperCase();
   }
 }
