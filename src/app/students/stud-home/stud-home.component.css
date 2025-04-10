@@ -668,3 +668,12 @@ border-left: 4px solid #6366f1;
         gap: 0.5rem;
     }
 }
+
+.status-result {
+    background-color: #818cf8;
+    color: white;
+}
+
+.mr-1 {
+    margin-right: 0.25rem;
+}

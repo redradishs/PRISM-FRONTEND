@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
@@ -67,17 +67,31 @@ interface PasswordData {
   styleUrls: ['./profile-inst.component.css']
 })
 export class ProfileInstComponent implements OnInit {
-  profile: any;
+  // Initialize all properties with default values
+  profile: any = {
+    name: '',
+    email: '',
+    role: '',
+    avatarUrl: '',
+    bio: '',
+    department: '',
+    position: '',
+    isCoordinator: 'no',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+  
   teachingSummary = {
     classCounts: 0,
     assessmentCounts: 0,
     studentCounts: 0,
-  }
+  };
+  
   userId: string = '';
   activeTab = 'personal';
   isMobile = false;
   
-  // Password related properties
+  // Password related properties with defaults
   showCurrentPassword = false;
   showNewPassword = false;
   showConfirmPassword = false;
@@ -87,8 +101,9 @@ export class ProfileInstComponent implements OnInit {
     confirmPassword: ''
   };
 
-  // Add property to store original profile data
   private originalProfile: InstructorProfile | null = null;
+
+  @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
 
   recentAssessments: Assessment[] = [
     {
@@ -132,28 +147,30 @@ export class ProfileInstComponent implements OnInit {
     { id: '3', name: 'BSIT 3C', students: 45, avgScore: 88, completionRate: 90 },
   ];
 
-  constructor(private api: ApiService, private auth: AuthService, private router: Router) {
-  }
+  constructor(private api: ApiService, private auth: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     this.checkMobile();
     window.addEventListener('resize', () => this.checkMobile());
 
+    // Chain the API calls
     this.auth.getCurrentUser().subscribe((user) => {
-      this.userId = user.id;
-      this.getProfile(this.userId);
-      this.getTeachingSummary(this.userId); 
-      console.log('User ID:', this.userId);
-      });
+      if (user) {
+        this.userId = user.id;
+        this.loadProfileData();
+      }
+    });
   }
 
-  // Modify getProfile to store original data
-  getProfile(id: string) {
+  private loadProfileData(): void {
+    // Load profile data first
     this.auth.getCurrentProfile(this.userId).subscribe({
       next: (resp: any) => {
-        this.profile = resp.data;
+        this.profile = { ...this.profile, ...resp.data }; // Merge with defaults
         this.originalProfile = { ...resp.data };
-        console.log(resp.data);
+        
+        // Then load teaching summary
+        this.loadTeachingSummary();
       },
       error: (error) => {
         console.error('Error fetching profile:', error);
@@ -161,7 +178,7 @@ export class ProfileInstComponent implements OnInit {
     });
   }
 
-  getTeachingSummary(id: string) {
+  private loadTeachingSummary(): void {
     this.api.getTeachingSummary(this.userId).subscribe({
       next: (resp: any) => {
         this.teachingSummary = resp.data;
@@ -169,7 +186,7 @@ export class ProfileInstComponent implements OnInit {
       error: (error) => {
         console.error('Error fetching teaching summary:', error);
       }
-      });
+    });
   }
 
   checkMobile(): void {
@@ -333,8 +350,9 @@ export class ProfileInstComponent implements OnInit {
   }
 
   toggleSidebar(): void {
-    // Handle sidebar toggle
-    console.log('Toggling sidebar');
+    if(this.sidebar){
+      this.sidebar.toggleSidebar();
+    }
   }
 
   onCoordinatorToggle(event: Event): void {

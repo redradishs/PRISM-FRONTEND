@@ -15,7 +15,6 @@ import { Subscription } from 'rxjs';
 import { StudentService } from '../../services/student.service';
 import { AuthService } from '../../services/auth.service';
 
-// Define question types for better type checking
 interface Question {
   id: string;
   type: 'multiple-choice' | 'true-false' | 'short-answer' | 'enumeration';

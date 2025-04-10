@@ -1,0 +1,224 @@
+import { Component, HostListener, ViewChild, OnInit } from '@angular/core';
+import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
+import { CommonModule } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { ApiService } from '../../services/api.service';
+import { StudentService } from '../../services/student.service';
+
+interface Question {
+  questionId: string;
+  questionText: string;
+  type: string;
+  points: number;
+  pointsEarned: number;
+  isCorrect: boolean;
+  studentAnswer: string | string[];
+  correctAnswer: string | string[];
+  options?: string[];
+}
+
+interface AssessmentResult {
+  assessmentTitle: string;
+  score: number;
+  totalItems: number;
+  correctAnswers: number;
+  incorrectAnswers: number;
+  passingScore: number;
+  submittedAt: string;
+  passed: boolean;
+  status: string;
+  questions: Question[];
+  questionTypes: {
+    type: string;
+    total: number;
+    correct: number;
+    percentage: number;
+  }[];
+  ranking: {
+    rank: number;
+    totalStudents: number;
+    submittedCount: number;
+    percentile: number;
+  };
+  statistics: {
+    classAverage: number;
+    topScore: number;
+    timeSpent: {
+      raw: number;
+      formatted: string;
+    };
+  };
+}
+
+@Component({
+  selector: 'app-stude-assessmentresult',
+  standalone: true,
+  imports: [SidebarComponent, CommonModule],
+  templateUrl: './stude-assessmentresult.component.html',
+  styleUrl: './stude-assessmentresult.component.css'
+})
+export class StudeAssessmentresultComponent implements OnInit {
+  isMobile = window.innerWidth < 768;
+  activeTab = 'overview';
+  currentQuestionIndex = 0;
+  Math = Math;
+  String = String;
+
+  assignedAssessmentId: string = '';
+  userId: string = '';
+  result!: AssessmentResult;
+  questionType: any;
+  
+  questions: any[] = [];
+  isFinished = false;
+  
+  @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
+  
+  constructor(private auth: AuthService, private api: StudentService, private router: Router) {
+    const navigation = this.router.getCurrentNavigation();
+    if(navigation?.extras.state) {
+      this.assignedAssessmentId = navigation.extras.state['assessmentId'];
+      console.log('Assigned Assessment ID:', this.assignedAssessmentId);
+    } else {
+      console.error('No assigned assessment ID found in the router state.');
+      this.router.navigate(['/student/dashboard']);
+    }
+  }
+
+  ngOnInit() {
+    this.checkMobile();
+
+    this.auth.getCurrentUser().subscribe(user => {
+      this.userId = user.id;
+      this.getResult();
+      this.getPerformancePerQuestion();
+      console.log('User ID:', this.userId);
+    });
+  }
+
+  getResult() {
+    this.api.getResultData(this.userId, this.assignedAssessmentId).subscribe({
+      next: (resp: any) => {
+        if (resp.remarks === 'Success') {
+          this.result = resp.data;
+          if(this.result.status === 'completed') {
+            this.viewAllQuestions();
+            this.isFinished = true;
+          }
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching assessment result:', error);
+      }
+    })
+  }
+
+  getPerformancePerQuestion() {
+    this.api.getPerformanceData(this.userId, this.assignedAssessmentId).subscribe({
+      next: (resp: any) => {
+        if (resp.remarks === 'Success') {
+          this.questionType = resp.data;
+          console.log('Performance per question:', this.questionType);
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching performance data:', error);
+      }
+    })
+  }
+
+  viewAllQuestions() {
+    this.api.getQuestionOverview(this.userId, this.assignedAssessmentId).subscribe({
+      next: (resp: any) => {
+        if (resp.remarks === 'Success') {
+          this.questions = resp.data;
+          console.log('Question overview:', resp.data);
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching question overview:', error);
+      }
+    })
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.checkMobile();
+  }
+
+  checkMobile() {
+    this.isMobile = window.innerWidth < 768;
+  }
+
+  toggleSidebar() {
+    if (this.sidebar) {
+      this.sidebar.toggleSidebar();
+    }
+  }
+
+  setActiveTab(tab: string) {
+    this.activeTab = tab;
+  }
+
+  handleNextQuestion() {
+    if (this.currentQuestionIndex < this.result.questions.length - 1) {
+      this.currentQuestionIndex++;
+    }
+
+  }
+
+  handlePreviousQuestion() {
+    if (this.currentQuestionIndex > 0) {
+      this.currentQuestionIndex--;
+    }
+  }
+
+  calculateProgress(percentage: number): string {
+    return `${percentage}%`;
+  }
+
+  getQuestionTypeIcon(type: string): string {
+    switch (type.toLowerCase()) {
+      case 'multiple-choice':
+        return 'fa-list-ul';
+      case 'enumeration':
+        return 'fa-list-ol';
+      default:
+        return 'fa-question';
+    }
+  }
+
+  getFriendlyTypeName(type: string): string {
+    return type.split('-').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+  }
+
+  formatAnswer(answer: string | string[]): string {
+    if (Array.isArray(answer)) {
+      return answer.join(', ');
+    }
+    return answer;
+  }
+  
+  scrollToQuestion(index: number) {
+    const element = document.getElementById(`question-${index}`);
+    if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  calculatePercentile(rank: number, totalStudents: number): number {
+    if (totalStudents <= 1) return 100;
+    return Math.round(((totalStudents - rank) / (totalStudents - 1)) * 100);
+  }
+
+  goAssessment() {
+    this.router.navigate(['/student/history']);
+  }
+
+  goHome() {
+    this.router.navigate(['/student/dashboard']);
+  }
+}

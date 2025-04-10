@@ -78,7 +78,8 @@
                 <div class="assessments">
                     <div class="assessments-header">
                         <h1>Ongoing Assessments</h1>
-                        <button class="view-all">View All <i class="fas fa-chevron-right"></i></button>
+                        <button (click)="viewAll()" class="view-all">View All <i
+                                class="fas fa-chevron-right"></i></button>
                     </div>
                     <div class="assessments-list">
                         <div *ngFor="let ass of onGoingAssessments" class="assessment-card">
@@ -92,7 +93,8 @@
                                     <div class="progress" [style.width.%]="calculateProgress(ass)"></div>
                                 </div>
                                 <div class="assessment-info">
-                                    <p class="due-date">Due: {{ass.dueDate | date}} {{ass.dueTime}}</p>
+                                    <p class="due-date">Due: {{ass.dueDate | date: 'MMM d, y h:mm a'}} {{ass.dueTime}}
+                                    </p>
                                     <p class="progress-text">Progress: {{calculateProgress(ass) |
                                         number:'1.0-0'}}%</p>
                                 </div>

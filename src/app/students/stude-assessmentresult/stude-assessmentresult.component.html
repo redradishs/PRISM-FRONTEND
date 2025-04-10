@@ -1,0 +1,358 @@
+<div class="min-h-screen bg-gray-50">
+    <div class="flex">
+        <app-sidebar></app-sidebar>
+        <div class="flex-1 ml-0 md:ml-20">
+            <header class="bg-white shadow-sm">
+                <div class="max-w-7xl mx-auto py-2 md:py-4 px-3 md:px-4 sm:px-6 lg:px-8">
+                    <div class="flex items-center justify-between">
+                        <h1 class="text-xl md:text-2xl font-semibold text-gray-900">Assessment Result</h1>
+                        <button *ngIf="isMobile" (click)="toggleSidebar()"
+                            class="p-1.5 md:p-2 rounded-md hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-bars w-5 md:w-6 h-5 md:h-6"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="max-w-7xl mx-auto px-4 py-5">
+                <div *ngIf="!result" class="flex items-center justify-center min-h-[400px]">
+                    <div class="text-center">
+                        <i class="fas fa-spinner fa-spin text-4xl text-indigo-600 mb-4"></i>
+                        <p class="text-gray-600">Loading assessment result...</p>
+                    </div>
+                </div>
+
+
+                <div class="flex justify-between items-center px-4 bugoy">
+                    <h1>Midterm Exam: NETWORKING 2 ASSESSMENT</h1>
+
+                    <div class="flex gap-4">
+                        <button (click)="goAssessment()">
+                            Assessments
+                        </button>
+
+                        <button (click)="goHome()">
+                            Home
+                        </button>
+                    </div>
+
+
+                </div>
+
+
+                <ng-container *ngIf="result">
+                    <div class="score-card">
+                        <div class="score-gradient"></div>
+                        <div class="score-content">
+                            <div class="score-grid">
+                                <!-- Score and Progress Section -->
+                                <div class="score-main-section">
+                                    <div class="score-header-group">
+                                        <div class="icon-circle">
+                                            <i
+                                                [class]="result.passed ? 'fas fa-trophy icon-success' : 'fas fa-trophy icon-error'"></i>
+                                        </div>
+                                        <div class="score-info">
+                                            <div class="score-title-group">
+                                                <h2 class="score-value">{{(result.score / result.totalItems *
+                                                    100).toFixed(0)}}%</h2>
+                                                <span class="status-badge" [class.status-passed]="result.passed"
+                                                    [class.status-failed]="!result.passed">
+                                                    {{result.passed ? 'Passed' : 'Failed'}}
+                                                </span>
+                                            </div>
+                                            <p class="score-detail">
+                                                You scored {{result.score}} out of {{result.totalItems}} points
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="progress-section">
+                                        <div class="progress-group">
+                                            <div class="progress-labels">
+                                                <span>Your Score</span>
+                                                <span>{{(result.score / result.totalItems * 100).toFixed(0)}}%</span>
+                                            </div>
+                                            <div class="progress-bar">
+                                                <div class="progress-indicator white"
+                                                    [style.width.%]="(result.score / result.totalItems * 100)"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="progress-group">
+                                            <div class="progress-labels">
+                                                <span>Passing Score</span>
+                                                <span>{{result.passingScore}}%</span>
+                                            </div>
+                                            <div class="progress-bar">
+                                                <div class="progress-indicator yellow"
+                                                    [style.width.%]="result.passingScore"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Stats Cards -->
+                                <div class="stats-grid">
+                                    <div class="stat-card">
+                                        <div class="stat-value">{{result.ranking.rank}}</div>
+                                        <div class="stat-label">Your Rank</div>
+                                        <div class="stat-detail">out of {{result.ranking.totalStudents}} students</div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-value">{{calculatePercentile(result.ranking.rank,
+                                            result.ranking.totalStudents)}}%</div>
+                                        <div class="stat-label">Percentile</div>
+                                        <div class="stat-detail">better than {{calculatePercentile(result.ranking.rank,
+                                            result.ranking.totalStudents)}}% of students
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Meta Information -->
+                            <div class="meta-grid">
+                                <div class="meta-item">
+                                    <i class="fas fa-calendar meta-icon"></i>
+                                    <div class="meta-text">
+                                        <span class="meta-label">Date: </span>
+                                        <span>{{result.submittedAt | date: 'MMM d, y, h:mm a'}}</span>
+                                    </div>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-clock meta-icon"></i>
+                                    <div class="meta-text">
+                                        <span class="meta-label">Time Taken: </span>
+                                        <span>{{result.statistics.timeSpent.formatted}}</span>
+                                    </div>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-check meta-icon"></i>
+                                    <div class="meta-text">
+                                        <span class="meta-label">Correct: </span>
+                                        <span>{{result.correctAnswers}} of {{result.totalItems}}</span>
+                                    </div>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-times meta-icon"></i>
+                                    <div class="meta-text">
+                                        <span class="meta-label">Incorrect: </span>
+                                        <span>{{result.incorrectAnswers}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Overview Section -->
+                    <section class="performance-section">
+                        <div class="performance-grid">
+                            <!-- Performance Breakdown Card -->
+                            <div class="performance-card">
+                                <div class="card-header">
+                                    <h3 class="section-title">
+                                        <i class="fas fa-chart-bar icon-primary"></i>
+                                        Performance Breakdown
+                                    </h3>
+                                    <p class="section-subtitle">Analysis of your performance by question type</p>
+                                </div>
+                                <div class="card-body">
+                                    <div *ngFor="let type of questionType" class="performance-item">
+                                        <div class="performance-header">
+                                            <div class="type-info">
+                                                <i class="fas {{getQuestionTypeIcon(type.type)}} icon-primary"></i>
+                                                <span class="type-name">{{getFriendlyTypeName(type.type)}}</span>
+                                            </div>
+                                            <span class="percentage-badge" [class.success]="type.percentage >= 80"
+                                                [class.warning]="type.percentage >= 60 && type.percentage < 80"
+                                                [class.danger]="type.percentage < 60">
+                                                {{type.percentage}}%
+                                            </span>
+                                        </div>
+                                        <div class="score-info">
+                                            <span>{{type.correctAnswers}} correct out of {{type.totalQuestions}}</span>
+                                            <span>{{type.percentage}}%</span>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" [style.width]="type.percentage + '%'"
+                                                [class.success]="type.percentage >= 80"
+                                                [class.warning]="type.percentage >= 60 && type.percentage < 80"
+                                                [class.danger]="type.percentage < 60">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Ranking & Comparison Card -->
+                            <div class="performance-card ranking-card">
+                                <div class="card-header">
+                                    <h3 class="section-title">
+                                        <i class="fas fa-trophy icon-primary"></i>
+                                        Ranking & Comparison
+                                    </h3>
+                                    <p class="section-subtitle">How you compare with other students</p>
+                                </div>
+                                <div class="card-body">
+                                    <div class="rank-circle-container">
+                                        <div class="rank-circle">
+                                            <div class="circle-background"></div>
+                                            <div class="circle-progress"
+                                                [style.transform]="'rotate(' + (result.ranking.percentile * 3.6) + 'deg)'">
+                                            </div>
+                                            <div class="circle-content">
+                                                <div class="percentile">{{calculatePercentile(result.ranking.rank,
+                                                    result.ranking.totalStudents)}}%</div>
+                                                <div class="percentile-label">Percentile</div>
+                                                <div class="rank-info">
+                                                    <i class="fas fa-trophy icon-gold"></i>
+                                                    <span>Rank {{result.ranking.rank}} of
+                                                        {{result.ranking.totalStudents}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="comparison-grid">
+                                        <div class="comparison-item">
+                                            <div class="comparison-icon">
+                                                <i class="fas fa-users"></i>
+                                            </div>
+                                            <div class="comparison-content">
+                                                <div class="comparison-label">Class Average</div>
+                                                <div class="comparison-value">{{result.statistics.classAverage}}</div>
+                                                <div class="comparison-diff"
+                                                    [class.positive]="result.score > result.statistics.classAverage"
+                                                    [class.negative]="result.score < result.statistics.classAverage">
+                                                    <i
+                                                        [class]="result.score > result.statistics.classAverage ? 'fas fa-arrow-up' : 'fas fa-arrow-down'"></i>
+                                                    <span>{{Math.abs(result.score - result.statistics.classAverage)}}
+                                                        points
+                                                        difference</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="comparison-item">
+                                            <div class="comparison-icon">
+                                                <i class="fas fa-crown"></i>
+                                            </div>
+                                            <div class="comparison-content">
+                                                <div class="comparison-label">Top Score</div>
+                                                <div class="comparison-value">{{result.statistics.topScore}}</div>
+                                                <div class="comparison-diff negative"
+                                                    *ngIf="result.score < result.statistics.topScore">
+                                                    <i class="fas fa-arrow-down"></i>
+                                                    <span>{{result.statistics.topScore - result.score}} points from
+                                                        top</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div *ngIf="!isFinished" class="notify">
+                        <h1>The Assessment data will be available once the assessment is completed</h1>
+                    </div>
+
+                    <!-- Question Review Section -->
+                    <section *ngIf="isFinished" class="questions-section">
+                        <h2 class="review-title">
+                            <i class="fas fa-clipboard-list mr-2"></i>
+                            Question Review
+                        </h2>
+
+                        <div class="question-nav-container">
+                            <div class="question-grid">
+                                <button *ngFor="let question of questions; let i = index" (click)="scrollToQuestion(i)"
+                                    class="question-nav-button" [class.current]="currentQuestionIndex === i"
+                                    [class.correct]="question.isCorrect" [class.incorrect]="!question.isCorrect">
+                                    {{i + 1}}
+                                </button>
+                            </div>
+
+                            <div class="question-legend">
+                                <div class="legend-item">
+                                    <div class="legend-indicator correct"></div>
+                                    <span>Correct</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-indicator incorrect"></div>
+                                    <span>Incorrect</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Individual Question Cards -->
+                        <div class="questions-container">
+                            <div *ngFor="let question of questions; let i = index" class="question-card"
+                                [id]="'question-' + i">
+                                <div class="question-card-header">
+                                    <div class="question-info">
+                                        <span class="question-number">Question {{i + 1}}</span>
+                                        <div class="points-badge">
+                                            <i class="fas fa-star"></i>
+                                            <span>{{question.points}} points</span>
+                                        </div>
+                                        <div class="type-badge">
+                                            <i [class]="'fas ' + getQuestionTypeIcon(question.type)"></i>
+                                            <span>{{getFriendlyTypeName(question.type)}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="status-badge" [class.correct]="question.isCorrect"
+                                        [class.incorrect]="!question.isCorrect">
+                                        <i class="fas" [class.fa-check-circle]="question.isCorrect"
+                                            [class.fa-times-circle]="!question.isCorrect"></i>
+                                        {{question.isCorrect ? 'Correct' : 'Incorrect'}}
+                                    </div>
+                                </div>
+
+                                <div class="question-card-content">
+                                    <div class="question-text">{{question.questionText}}</div>
+
+                                    <div class="answers-section">
+                                        <!-- Options display for multiple choice -->
+                                        <div *ngIf="question.type === 'multiple-choice'" class="options-grid">
+                                            <div *ngFor="let option of question.options; let j = index"
+                                                class="option-item"
+                                                [class.selected]="question.studentAnswer === String.fromCharCode(65 + j)"
+                                                [class.correct]="question.correctAnswer === String.fromCharCode(65 + j)">
+                                                <span class="option-letter">{{String.fromCharCode(65 + j)}}</span>
+                                                <span class="option-text">{{option}}</span>
+                                                <i *ngIf="question.correctAnswer === String.fromCharCode(65 + j)"
+                                                    class="fas fa-check text-green-600 ml-2"></i>
+                                            </div>
+                                        </div>
+
+                                        <!-- Answer display for enumeration -->
+                                        <div *ngIf="question.type === 'enumeration'" class="answer-container">
+                                            <div class="answer-header">
+                                                <i class="fas fa-user"></i>
+                                                <h4>Your Answer</h4>
+                                            </div>
+                                            <div class="answer-content" [class.incorrect]="!question.isCorrect">
+                                                {{formatAnswer(question.studentAnswer)}}
+                                            </div>
+
+                                            <div *ngIf="!question.isCorrect" class="answer-header correct mt-4">
+                                                <i class="fas fa-check-circle"></i>
+                                                <h4>Correct Answer</h4>
+                                            </div>
+                                            <div *ngIf="!question.isCorrect" class="answer-content correct">
+                                                {{formatAnswer(question.correctAnswer)}}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </ng-container>
+            </main>
+        </div>
+    </div>
+</div>

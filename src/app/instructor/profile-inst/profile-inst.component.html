@@ -23,15 +23,15 @@
                             <div class="profile-info">
                                 <div class="avatar-container">
                                     <div class="avatar">
-                                        <ng-container *ngIf="profile.avatarUrl; else initialsAvatar">
-                                            <img [src]="profile.avatarUrl" [alt]="profile.name">
+                                        <ng-container *ngIf="profile?.avatarUrl; else initialsAvatar">
+                                            <img [src]="profile.avatarUrl" [alt]="profile.name || 'User'">
                                             <div class="avatar-overlay">
                                                 <i class="fas fa-camera"></i>
                                             </div>
                                         </ng-container>
                                         <ng-template #initialsAvatar>
                                             <div class="initials-avatar">
-                                                {{ getInitials(profile.name) }}
+                                                {{ getInitials(profile.name || '') }}
                                             </div>
                                         </ng-template>
                                     </div>
@@ -39,17 +39,18 @@
 
                                 <div class="profile-details">
                                     <div class="name-role">
-                                        <h2>{{profile.name}}</h2>
+                                        <h2>{{profile.name || 'Loading...'}}</h2>
                                         <div class="email">
                                             <i class="fas fa-at"></i>
-                                            <span>{{profile.email}}</span>
+                                            <span>{{profile.email || 'Loading...'}}</span>
                                         </div>
                                     </div>
 
                                     <div class="role-badges">
                                         <span class="badge instructor-badge">
                                             <i class="fas fa-users"></i>
-                                            {{profile.role.charAt(0).toUpperCase() + profile.role.slice(1)}}
+                                            {{(profile.role || 'instructor').charAt(0).toUpperCase() + (profile.role ||
+                                            'instructor').slice(1)}}
                                         </span>
                                     </div>
 
@@ -302,7 +303,7 @@
                             <div class="grid-layout">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h3><i class="fas fa-chart-bar"></i> Teaching Overview</h3>
+                                        <h3><i class="fas fa-chart-bar icon"></i> Teaching Overview</h3>
                                         <p>Your teaching performance and class statistics</p>
                                     </div>
                                     <div class="card-body">

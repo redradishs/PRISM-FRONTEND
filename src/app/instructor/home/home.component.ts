@@ -122,9 +122,13 @@ export class HomeComponent implements OnInit {
     })
   }
 
+  viewAll(){
+    this.router.navigate(['/instructor/assessment']);
+  }
+
   calculateProgress(assessment: AssessmentProgress): number {
     const totalStudents = assessment.classes[0].totalStudents;
-    const gradedCount = assessment.classes[0].stats.graded;
+    const gradedCount = assessment.classes[0].stats.submitted;
     return totalStudents > 0 ? (gradedCount / totalStudents) * 100 : 0;
   }
 

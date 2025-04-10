@@ -76,9 +76,33 @@ export class StudHomeComponent {
   }
 
   gotoAssessments(id: string) {
-    this.router.navigate(['/student/confirmation'], {
-      state: { assessmentId: id }
-    });
+    const assessment = this.onGoingAssessments.find(a => a.assignedAssessmentId === id);
+    if (assessment && assessment.hasSubmitted) {
+      this.router.navigate(['/student/assessment/result'], {
+        state: { assessmentId: id }
+      });
+    } else {
+      this.router.navigate(['/student/confirmation'], {
+        state: { assessmentId: id }
+      });
+    }
     console.log("I received this id", id);
+  }
+
+  getStatusClass(assessment: any): string {
+    if (assessment.hasSubmitted) {
+      return 'status-result';
+    }
+    
+    switch (assessment.attemptStatus.toLowerCase()) {
+      case 'ongoing':
+        return 'status-ongoing';
+      case 'pending':
+        return 'status-pending';
+      case 'completed':
+        return 'status-completed';
+      default:
+        return '';
+    }
   }
 }

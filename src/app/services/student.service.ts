@@ -34,4 +34,15 @@ export class StudentService {
   submitAssessment(data: any) {
     return this.http.post(`${this.apiUrl}/submitAssessment`, data);
   }
+
+  //result page
+  getResultData(assessmentId: string, studentId: string) {
+    return this.http.get(`${this.apiUrl}/assessment/result/${assessmentId}/${studentId}`);
+  }
+  getPerformanceData(assessmentId: string, studentId: string) {
+    return this.http.get(`${this.apiUrl}/assessment/performance/${assessmentId}/${studentId}`);
+  }
+  getQuestionOverview(assessmentId: string, studentId: string) {
+    return this.http.get(`${this.apiUrl}/assessment/review/${assessmentId}/${studentId}`);
+  }
 }

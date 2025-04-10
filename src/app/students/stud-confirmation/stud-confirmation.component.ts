@@ -125,4 +125,11 @@ export class StudConfirmationComponent {
       state: { assessmentId: this.assignedAssessmentId },
     });
   }
+
+  result() {
+    console.log('Viewing result');
+    this.router.navigate(['/student/assessment/result'], {
+      state: { assessmentId: this.assignedAssessmentId },
+    });
+  }
 }

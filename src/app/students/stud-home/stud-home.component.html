@@ -99,17 +99,25 @@
                                                 <p class="ongoing-code">{{assessment.courseCode || 'No Code'}}</p>
                                             </div>
                                         </div>
-                                        <span class="ongoing-status"
-                                            [class.status-progress]="assessment.status === 'ongoing'"
-                                            [class.status-started]="assessment.status === 'started'"
-                                            [class.status-pending]="assessment.status === 'not_started'">
-                                            {{assessment.status === 'ongoing' ? 'In Progress' :
-                                            assessment.status === 'started' ? 'Started' : 'Not Started'}}
+                                        <span class="ongoing-status" [ngClass]="{
+                                                'status-result': assessment.hasSubmitted,
+                                                'status-progress': !assessment.hasSubmitted && assessment.attemptStatus === 'ongoing',
+                                                'status-started': !assessment.hasSubmitted && assessment.attemptStatus === 'started',
+                                                'status-pending': !assessment.hasSubmitted && assessment.attemptStatus === 'not_started'
+                                            }">
+                                            <ng-container *ngIf="assessment.hasSubmitted">
+                                                <i class="fas fa-chart-bar mr-1"></i>
+                                                View Result
+                                            </ng-container>
+                                            <ng-container *ngIf="!assessment.hasSubmitted">
+                                                {{assessment.attemptStatus === 'ongoing' ? 'In Progress' :
+                                                assessment.attemptStatus === 'started' ? 'Started' : 'Not Started'}}
+                                            </ng-container>
                                         </span>
                                     </div>
 
                                     <div class="ongoing-footer">
-                                        <span>Due: {{assessment.endDate | date:'MMM d, yyyy HH:mm'}}</span>
+                                        <span>Due: {{assessment.endDate | date:'MMM d, yyyy HH:mm a'}}</span>
                                     </div>
                                 </div>
 
@@ -117,6 +125,8 @@
                                     View All Assessments
                                     <i class="fas fa-chevron-right"></i>
                                 </a>
+
+
                             </div>
                         </div>
 

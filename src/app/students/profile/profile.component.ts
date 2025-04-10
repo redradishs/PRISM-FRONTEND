@@ -70,8 +70,15 @@ export class ProfileComponent implements OnInit {
     name: '',
     email: '',
     role: 'student',
-    createdAt: '',
-    updatedAt: '',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    studentId: '',
+    program: '',
+    year: '',
+    block: '',
+    bio: '',
+    phone: '',
+    avatarUrl: '',
     assessmentsTaken: 0,
     averageScore: 0,
     completionRate: 0
@@ -152,44 +159,55 @@ export class ProfileComponent implements OnInit {
       next: (user) => {
         if (user?.id) {
           this.userId = user.id;
-          this.loadProfile();
+          this.loadProfileData();
         } else {
-          console.error('No user ID found');
+          this.handleError('No user ID found');
+          this.isLoading = false;
         }
       },
       error: (error) => {
         console.error('Error getting current user:', error);
+        this.handleError('Failed to load user data');
+        this.isLoading = false;
       }
     });
   }
 
-  loadProfile(): void {
+  private loadProfileData(): void {
     this.isLoading = true;
+    
     this.auth.getCurrentProfile(this.userId).subscribe({
       next: (resp: any) => {
         if (resp?.data) {
+          // Merge with defaults while preserving the structure
           this.profile = {
             ...this.profile,
-            program: resp.data.program || '',
-            year: resp.data.yearLevel || '',
-            block: resp.data.block || '',
-            ...resp.data
+            ...resp.data,
+            program: resp.data.program || this.profile.program,
+            year: resp.data.yearLevel || this.profile.year,
+            block: resp.data.block || this.profile.block
           };
           this.originalProfile = { ...this.profile };
+          
+          // Load additional data if needed
+          this.loadPerformanceData();
         }
         this.isLoading = false;
       },
       error: (error) => {
         console.error('Error loading profile:', error);
-        this.profile = {
-          ...this.profile,
-          program: 'BSIT',
-          year: '1',
-          block: 'A'
-        };
+        this.handleError('Failed to load profile data');
         this.isLoading = false;
       }
     });
+  }
+
+  private loadPerformanceData(): void {
+    // Add any additional API calls for performance data here
+    // This is where you'd load real data for:
+    // - recentAssessments
+    // - upcomingAssessments
+    // - subjectPerformance
   }
 
   private handleError(message: string): void {
