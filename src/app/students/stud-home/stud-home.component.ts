@@ -89,6 +89,16 @@ export class StudHomeComponent {
     console.log("I received this id", id);
   }
 
+  gotoResult(id: string) {
+    const assessment = this.onGoingAssessments.find(a => a.assignedAssessmentId === id);
+    if (assessment && assessment.hasSubmitted) {
+      this.router.navigate(['/student/assessment/result'], {
+        state: { assessmentId: id }
+      });
+    }
+    console.log("You did not take this assessment, you will not be redirected to the result page.");
+  }
+
   getStatusClass(assessment: any): string {
     if (assessment.hasSubmitted) {
       return 'status-result';

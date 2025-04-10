@@ -168,14 +168,22 @@
                                     <p *ngIf="completedAssessments.length === 0" class="text-center text-gray-500">No
                                         completed assessments</p>
                                     <div *ngFor="let assessment of completedAssessments" class="ongoing-card">
-                                        <div class="upcoming-card">
-                                            <div>
+                                        <div (click)="gotoResult(assessment.assignedAssessmentId)"
+                                            class="upcoming-card">
+                                            <div class="flex flex-col">
                                                 <p class="ongoing-title">{{assessment.title}}</p>
                                                 <p class="ongoing-code">{{assessment.courseCode || 'No Code'}}</p>
                                             </div>
-                                            <span class="upcoming-due">Due: {{assessment.endDate | date:'MMM d,
-                                                yyyy HH:mm'}}</span>
-
+                                            <div class="flex flex-col items-end">
+                                                <p class="upcoming-due">Due: {{assessment.endDate | date:'MMM d,
+                                                    yyyy HH:mm'}}</p>
+                                                <p [ngClass]="{'status-result': assessment.hasSubmitted && assessment.attemptStatus === 'submitted', 'status-not-submitted': !assessment.hasSubmitted || assessment.attemptStatus !== 'submitted'}"
+                                                    class="status-badge mt-2">
+                                                    {{assessment.hasSubmitted && assessment.attemptStatus ===
+                                                    'submitted' ?
+                                                    'View Result' : 'Not Submitted'}}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
 
