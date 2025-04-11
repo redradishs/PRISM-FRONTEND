@@ -16,7 +16,7 @@
             </header>
 
             <!-- Main Content -->
-            <div class="p-4 md:p-8 space-y-6">
+            <div class="p-4 md:p-8 space-y-8">
                 <!-- Class Overview Section -->
                 <div class="grid gap-6 md:grid-cols-2">
                     <!-- PRISM Insights Card -->
@@ -60,92 +60,96 @@
                     </div>
                 </div>
 
-
-                <div class="result-card">
-                    <div class="result-header">
-                        <div class="header-title">
-                            <i class="fas fa-user"></i>
-                            <!-- <h2>Complete Result List</h2> -->
-                            <h2>{{className}} - {{classCode}}</h2>
-                        </div>
-                        <div class="search-container">
-                            <input type="text" [(ngModel)]="searchTerm" placeholder="Search students"
-                                class="search-input">
+                <!-- Student List Card -->
+                <div class="card">
+                    <div class="card-header p-4 border-b border-gray-100">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <i class="fas fa-users text-indigo-600 text-lg"></i>
+                                    <h3 class="text-lg font-bold text-gray-800">Student List</h3>
+                                </div>
+                                <p class="text-sm text-gray-500 ml-7">Complete list of student performance</p>
+                            </div>
+                            <div class="flex flex-col sm:flex-row w-full md:w-auto gap-3">
+                                <div class="relative flex-1 sm:max-w-[240px]">
+                                    <input type="text" placeholder="Search students..."
+                                        class="w-full h-10 pl-10 pr-4 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm">
+                                    <i
+                                        class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                </div>
+                                <select
+                                    class="h-10 px-4 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm bg-white min-w-[180px]">
+                                    <option value="all">All Students</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="in_progress">In Progress</option>
+                                    <option value="not_taken">Not Taken</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="table-container">
-                        <table class="result-table">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Block</th>
-                                    <th>Score</th>
-                                    <th>Performance</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let student of classResult">
-                                    <td>{{student.name}}</td>
-                                    <td>{{student.block}} A</td>
-                                    <td>{{student.score}}/{{student.totalScore}}</td>
-                                    <td>
-                                        <div class="performance-container">
-                                            <div class="progress-bar">
-                                                <div class="progress-fill"
-                                                    [style.width]="getProgressWidth(student.score)">
-                                                </div>
-                                            </div>
-                                            <span
-                                                [class]="'performance-status ' + student.performance.toLowerCase().replace(' ', '-')">
-                                                {{student.performance}}
-                                            </span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="pagination">
-                        <button (click)="handlePrevPage()" [disabled]="currentPage === 1" class="pagination-button">
-                            &lt; Previous
-                        </button>
-                        <span class="page-info">Page {{currentPage}} out of {{totalPages}}</span>
-                        <button (click)="handleNextPage()" [disabled]="currentPage === totalPages"
-                            class="pagination-button">
-                            Next &gt;
-                        </button>
-                    </div>
-                </div>
-
-                <div class="analysis-section">
-                    <div class="question-card">
-                        <div class="question-header">
-                            <h2>Detailed Question Analysis</h2>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="question-table">
-                                <thead>
+                    <div class="card-body p-0">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
                                     <tr>
-                                        <th>Question</th>
-                                        <th>Correct</th>
-                                        <th>Incorrect</th>
-                                        <th>Success Rate</th>
+                                        <th
+                                            class="sticky left-0 bg-gray-50 px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[160px] md:min-w-[280px]">
+                                            Name
+                                        </th>
+                                        <th
+                                            class="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[80px] md:min-w-[120px]">
+                                            Block
+                                        </th>
+                                        <th
+                                            class="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[80px] md:min-w-[120px]">
+                                            Score
+                                        </th>
+                                        <th
+                                            class="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px] md:min-w-[140px]">
+                                            Status
+                                        </th>
+                                        <th
+                                            class="px-3 py-2 md:px-6 md:py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px] md:min-w-[140px]">
+                                            Integrity
+                                        </th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr *ngFor="let item of itemAnalysis">
-                                        <td>{{item.questionText}}</td>
-                                        <td>{{item.correctAttempts}}</td>
-                                        <td>{{item.incorrectAttempts}}</td>
-                                        <td>
-                                            <div class="success-rate">
-                                                <div class="rate-bar">
-                                                    <div class="rate-fill" [style.width]="item.performanceRate + '%'">
-                                                    </div>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr *ngFor="let student of filteredStudents" class="hover:bg-gray-50">
+                                        <td class="sticky left-0 bg-white px-3 py-2 md:px-6 md:py-4 whitespace-nowrap">
+                                            <div class="flex items-center gap-2 md:gap-3">
+                                                <div
+                                                    class="w-7 h-7 md:w-9 md:h-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-xs md:text-sm font-medium">
+                                                    {{student.name.charAt(0)}}
                                                 </div>
-                                                <span>{{item.performanceRate}}%</span>
+                                                <span
+                                                    class="font-medium text-sm md:text-base text-gray-900">{{student.name}}</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap">
+                                            <span class="text-sm md:text-base text-gray-900">{{student.block}}</span>
+                                        </td>
+                                        <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap">
+                                            <span class="text-sm md:text-base font-medium"
+                                                [class]="student.score >= 75 ? 'text-green-600' : 'text-red-600'">
+                                                {{student.score}}%
+                                            </span>
+                                        </td>
+                                        <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap">
+                                            <!-- <span
+                                                class="inline-flex px-2 py-1 md:px-3 md:py-1.5 text-xs md:text-sm font-medium rounded-full"
+                                                [class]="student.status === 'completed' ? 'bg-green-100 text-green-800' :
+                                                        student.status === 'in_progress' ? 'bg-yellow-100 text-yellow-800' :
+                                                        'bg-gray-100 text-gray-800'">
+                                                {{student.status | titlecase}}
+                                            </span> -->
+                                        </td>
+                                        <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-right">
+                                            <div class="flex items-center justify-end gap-1 md:gap-2">
+                                                <i class="fas fa-shield-alt text-indigo-600 text-xs md:text-sm"></i>
+                                                <span class="text-sm md:text-base text-gray-500">Verified</span>
                                             </div>
                                         </td>
                                     </tr>
@@ -153,24 +157,365 @@
                             </table>
                         </div>
                     </div>
+                </div>
 
-                    <div class="grid gap-6 md:grid-cols-2">
-                        <div class="student-card">
-                            <h3>Top Performing Students</h3>
-                            <div class="student-list">
-                                <div *ngFor="let student of topPerforming" class="student-item">
-                                    <span>{{student.name}}</span>
-                                    <span class="score">{{student.score}}%</span>
+                <!-- Detailed Question Analysis Card -->
+                <div class="card">
+                    <div class="card-header p-4 border-b border-gray-100">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <i class="fas fa-file-text text-indigo-600 text-lg"></i>
+                                    <h3 class="text-lg font-bold text-gray-800">Detailed Question Analysis</h3>
+                                </div>
+                                <p class="text-sm text-gray-500 ml-7">Performance breakdown by question</p>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <select class="form-select sm:w-auto">
+                                    <option value="all">All Types</option>
+                                    <option value="multiple_choice">Multiple Choice</option>
+                                    <option value="true_false">True/False</option>
+                                    <option value="short_answer">Short Answer</option>
+                                    <option value="enumeration">Enumeration</option>
+                                </select>
+                                <select class="form-select sm:w-auto">
+                                    <option value="all">All Difficulties</option>
+                                    <option value="easy">Easy</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="hard">Hard</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th
+                                            class="sticky left-0 bg-gray-50 px-3 py-2 md:px-6 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider min-w-[200px] md:min-w-[400px]">
+                                            Question
+                                        </th>
+                                        <th
+                                            class="px-3 py-2 md:px-6 md:py-3 text-center text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider min-w-[80px] md:min-w-[120px]">
+                                            Correct
+                                        </th>
+                                        <th
+                                            class="px-3 py-2 md:px-6 md:py-3 text-center text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider min-w-[80px] md:min-w-[120px]">
+                                            Incorrect
+                                        </th>
+                                        <th
+                                            class="px-3 py-2 md:px-6 md:py-3 text-right text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider min-w-[140px] md:min-w-[200px]">
+                                            Success Rate
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr *ngFor="let question of itemAnalysis" class="hover:bg-gray-50">
+                                        <td class="sticky left-0 bg-white px-3 py-2 md:px-6 md:py-4">
+                                            <div class="flex items-start gap-2 md:gap-3">
+                                                <div class="p-1 md:p-1.5 rounded-md bg-indigo-100 shrink-0">
+                                                    <i class="fas text-xs md:text-sm text-indigo-600"
+                                                        [class.fa-check-circle]="question.type === 'multiple_choice'"
+                                                        [class.fa-question-circle]="question.type === 'true_false'"
+                                                        [class.fa-pencil-alt]="question.type === 'short_answer'"
+                                                        [class.fa-list]="question.type === 'enumeration'">
+                                                    </i>
+                                                </div>
+                                                <div>
+                                                    <p class="font-medium text-sm md:text-base">{{question.text}}</p>
+                                                    <div class="flex items-center gap-2 mt-1">
+                                                        <span
+                                                            class="inline-flex px-2 py-0.5 md:px-2.5 md:py-1 text-xs md:text-sm font-medium rounded-full bg-indigo-50 text-indigo-700">
+                                                            {{question.type | titlecase}}
+                                                        </span>
+                                                        <span
+                                                            class="inline-flex px-2 py-0.5 md:px-2.5 md:py-1 text-xs md:text-sm font-medium rounded-full"
+                                                            [class]="question.difficulty === 'easy' ? 'bg-green-100 text-green-800' :
+                                                                    question.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                                                                    'bg-red-100 text-red-800'">
+                                                            {{question.difficulty | titlecase}}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-3 py-2 md:px-6 md:py-4 text-center whitespace-nowrap">
+                                            <span class="text-sm md:text-base text-gray-900">{{question.correct}}</span>
+                                        </td>
+                                        <td class="px-3 py-2 md:px-6 md:py-4 text-center whitespace-nowrap">
+                                            <span
+                                                class="text-sm md:text-base text-gray-900">{{question.incorrect}}</span>
+                                        </td>
+                                        <td class="px-3 py-2 md:px-6 md:py-4 text-right whitespace-nowrap">
+                                            <div class="flex items-center justify-end gap-2 md:gap-3">
+                                                <div class="w-16 md:w-32 bg-gray-100 h-2 md:h-2.5 rounded-full">
+                                                    <div [class]="'h-full rounded-full ' + 
+                                                        (question.successRate >= 75 ? 'bg-green-500' : 
+                                                         question.successRate >= 50 ? 'bg-yellow-500' : 
+                                                         'bg-red-500')" [style.width.%]="question.successRate">
+                                                    </div>
+                                                </div>
+                                                <span class="text-sm md:text-base font-medium" [class]="question.successRate >= 75 ? 'text-green-600' : 
+                                                            question.successRate >= 50 ? 'text-yellow-600' : 
+                                                            'text-red-600'">
+                                                    {{question.successRate}}%
+                                                </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer flex justify-between py-4">
+                        <div class="flex items-center gap-1 text-sm text-gray-500">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Showing 999 questions</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button class="btn btn-outline btn-sm" disabled>
+                                <i class="fas fa-chevron-left mr-1"></i> Previous
+                            </button>
+                            <button class="btn btn-outline btn-sm" disabled>
+                                Next <i class="fas fa-chevron-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Analytics Section -->
+                <div class="space-y-4">
+                    <div class="mb-4">
+                        <div class="flex items-center gap-2 mb-1">
+                            <i class="fas fa-chart-bar text-indigo-600 text-lg"></i>
+                            <h3 class="text-lg font-bold text-gray-800">Performance Analytics</h3>
+                        </div>
+                        <p class="text-sm text-gray-500 ml-7">Overall assessment performance analysis</p>
+                    </div>
+
+                    <div class="grid gap-4 md:grid-cols-2">
+                        <!-- Completion Statistics Card -->
+                        <div class="card h-full bg-white">
+                            <div class="card-header p-4 border-b border-gray-100">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <i class="fas fa-chart-pie text-indigo-600 text-lg"></i>
+                                    <h3 class="text-lg font-bold text-gray-800">Completion Statistics</h3>
+                                </div>
+                                <p class="text-sm text-gray-500 ml-7">Assessment completion breakdown</p>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="flex items-center justify-between">
+                                    <!-- Left side: Large Circle with Percentage -->
+                                    <div class="relative w-40 h-40"> <!-- Removed ml-6 since it's now on the left -->
+                                        <svg class="w-full h-full transform -rotate-90">
+                                            <!-- Background circle -->
+                                            <circle cx="80" cy="80" r="74" stroke="#e0e7ff" stroke-width="10"
+                                                fill="white" class="opacity-25">
+                                            </circle>
+                                            <!-- Progress circle -->
+                                            <circle cx="80" cy="80" r="74" stroke="#4f46e5" stroke-width="10"
+                                                fill="none" stroke-linecap="round" stroke-dasharray="464.96"
+                                                stroke-dashoffset="116.24"
+                                                class="transition-all duration-1000 ease-out">
+                                            </circle>
+                                        </svg>
+                                        <!-- Centered Text -->
+                                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                            <div class="text-4xl font-bold text-indigo-600">75%</div>
+                                            <div class="text-xs text-gray-500 mt-1">Complete</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Right side: Status List -->
+                                    <div class="space-y-3 flex-1 ml-6"> <!-- Added ml-6 for spacing from circle -->
+                                        <div
+                                            class="flex items-center justify-between p-2 bg-white rounded-lg border border-indigo-50">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                                <span class="text-sm font-medium">Completed</span>
+                                            </div>
+                                            <span class="text-sm font-semibold text-green-600">30 (75%)</span>
+                                        </div>
+                                        <div
+                                            class="flex items-center justify-between p-2 bg-white rounded-lg border border-indigo-50">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                                                <span class="text-sm font-medium">In Progress</span>
+                                            </div>
+                                            <span class="text-sm font-semibold text-amber-600">5 (12.5%)</span>
+                                        </div>
+                                        <div
+                                            class="flex items-center justify-between p-2 bg-white rounded-lg border border-indigo-50">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-3 h-3 rounded-full bg-gray-400"></div>
+                                                <span class="text-sm font-medium">Not Started</span>
+                                            </div>
+                                            <span class="text-sm font-semibold text-gray-600">5 (12.5%)</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="student-card">
-                            <h3>Struggling Students</h3>
-                            <div class="student-list">
-                                <div *ngFor="let student of leastPerforming" class="student-item">
-                                    <span>{{student.name}}</span>
-                                    <span class="score struggling">{{student.score}}%</span>
+                        <!-- Score Distribution Card -->
+                        <div class="card h-full">
+                            <div class="card-header p-4 border-b border-gray-100">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <i class="fas fa-chart-bar text-indigo-600 text-lg"></i>
+                                    <h3 class="text-lg font-bold text-gray-800">Score Distribution</h3>
+                                </div>
+                                <p class="text-sm text-gray-500 ml-7">Distribution of student scores</p>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs w-16">90-100%</span>
+                                        <div class="flex-1 bg-gray-100 rounded-full h-2">
+                                            <div class="bg-green-500 h-2 rounded-full" style="width: 80%"></div>
+                                        </div>
+                                        <span class="text-xs w-8">(24)</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs w-16">80-89%</span>
+                                        <div class="flex-1 bg-gray-100 rounded-full h-2">
+                                            <div class="bg-blue-500 h-2 rounded-full" style="width: 60%"></div>
+                                        </div>
+                                        <span class="text-xs w-8">(18)</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs w-16">70-79%</span>
+                                        <div class="flex-1 bg-gray-100 rounded-full h-2">
+                                            <div class="bg-yellow-500 h-2 rounded-full" style="width: 40%"></div>
+                                        </div>
+                                        <span class="text-xs w-8">(12)</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs w-16">60-69%</span>
+                                        <div class="flex-1 bg-gray-100 rounded-full h-2">
+                                            <div class="bg-orange-500 h-2 rounded-full" style="width: 20%"></div>
+                                        </div>
+                                        <span class="text-xs w-8">(6)</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs w-16">&lt;60%</span>
+                                        <div class="flex-1 bg-gray-100 rounded-full h-2">
+                                            <div class="bg-red-500 h-2 rounded-full" style="width: 10%"></div>
+                                        </div>
+                                        <span class="text-xs w-8">(3)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Student Insights Section -->
+                <div class="space-y-4">
+                    <div class="mb-4">
+                        <div class="flex items-center gap-2 mb-1">
+                            <i class="fas fa-users text-indigo-600 text-lg"></i>
+                            <h3 class="text-lg font-bold text-gray-800">Student Insights</h3>
+                        </div>
+                        <p class="text-sm text-gray-500 ml-7">Detailed analysis of student performance</p>
+                    </div>
+
+                    <div class="grid gap-4 md:grid-cols-2">
+                        <!-- Top Performers Card -->
+                        <div class="card">
+                            <div class="card-header p-4 border-b border-gray-100">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <i class="fas fa-star text-indigo-600 text-lg"></i>
+                                    <h3 class="text-lg font-bold text-gray-800">Top Performing Students</h3>
+                                </div>
+                                <p class="text-sm text-gray-500 ml-7">Students with the highest scores</p>
+                            </div>
+                            <div class="card-body p-6">
+                                <div class="space-y-4">
+                                    <div class="performer-card">
+                                        <div class="rank-badge">1</div>
+                                        <div class="avatar">J</div>
+                                        <div class="flex-1">
+                                            <p class="font-medium">John Doe</p>
+                                            <p class="text-sm text-gray-500">Block A</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="font-bold text-green-600">98%</p>
+                                            <p class="text-sm text-gray-500">49/50</p>
+                                        </div>
+                                    </div>
+                                    <div class="performer-card">
+                                        <div class="rank-badge">2</div>
+                                        <div class="avatar">M</div>
+                                        <div class="flex-1">
+                                            <p class="font-medium">Mary Smith</p>
+                                            <p class="text-sm text-gray-500">Block B</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="font-bold text-green-600">96%</p>
+                                            <p class="text-sm text-gray-500">48/50</p>
+                                        </div>
+                                    </div>
+                                    <div class="performer-card">
+                                        <div class="rank-badge">3</div>
+                                        <div class="avatar">R</div>
+                                        <div class="flex-1">
+                                            <p class="font-medium">Robert Johnson</p>
+                                            <p class="text-sm text-gray-500">Block A</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="font-bold text-green-600">94%</p>
+                                            <p class="text-sm text-gray-500">47/50</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Struggling Students Card -->
+                        <div class="card">
+                            <div class="card-header p-4 border-b border-gray-100">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <i class="fas fa-exclamation-triangle text-indigo-600 text-lg"></i>
+                                    <h3 class="text-lg font-bold text-gray-800">Struggling Students</h3>
+                                </div>
+                                <p class="text-sm text-gray-500 ml-7">Students who may need additional support</p>
+                            </div>
+                            <div class="card-body p-6">
+                                <div class="space-y-4">
+                                    <div class="performer-card">
+                                        <div class="avatar">A</div>
+                                        <div class="flex-1">
+                                            <p class="font-medium">Alice Brown</p>
+                                            <p class="text-sm text-gray-500">Block C</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="font-bold text-red-600">45%</p>
+                                            <p class="text-sm text-gray-500">23/50</p>
+                                        </div>
+                                    </div>
+                                    <div class="performer-card">
+                                        <div class="avatar">T</div>
+                                        <div class="flex-1">
+                                            <p class="font-medium">Tom Wilson</p>
+                                            <p class="text-sm text-gray-500">Block B</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="font-bold text-red-600">52%</p>
+                                            <p class="text-sm text-gray-500">26/50</p>
+                                        </div>
+                                    </div>
+                                    <div class="performer-card">
+                                        <div class="avatar">S</div>
+                                        <div class="flex-1">
+                                            <p class="font-medium">Sarah Davis</p>
+                                            <p class="text-sm text-gray-500">Block A</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="font-bold text-red-600">58%</p>
+                                            <p class="text-sm text-gray-500">29/50</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -179,4 +524,3 @@
             </div>
         </div>
     </div>
-</div>
