@@ -127,19 +127,19 @@ export class ApiService {
   //result page instructor
 
   getClassOverview(id: string) {
-    return this.http.get(`${this.apiUrl}/getAssessmentResult/${id}`);
+    return this.http.get(`${this.apiUrl}/assessment/result/data/${id}`);
   }
 
   getQuestionAnalysis(id: string) {
-    return this.http.get(`${this.apiUrl}/getQuestionAnalysis/${id}`);
+    return this.http.get(`${this.apiUrl}/assessment/result/analysis/${id}`);
   }
 
   getTopandLowPerformers(id: string) {
-    return this.http.get(`${this.apiUrl}/rankStudentAssessment/${id}`);
+    return this.http.get(`${this.apiUrl}/assessment/result/rank/${id}`);
   }
 
   getClassScore(id: string) {
-    return this.http.get(`${this.apiUrl}/getClassScoreResult/${id}`);
+    return this.http.get(`${this.apiUrl}/assessment/result/score/${id}`);
   }
 
   //profile page instructor

@@ -13,7 +13,8 @@ interface Student {
   block: string;
   score: number;
   performance: string;
-}
+  percentage: number;
+} 
 
 interface QuestionData {
   id: number;
@@ -21,6 +22,13 @@ interface QuestionData {
   correct: number;
   incorrect: number;
   successRate: number;
+}
+
+interface SubmissionStatus {
+  submitted: number;
+  ongoing: number;
+  not_started: number;
+  total: number;
 }
 
 @Component({
@@ -46,7 +54,7 @@ export class ResultComponent implements OnInit {
   classOverview: any = {
     totalStudents: 0,
     averageScore: 0,
-    highestScore: 0,
+    highestScore: 0, 
     lowestScore: 0
   };
   itemAnalysis: any[] = [];
@@ -54,13 +62,30 @@ export class ResultComponent implements OnInit {
   leastPerforming: Student[] = [];
 
   searchTerm: string = '';
+  selectedStatus: string = 'all';
+  allStudents: any[] = [];
+  filteredStudents: any[] = [];
   currentPage: number = 1;
   itemsPerPage: number = 9;
   activeTab: string = 'results';
-  classResult: any[] = [];
+  classResult: any;
   className: string = '';
   classCode: string = '';
   assessmentTitle: string = '';
+  studentResult: any;
+  questions: any;
+  questionLength: number = 0;
+  scoreDistribution: any;
+  submissionStatus: SubmissionStatus = {
+    submitted: 0,
+    ongoing: 0,
+    not_started: 0,
+    total: 0
+  };
+  completionStatistics: any;
+  isLoading: boolean = true;
+  selectedQuestionType: string = 'all';
+  allQuestions: any[] = [];
 
   constructor(private api: ApiService, private auth: AuthService, private router: Router, private titleService: Title) {
     this.titleService.setTitle('PRISM | Result');
@@ -71,10 +96,15 @@ export class ResultComponent implements OnInit {
     
     if (state && state.assessmentId) {
       this.assessmentId = state.assessmentId;
-      this.getResultOverview(this.assessmentId);
-      this.getItemAnalysis(this.assessmentId);
-      this.getStudentPerformance(this.assessmentId);
-      this.getClassResult(this.assessmentId);
+      this.isLoading = true;
+      Promise.all([
+        this.getResultOverview(this.assessmentId),
+        this.getItemAnalysis(this.assessmentId),
+        this.getStudentPerformance(this.assessmentId),
+        this.getClassResult(this.assessmentId)
+      ]).finally(() => {
+        this.isLoading = false;
+      });
       console.log('Assessment ID:', this.assessmentId);
     } else {
       console.log("Could not find the assessment ID");
@@ -102,23 +132,36 @@ export class ResultComponent implements OnInit {
   }
 
   getItemAnalysis(id: string) {
-    this.api.getQuestionAnalysis(this.assessmentId).subscribe(({
-      next: (resp: any) => {
-        this.itemAnalysis = resp.data;
-        console.log('Item Analysis:', this.itemAnalysis);
-      }, error: (error) => {
-        console.error('Error getting item analysis:', error);
-      }
-    }))
+    this.api.getQuestionAnalysis(this.assessmentId).subscribe({
+        next: (resp: any) => {
+            console.log('Question Analysis Response:', resp.data);
+            this.itemAnalysis = resp.data;
+            if (resp.data && resp.data.questions) {
+                this.allQuestions = resp.data.questions;
+                this.questions = [...this.allQuestions];
+                this.questionLength = this.questions.length;
+                console.log('Questions loaded:', this.questions);
+                console.log('Question Length:', this.questionLength);
+            }
+        },
+        error: (error) => {
+            console.error('Error getting item analysis:', error);
+        }
+    });
   }
 
   getStudentPerformance(id: string) {
     this.api.getTopandLowPerformers(this.assessmentId).subscribe(({
       next: (resp: any) => {
-        this.topPerforming = resp.data.topPerformers;
-        this.leastPerforming = resp.data.lowestPerformers;
+        this.topPerforming = resp.data.studentPerformance.topPerformers;
+        this.leastPerforming = resp.data.studentPerformance.strugglingStudents;
         console.log('Top Performing Students:', this.topPerforming);
         console.log('Least Performing Students:', this.leastPerforming);
+
+        //////student performance 
+        this.scoreDistribution = resp.data.scoreDistribution;
+        this.submissionStatus = resp.data.submissionStatus;
+        this.completionStatistics = resp.data.submissionStatus;
       }, error: (error) => {
         console.error('Error getting student performance:', error);
       }
@@ -126,63 +169,53 @@ export class ResultComponent implements OnInit {
   }
 
   getClassResult(id: string) {
-    this.api.getClassScore(this.assessmentId).subscribe(({
+    this.api.getClassScore(this.assessmentId).subscribe({
       next: (resp: any) => {
         console.log('Class Result:', resp.data);
         this.classResult = resp.data;
-      }, error: (error) => {
+        this.allStudents = resp.data.results;
+        this.filteredStudents = [...this.allStudents];
+      },
+      error: (error) => {
         console.error('Error getting class result:', error);
-      } 
-      }))
+      }
+    });
   }
 
+  filterStudents() {
+    this.filteredStudents = this.allStudents.filter(student => {
+      const statusMatch = this.selectedStatus === 'all' || 
+                         student.status.toLowerCase() === this.selectedStatus;
 
+      const searchMatch = !this.searchTerm ||
+                         student.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                         (student.block && student.block.toLowerCase().includes(this.searchTerm.toLowerCase()));
 
+      return statusMatch && searchMatch;
+    });
+  }
 
-
-
-
-
-
-
-
-
-  studentsData: Student[] = [
-    { id: 1, name: "Johnny Johny Doe", block: "3A", score: 99, performance: "Excellent" },
-  ];
-
-  questionData: QuestionData[] = [
-    { id: 1, question: "What is the third layer in the OSI Layer?", correct: 38, incorrect: 10, successRate: 70 },
-  ];
-
-  topStudents = [
-    { id: 1, name: "John Doe Johnny", score: 98 },
-  ];
-
-  strugglingStudents = [
-    { id: 1, name: "Jane Doe Jane", score: 48 },
-  ];
+  filterQuestions() {
+    if (this.selectedQuestionType === 'all') {
+        this.questions = [...this.allQuestions];
+    } else {
+        this.questions = this.allQuestions.filter(question => 
+            question.questionType.toLowerCase() === this.selectedQuestionType.toLowerCase()
+        );
+    }
+    this.questionLength = this.questions.length;
+    console.log('Filtered Questions:', this.questions);
+    console.log('Selected Type:', this.selectedQuestionType);
+  }
 
   insights = [
     "Students Struggled Most with understanding each Layer specifically the 3rd Layer",
   ];
 
-  scoreDistribution = [
-    { range: "90-100", percentage: 30, color: "#36A2EB" },
-  ];
-
-
-
   toggleSidebar() {
     if (this.sidebar) {
       this.sidebar.toggleSidebar();
     }
-  }
-
-  get filteredStudents() {
-    return this.studentsData.filter(student =>
-      student.name.toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
   }
 
   get totalPages() {
@@ -227,4 +260,5 @@ export class ResultComponent implements OnInit {
   setActiveTab(tab: string) {
     this.activeTab = tab;
   }
+
 }
