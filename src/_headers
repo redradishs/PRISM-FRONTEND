@@ -1,0 +1,7 @@
+/*.js
+  Content-Type: application/javascript
+  Access-Control-Allow-Origin: *
+
+/*.mjs
+  Content-Type: application/javascript
+  Access-Control-Allow-Origin: *
