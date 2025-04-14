@@ -15,138 +15,277 @@
             </header>
 
             <div class="main-content">
-                <div class="course-header">
-                    <div class="select-wrapper">
-                        <select [(ngModel)]="selectedClass" (ngModelChange)="onClassSelect()" class="class-select">
-                            <option *ngFor="let class of classes" [ngValue]="class">
-                                {{class.className}} - {{class.classCode}}
-                            </option>
-                        </select>
-                        <div *ngIf="isLoading" class="loading-text">Loading classes...</div>
-                        <div *ngIf="error" class="error-text">{{error}}</div>
-                    </div>
 
-                    <div class="button-group">
-                        <button class="outline-button">
-                            <i class="fas fa-download"></i> Export List
-                        </button>
-                        <button class="primary-button">
-                            <i class="fas fa-plus"></i> Create Class
-                        </button>
+                <header class="demo-header">
+                    <div class="demo-header-container">
+                        <div class="demo-header-text">
+                            <h1 class="demo-title">Class Management</h1>
+                            <p class="demo-subtitle">Manage your classes and student enrollments</p>
+                        </div>
+                        <div class="demo-button-container">
+                            <button class="demo-button-primary">
+                                <i class="fas fa-plus demo-icon"></i>
+                                Create Class
+                            </button>
+                            <button class="demo-button-secondary">
+                                <i class="fas fa-file-alt demo-icon"></i>
+                                Assign Assessment
+                            </button>
+                        </div>
                     </div>
-                </div>
+                </header>
 
-                <h1 class="class-title">
-                    {{selectedClass?.className || 'Select a class'}}
-                    {{selectedClass?.classCode ? '- ' + selectedClass.classCode : ''}}
-                </h1>
+                <!-- Class Selector Section with Demo Styling -->
+                <div class="demo-selector-section">
+                    <div class="demo-selector-container">
+                        <div class="demo-select-wrapper">
+                            <select [(ngModel)]="selectedClass" (ngModelChange)="onClassSelect()" class="demo-select">
+                                <option *ngFor="let class of classes" [ngValue]="class">
+                                    {{class.className}} - {{class.classCode}}
+                                </option>
+                            </select>
+                            <div *ngIf="isLoading" class="demo-loading-text">
+                                <i class="fas fa-spinner fa-spin"></i> Loading classes...
+                            </div>
+                            <div *ngIf="error" class="demo-error-text">
+                                <i class="fas fa-exclamation-circle"></i> {{error}}
+                            </div>
+                        </div>
 
-                <div class="metrics-grid">
-                    <div class="metric-card c1">
-                        <div>
-                            <h3>PERFORMANCE</h3>
-                            <div class="metric-value">87%</div>
-                            <p class="text-sm text-gray-500 mt-2">Performance of this class</p>
-                        </div>
-                        <div class="card-icon">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                    </div>
-                    <div class="metric-card">
-                        <div>
-                            <h3>ADMITTED</h3>
-                            <div class="metric-value">{{admittedCount}}</div>
-                            <p class="text-sm text-gray-500 mt-2">Active in this class</p>
-                        </div>
-                        <div class="card-icon">
-                            <i class="fas fa-user-check"></i>
-                        </div>
-                    </div>
-                    <div (click)="togglePendingModal()" class="metric-card">
-                        <div>
-                            <h3>PENDING</h3>
-                            <div class="metric-value">{{pendingCount}}</div>
-                            <p class="text-sm text-gray-500 mt-2">Pending admission requests</p>
-                        </div>
-                        <div class="card-icon">
-                            <i class="fas fa-user-clock"></i>
+                        <div class="demo-button-group">
+                            <button class="demo-button-secondary">
+                                <i class="fas fa-download demo-icon"></i>
+                                Export List
+                            </button>
+                            <button class="demo-button-secondary">
+                                <i class=" fas fa-plus demo-icon"></i>
+                                Create Class
+                            </button>
                         </div>
                     </div>
                 </div>
 
-
-                <div class="actions-bar">
-                    <div class="search-container">
-                        <i class="fas fa-search search-icon"></i>
-                        <input type="text" placeholder="Search students" class="search-input" [value]="searchTerm"
-                            (input)="onSearch($event)" />
+                <div class="demo-stats-grid">
+                    <div class="demo-stat-card">
+                        <div class="demo-stat-content">
+                            <div class="demo-stat-info">
+                                <span class="demo-stat-label">PERFORMANCE</span>
+                                <div class="demo-stat-value">87%</div>
+                                <p class="demo-stat-description">Performance of this class</p>
+                            </div>
+                            <div class="demo-stat-icon performance">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                        </div>
                     </div>
-                    <div class="button-group">
-                        <button class="secondary-button" (click)="togglePendingModal()">
-                            <i class="fas fa-clock"></i> Pending
-                            <span class="badge" *ngIf="pendingCount > 0">{{pendingCount}}</span>
-                        </button>
-                        <button class="primary-button">
-                            <i class="fas fa-user-plus"></i> Add User
-                        </button>
-                        <button class="outline-button">
-                            <i class="fas fa-download"></i> Export
-                        </button>
+
+                    <div class="demo-stat-card">
+                        <div class="demo-stat-content">
+                            <div class="demo-stat-info">
+                                <span class="demo-stat-label">ADMITTED</span>
+                                <div class="demo-stat-value">{{admittedCount}}</div>
+                                <p class="demo-stat-description">Active in this class</p>
+                            </div>
+                            <div class="demo-stat-icon admitted">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="demo-stat-card clickable" (click)="togglePendingModal()">
+                        <div class="demo-stat-content">
+                            <div class="demo-stat-info">
+                                <span class="demo-stat-label">PENDING</span>
+                                <div class="demo-stat-value">{{pendingCount}}</div>
+                                <p class="demo-stat-description">Pending admission requests</p>
+                            </div>
+                            <div class="demo-stat-icon pending">
+                                <i class="fas fa-user-clock"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="table-container">
-                    <table class="students-table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Block</th>
-                                <th>Accuracy</th>
-                                <th class="actions-column">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngIf="filteredStudents.length === 0">
-                                <td colspan="5">
-                                    <div class="empty-state">
-                                        <i class="fas fa-search empty-icon"></i>
-                                        <h3 class="empty-title">
-                                            {{ searchTerm ? 'No matching students found' : 'No students enrolled' }}
-                                        </h3>
-                                        <p class="empty-description">
-                                            {{ searchTerm
-                                            ? 'Try adjusting your search term'
-                                            : 'There are currently no students enrolled in ' + selectedClass?.className
-                                            }}
-                                        </p>
+
+
+                <div class="demo-card">
+                    <div class="demo-card-content">
+                        <!-- Search and Actions Bar -->
+                        <div class="student-toolbar">
+                            <h2 class="section-title">Student {{selectedClass?.className || 'Select a class'}}
+                                {{selectedClass?.classCode ? '- ' + selectedClass.classCode : ''}}</h2>
+                            <div class="demo-search-filter-container">
+                                <div class="demo-search-actions">
+                                    <div class="demo-search-wrapper">
+                                        <i class="fas fa-search demo-search-icon"></i>
+                                        <input type="text" placeholder="Search Student..." [value]="searchTerm"
+                                            (input)="onSearch($event)" class="demo-search-input">
                                     </div>
-                                </td>
-                            </tr>
-                            <tr *ngFor="let student of currentStudents">
-                                <td class="font-semibold">{{student.name}}</td>
-                                <td class="font-semibold">{{student.email}}</td>
-                                <td>{{student.block}}A</td>
-                                <td>{{student.accuracy}}99%</td>
-                                <td class="actions-cell">
-                                    <button class="edit-button">Edit</button>
-                                    <button class="delete-button">Delete</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                    <button class="demo-filter-button">
+                                        <i class="fas fa-filter"></i>
+                                        Filter
+                                    </button>
+                                </div>
+                                <button class="demo-action-button-primary">
+                                    <i class="fas fa-user-plus"></i>
+                                    Add Student
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Students Table -->
+                        <div class="demo-table-container">
+                            <div class="demo-table-wrapper">
+                                <table class="demo-table">
+                                    <thead class="demo-table-header">
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Block</th>
+                                            <th>Performance</th>
+                                            <th>Completion</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngIf="filteredStudents.length === 0">
+                                            <td colspan="6" class="demo-empty-state">
+                                                No students found matching your search.
+                                            </td>
+                                        </tr>
+                                        <tr *ngFor="let student of currentStudents" class="demo-table-row">
+                                            <td class="demo-table-cell">
+                                                <div class="demo-student-info">
+                                                    <div class="demo-avatar">
+                                                        <!-- {{getInitials(student.name)}} -->
+                                                        FA
+                                                    </div>
+                                                    <span>{{student.name}}</span>
+                                                </div>
+                                            </td>
+                                            <td class="demo-table-cell">{{student.email}}</td>
+                                            <td class="demo-table-cell">Block {{student.block}}</td>
+                                            <td class="demo-table-cell">
+                                                <!-- <span
+                                                    [class]="'demo-performance-value ' + getPerformanceColor(student.performance)">
+                                                    {{student.performance}}%
+                                                </span> -->
+                                            </td>
+                                            <td class="demo-table-cell">
+                                                <div class="demo-completion-info">
+                                                    <div class="demo-completion-text">
+                                                        <!-- <span>{{student.assessmentsCompleted}}/{{student.assessmentsTotal}}
+                                                            completed</span> -->
+                                                        <span>99
+                                                            completed</span>
+                                                    </div>
+                                                    <div class="demo-completion-bar">
+                                                        <!-- <div [style.width.%]="calculateCompletionPercentage(student.assessmentsCompleted, student.assessmentsTotal)"
+                                                            [class]="student.assessmentsCompleted === student.assessmentsTotal ? 
+                                             'demo-completion-progress demo-completion-progress-completed' : 
+                                             'demo-completion-progress demo-completion-progress-active'">
+                                                        </div> -->
+                                                        dd
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="demo-table-cell">
+                                                <button class="demo-action-button">
+                                                    <i class="fas fa-ellipsis-h"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="pagination">
-                    <button class="pagination-button" (click)="previousPage()" [disabled]="currentPage === 1">
-                        Previous
-                    </button>
-                    <div class="page-info">
-                        Page {{currentPage}} out of {{totalPages}}
+                <div class="demo-card">
+                    <div class="demo-card-content">
+                        <!-- Search and Actions Bar -->
+                        <div class="student-toolbar">
+                            <h2 class="section-title">Assigned Assessments</h2>
+                            <div class="demo-search-filter-container">
+                                <div class="demo-search-actions">
+                                    <div class="demo-search-wrapper">
+                                        <i class="fas fa-search demo-search-icon"></i>
+                                        <input type="text" placeholder="Search Assessments..."
+                                            class="demo-search-input">
+                                    </div>
+                                    <button class="demo-filter-button">
+                                        <i class="fas fa-filter"></i>
+                                        Filter
+                                    </button>
+                                </div>
+                                <button class="demo-action-button-primary">
+                                    <i class="fas fa-user-plus"></i>
+                                    Assign Assessment
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Students Table -->
+                        <div class="demo-table-container">
+                            <div class="demo-table-wrapper">
+                                <table class="demo-table">
+                                    <thead class="demo-table-header">
+                                        <tr>
+                                            <th>Assessment</th>
+                                            <th>Type</th>
+                                            <th>Due Date</th>
+                                            <th>Completion</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngIf="filteredStudents.length === 0">
+                                            <td colspan="6" class="demo-empty-state">
+                                                No students found matching your search.
+                                            </td>
+                                        </tr>
+                                        <tr *ngFor="let student of currentStudents" class="demo-table-row">
+                                            <td class="demo-table-cell">
+                                                <div class="demo-student-info">
+                                                    <div class="demo-avatar">
+                                                        <!-- {{getInitials(student.name)}} -->
+                                                        FA
+                                                    </div>
+                                                    <span>{{student.name}}</span>
+                                                </div>
+                                            </td>
+                                            <td class="demo-table-cell">{{student.email}}</td>
+                                            <td class="demo-table-cell">Block {{student.block}}</td>
+                                            <td class="demo-table-cell">
+                                                <div class="demo-completion-info">
+                                                    <div class="demo-completion-text">
+                                                        <!-- <span>{{student.assessmentsCompleted}}/{{student.assessmentsTotal}}
+                                                            completed</span> -->
+                                                        <span>99
+                                                            completed</span>
+                                                    </div>
+                                                    <div class="demo-completion-bar">
+                                                        <!-- <div [style.width.%]="calculateCompletionPercentage(student.assessmentsCompleted, student.assessmentsTotal)"
+                                                            [class]="student.assessmentsCompleted === student.assessmentsTotal ? 
+                                             'demo-completion-progress demo-completion-progress-completed' : 
+                                             'demo-completion-progress demo-completion-progress-active'">
+                                                        </div> -->
+                                                        dd
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="demo-table-cell">
+                                                <button class="demo-action-button">
+                                                    <i class="fas fa-ellipsis-h"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                    <button class="pagination-button" (click)="nextPage()" [disabled]="currentPage === totalPages">
-                        Next
-                    </button>
                 </div>
             </div>
         </div>
