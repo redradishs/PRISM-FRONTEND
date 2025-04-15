@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 interface AIPromptRequest {
@@ -97,6 +97,48 @@ export class ApiService {
   approve(data: any) {
     return this.http.post(`${this.apiUrl}/approve`, data);
   }
+
+  studentList(id: string, classCode: string, page: number = 1, pageSize: number = 20) {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('limit', pageSize.toString());
+      
+    return this.http.get(`${this.apiUrl}/classes/student/list/${id}/${classCode}`, { params });
+  }
+
+  assignedAssessments(id: string, classCode: string, page: number = 1, pageSize: number = 10) {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('limit', pageSize.toString());
+      
+    return this.http.get(`${this.apiUrl}/classes/stats/assigned/assessments/${id}/${classCode}`, { params });
+  }
+
+  ownedClasses(id: string) {
+    return this.http.get(`${this.apiUrl}/classes/owned/${id}`);
+  }
+
+  statsClass(id: string, classCode: string) {
+    return this.http.get(`${this.apiUrl}/classes/stats/${id}/${classCode}`);
+  }
+
+  searchAssessment(id: string, classCode: string, text: string, page: number = 1, pageSize: number = 10) {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('limit', pageSize.toString());
+    return this.http.get(`${this.apiUrl}/classes/assessments/search/${id}/${classCode}?query=${text}`);
+  }
+
+  searchStudents(id: string, classCode: string, text: string, page: number = 1, pageSize: number = 10) {
+    let params = new HttpParams()
+    .set('page', page.toString())
+    .set('limit', pageSize.toString());
+    return this.http.get(`${this.apiUrl}/classes/students/search/${id}/${classCode}?query=${text}`);
+  }
+
+
+
+
 
   // Student assessment page
 

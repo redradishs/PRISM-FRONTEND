@@ -58,8 +58,8 @@
                                 Export List
                             </button>
                             <button class="demo-button-secondary">
-                                <i class=" fas fa-plus demo-icon"></i>
-                                Create Class
+                                <i class=" fas fa-gear demo-icon"></i>
+                                Class Settings
                             </button>
                         </div>
                     </div>
@@ -110,7 +110,6 @@
 
                 <div class="demo-card">
                     <div class="demo-card-content">
-                        <!-- Search and Actions Bar -->
                         <div class="student-toolbar">
                             <h2 class="section-title">Student {{selectedClass?.className || 'Select a class'}}
                                 {{selectedClass?.classCode ? '- ' + selectedClass.classCode : ''}}</h2>
@@ -118,22 +117,21 @@
                                 <div class="demo-search-actions">
                                     <div class="demo-search-wrapper">
                                         <i class="fas fa-search demo-search-icon"></i>
-                                        <input type="text" placeholder="Search Student..." [value]="searchTerm"
-                                            (input)="onSearch($event)" class="demo-search-input">
+                                        <input type="text" placeholder="Search Student..." [(ngModel)]="searchTerm"
+                                            (keyup)="onSearchInputChange('student')" class="demo-search-input">
                                     </div>
-                                    <button class="demo-filter-button">
-                                        <i class="fas fa-filter"></i>
-                                        Filter
+                                    <button class="demo-filter-button" (click)="searchStudent()">
+                                        <i class="fas fa-search"></i>
+                                        Search
                                     </button>
                                 </div>
-                                <button class="demo-action-button-primary">
+                                <button class=" demo-action-button-primary">
                                     <i class="fas fa-user-plus"></i>
                                     Add Student
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Students Table -->
                         <div class="demo-table-container">
                             <div class="demo-table-wrapper">
                                 <table class="demo-table">
@@ -148,44 +146,41 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr *ngIf="filteredStudents.length === 0">
+                                        <tr *ngIf="filteredStudents?.length === 0">
                                             <td colspan="6" class="demo-empty-state">
                                                 No students found matching your search.
                                             </td>
                                         </tr>
-                                        <tr *ngFor="let student of currentStudents" class="demo-table-row">
+                                        <tr *ngFor="let student of currentStudentsInfo || []" class="demo-table-row">
                                             <td class="demo-table-cell">
                                                 <div class="demo-student-info">
                                                     <div class="demo-avatar">
-                                                        <!-- {{getInitials(student.name)}} -->
-                                                        FA
+                                                        {{getInitials(student.name)}}
                                                     </div>
                                                     <span>{{student.name}}</span>
                                                 </div>
                                             </td>
                                             <td class="demo-table-cell">{{student.email}}</td>
-                                            <td class="demo-table-cell">Block {{student.block}}</td>
+                                            <td class="demo-table-cell">{{student.block ? 'Block ' + student.block :
+                                                'N/A'}}</td>
                                             <td class="demo-table-cell">
                                                 <!-- <span
                                                     [class]="'demo-performance-value ' + getPerformanceColor(student.performance)">
                                                     {{student.performance}}%
                                                 </span> -->
+                                                {{student.performance || 'NA'}}
                                             </td>
                                             <td class="demo-table-cell">
                                                 <div class="demo-completion-info">
                                                     <div class="demo-completion-text">
-                                                        <!-- <span>{{student.assessmentsCompleted}}/{{student.assessmentsTotal}}
-                                                            completed</span> -->
-                                                        <span>99
-                                                            completed</span>
+                                                        <span>{{student.completion}} completed</span>
                                                     </div>
                                                     <div class="demo-completion-bar">
-                                                        <!-- <div [style.width.%]="calculateCompletionPercentage(student.assessmentsCompleted, student.assessmentsTotal)"
-                                                            [class]="student.assessmentsCompleted === student.assessmentsTotal ? 
-                                             'demo-completion-progress demo-completion-progress-completed' : 
-                                             'demo-completion-progress demo-completion-progress-active'">
-                                                        </div> -->
-                                                        dd
+                                                        <div [style.width.%]="getCompletionPercentage(student.completion)"
+                                                            [class]="isFullyCompleted(student.completion) ? 
+                                                                'demo-completion-progress demo-completion-progress-completed' : 
+                                                                'demo-completion-progress demo-completion-progress-active'">
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </td>
@@ -199,12 +194,27 @@
                                 </table>
                             </div>
                         </div>
+
+                        <div class="demo-pagination-container" *ngIf="totalPages > 0">
+                            <div class="demo-pagination-info">
+                                Showing {{currentPage}} of {{totalPages}} pages ({{totalStudents}} students)
+                            </div>
+                            <div class="demo-pagination-controls">
+                                <button class="demo-pagination-button" [disabled]="currentPage === 1"
+                                    (click)="getStudentList(currentPage - 1)">
+                                    <i class="fas fa-chevron-left"></i> Previous
+                                </button>
+                                <button class="demo-pagination-button" [disabled]="currentPage === totalPages"
+                                    (click)="getStudentList(currentPage + 1)">
+                                    Next <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="demo-card">
                     <div class="demo-card-content">
-                        <!-- Search and Actions Bar -->
                         <div class="student-toolbar">
                             <h2 class="section-title">Assigned Assessments</h2>
                             <div class="demo-search-filter-container">
@@ -212,11 +222,12 @@
                                     <div class="demo-search-wrapper">
                                         <i class="fas fa-search demo-search-icon"></i>
                                         <input type="text" placeholder="Search Assessments..."
-                                            class="demo-search-input">
+                                            [(ngModel)]="assessmentSearchTerm"
+                                            (keyup)="onSearchInputChange('assessment')" class="demo-search-input">
                                     </div>
                                     <button class="demo-filter-button">
-                                        <i class="fas fa-filter"></i>
-                                        Filter
+                                        <i class="fas fa-searh" (click)="searchAssessment()"></i>
+                                        Search
                                     </button>
                                 </div>
                                 <button class="demo-action-button-primary">
@@ -236,53 +247,69 @@
                                             <th>Type</th>
                                             <th>Due Date</th>
                                             <th>Completion</th>
-                                            <th>Actions</th>
+                                            <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr *ngIf="filteredStudents.length === 0">
+                                        <tr *ngIf="assignedAssessments?.length === 0">
                                             <td colspan="6" class="demo-empty-state">
-                                                No students found matching your search.
+                                                No Assessments found matching your search.
                                             </td>
                                         </tr>
-                                        <tr *ngFor="let student of currentStudents" class="demo-table-row">
+                                        <tr (click)="goToResult(student._id)"
+                                            *ngFor="let student of assignedAssessments" class="demo-table-row">
                                             <td class="demo-table-cell">
                                                 <div class="demo-student-info">
-                                                    <div class="demo-avatar">
-                                                        <!-- {{getInitials(student.name)}} -->
-                                                        FA
+                                                    <div class="demo-avatar assessment-avatar">
+                                                        <i class="fas fa-file-alt"></i>
                                                     </div>
-                                                    <span>{{student.name}}</span>
+                                                    <span>{{student.title}}</span>
                                                 </div>
                                             </td>
-                                            <td class="demo-table-cell">{{student.email}}</td>
-                                            <td class="demo-table-cell">Block {{student.block}}</td>
+                                            <td class="demo-table-cell">
+                                                <span class="assessment-mode-badge">Assessment</span>
+                                            </td>
+                                            <td class="demo-table-cell">{{student.dueDate | date:'MMM d, yyyy, h:mm
+                                                a'}}
+                                            </td>
                                             <td class="demo-table-cell">
                                                 <div class="demo-completion-info">
                                                     <div class="demo-completion-text">
-                                                        <!-- <span>{{student.assessmentsCompleted}}/{{student.assessmentsTotal}}
-                                                            completed</span> -->
-                                                        <span>99
+                                                        <span>{{student.completion}}
                                                             completed</span>
                                                     </div>
                                                     <div class="demo-completion-bar">
-                                                        <!-- <div [style.width.%]="calculateCompletionPercentage(student.assessmentsCompleted, student.assessmentsTotal)"
-                                                            [class]="student.assessmentsCompleted === student.assessmentsTotal ? 
-                                             'demo-completion-progress demo-completion-progress-completed' : 
-                                             'demo-completion-progress demo-completion-progress-active'">
-                                                        </div> -->
-                                                        dd
+                                                        <div [style.width.%]="getCompletionPercentage(student.completion)"
+                                                            [class]="isFullyCompleted(student.completion) ? 
+                                                                'demo-completion-progress demo-completion-progress-completed' : 
+                                                                'demo-completion-progress demo-completion-progress-active'">
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td class="demo-table-cell">
-                                                <button class="demo-action-button">
-                                                    <i class="fas fa-ellipsis-h"></i>
-                                                </button>
+                                                <span
+                                                    [ngClass]="getStatusClass(student.status)">{{student.status}}</span>
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
+                            </div>
+                        </div>
+
+                        <div class="demo-pagination-container" *ngIf="totalPages2 > 0">
+                            <div class="demo-pagination-info">
+                                Showing {{currentPage2}} of {{totalPages2}} pages ({{totalAssessments}} assessments)
+                            </div>
+                            <div class="demo-pagination-controls">
+                                <button class="demo-pagination-button" [disabled]="currentPage2 === 1"
+                                    (click)="getAssignedAssessments(currentPage2 - 1)">
+                                    <i class="fas fa-chevron-left"></i> Previous
+                                </button>
+                                <button class="demo-pagination-button" [disabled]="currentPage2 === totalPages2"
+                                    (click)="getAssignedAssessments(currentPage2 + 1)">
+                                    Next <i class="fas fa-chevron-right"></i>
+                                </button>
                             </div>
                         </div>
                     </div>

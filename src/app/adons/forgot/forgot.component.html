@@ -8,7 +8,8 @@
             <!-- Step 1: Request Password Reset -->
             <div *ngIf="currentStep === 1">
                 <h1 class="wb">Reset Your Password</h1>
-                <p class="subtitle">Enter your email address below and we'll send you a verification code.</p>
+                <p class="subtitle">Enter your email address below and we'll send you a verification code, check it on
+                    'SPAM'.</p>
 
                 <form [formGroup]="forgotForm" (ngSubmit)="onSubmit()">
                     <div class="form-group">
