@@ -1075,3 +1075,21 @@ select[multiple] option:checked {
     height: 1rem;
 }
 
+/* Mobile adjustments */
+@media screen and (max-width: 768px) {
+    .main-content {
+        padding: 0.75rem; /* Reduced padding for tablets */
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .main-content {
+        padding: 0.5rem; /* Further reduced padding for mobile phones */
+    }
+}
+
+@media screen and (max-width: 360px) {
+    .main-content {
+        padding: 0.25rem; /* Minimal padding for very small devices */
+    }
+}

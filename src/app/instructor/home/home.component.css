@@ -1,4 +1,3 @@
-
 .welcome-section {
     background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
     border-radius: 1rem;
@@ -129,7 +128,7 @@
 .tabs {
     display: flex;
     gap: 1rem;
-    margin-top: 1.50rem;
+    margin-top: 1.5rem;
 }
 
 .tabs > div {
@@ -185,7 +184,7 @@
 
 .card-title {
     color: #6b7280;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
 }
@@ -197,17 +196,17 @@
     margin-bottom: 0.5rem;
 }
 
-
 .card-numbers h1 {
-    font-size: 3rem;
+    font-size: 2rem;
     font-weight: 700;
     color: #111827;
     margin-bottom: 0.25rem;
+    line-height: 1.2;
 }
 
 .card-numbers p {
+    font-size: 0.75rem;
     color: #6b7280;
-    font-size: 0.875rem;
 }
 
 .card-status {
@@ -220,8 +219,8 @@
 }
 
 .card-icon {
-    width: 3rem;
-    height: 3rem;
+    width: 2.5rem;
+    height: 2.5rem;
     border-radius: 0.75rem;
     display: flex;
     align-items: center;
@@ -241,29 +240,79 @@
     color: #ec4899;
 }
 
-/* Responsive Design */
+/* Mobile-first responsive adjustments */
 @media (max-width: 768px) {
     .tabs {
         flex-direction: column;
+        gap: 0.75rem;
     }
 
-    .tabs > div {
-        width: 100%;
-    }
-}
-
-@media (max-width: 480px) {
     .tabs > div {
         padding: 1rem;
-    }
-
-    .card-numbers h1 {
-        font-size: 1.5rem;
+        width: 100%;
     }
 
     .card-icon {
-        width: 2.5rem;
-        height: 2.5rem;
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+
+    .card-status {
+        font-size: 0.75rem;
+    }
+}
+
+/* Tablet adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .card-numbers h1 {
+        font-size: 2.5rem;
+    }
+
+    .card-numbers p {
+        font-size: 0.8rem;
+    }
+
+    .tabs > div {
+        padding: 1.25rem;
+    }
+}
+
+/* Desktop adjustments */
+@media (min-width: 1025px) {
+    .card-numbers h1 {
+        font-size: 3rem;
+    }
+
+    .card-numbers p {
+        font-size: 0.875rem;
+    }
+
+    .card-icon {
+        width: 3rem;
+        height: 3rem;
+    }
+
+    .tabs > div {
+        padding: 1.5rem;
+    }
+}
+
+/* Hover effects - only on devices that support hover */
+@media (hover: hover) {
+    .card1:hover,
+    .card2:hover,
+    .card3:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+}
+
+/* Touch device adjustments */
+@media (hover: none) {
+    .card1:active,
+    .card2:active,
+    .card3:active {
+        transform: scale(0.98);
     }
 }
 
@@ -275,7 +324,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .assessments-header h1 {
@@ -293,6 +342,13 @@
     display: flex;
     align-items: center;
     gap: 0.25rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    transition: all 0.2s ease;
+}
+
+.view-all:hover {
+    background-color: #f5f3ff;
 }
 
 .view-all i {
@@ -300,25 +356,24 @@
 }
 
 .assessments-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.50rem;
+    display: grid;
+    gap: 1rem;
 }
 
 .assessment-card {
     background: white;
     border-radius: 0.75rem;
-    padding: 1rem;
+    padding: 1.25rem;
     display: flex;
     gap: 1rem;
     border: 1px solid #e5e7eb;
-    transition: transform 0.2s ease;
+    transition: all 0.2s ease;
     border-right: 4px solid #6366f1;
 }
 
 .assessment-card:hover {
-    transform: scale(1.02);
-    cursor: pointer;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .assessment-icon {
@@ -328,6 +383,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .assessment-icon.blue {
@@ -347,6 +403,8 @@
 
 .assessment-content {
     flex: 1;
+    min-width: 0; /* Prevents flex item from overflowing */
+    cursor: pointer;
 }
 
 .assessment-content h2 {
@@ -354,6 +412,9 @@
     font-weight: 600;
     color: #111827;
     margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .course {
@@ -372,8 +433,9 @@
 
 .progress {
     height: 100%;
-    background-color: #111827;
+    background-color: #6366f1;
     border-radius: 1rem;
+    transition: width 0.3s ease;
 }
 
 .assessment-info {
@@ -383,15 +445,46 @@
     font-size: 0.875rem;
 }
 
-/* Responsive Design */
-@media (max-width: 640px) {
+/* Desktop (large screens) */
+@media (min-width: 1024px) {
+    .assessments-list {
+        grid-template-columns: repeat(2, 1fr); /* Changed to 2 cards per row */
+        gap: 1.5rem; /* Slightly larger gap for better spacing */
+    }
+
     .assessment-card {
-        flex-direction: column;
+        padding: 1.5rem;
+    }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .assessments-list {
+        grid-template-columns: repeat(2, 1fr); /* Keep 2 cards per row */
+        gap: 1rem;
+    }
+
+    .assessment-card {
+        padding: 1.25rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+    .assessments {
+        margin-top: 1.5rem;
     }
 
     .assessments-header h1 {
         font-size: 1.25rem;
-        font-weight: 600;
+    }
+
+    .assessments-list {
+        grid-template-columns: 1fr; /* Single column */
+    }
+
+    .assessment-card {
+        padding: 1rem;
     }
 
     .assessment-icon {
@@ -399,9 +492,61 @@
         height: 2.5rem;
     }
 
+    .assessment-content h2 {
+        font-size: 0.925rem;
+    }
+
+    .course {
+        font-size: 0.813rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .progress-bar {
+        height: 0.375rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .assessment-info {
+        font-size: 0.75rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+}
+
+/* Small Mobile */
+@media (max-width: 380px) {
+    .assessments-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .view-all {
+        width: 100%;
+        justify-content: center;
+        padding: 0.75rem;
+        background-color: #f5f3ff;
+    }
+
+    .assessment-card {
+        padding: 0.875rem;
+    }
+
     .assessment-info {
         flex-direction: column;
-        gap: 0.25rem;
+        gap: 0.375rem;
+    }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) {
+    .assessment-card:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .assessment-card:active {
+        background-color: #f9fafb;
     }
 }
 
@@ -412,21 +557,17 @@
     margin-top: 2rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     border-left: 4px solid #6366f1;
-    transition: border-color 0.3s ease, border-width 0.3s ease, transform 0.2s ease;
 }
-
-
-
 
 .header-section {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 .header-section h1 {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 600;
     color: #111827;
     margin-bottom: 0.25rem;
@@ -445,12 +586,18 @@
     color: #374151;
     font-size: 0.875rem;
     cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.export-btn:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
 }
 
 .student-table {
     width: 100%;
     border-collapse: separate;
-    border-spacing: 0 0.5rem;
+    border-spacing: 0;
 }
 
 .student-table th {
@@ -476,13 +623,14 @@
 .avatar {
     width: 2.5rem;
     height: 2.5rem;
-    background: #f3f4f6;
+    background: #ede9fe;
+    color: #7e22ce;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 500;
-    color: #4b5563;
+    font-size: 0.875rem;
 }
 
 .student-details {
@@ -500,10 +648,6 @@
     color: #6b7280;
 }
 
-.completion {
-    color: #374151;
-}
-
 .score-section {
     display: flex;
     align-items: center;
@@ -515,20 +659,12 @@
     color: #111827;
 }
 
-.badge {
-    padding: 0.25rem 0.5rem;
-    border-radius: 1rem;
-    font-size: 0.75rem;
-}
-
 .badge.good {
     background: #fef3c7;
     color: #92400e;
-}
-
-.badge.excellent {
-    background: #d1fae5;
-    color: #065f46;
+    padding: 0.25rem 0.5rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
 }
 
 .progress-bar {
@@ -556,113 +692,161 @@
     color: #6b7280;
     cursor: pointer;
     border-radius: 0.375rem;
+    transition: all 0.2s ease;
 }
 
 .action-btn:hover {
     background: #f3f4f6;
+    color: #111827;
 }
 
 .hatdog-row {
-    border-bottom: 2px solid gray;
-    transition: transform 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 .hatdog-row:hover {
-    background-color: #f3f4f6;
-    transform: scale(1.02);
+    background-color: #f9fafb;
     cursor: pointer;
 }
 
-/* Responsive Design */
+/* Responsive Styles */
 @media (max-width: 1024px) {
-    /* Hide Progress column */
-    .student-table th:nth-child(4),
-    .student-table td:nth-child(4) {
-        display: none;
+    .student-perf {
+        padding: 1.25rem;
+    }
+
+    .student-table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
 }
 
 @media (max-width: 768px) {
-    .student-perf {
-        padding: 1rem;
+    .header-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
     }
 
     .header-section h1 {
         font-size: 1.25rem;
     }
 
-    .header-section p {
-        font-size: 0.75rem;
-    }
-
     .export-btn {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.75rem;
+        width: 100%;
+        text-align: center;
     }
 
-    /* Hide email and badge */
-    .student-email {
-        display: none;
+    .student-table th,
+    .student-table td {
+        padding: 0.75rem;
     }
 
-    .badge {
-        display: none;
-    }
-
-    /* Adjust avatar size */
     .avatar {
         width: 2rem;
         height: 2rem;
         font-size: 0.75rem;
     }
 
-    /* Reduce font sizes */
-    .student-name {
-        font-size: 0.875rem;
-    }
-
-    .score {
-        font-size: 0.875rem;
-    }
-
-    .completion {
-        font-size: 0.875rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .student-perf {
-        padding: 0.75rem;
-    }
-
-    /* Hide Assessments Completed column */
-    .student-table th:nth-child(2),
-    .student-table td:nth-child(2) {
+    /* Hide email on mobile */
+    .student-email {
         display: none;
     }
 
-    .header-section h1 {
-        font-size: 1.1rem;
-    }
-
-    /* Further reduce sizes */
-    .student-name {
-        font-size: 0.8rem;
-    }
-
-    .score {
-        font-size: 0.8rem;
-    }
-
-    .action-btn {
-        padding: 0.3rem;
-    }
-
-    .action-btn i {
-        font-size: 0.8rem;
+    /* Adjust progress bar width */
+    .progress-bar {
+        max-width: 100px;
     }
 }
 
+@media (max-width: 640px) {
+    .student-perf {
+        padding: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    /* Stack table cells vertically */
+    .student-table thead {
+        display: none; /* Hide headers on mobile */
+    }
+
+    .student-table, 
+    .student-table tbody, 
+    .student-table tr {
+        display: block;
+    }
+
+    .student-table tr {
+        margin-bottom: 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        padding: 1rem;
+    }
+
+    .student-table td {
+        display: flex;
+        padding: 0.5rem 0;
+        align-items: center;
+        justify-content: space-between;
+        border: none;
+    }
+
+    /* Add labels for mobile view */
+    .student-table td::before {
+        content: attr(data-label);
+        font-weight: 500;
+        color: #6b7280;
+        font-size: 0.75rem;
+    }
+
+    .student-info {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .score-section {
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    .actions {
+        justify-content: flex-end;
+    }
+
+    .progress-bar {
+        max-width: 150px;
+    }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) {
+    .action-btn {
+        padding: 0.75rem; /* Larger touch target */
+    }
+
+    .hatdog-row:hover {
+        background-color: transparent;
+    }
+
+    .hatdog-row:active {
+        background-color: #f9fafb;
+    }
+}
+
+/* Scrollbar Styling */
+.student-table::-webkit-scrollbar {
+    height: 6px;
+}
+
+.student-table::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.student-table::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
 
 /* Performance Charts */
 .performance-section {
@@ -753,5 +937,207 @@
 
     .stat-value {
         font-size: 3rem;
+    }
+}
+
+/* Enhanced Responsive Design */
+@media (max-width: 1200px) {
+    .tabs {
+        gap: 0.75rem;
+    }
+
+    .card-numbers h1 {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .welcome-content {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-container {
+        height: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Existing styles remain */
+    .tabs {
+        flex-direction: column;
+    }
+
+    .tabs > div {
+        width: 100%;
+    }
+
+    /* Enhanced tablet responsiveness */
+    .assessments-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .assessment-card {
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .assessment-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .assessment-info {
+        margin-top: auto;
+    }
+
+    .student-table {
+        font-size: 0.875rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .welcome-section {
+        padding: 1.25rem;
+    }
+
+    .welcome-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .btn-create, .btn-view {
+        width: 100%;
+        text-align: center;
+    }
+
+    .assessments-list {
+        grid-template-columns: 1fr;
+    }
+
+    .assessment-card {
+        padding: 0.875rem;
+    }
+
+    .student-perf {
+        margin-top: 1.5rem;
+        padding: 1rem;
+    }
+
+    .header-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .export-btn {
+        width: 100%;
+    }
+
+    .student-table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .student-table th,
+    .student-table td {
+        white-space: nowrap;
+        padding: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Existing styles remain */
+    .welcome-section {
+        padding: 1rem;
+    }
+
+    .welcome-text h1 {
+        font-size: 1.5rem;
+    }
+
+    /* Enhanced mobile responsiveness */
+    .card-numbers {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .card-numbers h1 {
+        font-size: 2rem;
+    }
+
+    .assessment-icon {
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+
+    .assessment-content h2 {
+        font-size: 0.925rem;
+    }
+
+    .course {
+        font-size: 0.8rem;
+    }
+
+    .progress-bar {
+        height: 0.375rem;
+    }
+
+    .assessment-info {
+        font-size: 0.8rem;
+    }
+
+    .performance-section h2 {
+        font-size: 1.25rem;
+    }
+
+    .chart-container {
+        height: 200px;
+    }
+}
+
+/* Add support for larger screens */
+@media (min-width: 1400px) {
+    .welcome-section {
+        padding: 3rem 2rem;
+    }
+
+    .welcome-text h1 {
+        font-size: 2.5rem;
+    }
+
+    .card-numbers h1 {
+        font-size: 3.5rem;
+    }
+
+    .chart-container {
+        height: 400px;
+    }
+}
+
+/* Add print media query for better printing */
+@media print {
+    .welcome-section {
+        background: none;
+        color: black;
+        padding: 1rem;
+    }
+
+    .btn-create,
+    .btn-view,
+    .action-btn {
+        display: none;
+    }
+
+    .student-table {
+        page-break-inside: avoid;
     }
 }

@@ -601,81 +601,77 @@
     </div>
 </div>
 
-<!-- Class Settings Modal with Backdrop Blur -->
-<div class="modal-overlay backdrop-blur" *ngIf="showClassSettingsModal" (click)="toggleClassSettingsModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-            <div class="header-content">
-                <h2>Class Settings</h2>
-                <p class="modal-subtitle">{{selectedClass?.className}} - {{selectedClass?.classCode}}</p>
+<!-- Class Settings Modal -->
+<div class="cs-modal-overlay cs-backdrop-blur" *ngIf="showClassSettingsModal" (click)="toggleClassSettingsModal()">
+    <div class="cs-modal" (click)="$event.stopPropagation()">
+        <div class="cs-modal__header">
+            <div class="cs-modal__header-content">
+                <h2 class="cs-modal__title">Class Settings</h2>
+                <p class="cs-modal__subtitle">{{selectedClass?.className}} - {{selectedClass?.classCode}}</p>
             </div>
-            <button class="close-button" (click)="toggleClassSettingsModal()" aria-label="Close">
+            <button class="cs-modal__close" (click)="toggleClassSettingsModal()" aria-label="Close">
                 <i class="fas fa-times"></i>
             </button>
         </div>
 
-        <div class="modal-body">
+        <div class="cs-modal__body">
             <!-- Class Info Section -->
-            <div class="class-info-section">
-                <div class="info-item">
-                    <div class="info-icon graduation">
+            <div class="cs-info">
+                <div class="cs-info__container">
+                    <div class="cs-info__icon">
                         <i class="fas fa-graduation-cap"></i>
                     </div>
-                    <div class="info-content">
-                        <h4 class="info-title">{{selectedClass.className}} - {{selectedClass?.classCode}}</h4>
-                        <p class="info-subtitle">You may change your Class Admission settings on this page.</p>
+                    <div class="cs-info__content">
+                        <h4 class="cs-info__title">{{selectedClass.className}} - {{selectedClass?.classCode}}</h4>
+                        <p class="cs-info__description">You may change your Class Admission settings on this page.</p>
                     </div>
                 </div>
             </div>
 
-            <h3 class="settings-heading">Class Admission Settings</h3>
+            <h3 class="cs-settings__heading">Class Admission Settings</h3>
 
             <!-- Auto Admission Toggle -->
-            <div class="settings-item">
-                <div class="setting-info">
-                    <div class="setting-icon auto-admission">
+            <div class="cs-setting">
+                <div class="cs-setting__content">
+                    <div class="cs-setting__icon cs-setting__icon--auto">
                         <i class="fas fa-user-check"></i>
                     </div>
-                    <div>
-                        <h4 class="setting-title">Auto Admission</h4>
-                        <p class="setting-description">Students can join this class without approval</p>
+                    <div class="cs-setting__text">
+                        <h4 class="cs-setting__title">Auto Admission</h4>
+                        <p class="cs-setting__description">Students can join this class without approval</p>
                     </div>
                 </div>
-                <div class="toggle-container">
-                    <label class="toggle-label">
-                        <div class="toggle-switch">
-                            <input type="checkbox" [(ngModel)]="autoAdmission">
-                            <span class="toggle-slider"></span>
-                        </div>
+                <div class="cs-toggle">
+                    <label class="cs-toggle__label">
+                        <input type="checkbox" class="cs-toggle__input" [(ngModel)]="autoAdmission">
+                        <span class="cs-toggle__slider"></span>
                     </label>
                 </div>
             </div>
 
             <!-- Allow Joining Toggle -->
-            <div class="settings-item">
-                <div class="setting-info">
-                    <div class="setting-icon allow-joining">
+            <div class="cs-setting">
+                <div class="cs-setting__content">
+                    <div class="cs-setting__icon cs-setting__icon--join">
                         <i class="fas fa-users"></i>
                     </div>
-                    <div>
-                        <h4 class="setting-title">Allow Joining</h4>
-                        <p class="setting-description">Students can discover and request to join this class</p>
+                    <div class="cs-setting__text">
+                        <h4 class="cs-setting__title">Allow Joining</h4>
+                        <p class="cs-setting__description">Students can discover and request to join this class</p>
                     </div>
                 </div>
-                <div class="toggle-container">
-                    <label class="toggle-label">
-                        <div class="toggle-switch">
-                            <input type="checkbox" [(ngModel)]="allowJoining">
-                            <span class="toggle-slider"></span>
-                        </div>
+                <div class="cs-toggle">
+                    <label class="cs-toggle__label">
+                        <input type="checkbox" class="cs-toggle__input" [(ngModel)]="allowJoining">
+                        <span class="cs-toggle__slider"></span>
                     </label>
                 </div>
             </div>
 
-            <div class="form-footer">
-                <button type="button" class="cancel-button" (click)="toggleClassSettingsModal()">Close</button>
-                <button type="button" class="submit-button" (click)="saveClassSettings()">
-                    <i class="fas fa-save mr-2"></i> Save Changes
+            <div class="cs-modal__footer">
+                <button class="cs-button cs-button--secondary" (click)="toggleClassSettingsModal()">Close</button>
+                <button class="cs-button cs-button--primary" (click)="saveClassSettings()">
+                    <i class="fas fa-save"></i> Save Changes
                 </button>
             </div>
         </div>
