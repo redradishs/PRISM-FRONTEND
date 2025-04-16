@@ -23,11 +23,11 @@
                             <p class="demo-subtitle">Manage your classes and student enrollments</p>
                         </div>
                         <div class="demo-button-container">
-                            <button class="demo-button-primary">
+                            <button class="demo-button-primary" (click)="toggleCreateClassModal()">
                                 <i class="fas fa-plus demo-icon"></i>
                                 Create Class
                             </button>
-                            <button class="demo-button-secondary">
+                            <button class="demo-button-secondary" (click)="toggleAssignAssessmentModal()">
                                 <i class="fas fa-file-alt demo-icon"></i>
                                 Assign Assessment
                             </button>
@@ -57,7 +57,7 @@
                                 <i class="fas fa-download demo-icon"></i>
                                 Export List
                             </button>
-                            <button class="demo-button-secondary">
+                            <button class="demo-button-secondary" (click)="toggleClassSettingsModal()">
                                 <i class=" fas fa-gear demo-icon"></i>
                                 Class Settings
                             </button>
@@ -125,7 +125,7 @@
                                         Search
                                     </button>
                                 </div>
-                                <button class=" demo-action-button-primary">
+                                <button class="demo-action-button-primary" (click)="toggleAddStudentModal()">
                                     <i class="fas fa-user-plus"></i>
                                     Add Student
                                 </button>
@@ -230,7 +230,7 @@
                                         Search
                                     </button>
                                 </div>
-                                <button class="demo-action-button-primary">
+                                <button class="demo-action-button-primary" (click)="toggleAssignAssessmentModal()">
                                     <i class="fas fa-user-plus"></i>
                                     Assign Assessment
                                 </button>
@@ -319,54 +319,574 @@
     </div>
 </div>
 
-<div class="modal-overlay" *ngIf="showPendingModal" (click)="togglePendingModal()">
+<!-- Pending Admission Requests Modal with Backdrop Blur -->
+<div class="modal-overlay backdrop-blur" *ngIf="showPendingModal" (click)="togglePendingModal()">
     <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
             <div class="header-content">
                 <h2>Pending Admission Requests</h2>
-                <div class="auto-admit-toggle">
+                <p class="modal-subtitle">{{selectedClass?.className}} - {{selectedClass?.classCode}}</p>
+            </div>
+            <div class="auto-admit-toggle">
+                <label class="toggle-label">
+                    <span class="toggle-text">Auto Admission</span>
+                    <div class="toggle-switch">
+                        <input type="checkbox" [(ngModel)]="autoAdmission" (change)="toggleAutoAdmission()">
+                        <span class="toggle-slider"></span>
+                    </div>
+                </label>
+            </div>
+            <button class="close-button" (click)="togglePendingModal()" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <!-- Table with pending requests -->
+            <div class="table-container">
+                <table class="pending-table">
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Email</th>
+                            <th class="actions-column">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let request of pendingRequests" class="pending-row">
+                            <td class="student-name-cell">
+                                <div class="student-info">
+                                    <div class="demo-avatar">
+                                        {{getInitials(request.name)}}
+                                    </div>
+                                    <span>{{request.name}}</span>
+                                </div>
+                            </td>
+                            <td>{{request.email}}</td>
+                            <td class="actions-cell">
+                                <div class="action-buttons">
+                                    <button class="approve-button" (click)="approveRequest(request)">
+                                        <i class="fas fa-check-circle"></i> Approve
+                                    </button>
+                                    <button class="reject-button" (click)="rejectRequest(request)">
+                                        <i class="fas fa-times-circle"></i> Reject
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty state when no pending requests -->
+            <div class="empty-state" *ngIf="pendingRequests.length === 0">
+                <div class="empty-icon">
+                    <i class="fas fa-user-clock"></i>
+                </div>
+                <p class="empty-text">No pending requests</p>
+                <p class="empty-subtext">When students request to join your class, they'll appear here</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Class Modal with Updated Fields -->
+<div class="modal-overlay" *ngIf="showCreateClassModal" (click)="toggleCreateClassModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <div class="header-content">
+                <h2>Create New Class</h2>
+            </div>
+            <button class="close-button" (click)="toggleCreateClassModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form (ngSubmit)="createClass()">
+                <div class="form-group">
+                    <label for="className">Class Name*</label>
+                    <input type="text" id="className" name="className" [(ngModel)]="newClass.className" required
+                        placeholder="Enter class name (e.g. BSIT 3A)" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="classCode">Class Code*</label>
+                    <input type="text" id="classCode" name="classCode" [(ngModel)]="newClass.classCode" required
+                        placeholder="Enter class code (e.g. CS101)" class="form-input">
+                </div>
+
+                <!-- Year and Block on same line -->
+                <div class="form-row">
+                    <div class="form-group half-width">
+                        <label for="year">Year Level*</label>
+                        <select id="year" name="year" [(ngModel)]="newClass.year" class="form-select" required>
+                            <option value="" disabled selected>Select Year</option>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
+                        </select>
+                    </div>
+                    <div class="form-group half-width">
+                        <label for="block">Block*</label>
+                        <select id="block" name="block" [(ngModel)]="newClass.block" class="form-select" required>
+                            <option value="" disabled selected>Select Block</option>
+                            <option value="A">Block A</option>
+                            <option value="B">Block B</option>
+                            <option value="C">Block C</option>
+                            <option value="D">Block D</option>
+                            <option value="E">Block E</option>
+                            <option value="F">Block F</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Toggles on same line -->
+                <div class="form-row">
+                    <div class="form-group half-width toggle-container">
+                        <label class="toggle-label flex space-x-4">
+                            <span>Auto Admission</span>
+                            <div class="toggle-switch">
+                                <input type="checkbox" [(ngModel)]="newClass.autoAdmission" name="autoAdmission">
+                                <span class="toggle-slider"></span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="form-group half-width toggle-container">
+                        <label class="toggle-label flex space-x-4">
+                            <span>Allow Joining</span>
+                            <div class="toggle-switch">
+                                <input type="checkbox" [(ngModel)]="newClass.allowJoining" name="allowJoining">
+                                <span class="toggle-slider"></span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-footer">
+                    <button type="button" class="cancel-button" (click)="toggleCreateClassModal()">Cancel</button>
+                    <button type="submit" class="submit-button">Create Class</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Add Student Modal with Enhanced Styling -->
+<div class="modal-overlay" *ngIf="showAddStudentModal" (click)="toggleAddStudentModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <div class="header-content">
+                <h2>Add Students to Class</h2>
+                <p class="modal-subtitle">{{selectedClass?.className}} - {{selectedClass?.classCode}}</p>
+            </div>
+            <button class="close-button" (click)="toggleAddStudentModal()" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="search-container">
+                <div class="search-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input #searchInput type="text" placeholder="Search students by name or email..."
+                        [(ngModel)]="studentSearchQuery" (keyup)="searchStudentsForAdding()" class="search-input">
+                    <div class="search-action" *ngIf="studentSearchQuery">
+                        <button class="clear-button" (click)="clearSearch()" aria-label="Clear search">
+                            <i class="fas fa-times-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Initial Empty State -->
+            <div class="empty-state" *ngIf="!studentSearchQuery && !searchedStudents.length">
+                <div class="empty-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <p class="empty-text">Search for students to add to your class</p>
+                <p class="empty-subtext">You can search by name or email address</p>
+            </div>
+
+            <!-- Search Results -->
+            <div class="search-results-container" *ngIf="searchedStudents.length > 0">
+                <h3 class="results-title">Search Results <span class="result-count">{{searchedStudents.length}}
+                        found</span></h3>
+                <div class="search-results">
+                    <div *ngFor="let student of searchedStudents" class="search-result-item"
+                        [class.selected]="isStudentSelected(student)" [class.enrolled]="student.status === 'enrolled'"
+                        (click)="student.status !== 'enrolled' && toggleStudentSelection(student)">
+
+                        <div class="student-info">
+                            <div class="demo-avatar">
+                                {{getInitials(student.name)}}
+                            </div>
+                            <div class="student-details">
+                                <div class="student-name">{{student.name}}</div>
+                                <div class="student-email">{{student.email}}</div>
+                            </div>
+                        </div>
+
+                        <div class="student-actions">
+                            <!-- Status Badges -->
+                            <div class="status-wrapper">
+                                <span *ngIf="student.status === 'enrolled'" class="status-badge enrolled">
+                                    <i class="fas fa-user-check"></i> Enrolled
+                                </span>
+                                <span *ngIf="student.status === 'not_enrolled'" class="status-badge not-enrolled">
+                                    <i class="fas fa-user-plus"></i> Not Enrolled
+                                </span>
+                            </div>
+
+                            <div class="selection-indicator" *ngIf="student.status === 'not_enrolled'">
+                                <i class="fas"
+                                    [ngClass]="isStudentSelected(student) ? 'fa-check-circle' : 'fa-circle'"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- No Results State -->
+            <div class="no-results" *ngIf="studentSearchQuery && searchedStudents?.length === 0">
+                <div class="no-results-icon">
+                    <i class="fas fa-search-minus"></i>
+                </div>
+                <p class="no-results-text">No students found matching your search</p>
+                <p class="no-results-subtext">Try a different search term or check the spelling</p>
+            </div>
+
+            <!-- Selected Students Toggle Button -->
+            <button *ngIf="selectedStudents.length > 0" class="selected-students-toggle"
+                (click)="showSelectedStudents = !showSelectedStudents">
+                {{selectedStudents.length}} Student{{selectedStudents.length !== 1 ? 's' : ''}} Selected
+                <i class="fas" [ngClass]="showSelectedStudents ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+            </button>
+
+            <!-- Selected Students - Collapsible Section -->
+            <div class="selected-container" *ngIf="selectedStudents.length > 0 && showSelectedStudents">
+                <h3 class="results-title">
+                    Selected Students
+                    <span class="selection-count">{{selectedStudents.length}}</span>
+                    <button class="clear-all-button" (click)="clearAllSelections()"
+                        *ngIf="selectedStudents.length > 1">Clear All</button>
+                </h3>
+                <div class="selected-students">
+                    <div *ngFor="let student of selectedStudents" class="selected-student-item">
+                        <div class="student-info">
+                            <div class="demo-avatar">
+                                {{getInitials(student.name)}}
+                            </div>
+                            <div class="student-name">{{student.name}}</div>
+                        </div>
+                        <button class="remove-button" (click)="removeSelectedStudent(student)"
+                            aria-label="Remove student">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-footer">
+                <button type="button" class="cancel-button" (click)="toggleAddStudentModal()">Cancel</button>
+                <button type="button" class="submit-button" [disabled]="!selectedStudents.length || isAddingStudents"
+                    (click)="addSelectedStudents()">
+                    <div class="spinner-sm" *ngIf="isAddingStudents"></div>
+                    <span *ngIf="!isAddingStudents">Add {{selectedStudents.length}} Student{{selectedStudents.length !==
+                        1 ? 's' : ''}}</span>
+                    <span *ngIf="isAddingStudents">Adding...</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Class Settings Modal with Backdrop Blur -->
+<div class="modal-overlay backdrop-blur" *ngIf="showClassSettingsModal" (click)="toggleClassSettingsModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <div class="header-content">
+                <h2>Class Settings</h2>
+                <p class="modal-subtitle">{{selectedClass?.className}} - {{selectedClass?.classCode}}</p>
+            </div>
+            <button class="close-button" (click)="toggleClassSettingsModal()" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <!-- Class Info Section -->
+            <div class="class-info-section">
+                <div class="info-item">
+                    <div class="info-icon graduation">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="info-content">
+                        <h4 class="info-title">{{selectedClass.className}} - {{selectedClass?.classCode}}</h4>
+                        <p class="info-subtitle">You may change your Class Admission settings on this page.</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="settings-heading">Class Admission Settings</h3>
+
+            <!-- Auto Admission Toggle -->
+            <div class="settings-item">
+                <div class="setting-info">
+                    <div class="setting-icon auto-admission">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div>
+                        <h4 class="setting-title">Auto Admission</h4>
+                        <p class="setting-description">Students can join this class without approval</p>
+                    </div>
+                </div>
+                <div class="toggle-container">
                     <label class="toggle-label">
-                        <span>Auto Admission</span>
                         <div class="toggle-switch">
-                            <input type="checkbox" [(ngModel)]="autoAdmission" (change)="toggleAutoAdmission()">
+                            <input type="checkbox" [(ngModel)]="autoAdmission">
                             <span class="toggle-slider"></span>
                         </div>
                     </label>
                 </div>
             </div>
-            <button class="close-button" (click)="togglePendingModal()">
+
+            <!-- Allow Joining Toggle -->
+            <div class="settings-item">
+                <div class="setting-info">
+                    <div class="setting-icon allow-joining">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div>
+                        <h4 class="setting-title">Allow Joining</h4>
+                        <p class="setting-description">Students can discover and request to join this class</p>
+                    </div>
+                </div>
+                <div class="toggle-container">
+                    <label class="toggle-label">
+                        <div class="toggle-switch">
+                            <input type="checkbox" [(ngModel)]="allowJoining">
+                            <span class="toggle-slider"></span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-footer">
+                <button type="button" class="cancel-button" (click)="toggleClassSettingsModal()">Close</button>
+                <button type="button" class="submit-button" (click)="saveClassSettings()">
+                    <i class="fas fa-save mr-2"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Assign Assessment Modal with Dropdown and Search -->
+<div class="modal-overlay backdrop-blur" *ngIf="showAssignAssessmentModal" (click)="toggleAssignAssessmentModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <div class="header-content">
+                <h2>Assign Assessment</h2>
+                <p class="modal-subtitle">{{selectedClass?.className}} - {{selectedClass?.classCode}}</p>
+            </div>
+            <button class="close-button" (click)="toggleAssignAssessmentModal()" aria-label="Close">
                 <i class="fas fa-times"></i>
             </button>
         </div>
+
         <div class="modal-body">
-            <table class="pending-table">
-                <thead>
-                    <tr>
-                        <th>Student Name</th>
-                        <th>Email</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let request of pendingRequests">
-                        <td>{{request.studentName}}</td>
-                        <td>{{request.email}}</td>
-                        <td class="actions-cell">
-                            <button class="approve-button" (click)="approveRequest(request)">
-                                <i class="fas fa-check"></i> Approve
+            <!-- Assessment Selection Tabs -->
+            <div class="tab-container">
+                <button class="tab-button" [class.active]="activeTab === 'search'" (click)="activeTab = 'search'">
+                    <i class="fas fa-search"></i> Search Assessments
+                </button>
+                <button class="tab-button" [class.active]="activeTab === 'dropdown'" (click)="activeTab = 'dropdown'">
+                    <i class="fas fa-list"></i> Select from List
+                </button>
+
+            </div>
+
+            <!-- Dropdown Selection Tab Improvements -->
+            <div *ngIf="activeTab === 'dropdown'" class="tab-content">
+                <div class="form-group">
+                    <label for="assessmentDropdown" class="form-label">Select Assessment</label>
+                    <div class="dropdown-with-clear">
+                        <select id="assessmentDropdown" class="form-select" [(ngModel)]="selectedDropdownAssessment"
+                            (change)="onAssessmentDropdownChange()">
+                            <option value="" disabled selected>Choose an assessment</option>
+                            <option *ngFor="let assessment of ownAssessments" [ngValue]="assessment">
+                                {{assessment.title}} ({{assessment.totalQuestions || 0}} questions)
+                            </option>
+                        </select>
+                        <button *ngIf="selectedDropdownAssessment" type="button" class="clear-dropdown-button"
+                            (click)="clearSelectedAssessment()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="empty-state" *ngIf="!ownAssessments || ownAssessments.length === 0">
+                    <div class="empty-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <p class="empty-text">No assessments available</p>
+                    <p class="empty-subtext">Create a new assessment first</p>
+                </div>
+            </div>
+
+            <!-- Search Selection Tab -->
+            <div *ngIf="activeTab === 'search'" class="tab-content">
+                <!-- Assessment Search Section -->
+                <div class="search-container">
+                    <div class="search-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" placeholder="Search for assessments..." (click)="onTabChange('search')"
+                            [(ngModel)]="assessmentSearchQuery" (keyup)="searchAssessments()" class="search-input">
+                        <div class="search-action" *ngIf="assessmentSearchQuery">
+                            <button class="clear-button" (click)="clearAssessmentSearch()"
+                                (click)="onTabChange('dropdown')" aria-label="Clear search">
+                                <i class="fas fa-times-circle"></i>
                             </button>
-                            <button class="reject-button" (click)="rejectRequest(request)">
-                                <i class="fas fa-times"></i> Reject
-                            </button>
-                        </td>
-                    </tr>
-                    <tr *ngIf="pendingRequests.length === 0">
-                        <td colspan="4" class="empty-state">
-                            No pending requests
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search Results -->
+                <div class="search-results-container" *ngIf="searchedAssessments.length > 0">
+                    <h3 class="results-title">Search Results <span class="result-count">{{searchedAssessments.length}}
+                            found</span></h3>
+                    <div class="search-results">
+                        <div *ngFor="let assessment of searchedAssessments" class="search-result-item"
+                            [class.selected]="selectedAssessment?.id === assessment.id"
+                            (click)="selectAssessment(assessment)">
+
+                            <div class="assessment-info">
+                                <div class="assessment-icon">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <div class="assessment-details">
+                                    <div class="assessment-name">{{assessment.title}}</div>
+                                    <div class="assessment-meta">
+                                        <span class="assessment-type">{{assessment.type || 'Assessment'}}</span>
+                                        <span class="assessment-count">{{assessment.questionCount || 0}}
+                                            questions</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="selection-indicator">
+                                <i class="fas"
+                                    [ngClass]="selectedAssessment?.id === assessment.id ? 'fa-check-circle' : 'fa-circle'"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State for Search -->
+                <div class="empty-state" *ngIf="!assessmentSearchQuery && !searchedAssessments.length">
+                    <div class="empty-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <p class="empty-text">Search for assessments by title or content</p>
+                    <p class="empty-subtext">Type at least 3 characters to start searching</p>
+                </div>
+
+                <!-- No Results State -->
+                <div class="no-results"
+                    *ngIf="assessmentSearchQuery && assessmentSearchQuery.length >= 3 && searchedAssessments?.length === 0">
+                    <div class="no-results-icon">
+                        <i class="fas fa-search-minus"></i>
+                    </div>
+                    <p class="no-results-text">No assessments found matching your search</p>
+                    <p class="no-results-subtext">Try a different search term</p>
+                </div>
+            </div>
+
+            <!-- Assignment Settings Section Improvements -->
+            <div class="assignment-settings" *ngIf="selectedAssessment">
+                <h3 class="settings-heading">Assignment Settings</h3>
+
+                <div class="selected-assessment-info">
+                    <div class="assessment-icon large">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div>
+                        <h4 class="selected-assessment-title">{{selectedAssessment.title}}</h4>
+                        <p class="selected-assessment-desc">{{selectedAssessment.description || 'No description
+                            available'}}</p>
+                    </div>
+                </div>
+
+                <form (ngSubmit)="assignAssessment()">
+                    <!-- Date validation error message -->
+                    <div *ngIf="dateError" class="date-error-message">
+                        <i class="fas fa-exclamation-circle"></i> {{dateError}}
+                    </div>
+
+                    <!-- Improved Date/Time Selectors -->
+                    <div class="form-row">
+                        <div class="form-group half-width">
+                            <label for="startDate" class="form-label">Start Date & Time*</label>
+                            <div class="date-input-wrapper">
+                                <i class="fas fa-calendar-alt date-icon"></i>
+                                <input type="datetime-local" id="startDate" name="startDate"
+                                    [(ngModel)]="assignmentDetails.startDate" required class="form-input"
+                                    [min]="getCurrentDateTimeString()">
+                            </div>
+                            <small class="date-hint">Earliest: Today</small>
+                        </div>
+
+                        <div class="form-group half-width">
+                            <label for="dueDate" class="form-label">Due Date & Time*</label>
+                            <div class="date-input-wrapper">
+                                <i class="fas fa-calendar-alt date-icon"></i>
+                                <input type="datetime-local" id="dueDate" name="dueDate"
+                                    [(ngModel)]="assignmentDetails.dueDate" required class="form-input"
+                                    [min]="getMinDueDateString()">
+                            </div>
+                            <small class="date-hint">Must be after start date</small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="timeLimit">Time Limit (minutes)*</label>
+                        <input type="number" id="timeLimit" name="timeLimit" min="1" max="240"
+                            [(ngModel)]="assignmentDetails.timeLimit" required class="form-input"
+                            placeholder="Enter time limit in minutes">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="instructions">Instructions</label>
+                        <textarea id="instructions" name="instructions" [(ngModel)]="assignmentDetails.instructions"
+                            class="form-textarea" placeholder="Enter instructions for students (optional)"></textarea>
+                    </div>
+
+                    <!-- Additional options (checkboxes) -->
+                    <div class="form-group">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="randomizeQuestions" name="randomizeQuestions"
+                                [(ngModel)]="assignmentDetails.randomizeQuestions">
+                            <label for="randomizeQuestions">Randomize questions order</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="showResults" name="showResults"
+                                [(ngModel)]="assignmentDetails.showResults">
+                            <label for="showResults">Show results to students after submission</label>
+                        </div>
+                    </div>
+
+                    <div class="form-footer">
+                        <button type="button" class="cancel-button"
+                            (click)="toggleAssignAssessmentModal()">Cancel</button>
+                        <button type="submit" class="submit-button" [disabled]="!selectedAssessment || !isFormValid()">
+                            <i class="fas fa-paper-plane mr-2"></i> Assign Assessment
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

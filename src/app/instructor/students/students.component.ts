@@ -6,6 +6,7 @@ import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 interface Student {
   name: string;
@@ -91,6 +92,50 @@ export class StudentsComponent implements OnInit {
 
   showPendingModal = false;
   autoAdmission = false;
+  allowJoining = false;
+
+  showCreateClassModal = false;
+  showAddStudentModal = false;
+  newClass = {
+    className: '',
+    classCode: '',
+    autoAdmission: false,
+    description: '',
+    year: '',
+    block: '',
+    allowJoining: true
+  };
+
+  showAssignAssessmentModal = false;
+  assessmentSearchQuery = '';
+  searchedAssessments: any[] = [];
+  selectedAssessment: any = null;
+  assignmentDetails = {
+    startDate: '',
+    dueDate: '',
+    timeLimit: 60, // default 60 minutes
+    instructions: '',
+    randomizeQuestions: false,
+    showResults: false
+  };
+
+  searchedStudents: any[] = [];
+  selectedStudents: any[] = [];
+  isSearchLoading: boolean = false;
+  isAddingStudents: boolean = false;
+  studentSearchQuery = '';
+  newStudentEmails = '';
+  newStudentBlock = '';
+  showSelectedStudents: boolean = false;
+  addingProgressText: string = '';
+
+  showClassSettingsModal: boolean = false;
+
+  activeTab: 'dropdown' | 'search' = 'search';
+  ownAssessments: any[] = [];
+  selectedDropdownAssessment: any = null;
+
+  dateError: string = "";
 
   constructor(private api: ApiService, private auth: AuthService, private titleService: Title, private router: Router) {
     this.titleService.setTitle('PRISM | Students');
@@ -102,11 +147,9 @@ export class StudentsComponent implements OnInit {
       if (user) {
         this.userId = user.id;
         this.getClasses();
-
-        
       }
-    })
-    
+    });
+    this.loadOwnAssessments();
   }
 
   getClasses(){
@@ -174,7 +217,9 @@ export class StudentsComponent implements OnInit {
       next: (resp: any) => {
         this.admittedCount = resp.data.stats.admitted;
         this.pendingCount = resp.data.stats.pending;
-        this.pendingRequests = resp.data.pendingRequests;
+        this.pendingRequests = resp.data.pendingStudents;
+        this.allowJoining = resp.data.allowJoining;
+        this.autoAdmission = resp.data.autoAdmission;
       }, error: (err) => {
         console.log(err);
       }
@@ -269,7 +314,7 @@ export class StudentsComponent implements OnInit {
     console.log(student);
     const data = {
       instructorId: this.userId,
-      studentId: student.id,
+      studentId: student._id,
       classCode: this.selectedClass.classCode,
       action: 'accept'
     }
@@ -384,4 +429,478 @@ export class StudentsComponent implements OnInit {
     return 'status-unknown';
   }
 
+  toggleCreateClassModal() {
+    this.showCreateClassModal = !this.showCreateClassModal;
+    // Reset form when closing
+    if (!this.showCreateClassModal) {
+      this.newClass = {
+        className: '',
+        classCode: '',
+        autoAdmission: false,
+        description: '',
+        year: '',
+        block: '',
+        allowJoining: true
+      };
+    }
+  }
+
+  toggleAddStudentModal() {
+    this.showAddStudentModal = !this.showAddStudentModal;
+    // Reset form when closing
+    if (!this.showAddStudentModal) {
+      this.newStudentEmails = '';
+      this.newStudentBlock = '';
+    }
+  }
+
+  // Fixed createClass() to include all properties
+  createClass() {
+    if (!this.newClass.className || !this.newClass.classCode) {
+      return;
+    }
+    
+    const data = {
+      instructor: this.userId,
+      className: this.newClass.className,
+      classCode: this.newClass.classCode,
+      autoAdmission: this.newClass.autoAdmission,
+      description: this.newClass.description
+    };
+
+    this.isLoading = true;
+    this.api.createClass(data).subscribe({
+      next: (resp: any) => {
+        this.getClasses(); 
+        this.toggleCreateClassModal();
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.error = err.message;
+        this.isLoading = false;
+      }
+    });
+  }
+
+  // Completed addStudents() implementation
+  addStudents() {
+    if (!this.newStudentEmails || !this.selectedClass) {
+      return;
+    }
+
+    const emails = this.newStudentEmails
+      .split(/[\n,]/)
+      .map(email => email.trim())
+      .filter(email => email.length > 0);
+
+    if (emails.length === 0) {
+      return;
+    }
+
+    this.isSearchLoading = true;
+    
+    const data = {
+      instructorId: this.userId,
+      classCode: this.selectedClass.classCode,
+      emails: emails,
+      block: this.newStudentBlock || null
+    };
+    
+    this.api.addStudent(this.userId, this.selectedClass.classCode, data).subscribe({
+      next: (resp: any) => {
+        this.getStudentList();
+        this.toggleAddStudentModal();
+        this.isSearchLoading = false;
+      },
+      error: (err) => {
+        this.error = err.message;
+        this.isSearchLoading = false;
+      }
+    });
+  }
+
+  clearSearch() {
+    this.studentSearchQuery = '';
+    this.searchedStudents = [];
+  }
+  
+  clearAllSelections() {
+    this.selectedStudents = [];
+  }
+  
+
+  toggleAssignAssessmentModal() {
+    this.showAssignAssessmentModal = !this.showAssignAssessmentModal;
+    if (!this.showAssignAssessmentModal) {
+      this.resetAssignAssessmentModal();
+    } else {
+      this.loadOwnAssessments();
+    }
+  }
+
+  resetAssignAssessmentModal() {
+    this.activeTab = 'dropdown';
+    this.selectedAssessment = null;
+    this.selectedDropdownAssessment = null;
+    this.assessmentSearchQuery = '';
+    this.searchedAssessments = [];
+    this.assignmentDetails = {
+      startDate: '',
+      dueDate: '',
+      timeLimit: 60,
+      instructions: '',
+      randomizeQuestions: false,
+      showResults: false
+    };
+  }
+
+  loadOwnAssessments() {
+    if (!this.userId) return;
+    
+    this.api.getOwnAssessment(this.userId).subscribe({
+      next: (data: any) => {
+        this.ownAssessments = data.data;
+      },
+      error: (err) => {
+        console.error('Error fetching assessments for dropdown:', err);
+      }
+    });
+  }
+
+  onAssessmentDropdownChange() {
+    if (this.selectedDropdownAssessment) {
+      this.selectedAssessment = this.selectedDropdownAssessment;
+      this.setupDefaultScheduleSettings();
+    }
+  }
+
+  searchAssessments() {
+    if (!this.assessmentSearchQuery || this.assessmentSearchQuery.length < 3) {
+      this.searchedAssessments = [];
+      return;
+    }
+    
+    this.api.searchAssessmentUser(
+      this.userId, 
+      this.assessmentSearchQuery
+    ).subscribe({
+      next: (resp: any) => {
+        this.searchedAssessments = resp.data.assessments;
+      },
+      error: (err) => {
+        console.error('Error searching assessments:', err);
+      }
+    });
+  }
+
+  selectAssessment(assessment: any) {
+    this.selectedAssessment = assessment;
+    this.selectedDropdownAssessment = this.ownAssessments.find(
+      a => a.id === assessment.id
+    ) || null;  
+    this.setupDefaultScheduleSettings();
+  }
+
+  clearAssessmentSearch() {
+    this.assessmentSearchQuery = '';
+    this.searchedAssessments = [];
+  }
+
+  setupDefaultScheduleSettings() {
+    const now = new Date();
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 7);
+    
+    this.assignmentDetails.startDate = this.formatDateForInput(now);
+    this.assignmentDetails.dueDate = this.formatDateForInput(dueDate);
+  }
+
+  formatDateForInput(date: Date): string {
+    return date.toISOString().slice(0, 16);
+  }
+
+  searchStudentsForAdding() {
+    if(!this.selectedClass){
+      this.searchedStudents = [];
+      return;
+    }
+    if (!this.studentSearchQuery || this.studentSearchQuery.length < 2) {
+      this.searchedStudents = [];
+      return;
+    }
+    
+    this.isLoading = true;
+    this.api.searchStudentsAdd(this.userId, this.selectedClass.classCode, this.studentSearchQuery).subscribe({
+      next: (resp: any) => {
+        this.searchedStudents = resp.data.students || [];
+        console.log(this.searchedStudents);
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.error = err.message;
+        this.isLoading = false;
+      }
+    });
+  }
+
+  isStudentSelected(student: any) {
+    return this.selectedStudents.some(s => s._id === student._id);
+  }
+
+  toggleStudentSelection(student: any) {
+    if (this.isStudentSelected(student)) {
+      this.removeSelectedStudent(student);
+    } else {
+      this.selectedStudents.push(student);
+    }
+  }
+
+  removeSelectedStudent(student: any) {
+    this.selectedStudents = this.selectedStudents.filter(s => s._id !== student._id);
+  }
+
+  async addSelectedStudents() {
+    if (this.selectedStudents.length === 0) return;
+    
+    this.isAddingStudents = true;
+    let successCount = 0;
+    let failCount = 0;
+    const studentsToAdd = [...this.selectedStudents];
+    this.selectedStudents = [];
+    for (const student of studentsToAdd) {
+      try {
+        this.addingProgressText = `Adding ${successCount + 1} of ${studentsToAdd.length}...`;
+        
+        await this.api.addStudent(
+          this.userId, 
+          this.selectedClass.classCode,
+          {studentId: student._id}
+        ).toPromise();
+        successCount++;
+      } catch (error) {
+        console.error(`Failed to add student ${student.name}:`, error);
+        failCount++;
+      }
+    }
+    this.isAddingStudents = false;
+    if (successCount > 0) {
+      console.log(`Successfully added ${successCount} student(s) to class`);
+    }
+    if (failCount > 0) {
+      console.error(`Failed to add ${failCount} student(s)`);
+    }
+    if (successCount > 0) {
+      this.getStudentList();
+    }
+    if (failCount === 0) {
+      this.toggleAddStudentModal();
+    }
+  }
+
+  getTotalQuestions(types: any): number {
+    return 0
+  }
+
+  formatQuestionTypes(types: any): string {
+    if (!types) return 'Unknown';
+    
+    const typeKeys = Object.keys(types);
+    
+    if (typeKeys.length === 0) return 'Unknown';
+    if (typeKeys.length === 1) {
+      const typeName = this.formatTypeName(typeKeys[0]);
+      return `${typeName} (${types[typeKeys[0]]})`;
+    }
+    
+    const totalQuestions = this.getTotalQuestions(types);
+    return `Mixed (${totalQuestions})`;
+  }
+
+  formatTypeName(type: string): string {
+    if (!type) return 'Unknown';
+    
+    return type
+      .replace(/-|_/g, ' ')
+      .replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+  }
+
+  toggleClassSettingsModal() {
+    this.showClassSettingsModal = !this.showClassSettingsModal;
+  }
+
+  saveClassSettings() {
+    Swal.fire({
+      title: 'Save Changes?',
+      text: "Do you want to save changes to class settings?",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3b82f6',
+      cancelButtonColor: '#d1d5db',
+      confirmButtonText: 'Yes, save changes',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const data = {
+          instructorId: this.userId,
+          autoAdmission: this.autoAdmission,
+          allowJoining: this.allowJoining,
+          className: this.selectedClass.className,
+        }
+        this.api.classSettings(
+          this.selectedClass.classCode,
+          data
+        ).subscribe({
+          next: (response) => {
+            console.log('Class settings updated successfully');
+            this.toggleClassSettingsModal();
+            Swal.fire({
+              title: 'Settings Saved!',
+              text: 'Class settings have been updated successfully.',
+              icon: 'success',
+              confirmButtonColor: '#3b82f6'
+            });
+          },
+          error: (error) => {
+            console.error('Failed to update class settings', error);
+            Swal.fire({
+              title: 'Error!',
+              text: 'Failed to update class settings. Please try again.',
+              icon: 'error',
+              confirmButtonColor: '#3b82f6'
+            });
+          }
+        });
+      }
+    });
+  }
+
+  assignAssessment() {
+    if (!this.isFormValid()) return;
+    Swal.fire({
+      title: 'Assign Assessment?',
+      text: `Are you sure you want to assign "${this.selectedAssessment.title}" to this class?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3b82f6',
+      cancelButtonColor: '#d1d5db',
+      confirmButtonText: 'Yes, assign it',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const assignmentData = {
+          assessmentId: this.selectedAssessment._id,
+          classCodes: this.selectedClass?.classCode,
+          createdBy: this.userId,
+          startDate: new Date(this.assignmentDetails.startDate).toISOString(),
+          dueDate: new Date(this.assignmentDetails.dueDate).toISOString(),
+          timeLimit: this.assignmentDetails.timeLimit,
+          instructions: this.assignmentDetails.instructions,
+          // randomizeQuestions: this.assignmentDetails.randomizeQuestions,
+          // showResults: this.assignmentDetails.showResults
+        };
+        
+        // Call API to assign assessment
+        this.api.assignAssessment(assignmentData).subscribe({
+          next: (response) => {
+            console.log('Assessment assigned successfully');
+            
+            // Show success message
+            Swal.fire({
+              title: 'Success!',
+              text: 'Assessment has been assigned to the class.',
+              icon: 'success',
+              confirmButtonColor: '#3b82f6'
+            });
+            
+            // Close modal and refresh assessment list
+            this.toggleAssignAssessmentModal();
+            this.getAssignedAssessments();
+          },
+          error: (error) => {
+            console.error('Failed to assign assessment:', error);
+            Swal.fire({
+              title: 'Error!',
+              text: 'Failed to assign assessment. Please try again.',
+              icon: 'error',
+              confirmButtonColor: '#3b82f6'
+            });
+          }
+        });
+      }
+    });
+  }
+
+  getCurrentDateTimeString(): string {
+    const now = new Date();
+    now.setSeconds(0); 
+    now.setMilliseconds(0); 
+    return now.toISOString().slice(0, 16); 
+  }
+
+  getMinDueDateString(): string {
+    if (!this.assignmentDetails.startDate) {
+      return this.getCurrentDateTimeString();
+    }
+    
+    // Use start date as minimum for due date
+    const startDate = new Date(this.assignmentDetails.startDate);
+    // Add at least 5 minutes to start date
+    startDate.setMinutes(startDate.getMinutes() + 5);
+    return startDate.toISOString().slice(0, 16);
+  }
+
+  
+  isFormValid(): boolean {
+    if (!this.selectedAssessment) return false;
+    if (!this.assignmentDetails.startDate || !this.assignmentDetails.dueDate || !this.assignmentDetails.timeLimit) return false;
+    
+    // Validate time limit is positive
+    if (this.assignmentDetails.timeLimit <= 0) return false;
+    
+    // Convert dates to compare
+    const startDate = new Date(this.assignmentDetails.startDate);
+    const dueDate = new Date(this.assignmentDetails.dueDate);
+    const now = new Date();
+    
+    // Check if start date is not in the past
+    if (startDate < now) {
+      this.dateError = "Start date cannot be in the past";
+      return false;
+    }
+    
+    // Check if due date is after start date
+    if (dueDate <= startDate) {
+      this.dateError = "Due date must be after start date";
+      return false;
+    }
+    
+    // Clear error if validation passes
+    this.dateError = "";
+    return true;
+  }
+
+  // Clear selected assessment
+  clearSelectedAssessment() {
+    this.selectedAssessment = null;
+    this.selectedDropdownAssessment = null;
+  }
+
+  onTabChange(newTab: 'dropdown' | 'search') {
+    // Store the previous tab before changing
+    const previousTab = this.activeTab;
+    this.activeTab = newTab;
+    
+    // Synchronize selections between tabs
+    if (previousTab === 'search' && newTab === 'dropdown' && this.selectedAssessment) {
+      // Find the matching assessment in dropdown options and select it
+      this.selectedDropdownAssessment = this.ownAssessments.find(
+        assessment => assessment.id === this.selectedAssessment?.id
+      ) || null;
+    } 
+    else if (previousTab === 'dropdown' && newTab === 'search' && this.selectedDropdownAssessment) {
+      // Keep the selected assessment when switching to search tab
+      this.selectedAssessment = this.selectedDropdownAssessment;
+    }
+  }
+  
 }

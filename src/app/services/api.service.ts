@@ -137,6 +137,32 @@ export class ApiService {
   }
 
 
+  getOwnAssessment(id: string){
+    return this.http.get(`${this.apiUrl}/classes/assessment/latest/${id}`);
+  }
+
+  searchAssessmentUser(id: string, text: string, page: number = 1, pageSize: number = 10) {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('limit', pageSize.toString());
+    return this.http.get(`${this.apiUrl}/search/assessment/own/${id}?query=${text}`);
+  }
+
+  searchStudentsAdd(id: string, classCode: string, text: string) {
+    return this.http.get(`${this.apiUrl}/classes/student/search/add/${id}/${classCode}?query=${text}`);
+  }
+
+  classSettings(id: string, data: any) {
+    return this.http.put(`${this.apiUrl}/class/settings/${id}`, data);
+  }
+
+  addStudent(id: string, classCode: string, data: any) {
+    return this.http.post(`${this.apiUrl}/class/addstudent/${id}/${classCode}`, data);
+  }
+
+  removeStudent(id: string, classCode: string, data: any){
+    return this.http.put(`${this.apiUrl}/class/removeStudent/${id}/${classCode}`, data);
+  }
 
 
 
@@ -164,6 +190,10 @@ export class ApiService {
 
   assignAssessment(data: any) {
     return this.http.post(`${this.apiUrl}/assign`, data);
+  }
+
+  createClass(data: any) {
+    return this.http.post(`${this.apiUrl}/create`, data);
   }
 
   //result page instructor
