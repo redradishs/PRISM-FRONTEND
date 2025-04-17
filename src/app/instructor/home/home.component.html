@@ -1,20 +1,20 @@
-<div class="min-h-screen bg-gray-50">
-    <div class="flex">
+<div class="bg-gray-50 min-h-screen w-full overflow-x-hidden">
+    <div class="flex w-full">
         <app-sidebar></app-sidebar>
-        <div class="flex-1 ml-0 md:ml-20">
+        <div class="flex-1 ml-0 md:ml-20 w-full">
             <header class="bg-white shadow-sm">
-                <div class="max-w-7xl mx-auto py-2 md:py-4 px-3 md:px-4 sm:px-6 lg:px-8">
+                <div class="w-full px-4 py-2 md:py-3">
                     <div class="flex items-center justify-between">
-                        <h1 class="text-xl md:text-2xl font-semibold text-gray-900">Home</h1>
+                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900 lg:ml-5">Home</h1>
                         <button *ngIf="isMobile" (click)="toggleSidebar()"
                             class="p-1.5 md:p-2 rounded-md hover:bg-gray-100 transition-colors">
-                            <i class="fas fa-bars w-5 md:w-6 h-5 md:h-6"></i>
+                            <i class="fas fa-bars w-4 md:w-5 lg:w-6 h-4 md:h-5 lg:h-6"></i>
                         </button>
                     </div>
                 </div>
             </header>
 
-            <main class="p-2 md:p-4 lg:p-4">
+            <main class="p-2 md:p-4 lg:p-4 w-full">
                 <div class="welcome-section">
                     <div class="welcome-content">
                         <div class="welcome-text">
@@ -113,115 +113,117 @@
                         <button class="export-btn">Export Data</button>
                     </div>
 
-                    <table class="student-table">
-                        <thead>
-                            <tr>
-                                <th>Student</th>
-                                <th>Assessments Completed</th>
-                                <th>Average Score</th>
-                                <th>Progress</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="hatdog-row">
-                                <td>
-                                    <div class="student-info">
-                                        <div class="avatar">JD</div>
-                                        <div class="student-details">
-                                            <div class="student-name">John Doe</div>
-                                            <div class="student-email">johbndjkddj</div>
+                    <div class="table-container">
+                        <table class="student-table">
+                            <thead>
+                                <tr>
+                                    <th class="student-col">Student</th>
+                                    <th class="completion-col">Assessments Completed</th>
+                                    <th class="score-col">Average Score</th>
+                                    <th class="progress-col">Progress</th>
+                                    <th class="actions-col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="hatdog-row">
+                                    <td class="student-col">
+                                        <div class="student-info">
+                                            <div class="avatar">JD</div>
+                                            <div class="student-details">
+                                                <div class="student-name">John Doe</div>
+                                                <div class="student-email">johbndjkddj</div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="completion">2 / 3</span>
-                                </td>
-                                <td>
-                                    <div class="score-section">
-                                        <span class="score">85%</span>
-                                        <span class="badge good">Good</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="progress-bar">
-                                        <div class="progress" style="width: 67%; background-color: #f59e0b;"></div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="actions">
-                                        <button class="action-btn"><i class="fas fa-file-alt"></i></button>
-                                        <button class="action-btn"><i class="fas fa-ellipsis-h"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <tr class="hatdog-row">
-                                <td>
-                                    <div class="student-info">
-                                        <div class="avatar">JD</div>
-                                        <div class="student-details">
-                                            <div class="student-name">John Doe</div>
-                                            <div class="student-email">johbndjkddj</div>
+                                    </td>
+                                    <td class="completion-col">
+                                        <span class="completion">2 / 3</span>
+                                    </td>
+                                    <td class="score-col">
+                                        <div class="score-section">
+                                            <span class="score">85%</span>
+                                            <span class="badge good">Good</span>
                                         </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="completion">2 / 3</span>
-                                </td>
-                                <td>
-                                    <div class="score-section">
-                                        <span class="score">85%</span>
-                                        <span class="badge good">Good</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="progress-bar">
-                                        <div class="progress" style="width: 67%; background-color: #f59e0b;"></div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="actions">
-                                        <button class="action-btn"><i class="fas fa-file-alt"></i></button>
-                                        <button class="action-btn"><i class="fas fa-ellipsis-h"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <tr class="hatdog-row">
-                                <td>
-                                    <div class="student-info">
-                                        <div class="avatar">JD</div>
-                                        <div class="student-details">
-                                            <div class="student-name">John Doe</div>
-                                            <div class="student-email">johbndjkddj</div>
+                                    </td>
+                                    <td class="progress-col">
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 67%; background-color: #f59e0b;"></div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="completion">2 / 3</span>
-                                </td>
-                                <td>
-                                    <div class="score-section">
-                                        <span class="score">85%</span>
-                                        <span class="badge good">Good</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="progress-bar">
-                                        <div class="progress" style="width: 67%; background-color: #f59e0b;"></div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="actions">
-                                        <button class="action-btn"><i class="fas fa-file-alt"></i></button>
-                                        <button class="action-btn"><i class="fas fa-ellipsis-h"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
+                                    </td>
+                                    <td class="actions-col">
+                                        <div class="actions">
+                                            <button class="action-btn"><i class="fas fa-file-alt"></i></button>
+                                            <button class="action-btn"><i class="fas fa-ellipsis-h"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
 
-                        </tbody>
-                    </table>
+                                <tr class="hatdog-row">
+                                    <td class="student-col">
+                                        <div class="student-info">
+                                            <div class="avatar">JD</div>
+                                            <div class="student-details">
+                                                <div class="student-name">John Doe</div>
+                                                <div class="student-email">johbndjkddj</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="completion-col">
+                                        <span class="completion">2 / 3</span>
+                                    </td>
+                                    <td class="score-col">
+                                        <div class="score-section">
+                                            <span class="score">85%</span>
+                                            <span class="badge good">Good</span>
+                                        </div>
+                                    </td>
+                                    <td class="progress-col">
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 67%; background-color: #f59e0b;"></div>
+                                        </div>
+                                    </td>
+                                    <td class="actions-col">
+                                        <div class="actions">
+                                            <button class="action-btn"><i class="fas fa-file-alt"></i></button>
+                                            <button class="action-btn"><i class="fas fa-ellipsis-h"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr class="hatdog-row">
+                                    <td class="student-col">
+                                        <div class="student-info">
+                                            <div class="avatar">JD</div>
+                                            <div class="student-details">
+                                                <div class="student-name">John Doe</div>
+                                                <div class="student-email">johbndjkddj</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="completion-col">
+                                        <span class="completion">2 / 3</span>
+                                    </td>
+                                    <td class="score-col">
+                                        <div class="score-section">
+                                            <span class="score">85%</span>
+                                            <span class="badge good">Good</span>
+                                        </div>
+                                    </td>
+                                    <td class="progress-col">
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 67%; background-color: #f59e0b;"></div>
+                                        </div>
+                                    </td>
+                                    <td class="actions-col">
+                                        <div class="actions">
+                                            <button class="action-btn"><i class="fas fa-file-alt"></i></button>
+                                            <button class="action-btn"><i class="fas fa-ellipsis-h"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
 

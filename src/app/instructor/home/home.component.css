@@ -600,6 +600,13 @@
     border-spacing: 0;
 }
 
+/* Responsive table container */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
 .student-table th {
     text-align: left;
     padding: 0.75rem 1rem;
@@ -607,11 +614,35 @@
     font-weight: 500;
     font-size: 0.875rem;
     border-bottom: 1px solid #e5e7eb;
+    white-space: nowrap;
 }
 
 .student-table td {
     padding: 1rem;
     vertical-align: middle;
+    white-space: nowrap;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+/* Column specific widths */
+.student-table .student-col {
+    min-width: 200px;
+}
+
+.student-table .completion-col {
+    min-width: 150px;
+}
+
+.student-table .score-col {
+    min-width: 150px;
+}
+
+.student-table .progress-col {
+    min-width: 150px;
+}
+
+.student-table .actions-col {
+    min-width: 100px;
 }
 
 .student-info {
@@ -764,58 +795,63 @@
     .student-perf {
         padding: 1rem;
         margin-top: 1.5rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
-    /* Stack table cells vertically */
+    .student-table {
+        margin: 0;
+        width: 100%;
+    }
+
+    .student-table th,
+    .student-table td {
+        padding: 0.75rem;
+        white-space: nowrap;
+    }
+
     .student-table thead {
-        display: none; /* Hide headers on mobile */
+        display: table-header-group;
     }
 
-    .student-table, 
-    .student-table tbody, 
-    .student-table tr {
-        display: block;
+    .student-table tbody {
+        display: table-row-group;
     }
 
     .student-table tr {
-        margin-bottom: 1rem;
-        border: 1px solid #e5e7eb;
-        border-radius: 0.5rem;
-        padding: 1rem;
+        display: table-row;
+        margin-bottom: 0;
+        border: none;
+        padding: 0;
     }
 
     .student-table td {
-        display: flex;
-        padding: 0.5rem 0;
-        align-items: center;
-        justify-content: space-between;
-        border: none;
+        display: table-cell;
+        padding: 0.75rem;
+        white-space: nowrap;
+        border-bottom: 1px solid #e5e7eb;
     }
 
-    /* Add labels for mobile view */
+    /* Remove the mobile labels */
     .student-table td::before {
-        content: attr(data-label);
-        font-weight: 500;
-        color: #6b7280;
-        font-size: 0.75rem;
+        display: none;
     }
 
     .student-info {
-        width: 100%;
-        justify-content: flex-start;
+        width: auto;
     }
 
     .score-section {
-        flex-direction: column;
-        align-items: flex-end;
+        flex-direction: row;
+        align-items: center;
     }
 
     .actions {
-        justify-content: flex-end;
+        justify-content: flex-start;
     }
 
     .progress-bar {
-        max-width: 150px;
+        max-width: 100px;
     }
 }
 

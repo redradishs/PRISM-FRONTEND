@@ -585,7 +585,10 @@ export class StudentsComponent implements OnInit {
       this.assessmentSearchQuery
     ).subscribe({
       next: (resp: any) => {
-        this.searchedAssessments = resp.data.assessments;
+        this.searchedAssessments = resp.data.assessments.map((assessment: any) => ({
+          ...assessment,
+          selected: this.selectedAssessment?._id === assessment._id
+        }));
       },
       error: (err) => {
         console.error('Error searching assessments:', err);
@@ -594,10 +597,25 @@ export class StudentsComponent implements OnInit {
   }
 
   selectAssessment(assessment: any) {
+    // If clicking the same assessment, deselect it
+    if (this.selectedAssessment?._id === assessment._id) {
+      this.clearSelectedAssessment();
+      return;
+    }
+    
     this.selectedAssessment = assessment;
+    
+    // Update selection state in search results
+    this.searchedAssessments = this.searchedAssessments.map(a => ({
+      ...a,
+      selected: a._id === assessment._id
+    }));
+    
+    // Find the exact matching assessment by ID in dropdown list
     this.selectedDropdownAssessment = this.ownAssessments.find(
-      a => a.id === assessment.id
-    ) || null;  
+      a => a._id === assessment._id
+    ) || null;
+    
     this.setupDefaultScheduleSettings();
   }
 
@@ -885,21 +903,14 @@ export class StudentsComponent implements OnInit {
     this.selectedDropdownAssessment = null;
   }
 
-  onTabChange(newTab: 'dropdown' | 'search') {
-    // Store the previous tab before changing
-    const previousTab = this.activeTab;
-    this.activeTab = newTab;
-    
-    // Synchronize selections between tabs
-    if (previousTab === 'search' && newTab === 'dropdown' && this.selectedAssessment) {
-      // Find the matching assessment in dropdown options and select it
-      this.selectedDropdownAssessment = this.ownAssessments.find(
-        assessment => assessment.id === this.selectedAssessment?.id
-      ) || null;
-    } 
-    else if (previousTab === 'dropdown' && newTab === 'search' && this.selectedDropdownAssessment) {
-      // Keep the selected assessment when switching to search tab
-      this.selectedAssessment = this.selectedDropdownAssessment;
+  onTabChange(tab: 'search' | 'dropdown') {
+    this.activeTab = tab;
+    // Clear selections when switching tabs
+    this.clearSelectedAssessment();
+    // Clear search results when switching to dropdown
+    if (tab === 'dropdown') {
+      this.assessmentSearchQuery = '';
+      this.searchedAssessments = [];
     }
   }
   
