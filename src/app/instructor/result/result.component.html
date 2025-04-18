@@ -381,8 +381,8 @@
                                                 <span class="text-sm font-medium">In Progress</span>
                                             </div>
                                             <span class="text-sm font-semibold text-amber-600">
-                                                {{submissionStatus.ongoing || 0}}
-                                                ({{((submissionStatus.ongoing || 0) / (submissionStatus.total || 1) * 100) | number:'1.0-0'}}%)
+                                                {{submissionStatus.inProgress || 0}}
+                                                ({{((submissionStatus.inProgress || 0) / (submissionStatus.total || 1) * 100) | number:'1.0-0'}}%)
                                             </span>
                                         </div>
                                         <div
@@ -392,8 +392,8 @@
                                                 <span class="text-sm font-medium">Not Started</span>
                                             </div>
                                             <span class="text-sm font-semibold text-gray-600">
-                                                {{submissionStatus.not_started || 0}}
-                                                ({{((submissionStatus.not_started || 0) / (submissionStatus.total || 1) * 100) | number:'1.0-0'}}%)
+                                                {{submissionStatus.notStarted || 0}}
+                                                ({{((submissionStatus.notStarted || 0) / (submissionStatus.total || 1) * 100) | number:'1.0-0'}}%)
                                             </span>
                                         </div>
                                     </div>

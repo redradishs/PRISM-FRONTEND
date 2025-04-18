@@ -26,8 +26,8 @@ interface QuestionData {
 
 interface SubmissionStatus {
   submitted: number;
-  ongoing: number;
-  not_started: number;
+  inProgress: number;
+  notStarted: number;
   total: number;
 }
 
@@ -78,8 +78,8 @@ export class ResultComponent implements OnInit {
   scoreDistribution: any;
   submissionStatus: SubmissionStatus = {
     submitted: 0,
-    ongoing: 0,
-    not_started: 0,
+    inProgress: 0,
+    notStarted: 0,
     total: 0
   };
   completionStatistics: any;

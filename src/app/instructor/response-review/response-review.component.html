@@ -1,0 +1,355 @@
+<div class="bg-gray-50 min-h-screen w-full overflow-x-hidden">
+    <div class="flex w-full">
+        <app-sidebar></app-sidebar>
+        <div class="flex-1 ml-0 md:ml-20 w-full">
+            <header class="bg-white shadow-sm">
+                <div class="w-full px-4 py-2 md:py-3">
+                    <div class="flex items-center justify-between">
+                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900 lg:ml-5">Response Review</h1>
+                        <button *ngIf="isMobile" (click)="toggleSidebar()"
+                            class="p-1.5 md:p-2 rounded-md hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-bars w-4 md:w-5 lg:w-6 h-4 md:h-5 lg:h-6"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-2 md:p-4 lg:p-4 w-full">
+                <!-- Assessment Header -->
+                <div class="assessment-header p-4">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <h2 class="assessment-title">Final Assessment: Introduction to Computer Science</h2>
+                            <p class="assessment-subtitle">Course Code: CS101 Spring 2024</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <button class="action-button secondary">
+                                <i class="fas fa-file-export"></i>
+                                Export Results
+                            </button>
+                            <button class="action-button primary">
+                                <i class="fas fa-edit"></i>
+                                Edit Grading
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                    <!-- Cards Grid -->
+                    <div class="hatdogcont">
+                        <!-- Student Information Card -->
+                        <div class="contauko">
+                            <div class="taekopre">
+                                <i class="fas fa-user"></i>
+                                <h3 class="taekotext">Student Information</h3>
+                            </div>
+                            <div class="studentbox">
+                                <div class="mukhaselfie">
+                                    JD
+                                </div>
+                                <div class="infokopogi">
+                                    <h2 class="studentname">John Doe</h2>
+                                    <div class="profilerow">
+                                        <p class="studentemail">john.doe&#64;example.com</p>
+                                        <div class="badgekoto">
+                                            <span>ID: STUD-001</span>
+                                            <span>Block A</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="infolist">
+                                <div class="infoitem">
+                                    <span>Submitted:</span>
+                                    <span>Mar 15, 2024, 2:30 PM</span>
+                                </div>
+                                <div class="infoitem">
+                                    <span>Time Spent:</span>
+                                    <span>45 minutes</span>
+                                </div>
+                                <div class="infoitem">
+                                    <span>Class Rank:</span>
+                                    <span>2 of 4</span>
+                                </div>
+                                <div class="infoitem">
+                                    <span>Class Average:</span>
+                                    <span>72%</span>
+                                </div>
+                                <div class="infoitem">
+                                    <span>Class Highest:</span>
+                                    <span>92%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Score Overview Card -->
+                        <div class="contauko">
+                            <div class="taekopre">
+                                <i class="fas fa-award"></i>
+                                <h3 class="taekotext">Score Overview</h3>
+                            </div>
+                            
+                            <div class="scorekopogi">
+                                <div class="bilogbilog">
+                                    <svg viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="45" />
+                                        <circle cx="50" cy="50" r="45" [style.strokeDasharray]="'282.7'" [style.strokeDashoffset]="282.7 * (1 - 78/100)" />
+                                    </svg>
+                                    <div class="porsyento">78%</div>
+                                </div>
+
+                                <div class="barkopogi">
+                                    <div class="baritem">
+                                        <div class="barinfo">
+                                            <span>Student Score</span>
+                                            <span>78 / 100 points</span>
+                                        </div>
+                                        <div class="barline">
+                                            <div class="barfill berde" [style.width.%]="78"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="baritem">
+                                        <div class="barinfo">
+                                            <span>Passing Score (75%)</span>
+                                            <span>75 / 100 points</span>
+                                        </div>
+                                        <div class="barline">
+                                            <div class="barfill dilaw" [style.width.%]="75"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="baritem">
+                                        <div class="barinfo">
+                                            <span>Class Average</span>
+                                            <span>72%</span>
+                                        </div>
+                                        <div class="barline">
+                                            <div class="barfill asul" [style.width.%]="72"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="feedbackbox">
+                                <div class="feedbackheader">
+                                    <h3 class="feedbacktitle">
+                                        <i class="fas fa-comment"></i>
+                                        Instructor Feedback
+                                    </h3>
+                                    <button class="btn-ghost" (click)="toggleFeedbackEdit()">
+                                        <i class="fas" [class.fa-edit]="!isEditingFeedback" [class.fa-save]="isEditingFeedback"></i>
+                                    </button>
+                                </div>
+                                <ng-container *ngIf="isEditingFeedback; else displayFeedback">
+                                    <div class="space-y-2">
+                                        <textarea [(ngModel)]="feedback" placeholder="Enter feedback for the student..." class="w-full min-h-[100px] p-2 border rounded-md"></textarea>
+                                        <div class="flex justify-end gap-2">
+                                            <button class="btn-outline" (click)="cancelFeedbackEdit()">Cancel</button>
+                                            <button class="btn-primary" (click)="saveFeedback()">Save Feedback</button>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                                <ng-template #displayFeedback>
+                                    <p class="feedbacktext">
+                                        {{feedback || "No feedback provided yet. Click the edit button to add feedback."}}
+                                    </p>
+                                </ng-template>
+                            </div>
+                        </div>
+                    </div>
+
+                <!-- Questions Section -->
+                <div class="questions-section">
+                    <div class="section-header">
+                        <div class="header-content">
+                            <i class="fas fa-list header-icon"></i>
+                            <div>
+                                <h3 class="header-title">All Responses</h3>
+                                <p class="header-subtitle">Quick overview of all question responses</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="questions-list">
+                        <!-- Question 1 -->
+                        <div class="question-item">
+                            <div class="question-header" (click)="toggleQuestion(1)">
+                                <div class="question-info">
+                                    <div class="score-badge correct">
+                                        <i class="fas fa-check"></i>
+                                        <span>20/20</span>
+                                    </div>
+                                    <span class="question-title">Question 1</span>
+                                </div>
+                                <div class="question-meta">
+                                    <span class="auto-grade-badge">Auto Graded</span>
+                                    <i class="fas fa-chevron-down expand-icon" [class.expanded]="isExpanded(1)"></i>
+                                </div>
+                            </div>
+                            <div class="question-content" *ngIf="isExpanded(1)">
+                                <div class="content-wrapper">
+                                    <p class="question-text">What is the primary function of the cron daemon in a Linux system?</p>
+                                    <div class="answers-container">
+                                        <div class="answer-block">
+                                            <span class="answer-label">Student's Answer:</span>
+                                            <div class="answer-content">To schedule tasks to run at specific times</div>
+                                        </div>
+                                        <div class="answer-block">
+                                            <span class="answer-label">Correct Answer:</span>
+                                            <div class="answer-content">To schedule tasks to run at specific times</div>
+                                        </div>
+                                    </div>
+                                    <div class="review-button-container">
+                                        <button class="review-button">Review & Grade</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="question-item">
+                            <div class="question-header" (click)="toggleQuestion(2)">
+                                <div class="question-info">
+                                    <div class="score-badge correct">
+                                        <i class="fas fa-check"></i>
+                                        <span>20/20</span>
+                                    </div>
+                                    <span class="question-title">Question 2</span>
+                                </div>
+                                <div class="question-meta">
+                                    <span class="auto-grade-badge">Auto Graded</span>
+                                    <i class="fas fa-chevron-down expand-icon" [class.expanded]="isExpanded(2)"></i>
+                                </div>
+                            </div>
+                            <div class="question-content" *ngIf="isExpanded(2)">
+                                <div class="content-wrapper">
+                                    <p class="question-text">Which three types of network interfaces are typically found on a Linux system?</p>
+                                    <div class="answers-container">
+                                        <div class="answer-block">
+                                            <span class="answer-label">Student's Answer:</span>
+                                            <div class="answer-content">Ethernet (eth), Wireless (wlan), Loopback (lo)</div>
+                                        </div>
+                                        <div class="answer-block">
+                                            <span class="answer-label">Correct Answer:</span>
+                                            <div class="answer-content">Ethernet (eth), Wireless (wlan), Loopback (lo)</div>
+                                        </div>
+                                    </div>
+                                    <div class="review-button-container">
+                                        <button class="review-button">Review & Grade</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div class="question-item">
+                            <div class="question-header" (click)="toggleQuestion(3)">
+                                <div class="question-info">
+                                    <div class="score-badge incorrect">
+                                        <i class="fas fa-times"></i>
+                                        <span>0/20</span>
+                                    </div>
+                                    <span class="question-title">Question 3</span>
+                                </div>
+                                <div class="question-meta">
+                                    <span class="manual-grade-badge">Manually Graded</span>
+                                    <i class="fas fa-chevron-down expand-icon" [class.expanded]="isExpanded(3)"></i>
+                                </div>
+                            </div>
+                            <div class="question-content" *ngIf="isExpanded(3)">
+                                <div class="content-wrapper">
+                                    <p class="question-text">What is the purpose of the /etc/passwd file in a Linux system?</p>
+                                    <div class="answers-container">
+                                        <div class="answer-block">
+                                            <span class="answer-label">Student's Answer:</span>
+                                            <div class="answer-content">Stores user account information and settings</div>
+                                        </div>
+                                        <div class="answer-block">
+                                            <span class="answer-label">Correct Answer:</span>
+                                            <div class="answer-content">Stores user account information and settings</div>
+                                        </div>
+                                    </div>
+                                    <div class="review-button-container">
+                                        <button class="review-button">Review & Grade</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 4 -->
+                        <div class="question-item">
+                            <div class="question-header" (click)="toggleQuestion(4)">
+                                <div class="question-info">
+                                    <div class="score-badge correct">
+                                        <i class="fas fa-check"></i>
+                                        <span>20/20</span>
+                                    </div>
+                                    <span class="question-title">Question 4</span>
+                                </div>
+                                <div class="question-meta">
+                                    <span class="auto-grade-badge">Auto Graded</span>
+                                    <i class="fas fa-chevron-down expand-icon" [class.expanded]="isExpanded(4)"></i>
+                                </div>
+                            </div>
+                            <div class="question-content" *ngIf="isExpanded(4)">
+                                <div class="content-wrapper">
+                                    <p class="question-text">Which two protocols are commonly used for remote access to a Linux system?</p>
+                                    <div class="answers-container">
+                                        <div class="answer-block">
+                                            <span class="answer-label">Student's Answer:</span>
+                                            <div class="answer-content">SSH and Telnet</div>
+                                        </div>
+                                        <div class="answer-block">
+                                            <span class="answer-label">Correct Answer:</span>
+                                            <div class="answer-content">SSH and Telnet</div>
+                                        </div>
+                                    </div>
+                                    <div class="review-button-container">
+                                        <button class="review-button">Review & Grade</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 5 -->
+                        <div class="question-item">
+                            <div class="question-header" (click)="toggleQuestion(5)">
+                                <div class="question-info">
+                                    <div class="score-badge partial">
+                                        <i class="fas fa-check"></i>
+                                        <span>18/20</span>
+                                    </div>
+                                    <span class="question-title">Question 5</span>
+                                </div>
+                                <div class="question-meta">
+                                    <span class="manual-grade-badge">Manually Graded</span>
+                                    <i class="fas fa-chevron-down expand-icon" [class.expanded]="isExpanded(5)"></i>
+                                </div>
+                            </div>
+                            <div class="question-content" *ngIf="isExpanded(5)">
+                                <div class="content-wrapper">
+                                    <p class="question-text">What is the main purpose of the chkconfig command in a Linux system?</p>
+                                    <div class="answers-container">
+                                        <div class="answer-block">
+                                            <span class="answer-label">Student's Answer:</span>
+                                            <div class="answer-content">To manage system services and runlevels</div>
+                                        </div>
+                                        <div class="answer-block">
+                                            <span class="answer-label">Correct Answer:</span>
+                                            <div class="answer-content">To manage and configure system services across different runlevels</div>
+                                        </div>
+                                    </div>
+                                    <div class="review-button-container">
+                                        <button class="review-button">Review & Grade</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
