@@ -369,6 +369,12 @@ export class StudentsComponent implements OnInit {
     }, this.DEBOUNCE_TIME);
   }
 
+  studentInfo(studentId: string) {
+    this.router.navigate(['instructor/students/assessments'], {
+      state: {studentId: studentId, classCode: this.selectedClass.classCode}
+    });
+  }
+
 
 
   updateDisplayedData(selectedClass: any) {

@@ -218,4 +218,37 @@ export class ApiService {
   getTeachingSummary(id: string) {
     return this.http.get(`${this.apiUrl}/instructorstats/${id}`);
   }
+
+  //student assessment history page
+  studentStatsData(id: string, classCode: string, studentId: string) {
+    return this.http.get(`${this.apiUrl}/student/assessment/history/${id}/${classCode}/${studentId}`);
+  }
+  studentCompletedlist(id: string, classCode: string, studentId: string) {
+    return this.http.get(`${this.apiUrl}/student/assessment/history/completed/${id}/${classCode}/${studentId}`);
+  } 
+  studentUpcomingList(id: string, classCode: string, studentId: string) {
+    return this.http.get(`${this.apiUrl}/student/assessment/history/upcoming/${id}/${classCode}/${studentId}`);
+  } 
+
+  //student response page
+  getAssessmentDataP(assignedAssessmentId: string, studentId: string) {
+    return this.http.get(`${this.apiUrl}/assessment/response/${assignedAssessmentId}/${studentId}`);
+  }
+  getDetailedAnswers(assignedAssessmentId: string, studentId: string) {
+    return this.http.get(`${this.apiUrl}/assessment/response/answers/${assignedAssessmentId}/${studentId}`);
+  }
+  rectifyResult(assignedAssessmentId: string, studentId: string, data: {
+  instructorId: string;
+  adjustments: {
+    questionsId: string;
+    isCorrect: boolean;
+    pointsEarned: number;
+  }[]
+}) {
+  return this.http.put(
+    `${this.apiUrl}/assessment/rectify/${assignedAssessmentId}/${studentId}`, 
+    data
+  );
+}
+
 }

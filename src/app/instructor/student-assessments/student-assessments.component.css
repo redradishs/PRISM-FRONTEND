@@ -16,6 +16,33 @@
     background: linear-gradient(to right, #4f46e5, #7c3aed);
 }
 
+/* Base status badge styles */
+.status-badge {
+    display: inline-flex;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
+    padding: 0.25rem 0.625rem;
+  }
+  
+  /* Pending status (yellow) */
+  .status-badge.pending {
+    background-color: #fef3c7;
+    color: #92400e;
+  }
+  
+  /* Ongoing status (blue) */
+  .status-badge.ongoing {
+    background-color: #dbeafe;
+    color: #1e40af;
+  }
+  
+  /* Scheduled status (purple) */
+  .status-badge.scheduled {
+    background-color: #f3e8ff;
+    color: #6b21a8;
+  }
+  
 .card-content {
     padding: 1.5rem;
 }
@@ -52,7 +79,7 @@
     width: 3rem;
     height: 3rem;
     border-radius: 50%;
-    background-color: #f8fafc;
+    background-color: #f6f0fd;
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -589,6 +616,11 @@ button.active {
     color: #166534;
 }
 
+.status-badge.failed {
+    background-color: #f5cbcb;
+    color: #c02d2d;
+}
+
 .status-badge.pending {
     background-color: #fef3c7;
     color: #92400e;
@@ -656,6 +688,12 @@ button.active {
         padding-left: 0;
         margin-left: auto;
         gap: 2rem;
+    }
+
+    .detail-group .value {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #535a6b;
     }
 }
 

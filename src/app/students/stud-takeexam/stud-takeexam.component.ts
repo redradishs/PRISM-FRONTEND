@@ -337,8 +337,6 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
 
   confirmSubmit() {
     this.showSubmitDialog = false;
-
-    // Prepare the submission data
     const submissionData = {
       assignedAssessmentId: this.assignedAssessmentId,
       studentId: this.userId,
@@ -351,16 +349,12 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
     this.api.submitAssessment(submissionData).subscribe({
       next: (resp: any) => {
         console.log('Assessment submitted successfully');
-
-        // Clear violation data from storage
         localStorage.removeItem('violations');
         sessionStorage.removeItem('violations');
-
-        // Reset the integrity monitoring service
         this.is.resetViolations();
-
-        // Navigate to completion page
-        this.router.navigate(['/student/assessment-complete']);
+        this.router.navigate(['/student/assessment/result'], {
+          state: {assessmentId: this.assignedAssessmentId}
+        });
       },
       error: (error) => {
         console.error('Error submitting assessment:', error);

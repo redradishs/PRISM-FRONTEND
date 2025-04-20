@@ -3,6 +3,8 @@ import { Component, HostListener, ViewChild, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { ApiService } from '../../services/api.service';
 
 export interface Assessment {
   id: string;
@@ -10,6 +12,7 @@ export interface Assessment {
   subject: string;
   status: 'completed' | 'pending';
   score?: number;
+  category: string;
   passingScore?: number;
   dateCompleted?: Date;
   dateAssigned?: Date;
@@ -33,35 +36,78 @@ export class StudentAssessmentsComponent implements OnInit {
   @HostListener('window:resize')
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
 
-  // Tab and search functionality
   activeTab: 'all' | 'completed' | 'pending' = 'all';
   searchQuery: string = '';
   assessments: Assessment[] = [];
   filteredAssessments: Assessment[] = [];
+  userId: string = '';
+  classCode: string = '';
+  studentId: string = '';
+  completedAssessments: any[] = [];
+  upcomingAssessments: any[] = [];
+  studentStats: any = {};
+  filteredCompletedAssessments: any[] = [];
+  filteredUpcomingAssessments: any[] = [];
 
-  constructor(private router: Router) {}
+
+  constructor(private router: Router, private auth: AuthService, private api: ApiService) {
+    const navigation = this.router.getCurrentNavigation();
+    if(navigation?.extras?.state) {
+      this.studentId = navigation.extras.state['studentId']
+      this.classCode = navigation.extras.state['classCode']
+      console.log('Student ID:', this.studentId);
+      console.log('Class Code:', this.classCode);
+      
+      if (!this.studentId || !this.classCode) {
+        this.router.navigate(['/instructor/students']);
+      }
+    } else {
+      this.router.navigate(['/instructor/students']);
+    }
+  }
 
   ngOnInit() {
-    // Initialize with mock data or fetch from service
-    this.loadAssessments();
+    this.auth.getCurrentUser().subscribe(user => {
+      this.userId = user.id;
+      console.log('User ID:', this.userId);
+      this.studentData();
+      this.completedList();
+      this.upcomingList();  
+    })
   }
 
   loadAssessments() {
-    // Mock data - replace with actual API call
-    this.assessments = [];
+    this.assessments = [
+      ...(this.completedAssessments || []).map(i => ({
+        ...i,
+        status: 'completed'
+      })),
+      ...(this.upcomingAssessments || []).map(i => ({
+        ...i,
+        status: i.status
+      }))
+    ]
+    console.log('Assessments:', this.assessments);
     this.filterAssessments();
   }
 
   filterAssessments() {
-    this.filteredAssessments = this.assessments.filter(assessment => {
+    // Create a combined filtered list
+    const filtered = this.assessments.filter(assessment => {
       const matchesSearch = !this.searchQuery || 
-        assessment.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        assessment.subject.toLowerCase().includes(this.searchQuery.toLowerCase());
-
-      const matchesTab = this.activeTab === 'all' || assessment.status === this.activeTab;
-
+        assessment.title?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        assessment.category?.toLowerCase().includes(this.searchQuery.toLowerCase());
+  
+      const matchesTab = this.activeTab === 'all' || 
+        (this.activeTab === 'completed' && assessment.status === 'completed') ||
+        (this.activeTab === 'pending' && assessment.status !== 'completed');
+  
       return matchesSearch && matchesTab;
     });
+    
+    // Update the separate lists for display
+    this.filteredCompletedAssessments = filtered.filter(a => a.status === 'completed');
+    this.filteredUpcomingAssessments = filtered.filter(a => a.status !== 'completed');
   }
 
   toggleSidebar() {
@@ -72,5 +118,76 @@ export class StudentAssessmentsComponent implements OnInit {
 
   onResize() {
     this.isMobile = window.innerWidth < 768;
+  }
+
+  studentData() {
+    this.api.studentStatsData(this.userId, this.classCode, this.studentId).subscribe({
+      next: (resp: any) => {
+        this.studentStats = resp.data;
+        console.log('Student Stats:', this.studentStats);
+      }, error: (error: any) => {
+        console.error('Error retrieving student data:', error);
+      }
+    })
+  }
+
+  completedList() {
+    this.api.studentCompletedlist(this.userId, this.classCode, this.studentId).subscribe({
+      next: (resp: any) => {
+        this.completedAssessments = resp.data.completedAssessments;
+        this.loadAssessments();
+        console.log('Completed assessments:', this.completedAssessments);
+      }, error: (error: any) => {
+        console.error('Error retrieving completed assessments:', error);
+      }
+    })
+  }
+
+  upcomingList() {
+    this.api.studentUpcomingList(this.userId, this.classCode, this.studentId).subscribe({
+      next: (resp: any) => {
+        this.upcomingAssessments = resp.data;
+        this.loadAssessments();  
+        console.log('Upcoming assessments:', this.upcomingAssessments);
+      }, error: (error: any) => {
+        console.error('Error retrieving completed assessments:', error);
+      }
+    })
+  }
+
+  getNameInitials(fullName: string | undefined): string {
+    if (!fullName) return '';
+    const nameParts = fullName.split(' ');
+    const firstInitial = nameParts[0].charAt(0);
+    const lastInitial = nameParts.length > 1 ? 
+      nameParts[nameParts.length - 1].charAt(0) : '';
+    return (firstInitial + lastInitial).toUpperCase();
+  }
+
+  formatTimeSpent(seconds: number): string {
+    if (!seconds) return '0 minutes';
+    
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    
+    if (minutes === 0) {
+      return `${remainingSeconds} seconds`;
+    } else if (remainingSeconds === 0) {
+      return `${minutes} minute${minutes !== 1 ? 's' : ''}`;
+    } else {
+      return `${minutes} min${minutes !== 1 ? 's' : ''} ${remainingSeconds} sec${remainingSeconds !== 1 ? 's' : ''}`;
+    }
+  }
+
+  setActiveTab(tab: 'all' | 'completed' | 'pending') {
+    this.activeTab = tab;
+    this.filterAssessments();
+  }
+
+  viewResponse(id: string) {
+    this.router.navigate(['/instructor/response'], {
+      state: { assessmentId: id, studentId: this.studentId }
+    });
+
   }
 }

@@ -19,50 +19,53 @@
                 <div class="student-card">
                     <div class="student-profile">
                         <!-- Left section with avatar and info -->
-                        <div class="profile-section">
+                        <div *ngIf="studentStats" class="profile-section">
                             <div class="avatar">
-                                <span>JD</span>
+                                <span>{{getNameInitials(studentStats.student?.name)}}</span>
                             </div>
                             <div class="student-info">
-                                <h2 class="student-name">John Doe</h2>
-                                <p class="student-email">123456789gordoncollege.edu.ph</p>
+                                <h2 class="student-name">{{studentStats.student?.name}}</h2>
+                                <p class="student-email">{{studentStats.student?.email}}</p>
                                 <div class="student-badges">
-                                    <span class="badge">ID: GC-2023-0123</span>
-                                    <span class="badge">Block A</span>
-                                    <span class="badge">3rd Year</span>
+                                    <span class="badge">ID: {{studentStats.student?.email.split('@')[0]}}</span>
+                                    <span class="badge" *ngIf="studentStats.student?.block">Block
+                                        {{studentStats.student?.block}}</span>
+                                    <span class="badge" *ngIf="studentStats.student?.year ">Year
+                                        {{studentStats.student?.year }}</span>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Right section with stats -->
-                        <div class="stats-container">
+                        <div *ngIf="studentStats" class="stats-container">
                             <div class="stat-item">
                                 <div class="stat-icon-wrapper blue">
                                     <i class="fas fa-file-alt"></i>
                                 </div>
                                 <span class="stat-label">Assessments</span>
-                                <span class="stat-value">12 / 15</span>
+                                <span class="stat-value">{{studentStats.assessmentStats?.completed || 0}}</span>
                             </div>
                             <div class="stat-item">
                                 <div class="stat-icon-wrapper green">
                                     <i class="fas fa-chart-line"></i>
                                 </div>
                                 <span class="stat-label">Avg. Score</span>
-                                <span class="stat-value">85%</span>
+                                <span class="stat-value">{{studentStats.assessmentStats?.averageScore || 0}}%</span>
                             </div>
                             <div class="stat-item">
                                 <div class="stat-icon-wrapper gold">
                                     <i class="fas fa-star"></i>
                                 </div>
                                 <span class="stat-label">Highest</span>
-                                <span class="stat-value">98%</span>
+                                <span class="stat-value">{{studentStats.assessmentStats?.highestScore || 0}}%</span>
                             </div>
                             <div class="stat-item">
                                 <div class="stat-icon-wrapper purple">
                                     <i class="fas fa-graduation-cap"></i>
                                 </div>
                                 <span class="stat-label">Performance</span>
-                                <span class="stat-value">87%</span>
+                                <span class="stat-value">{{studentStats.assessmentStats?.performancePercent ||
+                                    0}}%</span>
                             </div>
                         </div>
                     </div>
@@ -70,118 +73,75 @@
 
                 <!-- Assessment Tabs and Search -->
                 <div class="assessment-controls">
-                    <!-- Tabs -->
                     <div class="tab-container">
-                        <button (click)="activeTab = 'all'" 
-                            [class.active-tab]="activeTab === 'all'"
+                        <button (click)="setActiveTab('all')" [class.active-tab]="activeTab === 'all'"
                             class="tab-button">
                             <i class="fas fa-file-alt"></i>
                             <span>All</span>
                         </button>
-                        <button (click)="activeTab = 'completed'"
-                            [class.active-tab]="activeTab === 'completed'"
+                        <button (click)="setActiveTab('completed')" [class.active-tab]="activeTab === 'completed'"
                             class="tab-button">
                             <i class="fas fa-check"></i>
                             <span>Completed</span>
                         </button>
-                        <button (click)="activeTab = 'pending'"
-                            [class.active-tab]="activeTab === 'pending'"
+                        <button (click)="setActiveTab('pending')" [class.active-tab]="activeTab === 'pending'"
                             class="tab-button">
                             <i class="fas fa-clock"></i>
                             <span>Pending</span>
                         </button>
                     </div>
-
-                    <!-- Search -->
                     <div class="search-wrapper">
                         <i class="fas fa-search search-icon"></i>
-                        <input 
-                            type="text"
-                            [(ngModel)]="searchQuery"
-                            placeholder="Search assessments..."
-                            class="search-input">
+                        <input type="text" [(ngModel)]="searchQuery" (input)="filterAssessments()"
+                            placeholder="Search assessments..." class="search-input">
                     </div>
                 </div>
-
-
-                <!-- Assessment Lists -->
                 <div class="assessment-lists">
-                    <!-- Completed Assessments -->
+
                     <div *ngIf="activeTab === 'all' || activeTab === 'completed'" class="assessment-section">
                         <h2 class="section-title">
                             <i class="fas fa-check-circle"></i>
                             Completed Assessments
                         </h2>
+                        <div *ngIf="completedAssessments.length === 0 || filteredCompletedAssessments.length === 0">
+                            <p class="text-center italic text-gray-600">The student hasn't completed any assessments
+                                yet.
+                            </p>
+                        </div>
                         <div class="assessment-items">
-                            <!-- First Completed Assessment -->
-                            <div class="assessment-item">
-                                <div class="assessment-main">
-                                    <div class="assessment-status">
-                                        <div class="status-dot passed"></div>
+                            <div (click)="viewResponse(c.assignedAssessmentId)"
+                                *ngFor="let c of filteredCompletedAssessments" class="assessment-item">
+                                <div class="assessment-status">
+                                    <div class="status-dot passed"></div>
+                                </div>
+                                <div class="assessment-info">
+                                    <div class="assessment-header">
+                                        <h3 class="assessment-title">{{c.title}}</h3>
+                                        <span class="status-badge" [ngClass]="{
+                                            'passed': c.passed === true || c.passed === 'true',
+                                            'failed': c.passed === false || c.passed === 'false'
+                                        }">{{c.passed === true || c.passed === 'true' ? 'Passed' : 'Failed'}}</span>
                                     </div>
-                                    <div class="assessment-info">
-                                        <div class="assessment-header">
-                                            <h3 class="assessment-title">Linux Fundamentals Assessment</h3>
-                                            <span class="status-badge passed">Passed</span>
-                                        </div>
-                                        <p class="assessment-subject">Operating Systems</p>
-                                    </div>
+                                    <p class="assessment-subject">{{c.category.charAt(0).toUpperCase() +
+                                        c.category.slice(1)}}</p>
                                 </div>
                                 <div class="assessment-details">
                                     <div class="detail-group">
-                                        <span class="value">85%</span>
                                         <span class="label">Score</span>
+                                        <span class="value">{{c.score}}/{{c.totalPoints}}</span>
                                     </div>
                                     <div class="detail-group">
-                                        <span class="value">2/4</span>
                                         <span class="label">Rank</span>
+                                        <span class="value">{{c.ranking}}</span>
                                     </div>
                                     <div class="detail-group">
-                                        <span class="value">45 minutes</span>
                                         <span class="label">Time Spent</span>
+                                        <span class="value">{{formatTimeSpent(c.secondSpent)}}</span>
                                     </div>
-                                    <div class="detail-group">
-                                        <button class="view-button">
-                                            <i class="fas fa-eye"></i>
-                                            View Results
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Second Completed Assessment -->
-                            <div class="assessment-item">
-                                <div class="assessment-main">
-                                    <div class="assessment-status">
-                                        <div class="status-dot passed"></div>
-                                    </div>
-                                    <div class="assessment-info">
-                                        <div class="assessment-header">
-                                            <h3 class="assessment-title">Database Design Principles</h3>
-                                            <span class="status-badge passed">Passed</span>
-                                        </div>
-                                        <p class="assessment-subject">Database Management</p>
-                                    </div>
-                                </div>
-                                <div class="assessment-details">
-                                    <div class="detail-group">
-                                        <span class="value">92%</span>
-                                        <span class="label">Score</span>
-                                    </div>
-                                    <div class="detail-group">
-                                        <span class="value">1/4</span>
-                                        <span class="label">Rank</span>
-                                    </div>
-                                    <div class="detail-group">
-                                        <span class="value">52 minutes</span>
-                                        <span class="label">Time Spent</span>
-                                    </div>
-                                    <div class="detail-group">
-                                        <button class="view-button">
-                                            <i class="fas fa-eye"></i>
-                                            View Results
-                                        </button>
-                                    </div>
+                                    <button class="view-button">
+                                        <i class="fas fa-eye"></i>
+                                        View Results
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -193,56 +153,39 @@
                             <i class="fas fa-clock"></i>
                             Pending Assessments
                         </h2>
+                        <div *ngIf="upcomingAssessments.length === 0 || filteredUpcomingAssessments.length === 0">
+                            <p class="text-center italic text-gray-600">The student don't have any assigned assessment
+                                assign now.
+                            </p>
+                        </div>
                         <div class="assessment-items">
                             <!-- First Pending Assessment -->
-                            <div class="assessment-item">
+                            <div *ngFor="let u of filteredUpcomingAssessments" class="assessment-item">
                                 <div class="assessment-status">
                                     <div class="status-dot pending"></div>
                                 </div>
                                 <div class="assessment-info">
                                     <div class="assessment-header">
-                                        <h3 class="assessment-title">Cloud Computing Basics</h3>
-                                        <span class="status-badge pending">Pending</span>
+                                        <h3 class="assessment-title">{{u.title}}</h3>
+                                        <span class="status-badge" [ngClass]="{
+                                          'pending': u.status === 'pending',
+                                          'ongoing': u.status === 'ongoing',
+                                          'scheduled': u.status === 'scheduled',
+                                          'completed': u.status === 'completed'
+                                        }">
+                                            {{u.status.charAt(0).toUpperCase() + u.status.slice(1)}}
+                                        </span>
                                     </div>
-                                    <p class="assessment-subject">Cloud Technologies</p>
+                                    <p class="assessment-subject">{{u.category.charAt(0).toUpperCase() +
+                                        u.category.slice(1)}}</p>
                                 </div>
                                 <div class="assessment-details">
                                     <div class="detail-group">
-                                        <span class="value">3/27/2025</span>
+                                        <span class="value">{{u.dueDate | date: 'M/d/yyyy h:mm a'}}</span>
                                         <span class="label">Due Date</span>
                                     </div>
                                     <div class="detail-group">
-                                        <span class="value">45 minutes</span>
-                                        <span class="label">Time Limit</span>
-                                    </div>
-                                    <div class="detail-group">
-                                        <button class="view-button">
-                                            <i class="fas fa-external-link-alt"></i>
-                                            View Details
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Second Pending Assessment -->
-                            <div class="assessment-item">
-                                <div class="assessment-status">
-                                    <div class="status-dot pending"></div>
-                                </div>
-                                <div class="assessment-info">
-                                    <div class="assessment-header">
-                                        <h3 class="assessment-title">Mobile App Development</h3>
-                                        <span class="status-badge pending">Pending</span>
-                                    </div>
-                                    <p class="assessment-subject">Mobile Technologies</p>
-                                </div>
-                                <div class="assessment-details">
-                                    <div class="detail-group">
-                                        <span class="value">3/25/2025</span>
-                                        <span class="label">Due Date</span>
-                                    </div>
-                                    <div class="detail-group">
-                                        <span class="value">60 minutes</span>
+                                        <span class="value">{{u.timeLimit}} minutes</span>
                                         <span class="label">Time Limit</span>
                                     </div>
                                     <div class="detail-group">

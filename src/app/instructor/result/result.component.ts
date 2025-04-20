@@ -212,6 +212,12 @@ export class ResultComponent implements OnInit {
     "Students Struggled Most with understanding each Layer specifically the 3rd Layer",
   ];
 
+  assessmentDetails(id: string) {
+    this.router.navigate(['/instructor/response'], {
+      state: { studentId: id, assessmentId: this.assessmentId }
+    });
+  }
+
   toggleSidebar() {
     if (this.sidebar) {
       this.sidebar.toggleSidebar();

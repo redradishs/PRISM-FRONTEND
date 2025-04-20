@@ -90,7 +90,7 @@ export class StudHomeComponent {
   }
 
   gotoResult(id: string) {
-    const assessment = this.onGoingAssessments.find(a => a.assignedAssessmentId === id);
+    const assessment = this.completedAssessments.find(a => a.assignedAssessmentId === id);
     if (assessment && assessment.hasSubmitted) {
       this.router.navigate(['/student/assessment/result'], {
         state: { assessmentId: id }
