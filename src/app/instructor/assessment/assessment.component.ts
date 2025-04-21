@@ -32,6 +32,30 @@ interface ClassData {
     year?: string;
 }
 
+interface AssessmentMode {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+}
+
+interface AssignData {
+  assessmentId: string;
+  startDate: string;
+  dueDate: string;
+  timeLimit: number;
+  instructions: string;
+  file: string;
+  createdBy: string;
+  assignmentMode: string;
+  classCodes: string[];
+  maxAttempts: number;
+  totalPoints?: number;
+  modeSettings: {
+    masteryScore: number;
+  };
+}
+
 @Component({
   selector: 'app-assessment',
   imports: [SidebarComponent, CommonModule, FormsModule, RouterLink],
@@ -56,11 +80,46 @@ export class AssessmentComponent {
   activeDropdown: string | null = null;
   showAll: boolean = false;
   showAssignModal = false;
-  assignData: any;
+  assignData: AssignData = {
+    assessmentId: '',
+    startDate: '',
+    dueDate: '',
+    timeLimit: 60,
+    instructions: '',
+    file: '',
+    createdBy: '',
+    assignmentMode: 'assessment',
+    classCodes: [],
+    maxAttempts: 1,
+    modeSettings: {
+      masteryScore: 90
+    }
+  };
   classes: ClassData[] = [];
   isDropdownOpen = false;
   searchClass = '';
   filteredClasses: any[] = [];
+  selectedMode: string = 'assessment';
+  assessmentModes: AssessmentMode[] = [
+    {
+      id: 'assessment',
+      name: 'Assessment Mode',
+      description: 'Traditional assessment with class codes and specific settings',
+      icon: 'fa-solid fa-clipboard-check'
+    },
+    {
+      id: 'mastery',
+      name: 'Mastery Mode',
+      description: 'Students must achieve mastery level to complete',
+      icon: 'fa-solid fa-trophy'
+    },
+    {
+      id: 'public',
+      name: 'Public Mode',
+      description: 'Open assessment available to all students',
+      icon: 'fa-solid fa-globe'
+    }
+  ];
 
   constructor(
     private api: ApiService,
@@ -75,32 +134,56 @@ export class AssessmentComponent {
     this.auth.getCurrentUser().subscribe((user) => {
       if (user) {
         this.userId = user.id;
+        this.assignData.createdBy = user.id;
         this.getTotalStudents(this.userId);
         this.getTotalClasses(this.userId);
         this.loadAssessments(this.userId);
         this.getownAssessments(this.userId);
         this.getClassessDetails(this.userId);
         this.filteredClasses = this.classes;
-
-        this.assignData = {
-          assessmentId: '',
-          classCodes: [] as string[],
-          startDate: '',
-          dueDate: '',
-          dueTime: '23:59',
-          timeLimit: 60,
-          instructions: '',
-          file: '',
-          createdBy: this.userId
-      };
-
-
       } else {
         console.log('No user found');
       }
     });
   }
 
+  resetAssignData() {
+    const currentTotalPoints = this.assignData?.totalPoints || 0;
+    const baseData = {
+      assessmentId: this.assignData?.assessmentId || '',
+      startDate: '',
+      dueDate: '',
+      timeLimit: 60,
+      instructions: '',
+      file: '',
+      createdBy: this.userId,
+      assignmentMode: this.selectedMode,
+      totalPoints: currentTotalPoints, // Preserve the total points
+      modeSettings: {
+        masteryScore: Math.min(90, currentTotalPoints) 
+      }
+    };
+
+    if (this.selectedMode === 'mastery') {
+      this.assignData = {
+        ...baseData,
+        classCodes: [],
+        maxAttempts: 3
+      };
+    } else if (this.selectedMode === 'assessment') {
+      this.assignData = {
+        ...baseData,
+        classCodes: [],
+        maxAttempts: 1
+      };
+    } else { // public mode
+      this.assignData = {
+        ...baseData,
+        classCodes: [],
+        maxAttempts: 2
+      };
+    }
+  }
 
   getClassessDetails(id: string) {
     this.api.getSpecifiedClasses(id).subscribe({
@@ -280,24 +363,61 @@ export class AssessmentComponent {
   }
 
   openAssignModal(assessmentId: string) {
-    this.assignData.assessmentId = assessmentId;
+    // Find the assessment to get its total points
+    const assessment = this.ownAssessments.find(a => a._id === assessmentId);
+    console.log("Assessment found:", assessment);
+    console.log("All assessments:", this.ownAssessments);
+    
+    // Safely access totalPoints with proper type checking
+    let totalPoints = 0;
+    if (assessment && typeof assessment.totalPoints === 'number') {
+      totalPoints = assessment.totalPoints;
+    }
+    console.log("Total points:", totalPoints);
+
+    const baseData = {
+      assessmentId: assessmentId,
+      startDate: '',
+      dueDate: '',
+      timeLimit: 60,
+      instructions: '',
+      file: '',
+      createdBy: this.userId,
+      assignmentMode: this.selectedMode,
+      totalPoints: totalPoints,
+      modeSettings: {
+        masteryScore: Math.min(90, totalPoints) // Initialize mastery score as min of 90 or total points
+      }
+    };
+
+    if (this.selectedMode === 'mastery') {
+      this.assignData = {
+        ...baseData,
+        classCodes: [],
+        maxAttempts: 3
+      };
+    } else if (this.selectedMode === 'assessment') {
+      this.assignData = {
+        ...baseData,
+        classCodes: [],
+        maxAttempts: 1
+      };
+    } else { // public mode
+      this.assignData = {
+        ...baseData,
+        classCodes: [],
+        maxAttempts: 2
+      };
+    }
+
+    console.log("Final assignData:", this.assignData);
     this.showAssignModal = true;
   }
 
   closeAssignModal() {
     this.showAssignModal = false;
-    // Reset form
-    this.assignData = {
-      assessmentId: '',
-      classCodes: [],
-      startDate: '',
-      dueDate: '',
-      dueTime: '23:59',
-      timeLimit: 60,
-      instructions: '',
-      file: '',
-      createdBy: ''
-    };
+    this.selectedMode = 'assessment';
+    this.resetAssignData();
   }
 
   onFileSelected(event: any) {
@@ -308,45 +428,65 @@ export class AssessmentComponent {
   }
 
   assignAssessment() {
-    if (!this.assignData.classCodes.length) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Please select at least one class'
-        });
-        return;
+    if (this.selectedMode !== 'public' && !this.assignData.classCodes.length) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Please select at least one class'
+      });
+      return;
+    }
+
+    const formattedData = {
+      ...this.assignData,
+      startDate: new Date(this.assignData.startDate).toISOString(),
+      dueDate: new Date(this.assignData.dueDate).toISOString()
+    };
+
+    if ('dueTime' in formattedData) {
+      delete formattedData.dueTime;
     }
 
     this.isLoading = true;
-    this.api.assignAssessment(this.assignData).subscribe({
-        next: (resp: any) => {
-            if (resp.message === 'Assessment assigned successfully.') {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: 'Assessment assigned successfully'
-                });
-                this.closeAssignModal();
-                this.loadAssessments(this.userId);
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: resp.message || 'Failed to assign assessment'
-                });
-            }
-        },
-        error: (error) => {
-            console.error('Error assigning assessment:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: error.message || 'Failed to assign assessment'
-            });
-        },
-        complete: () => {
-            this.isLoading = false;
+    this.api.assignAssessment(formattedData).subscribe({
+      next: (resp: any) => {
+        if (resp.remarks === 'Success') {
+          let successMessage = '';
+          if(this.selectedMode === 'assessment') {
+            successMessage = 'Assessment assigned successfully';
+          } else if (this.selectedMode === 'mastery') {
+            successMessage = 'Mastery assessment assigned successfully';
+          } else if (this.selectedMode === 'public') {
+            successMessage = 'Public assessment assigned successfully, your students may now join with code ' + resp.data.joiningCode;
+          } else {
+            successMessage = 'Assessment assigned successfully';
+          }
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: successMessage
+          });
+          this.closeAssignModal();
+          this.loadAssessments(this.userId);
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: resp.message || 'Failed to assign assessment'
+          });
         }
+      },
+      error: (error) => {
+        console.error('Error assigning assessment:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.message || 'Failed to assign assessment'
+        });
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
     });
   }
 
@@ -406,5 +546,16 @@ export class AssessmentComponent {
   getMinDueDate(): string {
     const startDate = this.assignData.startDate ? new Date(this.assignData.startDate) : new Date();
     return startDate.toISOString().split('T')[0];
+  }
+
+  onModeChange(mode: string) {
+    this.selectedMode = mode;
+    this.resetAssignData();
+  }
+
+  validateMasteryScore() {
+    if (this.assignData.totalPoints && this.assignData.modeSettings.masteryScore > this.assignData.totalPoints) {
+      this.assignData.modeSettings.masteryScore = this.assignData.totalPoints;
+    }
   }
 }

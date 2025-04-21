@@ -364,7 +364,6 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
     console.log('Submission data:', submissionData);
   }
 
-  // Helper method to format answers for submission
   private formatAnswersForSubmission() {
     const formattedAnswers = [];
 

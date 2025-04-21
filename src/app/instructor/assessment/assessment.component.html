@@ -219,7 +219,27 @@
 
         <div class="modal-body">
             <form (ngSubmit)="assignAssessment()" #assignForm="ngForm">
+                <!-- Assessment Mode Selection -->
                 <div class="form-group">
+                    <label>Assessment Mode</label>
+                    <div class="mode-selection">
+                        <div *ngFor="let mode of assessmentModes" 
+                             class="mode-option" 
+                             [class.selected]="selectedMode === mode.id"
+                             (click)="onModeChange(mode.id)">
+                            <div class="mode-icon">
+                                <i [class]="mode.icon"></i>
+                            </div>
+                            <div class="mode-info">
+                                <h3>{{mode.name}}</h3>
+                                <p>{{mode.description}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Class Codes Selection - Only for Assessment and Mastery modes -->
+                <div class="form-group" *ngIf="selectedMode !== 'public'" [class.isDropdownOpen]="isDropdownOpen">
                     <label>Class Codes</label>
                     <div class="checkbox-dropdown">
                         <div class="dropdown-header" (click)="toggleDropdown()">
@@ -229,11 +249,13 @@
                                 [class.fa-chevron-up]="isDropdownOpen"></i>
                         </div>
 
+                        <div class="dropdown-backdrop" *ngIf="isDropdownOpen" (click)="toggleDropdown()"></div>
+
                         <div class="dropdown-content" *ngIf="isDropdownOpen">
                             <div class="search-box">
                                 <i class="fas fa-search"></i>
                                 <input type="text" [(ngModel)]="searchClass" [ngModelOptions]="{standalone: true}"
-                                    placeholder="Search classes" (input)="filterClasses()">
+                                    placeholder="Search classes" (input)="filterClasses()" class="form-control">
                             </div>
 
                             <div class="checkbox-list">
@@ -258,36 +280,92 @@
                     </div>
                 </div>
 
+                <!-- Mastery Score - Only for Mastery mode -->
+                <div class="form-group" *ngIf="selectedMode === 'mastery'">
+                    <div class="mastery-score-container">
+                        <label class="form-label">Mastery Score Required</label>
+                        <div class="score-input-wrapper">
+                            <input 
+                                type="number" 
+                                [(ngModel)]="assignData.modeSettings.masteryScore"
+                                (input)="validateMasteryScore()"
+                                class="form-control" 
+                                name="masteryScore" 
+                                [min]="1" 
+                                [max]="assignData.totalPoints || 100" 
+                                required
+                            >
+                            <div class="total-points-indicator">
+                                <span>/ {{assignData.totalPoints || 0}} points</span>
+                            </div>
+                        </div>
+                        
+                        <div class="score-hint">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Score required to achieve mastery (cannot exceed total points)</span>
+                        </div>
+                    </div>
+                </div>
+                
+
                 <div class="form-row">
                     <div class="form-group">
                         <label>Start Date & Time</label>
-                        <input type="datetime-local" [(ngModel)]="assignData.startDate" name="startDate"
-                            [min]="getCurrentDateTime()" required>
+                        <input type="datetime-local" [(ngModel)]="assignData.startDate" 
+                               class="form-control" name="startDate"
+                               [min]="getCurrentDateTime()" required>
                     </div>
                     <div class="form-group">
-                        <label>Due Date</label>
-                        <input type="datetime-local" [(ngModel)]="assignData.dueDate" name="dueDate"
-                            [min]="getMinDueDate()" required>
+                        <label>Due Date & Time</label>
+                        <input type="datetime-local" [(ngModel)]="assignData.dueDate" 
+                               class="form-control" name="dueDate"
+                               [min]="getMinDueDate()" required>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>Time Limit (minutes)</label>
-                    <input type="number" [(ngModel)]="assignData.timeLimit" name="timeLimit" required>
-                </div>
 
-                <div class="form-group">
-                    <label>Instructions</label>
-                    <textarea [(ngModel)]="assignData.instructions" name="instructions" rows="4" required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>Guidelines File (Optional)</label>
-                    <div class="file-input">
-                        <input type="file" (change)="onFileSelected($event)" accept=".pdf,.doc,.docx">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <span>{{assignData.file || 'Choose a file'}}</span>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Time Limit (minutes)</label>
+                        <div class="input-group">
+                            <input type="number" [(ngModel)]="assignData.timeLimit" 
+                                   class="form-control" name="timeLimit" min="1" required>
+                            <div class="input-group-append">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Maximum Attempts</label>
+                        <div class="input-group">
+                            <input type="number" [(ngModel)]="assignData.maxAttempts" 
+                                   class="form-control" name="maxAttempts" 
+                                   [min]="1" [max]="selectedMode === 'mastery' ? 10 : 5" required>
+                            <div class="input-group-append">
+                                <i class="fas fa-redo"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Instructions and Guidelines - Only for Assessment and Public modes -->
+                <ng-container *ngIf="selectedMode !== 'mastery'">
+                    <div class="form-group">
+                        <label>Instructions</label>
+                        <textarea [(ngModel)]="assignData.instructions" 
+                                class="form-control" name="instructions" 
+                                rows="4" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Guidelines File (Optional)</label>
+                        <div class="file-input">
+                            <input type="file" (change)="onFileSelected($event)" 
+                                   accept=".pdf,.doc,.docx">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>{{assignData.file || 'Choose a file'}}</span>
+                        </div>
+                    </div>
+                </ng-container>
 
                 <div class="modal-footer">
                     <button type="button" class="cancel-button" (click)="closeAssignModal()">Cancel</button>

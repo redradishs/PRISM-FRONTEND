@@ -110,12 +110,10 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
   }
 
   saveFeedback(): void {
-    // Implement save feedback logic here
     this.isEditingFeedback = false;
   }
 
   openGradeModal(question: any): void {
-    // Implement grading functionality
     console.log('Opening grade modal for:', question);
   }
 
@@ -146,13 +144,10 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
 
     this.api.rectifyResult(this.assignedAssessmentId, this.studentId, adjustment).subscribe({
       next: (response) => {
-        // Update the question with new values
         question.isCorrect = question.grading.isCorrect;
         question.pointsEarned = question.grading.pointsEarned;
         question.isGrading = false;
         delete question.grading;
-        
-        // Refresh assessment data to update scores
         this.assessmentData();
       },
       error: (error) => {
@@ -163,31 +158,22 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
 
   validatePoints(question: any): void {
     if (question.grading && question.grading.pointsEarned !== undefined) {
-      // Get the maxPoints from the question data
-      const maxPoints = question.maxPoints || 1; // Default to 1 if not specified
-      
-      // If marked as incorrect, reset points to 0
+      const maxPoints = question.maxPoints || 1;
       if (!question.grading.isCorrect) {
         question.grading.pointsEarned = 0;
         return;
       }
-
-      // Convert to number and ensure it's a valid number
       const points = Number(question.grading.pointsEarned);
       if (isNaN(points)) {
         question.grading.pointsEarned = 0;
         return;
       }
-
-      // Ensure points don't exceed maxPoints
       if (points > maxPoints) {
         question.grading.pointsEarned = maxPoints;
       }
-      // Ensure points are not negative
       else if (points < 0) {
         question.grading.pointsEarned = 0;
       }
-      // Ensure points is a whole number
       else {
         question.grading.pointsEarned = Math.floor(points);
       }
@@ -198,24 +184,16 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
     const maxPoints = question.maxPoints || 1;
     const currentValue = (event.target as HTMLInputElement).value;
     const newValue = currentValue + event.key;
-    
-    // Allow backspace, delete, tab, escape, enter
     if ([8, 46, 9, 27, 13].includes(event.keyCode)) {
       return;
     }
-    
-    // Allow arrow keys
     if (event.keyCode >= 37 && event.keyCode <= 40) {
       return;
     }
-    
-    // Allow numbers only
     if (!/^\d+$/.test(event.key)) {
       event.preventDefault();
       return;
     }
-    
-    // Prevent entering numbers that would exceed maxPoints
     if (parseInt(newValue) > maxPoints) {
       event.preventDefault();
     }
@@ -225,17 +203,11 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
     const input = event.target;
     const value = input.value;
     const maxPoints = question.maxPoints || 1;
-    
-    // If the value is empty, set to 0
     if (!value) {
       question.grading.pointsEarned = 0;
       return;
     }
-    
-    // Convert to number
     const points = parseInt(value, 10);
-    
-    // Ensure points don't exceed maxPoints
     if (points > maxPoints) {
       input.value = maxPoints;
       question.grading.pointsEarned = maxPoints;
@@ -246,10 +218,8 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
 
   onCorrectnessChange(question: any): void {
     if (!question.grading.isCorrect) {
-      // If marked as incorrect, set points to 0
       question.grading.pointsEarned = 0;
     } else {
-      // If marked as correct, set points to maxPoints by default
       question.grading.pointsEarned = question.maxPoints || 1;
     }
   }
