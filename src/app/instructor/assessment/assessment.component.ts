@@ -72,6 +72,7 @@ export class AssessmentComponent {
   onResize() {
     this.isMobile = window.innerWidth < 768;
   }
+  username: string = '';
   userId: string = '';
   totalStudents: number = 0;
   totalClasses: number = 0;
@@ -133,7 +134,9 @@ export class AssessmentComponent {
   ngOnInit(): void {
     this.auth.getCurrentUser().subscribe((user) => {
       if (user) {
+        console.log('User logged in:', user);
         this.userId = user.id;
+        this.username = user.name;
         this.assignData.createdBy = user.id;
         this.getTotalStudents(this.userId);
         this.getTotalClasses(this.userId);
@@ -360,6 +363,14 @@ export class AssessmentComponent {
     this.router.navigate(['/instructor/result'], {
       state: { assessmentId: id },
     });
+  }
+
+  action1() {
+    this.router.navigate(['/instructor/action1'])
+  }
+
+  action2() {
+    this.router.navigate(['/instructor/action1'])
   }
 
   openAssignModal(assessmentId: string) {

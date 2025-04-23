@@ -91,6 +91,7 @@ export class CreateAssessmentComponent implements OnInit {
     questionCount: '5',
     instructions: '',
   };
+  username: string = '';
   userId: number = 0;
   multipleChoiceOptions: string[] = Array(4).fill('');
   enumerationItems: string[] = Array(5).fill('');
@@ -128,6 +129,7 @@ export class CreateAssessmentComponent implements OnInit {
     this.auth.getCurrentUser().subscribe(
       (user: any) => {
         this.userId = user.id;
+        this.username = user.name;
         console.log(this.userId);
       },
       (error: any) => {
@@ -684,5 +686,12 @@ export class CreateAssessmentComponent implements OnInit {
   deleteFile() {
     this.selectedFileName = '';
     this.extractedText = '';
+  }
+
+  scrollToSection(sectionId: string) {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 }

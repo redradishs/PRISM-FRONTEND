@@ -2,17 +2,49 @@
     <div class="flex w-full">
         <app-sidebar></app-sidebar>
         <div class="flex-1 ml-0 md:ml-20 w-full">
-            <header class="bg-white shadow-sm">
-                <div class="w-full px-4 py-2 md:py-3">
+            <header class="bg-white shadow-sm fixed top-0 right-0 w-full md:w-[calc(100%-80px)] z-40">
+                <div class="w-full px-4 md:px-6 py-3 md:py-4">
                     <div class="flex items-center justify-between">
-                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900 lg:ml-5">Assessments</h1>
-                        <button *ngIf="isMobile" (click)="toggleSidebar()"
-                            class="p-1.5 md:p-2 rounded-md hover:bg-gray-100 transition-colors">
-                            <i class="fas fa-bars w-4 md:w-5 lg:w-6 h-4 md:h-5 lg:h-6"></i>
-                        </button>
+                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">Assessment</h1>
+                        <div class="flex items-center space-x-4 md:space-x-8">
+                            <div class="hidden md:flex items-center space-x-2">
+                                <span class="text-sm text-gray-500">Quick Actions:</span>
+                                <button [routerLink]="['/instructor/generate']"
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
+                                    Generate Assessment
+                                </button>
+                                <button (click)="action2()"
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
+                                    All Assessments
+                                </button>
+                            </div>
+                            <div *ngIf="!isMobile" class="flex items-center space-x-3 md:space-x-4">
+                                <div class="relative">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center">
+                                        <span
+                                            class="text-base md:text-lg font-medium text-gray-600">{{username.charAt(0)
+                                            || 'A'}}</span>
+                                    </div>
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    </div>
+                                </div>
+                                <div class="text-left">
+                                    <div class="text-sm font-medium text-gray-900">{{username}}</div>
+                                    <div class="text-xs text-gray-500">Teacher</div>
+                                </div>
+                            </div>
+                            <button *ngIf="isMobile" (click)="toggleSidebar()"
+                                class="p-2 rounded-md hover:bg-gray-100 transition-colors">
+                                <i class="fas fa-bars w-5 h-5 text-gray-600"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </header>
+
+            <div class="h-[65px] md:h-[68px] w-full"></div>
 
             <div class="main-content">
                 <!-- Performance Details Section, responsiveness needs to be fixed and also add few more details about the students -->
@@ -223,10 +255,8 @@
                 <div class="form-group">
                     <label>Assessment Mode</label>
                     <div class="mode-selection">
-                        <div *ngFor="let mode of assessmentModes" 
-                             class="mode-option" 
-                             [class.selected]="selectedMode === mode.id"
-                             (click)="onModeChange(mode.id)">
+                        <div *ngFor="let mode of assessmentModes" class="mode-option"
+                            [class.selected]="selectedMode === mode.id" (click)="onModeChange(mode.id)">
                             <div class="mode-icon">
                                 <i [class]="mode.icon"></i>
                             </div>
@@ -285,41 +315,32 @@
                     <div class="mastery-score-container">
                         <label class="form-label">Mastery Score Required</label>
                         <div class="score-input-wrapper">
-                            <input 
-                                type="number" 
-                                [(ngModel)]="assignData.modeSettings.masteryScore"
-                                (input)="validateMasteryScore()"
-                                class="form-control" 
-                                name="masteryScore" 
-                                [min]="1" 
-                                [max]="assignData.totalPoints || 100" 
-                                required
-                            >
+                            <input type="number" [(ngModel)]="assignData.modeSettings.masteryScore"
+                                (input)="validateMasteryScore()" class="form-control" name="masteryScore" [min]="1"
+                                [max]="assignData.totalPoints || 100" required>
                             <div class="total-points-indicator">
                                 <span>/ {{assignData.totalPoints || 0}} points</span>
                             </div>
                         </div>
-                        
+
                         <div class="score-hint">
                             <i class="fas fa-info-circle"></i>
                             <span>Score required to achieve mastery (cannot exceed total points)</span>
                         </div>
                     </div>
                 </div>
-                
+
 
                 <div class="form-row">
                     <div class="form-group">
                         <label>Start Date & Time</label>
-                        <input type="datetime-local" [(ngModel)]="assignData.startDate" 
-                               class="form-control" name="startDate"
-                               [min]="getCurrentDateTime()" required>
+                        <input type="datetime-local" [(ngModel)]="assignData.startDate" class="form-control"
+                            name="startDate" [min]="getCurrentDateTime()" required>
                     </div>
                     <div class="form-group">
                         <label>Due Date & Time</label>
-                        <input type="datetime-local" [(ngModel)]="assignData.dueDate" 
-                               class="form-control" name="dueDate"
-                               [min]="getMinDueDate()" required>
+                        <input type="datetime-local" [(ngModel)]="assignData.dueDate" class="form-control"
+                            name="dueDate" [min]="getMinDueDate()" required>
                     </div>
                 </div>
 
@@ -327,8 +348,8 @@
                     <div class="form-group">
                         <label>Time Limit (minutes)</label>
                         <div class="input-group">
-                            <input type="number" [(ngModel)]="assignData.timeLimit" 
-                                   class="form-control" name="timeLimit" min="1" required>
+                            <input type="number" [(ngModel)]="assignData.timeLimit" class="form-control"
+                                name="timeLimit" min="1" required>
                             <div class="input-group-append">
                                 <i class="fas fa-clock"></i>
                             </div>
@@ -337,9 +358,8 @@
                     <div class="form-group">
                         <label>Maximum Attempts</label>
                         <div class="input-group">
-                            <input type="number" [(ngModel)]="assignData.maxAttempts" 
-                                   class="form-control" name="maxAttempts" 
-                                   [min]="1" [max]="selectedMode === 'mastery' ? 10 : 5" required>
+                            <input type="number" [(ngModel)]="assignData.maxAttempts" class="form-control"
+                                name="maxAttempts" [min]="1" [max]="selectedMode === 'mastery' ? 10 : 5" required>
                             <div class="input-group-append">
                                 <i class="fas fa-redo"></i>
                             </div>
@@ -351,16 +371,14 @@
                 <ng-container *ngIf="selectedMode !== 'mastery'">
                     <div class="form-group">
                         <label>Instructions</label>
-                        <textarea [(ngModel)]="assignData.instructions" 
-                                class="form-control" name="instructions" 
-                                rows="4" required></textarea>
+                        <textarea [(ngModel)]="assignData.instructions" class="form-control" name="instructions"
+                            rows="4" required></textarea>
                     </div>
 
                     <div class="form-group">
                         <label>Guidelines File (Optional)</label>
                         <div class="file-input">
-                            <input type="file" (change)="onFileSelected($event)" 
-                                   accept=".pdf,.doc,.docx">
+                            <input type="file" (change)="onFileSelected($event)" accept=".pdf,.doc,.docx">
                             <i class="fas fa-cloud-upload-alt"></i>
                             <span>{{assignData.file || 'Choose a file'}}</span>
                         </div>

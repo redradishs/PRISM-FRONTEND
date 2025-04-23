@@ -40,6 +40,7 @@ export class StudentAssessmentsComponent implements OnInit {
   searchQuery: string = '';
   assessments: Assessment[] = [];
   filteredAssessments: Assessment[] = [];
+  username: string = '';
   userId: string = '';
   classCode: string = '';
   studentId: string = '';
@@ -69,6 +70,7 @@ export class StudentAssessmentsComponent implements OnInit {
   ngOnInit() {
     this.auth.getCurrentUser().subscribe(user => {
       this.userId = user.id;
+      this.username = user.name;
       console.log('User ID:', this.userId);
       this.studentData();
       this.completedList();

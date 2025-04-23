@@ -63,7 +63,7 @@ export class StudentsComponent implements OnInit {
       this.sidebarOpen = true;
     }
   }
-
+  username: string = '';
   userId: string = '';
   searchTerm: string = '';
   assessmentSearchTerm: string = '';
@@ -146,6 +146,7 @@ export class StudentsComponent implements OnInit {
     this.auth.getCurrentUser().subscribe((user) => {
       if (user) {
         this.userId = user.id;
+        this.username = user.name;
         this.getClasses();
       }
     });
@@ -374,7 +375,6 @@ export class StudentsComponent implements OnInit {
       state: {studentId: studentId, classCode: this.selectedClass.classCode}
     });
   }
-
 
 
   updateDisplayedData(selectedClass: any) {

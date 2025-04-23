@@ -19,6 +19,7 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
   feedback: string = '';
   Array = Array;
   userId: string = '';
+  username: string = '';
   assignedAssessmentId: string = '';
   studentId: string = '';
   assessmentDetails: any = {};
@@ -45,6 +46,7 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.auth.getCurrentUser().subscribe(user => {
       this.userId = user.id;
+      this.username = user.name;
       console.log('User ID:', this.userId);
     });
   }

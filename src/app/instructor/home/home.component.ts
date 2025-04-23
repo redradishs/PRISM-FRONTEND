@@ -217,5 +217,12 @@ export class HomeComponent implements OnInit {
     }
   };
 
+  createNewAssessment() {
+    this.router.navigate(['/instructor/generate']);
+  }
+
+  addStudent() {
+    this.router.navigate(['instructor/students']);
+  }
 
 }

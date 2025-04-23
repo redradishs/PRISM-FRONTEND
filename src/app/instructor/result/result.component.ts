@@ -57,6 +57,7 @@ export class ResultComponent implements OnInit {
     highestScore: 0, 
     lowestScore: 0
   };
+  username: string = '';
   itemAnalysis: any[] = [];
   topPerforming: Student[] = [];
   leastPerforming: Student[] = [];
@@ -110,6 +111,10 @@ export class ResultComponent implements OnInit {
       console.log("Could not find the assessment ID");
       this.router.navigate(['/instructor/assessment']);
     }
+
+    this.auth.getCurrentUser().subscribe((user) => {
+      this.username = user.name;
+    });
   }
 
   getResultOverview(id: string) {

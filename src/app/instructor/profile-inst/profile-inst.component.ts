@@ -88,6 +88,7 @@ export class ProfileInstComponent implements OnInit {
   };
   
   userId: string = '';
+  username: string = '';
   activeTab = 'personal';
   isMobile = false;
   
@@ -157,6 +158,7 @@ export class ProfileInstComponent implements OnInit {
     this.auth.getCurrentUser().subscribe((user) => {
       if (user) {
         this.userId = user.id;
+        this.username = user.name;
         this.loadProfileData();
       }
     });
