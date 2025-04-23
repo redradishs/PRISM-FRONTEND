@@ -6,11 +6,11 @@
                 <div class="w-full px-4 md:px-6 py-3 md:py-4">
                     <div class="flex items-center justify-between">
                         <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">Assessment</h1>
-                        <div class="flex items-center space-x-4 md:space-x-8">
-                            <div class="hidden md:flex items-center space-x-2">
-                                <span class="text-sm text-gray-500">Quick Actions:</span>
+                        <div class="flex items-center">
+                            <div class="hidden md:flex items-center mr-4">
+                                <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
                                 <button [routerLink]="['/instructor/generate']"
-                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2">
                                     Generate Assessment
                                 </button>
                                 <button (click)="action2()"
@@ -18,8 +18,8 @@
                                     All Assessments
                                 </button>
                             </div>
-                            <div *ngIf="!isMobile" class="flex items-center space-x-3 md:space-x-4">
-                                <div class="relative">
+                            <div *ngIf="!isMobile" class="flex items-center">
+                                <div class="relative mr-3">
                                     <div
                                         class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center">
                                         <span
@@ -32,7 +32,7 @@
                                 </div>
                                 <div class="text-left">
                                     <div class="text-sm font-medium text-gray-900">{{username}}</div>
-                                    <div class="text-xs text-gray-500">Teacher</div>
+                                    <div class="text-xs text-gray-500">Instructor</div>
                                 </div>
                             </div>
                             <button *ngIf="isMobile" (click)="toggleSidebar()"
