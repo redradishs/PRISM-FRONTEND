@@ -14,8 +14,13 @@ interface AssessmentProgress {
   title: string;
   startDate: string;
   dueDate: string;
-  dueTime: string;
   timeLimit: number;
+  type: string;
+  masteryScore?: number;
+  modeSettings?: {
+    joiningCode: string;
+    masteryScore?: number;
+  };
   classes: {
     classCode: string;
     className: string;
@@ -24,6 +29,7 @@ interface AssessmentProgress {
       inProgress: number;
       submitted: number;
       graded: number;
+      mastered?: number;
     };
     remainingStudents: number;
     responses: {
@@ -55,7 +61,12 @@ export class HomeComponent implements OnInit {
   totalActiveAssessments: number = 0;
   totalClasses: number = 0;
   onGoingAssessments: AssessmentProgress[] = [];
-
+  totalOngoingAssessments: number = 0;
+  remainingOngoingAssessments: number = 0;
+  showAllOngoing: boolean = false;
+  scheduledAssessments: AssessmentProgress[] = [];
+  totalScheduledAssessments: number = 0;
+  remainingScheduledAssessments: number = 0;
 
   isMobile = window.innerWidth < 768;
   @HostListener('window:resize')
@@ -75,6 +86,7 @@ export class HomeComponent implements OnInit {
         this.getActiveAssessments(this.userId);
         this.getTotalClases(this.userId);
         this.getOnGoingAssessments(this.userId);
+        this.getScheduledAssessments(this.userId);
       } else {
         console.log('No user found');
       }
@@ -122,25 +134,34 @@ export class HomeComponent implements OnInit {
     })
   }
 
-  viewAll(){
-    this.router.navigate(['/instructor/assessment']);
+  viewAll() {
+    this.router.navigate(['/instructor/manage'], { queryParams: { tab: 'ongoing' } });
   }
 
   calculateProgress(assessment: AssessmentProgress): number {
-    const totalStudents = assessment.classes[0].totalStudents;
-    const gradedCount = assessment.classes[0].stats.submitted;
+    if (assessment.type === 'Public Assessment') {
+      return 0;
+    }
+    const totalStudents = assessment.classes[0]?.totalStudents || 0;
+    const gradedCount = assessment.classes[0]?.stats.submitted || 0;
     return totalStudents > 0 ? (gradedCount / totalStudents) * 100 : 0;
   }
 
 
   getOnGoingAssessments(userId: string) {
-    this.api.getOngoingAssessments(this.userId).subscribe((resp: any) => {
+    this.api.getOngoingAssessments(this.userId, 4).subscribe((resp: any) => {
       try {
-        this.onGoingAssessments = resp.data;
+        this.onGoingAssessments = resp.data.data;
+        this.totalOngoingAssessments = resp.data.total;
+        this.remainingOngoingAssessments = resp.data.left;
       } catch (error) {
         console.error('Error getting ongoing assessments:', error);
       }
     })
+  }
+
+  getDisplayedOngoingAssessments() {
+    return this.showAllOngoing ? this.onGoingAssessments : this.onGoingAssessments.slice(0, 6);
   }
 
   gotoAssessment(_id: string){
@@ -223,6 +244,55 @@ export class HomeComponent implements OnInit {
 
   addStudent() {
     this.router.navigate(['instructor/students']);
+  }
+
+  getAssessmentTypeLabel(assessment: any): string {
+    return assessment.type || 'Assessment';
+  }
+
+  getAssessmentTypeIcon(assessment: AssessmentProgress): string {
+    switch (assessment.type) {
+      case 'Mastery':
+        return 'fa-trophy';
+      case 'Public Assessment':
+        return 'fa-globe';
+      default:
+        return 'fa-clipboard-check';
+    }
+  }
+
+  getAssessmentTypeColor(assessment: AssessmentProgress): string {
+    switch (assessment.type) {
+      case 'Mastery':
+        return 'amber';
+      case 'Public Assessment':
+        return 'blue';
+      default:
+        return 'indigo';
+    }
+  }
+
+  getAssessmentTotalStudents(assessment: any): number {
+    if (assessment.type === 'Public Assessment') {
+      return 0; // Public assessments don't have students yet
+    }
+    return assessment.classes.reduce((total: number, classData: any) => total + classData.totalStudents, 0);
+  }
+
+  getJoiningCode(assessment: any): string {
+    return assessment.type === 'Public Assessment' ? assessment.modeSettings?.joiningCode : '';
+  }
+
+  getScheduledAssessments(userId: string) {
+    this.api.getScheduledAssessments(this.userId, 4).subscribe((resp: any) => {
+      try {
+        this.scheduledAssessments = resp.data.data;
+        this.totalScheduledAssessments = resp.data.total;
+        this.remainingScheduledAssessments = resp.data.left;
+      } catch (error) {
+        console.error('Error getting scheduled assessments:', error);
+      }
+    })
   }
 
 }

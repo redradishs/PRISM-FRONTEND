@@ -149,10 +149,15 @@
                                 <div class="assessment-info">
                                     <div class="assessment-header">
                                         <h3 class="assessment-title">{{c.title}}</h3>
-                                        <span class="status-badge" [ngClass]="{
-                                            'passed': c.passed === true || c.passed === 'true',
-                                            'failed': c.passed === false || c.passed === 'false'
-                                        }">{{c.passed === true || c.passed === 'true' ? 'Passed' : 'Failed'}}</span>
+                                        <div class="badge-container">
+                                            <span class="assessment-type" [class]="'type-' + getAssessmentTypeColor(c)">
+                                                {{c.type}}
+                                            </span>
+                                            <span class="status-badge" [ngClass]="{
+                                                'passed': c.passed === true || c.passed === 'true',
+                                                'failed': c.passed === false || c.passed === 'false'
+                                            }">{{c.passed === true || c.passed === 'true' ? 'Passed' : 'Failed'}}</span>
+                                        </div>
                                     </div>
                                     <p class="assessment-subject">{{c.category.charAt(0).toUpperCase() +
                                         c.category.slice(1)}}</p>
@@ -199,14 +204,19 @@
                                 <div class="assessment-info">
                                     <div class="assessment-header">
                                         <h3 class="assessment-title">{{u.title}}</h3>
-                                        <span class="status-badge" [ngClass]="{
-                                          'pending': u.status === 'pending',
-                                          'ongoing': u.status === 'ongoing',
-                                          'scheduled': u.status === 'scheduled',
-                                          'completed': u.status === 'completed'
-                                        }">
-                                            {{u.status.charAt(0).toUpperCase() + u.status.slice(1)}}
-                                        </span>
+                                        <div class="badge-container">
+                                            <span class="assessment-type" [class]="'type-' + getAssessmentTypeColor(u)">
+                                                {{u.type}}
+                                            </span>
+                                            <span class="status-badge" [ngClass]="{
+                                              'pending': u.status === 'pending',
+                                              'ongoing': u.status === 'ongoing',
+                                              'scheduled': u.status === 'scheduled',
+                                              'completed': u.status === 'completed'
+                                            }">
+                                                {{u.status.charAt(0).toUpperCase() + u.status.slice(1)}}
+                                            </span>
+                                        </div>
                                     </div>
                                     <p class="assessment-subject">{{u.category.charAt(0).toUpperCase() +
                                         u.category.slice(1)}}</p>
@@ -219,6 +229,10 @@
                                     <div class="detail-group">
                                         <span class="value">{{u.timeLimit}} minutes</span>
                                         <span class="label">Time Limit</span>
+                                    </div>
+                                    <div class="detail-group" *ngIf="u.type === 'Public Assessment'">
+                                        <span class="value joining-code">Code: {{u.modeSettings?.joiningCode}}</span>
+                                        <span class="label">Joining Code</span>
                                     </div>
                                     <div class="detail-group">
                                         <button class="view-button">

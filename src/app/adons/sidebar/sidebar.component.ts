@@ -35,9 +35,10 @@ export class SidebarComponent {
   instructorNav = [
     { icon: 'fas fa-home', label: 'Home', id: 'home', route: '/instructor/dashboard' },
     { icon: 'fas fa-users', label: 'Students', id: 'students', route: '/instructor/students' },
+    { icon: 'fas fa-layer-group', label: 'Manage', id: 'manage', route: '/instructor/manage' },
     { icon: 'fas fa-tasks', label: 'Assessment', id: 'assessment', route: '/instructor/assessment' },
     { icon: 'fas fa-star', label: 'Generate', id: 'Generate', route: '/instructor/generate' },
-    { icon: 'fas fa-user', label: 'Profile', id: 'profile', route: '/instructor/profile' }
+    { icon: 'fas fa-user', label: 'Profile', id: 'profile', route: '/instructor/profile' },
   ];
   
   userNav = [

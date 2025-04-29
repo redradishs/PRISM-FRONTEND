@@ -192,4 +192,26 @@ export class StudentAssessmentsComponent implements OnInit {
     });
 
   }
+
+  getAssessmentTypeColor(assessment: any): string {
+    switch (assessment.type) {
+      case 'Mastery':
+        return 'amber';
+      case 'Public Assessment':
+        return 'blue';
+      default:
+        return 'indigo';
+    }
+  }
+
+  getAssessmentTypeIcon(assessment: any): string {
+    switch (assessment.type) {
+      case 'Mastery':
+        return 'fa-trophy';
+      case 'Public Assessment':
+        return 'fa-globe';
+      default:
+        return 'fa-clipboard-check';
+    }
+  }
 }

@@ -1,0 +1,274 @@
+<div class="bg-gray-50 min-h-screen w-full overflow-x-hidden">
+    <div class="flex w-full">
+        <app-sidebar></app-sidebar>
+        <div class="flex-1 ml-0 md:ml-20 w-full">
+            <header class="bg-white shadow-sm fixed top-0 right-0 w-full md:w-[calc(100%-80px)] z-40">
+                <div class="w-full px-4 md:px-6 py-3 md:py-4">
+                    <div class="flex items-center justify-between">
+                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">Manage</h1>
+                        <div class="flex items-center">
+                            <div class="hidden md:flex items-center mr-4">
+                                <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
+                                <button (click)="createNewAssessment()"
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2">
+                                    New Assessment
+                                </button>
+                                <button (click)="addStudent()"
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
+                                    Add Student
+                                </button>
+                            </div>
+                            <div *ngIf="!isMobile" class="flex items-center">
+                                <div class="relative mr-3">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center">
+                                        <span
+                                            class="text-base md:text-lg font-medium text-gray-600">{{username.charAt(0)
+                                            || 'A'}}</span>
+                                    </div>
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    </div>
+                                </div>
+                                <div class="text-left">
+                                    <div class="text-sm font-medium text-gray-900">{{username}}</div>
+                                    <div class="text-xs text-gray-500">Instructor</div>
+                                </div>
+                            </div>
+                            <button *ngIf="isMobile" (click)="toggleSidebar()"
+                                class="p-2 rounded-md hover:bg-gray-100 transition-colors">
+                                <i class="fas fa-bars w-5 h-5 text-gray-600"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="h-[65px] md:h-[68px] w-full"></div>
+
+            <div class="main-container">
+                <!-- Header -->
+                <div class="page-header">
+                    <div class="page-title-container">
+                        <h1 class="page-title">
+                            <i class="fas fa-layer-group title-icon"></i>
+                            My Assessments
+                        </h1>
+                        <p class="page-subtitle">Manage and track all your assigned assessments</p>
+                    </div>
+                    <div class="header-buttons">
+                        <button class="create-assessment-btn" (click)="createNewAssessment()">
+                            <i class="fas fa-plus btn-icon"></i>
+                            Create Assessment
+                        </button>
+                    </div>
+                </div>
+        
+                <!-- Search and Filters -->
+                <div class="filter-container">
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" 
+                               class="search-input" 
+                               placeholder="Search by title, description, or class..."
+                               [(ngModel)]="searchQuery"
+                               (input)="onSearch($event)"
+                               [ngModelOptions]="{standalone: true}">
+                    </div>
+                    <div class="filter-options">
+                        <div class="filter-item">
+                            <i class="fas fa-filter filter-icon"></i>
+                            <select class="filter-trigger" [(ngModel)]="selectedMode">
+                                <option value="">All Modes</option>
+                                <option value="standard">Standard Assessment</option>
+                                <option value="public">Public Assessment</option>
+                                <option value="mastery">Mastery Assessment</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <i class="fas fa-sort filter-icon"></i>
+                            <select class="filter-trigger" [(ngModel)]="sortBy">
+                                <option value="newest">Newest First</option>
+                                <option value="oldest">Oldest First</option>
+                                <option value="alphabetical">Alphabetical</option>
+                                <option value="dueDate">Due Date</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- Status Tabs -->
+                <div class="status-tabs">
+                    <button 
+                        [class.active]="selectedStatus === ''" 
+                        (click)="onTabChange('')"
+                        class="tab-trigger">
+                        <i class="fas fa-layer-group tab-icon"></i>
+                        All
+                        <span class="count-badge">{{assessmentCounts.total}}</span>
+                    </button>
+                    <button 
+                        [class.active]="selectedStatus === 'scheduled'" 
+                        (click)="onTabChange('scheduled')"
+                        class="tab-trigger">
+                        <i class="fas fa-calendar tab-icon"></i>
+                        Scheduled
+                        <span class="count-badge">{{assessmentCounts.scheduled}}</span>
+                    </button>
+                    <button 
+                        [class.active]="selectedStatus === 'ongoing'" 
+                        (click)="onTabChange('ongoing')"
+                        class="tab-trigger">
+                        <i class="fas fa-clock tab-icon"></i>
+                        Ongoing
+                        <span class="count-badge">{{assessmentCounts.ongoing}}</span>
+                    </button>
+                    <button 
+                        [class.active]="selectedStatus === 'completed'" 
+                        (click)="onTabChange('completed')"
+                        class="tab-trigger">
+                        <i class="fas fa-check-circle tab-icon"></i>
+                        Completed
+                        <span class="count-badge">{{assessmentCounts.completed}}</span>
+                    </button>
+                </div>
+        
+                <!-- Loading State -->
+                <div *ngIf="isLoading" class="loading-state">
+                    <i class="fas fa-circle-notch fa-spin"></i>
+                    <span>Loading assessments...</span>
+                </div>
+        
+                <!-- Empty State -->
+                <div *ngIf="!isLoading && filteredAssessments.length === 0" class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h2 class="empty-state-title">No assessments found</h2>
+                    <p class="empty-state-text">
+                        {{searchQuery ? 'No assessments match your search criteria.' : 
+                          selectedStatus ? 'No ' + selectedStatus + ' assessments available.' : 
+                          'Create your first assessment to get started.'}}
+                    </p>
+                    <button class="create-assessment-btn" (click)="createNewAssessment()">
+                        <i class="fas fa-plus"></i>
+                        Create Assessment
+                    </button>
+                </div>
+        
+                <!-- Assessment Grid -->
+                <div class="assessment-grid" *ngIf="filteredAssessments.length > 0">
+                    <div *ngFor="let assessment of filteredAssessments" 
+                         class="assessment-card card-{{assessment.type | lowercase}}">
+                        <div class="card-header">
+                            <div class="card-header-top">
+                                <div class="card-mode">
+                                    <i class="fas {{getModeIcon(assessment.type)}} mode-icon mode-icon-{{assessment.type | lowercase}}"></i>
+                                    <span class="badge badge-{{assessment.type | lowercase}}">{{assessment.type}}</span>
+                                </div>
+                                <span class="badge badge-{{assessment.status}}">
+                                    <i class="fas {{getStatusIcon(assessment.status)}} badge-icon"></i>
+                                    <span>{{assessment.status | titlecase}}</span>
+                                </span>
+                            </div>
+                            <h3 class="card-title">{{assessment.title}}</h3>
+                            <p class="card-description">{{assessment.instructions}}</p>
+                        </div>
+        
+                        <div class="card-content">
+                            <!-- Category for all assessments -->
+                            <div class="category-tag">
+                                <i class="fas fa-tag"></i>
+                                <span>{{assessment.category | titlecase}}</span>
+                            </div>
+
+                            <!-- Public Assessment Joining Code -->
+                            <div class="joining-code" *ngIf="assessment.type === 'Public'">
+                                <div class="code-label">Joining Code:</div>
+                                <div class="code-value">{{assessment.modeSettings.joiningCode || 'N/A'}}</div>
+                            </div>
+
+                            <!-- Status specific info -->
+                            <ng-container [ngSwitch]="assessment.status">
+                                <div *ngSwitchCase="'scheduled'" class="status-box">
+                                    <div class="status-box-content">
+                                        <i class="far fa-calendar"></i>
+                                        <span>Scheduled for {{assessment.startDate | date:'MMM d, y, h:mm a'}}</span>
+                                    </div>
+                                </div>
+        
+                                <div *ngSwitchCase="'ongoing'" class="status-box">
+                                    <div class="status-box-content">
+                                        <i class="fas fa-clock"></i>
+                                        <span>Due {{assessment.dueDate | date:'MMM d, y, h:mm a'}}</span>
+                                    </div>
+                                </div>
+        
+                                <div *ngSwitchCase="'completed'" class="status-box">
+                                    <div class="status-box-content">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Completed on {{assessment.dueDate | date:'MMM d, y'}}</span>
+                                    </div>
+                                </div>
+                            </ng-container>
+        
+                            <!-- Assessment details -->
+                            <div class="assessment-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-file-alt detail-icon"></i>
+                                    <span>{{assessment.questions}} Questions</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="far fa-clock detail-icon"></i>
+                                    <span>{{assessment.timeLimit}} minutes</span>
+                                </div>
+                            </div>
+                        </div>
+        
+                        <div class="card-footer">
+                            <button class="btn btn-outline" (click)="editAssessment(assessment)">Edit</button>
+                            <div class="actions-container">
+                                <button class="btn btn-primary" (click)="viewAssessmentDetails(assessment)">View Details</button>
+                                <div class="dropdown">
+                                    <button class="btn-icon">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                    <div class="dropdown-content">
+                                        <div class="dropdown-item" (click)="duplicateAssessment(assessment)">
+                                            <i class="fas fa-copy mr-2"></i> Duplicate
+                                        </div>
+                                        <div class="dropdown-item">
+                                            <i class="fas fa-share mr-2"></i> Share
+                                        </div>
+                                        <div class="dropdown-item" (click)="deleteAssessment(assessment)">
+                                            <i class="fas fa-archive mr-2"></i> Archive
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-controls" *ngIf="pagination.totalPages > 1">
+                <button class="pagination-btn" 
+                        [disabled]="pagination.currentPage === 1"
+                        (click)="onPageChange(pagination.currentPage - 1)">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                
+                <span class="pagination-info">
+                    Page {{pagination.currentPage}} of {{pagination.totalPages}}
+                </span>
+
+                <button class="pagination-btn" 
+                        [disabled]="pagination.currentPage === pagination.totalPages"
+                        (click)="onPageChange(pagination.currentPage + 1)">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

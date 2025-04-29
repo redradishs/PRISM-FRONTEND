@@ -697,3 +697,40 @@ button.active {
     }
 }
 
+.badge-container {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.assessment-type {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.type-amber {
+    background-color: #fff3e0;
+    color: #f57c00;
+}
+
+.type-blue {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.type-indigo {
+    background-color: #e8eaf6;
+    color: #3f51b5;
+}
+
+.joining-code {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+

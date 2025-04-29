@@ -10,17 +10,21 @@ interface AIResponse {
   // Define the structure of the response from the API
 }
 
+interface PaginationParams {
+  page?: number;
+  limit?: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class ApiService {
-  // apiUrl = 'http://localhost:8000/api';
+  // apiUrl = 'http://localhost:8000/instructor';
   // apiUrl = 'https://prismcdn.onrender.com/api';
   apiUrl = 'https://prismapi2.onrender.com/instructor';
   aiUrl = 'https://redprismai.vercel.app';
 
   constructor(private http: HttpClient) {}
-
   // The AI CONTENT GENERATION STARTS HERE
 
   // Basic assessment generation
@@ -82,8 +86,14 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/getTotalClasses/${id}`);
   }
 
-  getOngoingAssessments(id: string) {
-    return this.http.get(`${this.apiUrl}/getOnGoingAssessments/${id}`);
+  getOngoingAssessments(id: string, limit?: number) {
+    const url = limit ? `${this.apiUrl}/getOnGoingAssessments/${id}?limit=${limit}` : `${this.apiUrl}/getOnGoingAssessments/${id}`;
+    return this.http.get(url);
+  }
+
+  getScheduledAssessments(id: string, limit?: number) {
+    const url = limit ? `${this.apiUrl}/getScheduledAssessments/${id}?limit=${limit}` : `${this.apiUrl}/getScheduledAssessments/${id}`;
+    return this.http.get(url);
   }
 
   //  starts with generateAssessmentPage
@@ -250,5 +260,53 @@ export class ApiService {
     data
   );
 }
+
+
+  // Assessment Management Routes
+  getAllAssessments(instructorId: string, params: PaginationParams = {}) {
+    let httpParams = new HttpParams();
+    if (params.page) httpParams = httpParams.set('page', params.page.toString());
+    if (params.limit) httpParams = httpParams.set('limit', params.limit.toString());
+    
+    return this.http.get(`${this.apiUrl}/assessments/all/${instructorId}`, { params: httpParams });
+  }
+
+  searchAssessments(instructorId: string, query: string, params: PaginationParams = {}) {
+    let httpParams = new HttpParams();
+    if (params.page) httpParams = httpParams.set('page', params.page.toString());
+    if (params.limit) httpParams = httpParams.set('limit', params.limit.toString());
+    httpParams = httpParams.set('q', query);
+    
+    return this.http.get(`${this.apiUrl}/assessments/search/${instructorId}`, { params: httpParams });
+  }
+
+  getOngoingAssessmentsWithPagination(instructorId: string, params: PaginationParams = {}) {
+    let httpParams = new HttpParams();
+    if (params.page) httpParams = httpParams.set('page', params.page.toString());
+    if (params.limit) httpParams = httpParams.set('limit', params.limit.toString());
+    
+    return this.http.get(`${this.apiUrl}/assessments/ongoing/${instructorId}`, { params: httpParams });
+  }
+
+  getScheduledAssessmentsWithPagination(instructorId: string, params: PaginationParams = {}) {
+    let httpParams = new HttpParams();
+    if (params.page) httpParams = httpParams.set('page', params.page.toString());
+    if (params.limit) httpParams = httpParams.set('limit', params.limit.toString());
+    
+    return this.http.get(`${this.apiUrl}/assessments/scheduled/${instructorId}`, { params: httpParams });
+  }
+
+  getCompletedAssessments(instructorId: string, params: PaginationParams = {}) {
+    let httpParams = new HttpParams();
+    if (params.page) httpParams = httpParams.set('page', params.page.toString());
+    if (params.limit) httpParams = httpParams.set('limit', params.limit.toString());
+    
+    return this.http.get(`${this.apiUrl}/assessments/completed/${instructorId}`, { params: httpParams });
+  }
+
+  // Get assessment counts
+  getAssessmentCounts(instructorId: string) {
+    return this.http.get(`${this.apiUrl}/assessments/counts/${instructorId}`);
+  }
 
 }

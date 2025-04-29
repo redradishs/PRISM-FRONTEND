@@ -56,6 +56,44 @@ interface AssignData {
   };
 }
 
+interface DatePreset {
+  label: string;
+  startDate: Date;
+  dueDate: Date;
+}
+
+interface AssessmentProgress {
+  id: string;
+  assessmentId: string;
+  title: string;
+  startDate: string;
+  dueDate: string;
+  timeLimit: number;
+  type: string;
+  masteryScore?: number;
+  modeSettings?: {
+    joiningCode: string;
+    masteryScore?: number;
+  };
+  classes: {
+    classCode: string;
+    className: string;
+    totalStudents: number;
+    stats: {
+      inProgress: number;
+      submitted: number;
+      graded: number;
+      mastered?: number;
+    };
+    remainingStudents: number;
+    responses: {
+      status: string;
+      score: number;
+      studentId: string;
+    }[];
+  }[];
+}
+
 @Component({
   selector: 'app-assessment',
   imports: [SidebarComponent, CommonModule, FormsModule, RouterLink],
@@ -122,6 +160,58 @@ export class AssessmentComponent {
     }
   ];
 
+  startDatePresets: DatePreset[] = [
+    {
+      label: 'Now',
+      startDate: new Date(),
+      dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000)
+    },
+    {
+      label: 'Tomorrow',
+      startDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      dueDate: new Date(Date.now() + 48 * 60 * 60 * 1000)
+    },
+    {
+      label: 'Next Week',
+      startDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
+    }
+  ];
+
+  dueDatePresets: DatePreset[] = [
+    {
+      label: '1hr',
+      startDate: new Date(),
+      dueDate: new Date(Date.now() + 60 * 60 * 1000)
+    },
+    {
+      label: 'Tomorrow',
+      startDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      dueDate: new Date(Date.now() + 48 * 60 * 60 * 1000)
+    },
+    {
+      label: 'Next Week',
+      startDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
+    }
+  ];
+
+  onGoingAssessments: AssessmentProgress[] = [];
+  totalOngoingAssessments: number = 0;
+  remainingOngoingAssessments: number = 0;
+  totalScheduledAssessments: number = 0;
+  remainingScheduledAssessments: number = 0;
+  scheduledAssessments: any[] = [];
+
+  getLocalDateTime(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
+
   constructor(
     private api: ApiService,
     private auth: AuthService,
@@ -134,7 +224,7 @@ export class AssessmentComponent {
   ngOnInit(): void {
     this.auth.getCurrentUser().subscribe((user) => {
       if (user) {
-        console.log('User logged in:', user);
+        console.log('User ID:', user.id);
         this.userId = user.id;
         this.username = user.name;
         this.assignData.createdBy = user.id;
@@ -144,6 +234,8 @@ export class AssessmentComponent {
         this.getownAssessments(this.userId);
         this.getClassessDetails(this.userId);
         this.filteredClasses = this.classes;
+        this.getOnGoingAssessments(this.userId);
+        this.loadScheduledAssessments(this.userId);
       } else {
         console.log('No user found');
       }
@@ -228,7 +320,7 @@ export class AssessmentComponent {
       next: (resp: any) => {
         this.assessments = resp.data.map((assessment: any) => ({
           ...assessment,
-          progress: this.calculateProgress(assessment),
+          progress: this.calculateProgress(assessment as AssessmentProgress),
           totalStudents: assessment.classes[0].stats.totalStudents,
           submittedCount: assessment.classes[0].stats.submitted,
           gradedCount: assessment.classes[0].stats.graded,
@@ -256,11 +348,13 @@ export class AssessmentComponent {
     });
   }
 
-  calculateProgress(assessment: any) {
-    const stats = assessment.classes[0].stats;
-    return stats.totalStudents > 0
-      ? (stats.submitted / stats.totalStudents) * 100
-      : 0;
+  calculateProgress(assessment: AssessmentProgress): number {
+    if (assessment.type === 'Public Assessment') {
+      return 0;
+    }
+    const totalStudents = assessment.classes[0]?.totalStudents || 0;
+    const gradedCount = assessment.classes[0]?.stats.submitted || 0;
+    return totalStudents > 0 ? (gradedCount / totalStudents) * 100 : 0;
   }
 
   onSearch(event: any): void {
@@ -438,67 +532,85 @@ export class AssessmentComponent {
     }
   }
 
-  assignAssessment() {
-    if (this.selectedMode !== 'public' && !this.assignData.classCodes.length) {
+  async assignAssessment() {
+    if (!this.assignData.assessmentId || !this.assignData.startDate || !this.assignData.dueDate) {
       Swal.fire({
         icon: 'error',
-        title: 'Error',
-        text: 'Please select at least one class'
+        title: 'Missing Information',
+        text: 'Please fill in all required fields.',
       });
       return;
     }
 
-    const formattedData = {
-      ...this.assignData,
-      startDate: new Date(this.assignData.startDate).toISOString(),
-      dueDate: new Date(this.assignData.dueDate).toISOString()
-    };
-
-    if ('dueTime' in formattedData) {
-      delete formattedData.dueTime;
+    // Only check for class selection if not in public mode
+    if (this.selectedMode !== 'public' && this.assignData.classCodes.length === 0) {
+      Swal.fire({
+        icon: 'error',
+        title: 'No Classes Selected',
+        text: 'Please select at least one class.',
+      });
+      return;
     }
 
-    this.isLoading = true;
-    this.api.assignAssessment(formattedData).subscribe({
-      next: (resp: any) => {
-        if (resp.remarks === 'Success') {
-          let successMessage = '';
-          if(this.selectedMode === 'assessment') {
-            successMessage = 'Assessment assigned successfully';
-          } else if (this.selectedMode === 'mastery') {
-            successMessage = 'Mastery assessment assigned successfully';
-          } else if (this.selectedMode === 'public') {
-            successMessage = 'Public assessment assigned successfully, your students may now join with code ' + resp.data.joiningCode;
-          } else {
-            successMessage = 'Assessment assigned successfully';
-          }
-          Swal.fire({
-            icon: 'success',
-            title: 'Success',
-            text: successMessage
-          });
-          this.closeAssignModal();
-          this.loadAssessments(this.userId);
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: resp.message || 'Failed to assign assessment'
-          });
+    if (this.selectedMode === 'mastery' && this.assignData.totalPoints && this.assignData.modeSettings.masteryScore > this.assignData.totalPoints) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid Mastery Score',
+        text: 'Mastery score cannot be greater than total points.',
+      });
+      return;
+    }
+
+    try {
+      // Show loading state
+      Swal.fire({
+        title: 'Assigning Assessment',
+        text: 'Please wait while we assign the assessment...',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
         }
-      },
-      error: (error) => {
-        console.error('Error assigning assessment:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: error.message || 'Failed to assign assessment'
-        });
-      },
-      complete: () => {
-        this.isLoading = false;
+      });
+
+      // For public mode, send without class codes
+      if (this.selectedMode === 'public') {
+        const assignmentData = {
+          ...this.assignData,
+          classCodes: [] // Empty array for public mode
+        };
+        await this.api.assignAssessment(assignmentData).toPromise();
+      } else {
+        // For other modes, assign to each class sequentially
+        for (const classCode of this.assignData.classCodes) {
+          const assignmentData = {
+            ...this.assignData,
+            classCodes: [classCode] // Send one class at a time
+          };
+          await this.api.assignAssessment(assignmentData).toPromise();
+        }
       }
-    });
+
+      // Show success message
+      Swal.fire({
+        icon: 'success',
+        title: 'Assessment Assigned',
+        text: this.selectedMode === 'public' 
+          ? 'The public assessment has been successfully created.' 
+          : 'The assessment has been successfully assigned to all selected classes.',
+      });
+
+      // Reset form and close modal
+      this.resetAssignData();
+      this.closeAssignModal();
+      this.loadAssessments(this.userId);
+    } catch (error) {
+      console.error('Error assigning assessment:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Assignment Failed',
+        text: 'There was an error assigning the assessment. Please try again.',
+      });
+    }
   }
 
   getClassName(code: string): string {
@@ -568,5 +680,81 @@ export class AssessmentComponent {
     if (this.assignData.totalPoints && this.assignData.modeSettings.masteryScore > this.assignData.totalPoints) {
       this.assignData.modeSettings.masteryScore = this.assignData.totalPoints;
     }
+  }
+
+  applyStartDatePreset(preset: DatePreset, event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.assignData.startDate = this.getLocalDateTime(preset.startDate);
+  }
+
+  applyDueDatePreset(preset: DatePreset, event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.assignData.dueDate = this.getLocalDateTime(preset.dueDate);
+  }
+
+  viewAll() {
+    if (this.totalOngoingAssessments > 0) {
+      this.router.navigate(['/instructor/manage'], { queryParams: { tab: 'ongoing' } });
+    } else if (this.totalScheduledAssessments > 0) {
+      this.router.navigate(['/instructor/manage'], { queryParams: { tab: 'scheduled' } });
+    }
+  }
+
+  getOnGoingAssessments(userId: string) {
+    this.api.getOngoingAssessments(this.userId, 4).subscribe((resp: any) => {
+      try {
+        this.onGoingAssessments = resp.data.data;
+        this.totalOngoingAssessments = resp.data.total;
+        this.remainingOngoingAssessments = resp.data.left;
+      } catch (error) {
+        console.error('Error getting ongoing assessments:', error);
+      }
+    })
+  }
+
+  gotoAssessment(_id: string) {
+    this.router.navigate(['/instructor/result'], {
+      state: {assessmentId: _id}
+    })
+  }
+
+  getAssessmentTypeIcon(assessment: AssessmentProgress): string {
+    switch (assessment.type) {
+      case 'Mastery':
+        return 'fa-trophy';
+      case 'Public Assessment':
+        return 'fa-globe';
+      case 'Assessment':
+        return 'fa-clipboard-check';
+      default:
+        return 'fa-clipboard-check';
+    }
+  }
+
+  getAssessmentTypeColor(assessment: AssessmentProgress): string {
+    switch (assessment.type) {
+      case 'Mastery':
+        return 'amber';
+      case 'Public Assessment':
+        return 'blue';
+      case 'Assessment':
+        return 'indigo';
+      default:
+        return 'indigo';
+    }
+  }
+
+  loadScheduledAssessments(id: string) {
+    this.api.getScheduledAssessments(id, 4).subscribe((resp: any) => {
+      try {
+        this.scheduledAssessments = resp.data.data;
+        this.totalScheduledAssessments = resp.data.total;
+        this.remainingScheduledAssessments = resp.data.left;
+      } catch (error) {
+        console.error('Error getting scheduled assessments:', error);
+      }
+    })
   }
 }
