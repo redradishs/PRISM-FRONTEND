@@ -1,0 +1,287 @@
+<div class="bg-gray-50 min-h-screen w-full overflow-x-hidden">
+    <div class="flex w-full">
+        <app-sidebar></app-sidebar>
+        <div class="flex-1 ml-0 md:ml-20 w-full">
+            <header class="bg-white shadow-sm fixed top-0 right-0 w-full md:w-[calc(100%-80px)] z-40">
+                <div class="w-full px-4 md:px-6 py-3 md:py-4">
+                    <div class="flex items-center justify-between">
+                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">Result</h1>
+                        <div class="flex items-center">
+                            <div class="hidden md:flex items-center mr-4">
+                                <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
+                                <button (click)="createNewAssessment()"
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2">
+                                    New Assessment
+                                </button>
+                                <button (click)="addStudent()"
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
+                                    Add Student
+                                </button>
+                            </div>
+                            <div *ngIf="!isMobile" class="flex items-center">
+                                <div class="relative mr-3">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center">
+                                        <span
+                                            class="text-base md:text-lg font-medium text-gray-600">{{username.charAt(0)
+                                            || 'A'}}</span>
+                                    </div>
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    </div>
+                                </div>
+                                <div class="text-left">
+                                    <div class="text-sm font-medium text-gray-900">{{username}}</div>
+                                    <div class="text-xs text-gray-500">Instructor</div>
+                                </div>
+                            </div>
+                            <button *ngIf="isMobile" (click)="toggleSidebar()"
+                                class="p-2 rounded-md hover:bg-gray-100 transition-colors">
+                                <i class="fas fa-bars w-5 h-5 text-gray-600"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="h-[65px] md:h-[68px] w-full"></div>
+
+            <div class="mastery-wrapper">
+                <div class="mastery-container">
+                    <div class="header-section">
+                        <div class="header-content">
+                            <div class="header-icon">
+                                <svg class="icon" viewBox="0 0 24 24" width="24" height="24">
+                                    <path d="M6 9l6-6 6 6M6 15l6 6 6-6"/>
+                                </svg>
+                            </div>
+                            <div class="header-text">
+                                <h1 class="header-title">JavaScript Mastery</h1>
+                                <div class="header-badges">
+                                    <span class="badge pink">Mastery</span>
+                                    <span class="badge green">Active</span>
+                                </div>
+                                <p class="header-description">Progressive JavaScript challenges to master core concepts</p>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="button">
+                                <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                </svg>
+                                Edit
+                            </button>
+                            <button class="button">
+                                <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
+                                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                Settings
+                            </button>
+                            <button class="button primary">
+                                <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
+                                    <path d="M3 3v18h18M18 17V9M12 17V5M6 17v-3"/>
+                                </svg>
+                                View Results
+                            </button>
+                        </div>
+                    </div>
+            
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-content">
+                                <div class="stat-icon pink">
+                                    <svg class="icon" viewBox="0 0 24 24" width="24" height="24">
+                                        <path d="M22 2 L12 20 L2 2"/>
+                                    </svg>
+                                </div>
+                                <div class="stat-value">62%</div>
+                                <p class="stat-label">Mastery Rate</p>
+                            </div>
+                        </div>
+            
+                        <div class="stat-card">
+                            <div class="stat-content">
+                                <div class="stat-icon indigo">
+                                    <svg class="icon" viewBox="0 0 24 24" width="24" height="24">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="9" cy="7" r="4"/>
+                                    </svg>
+                                </div>
+                                <div class="stat-value">18</div>
+                                <p class="stat-label">Students</p>
+                            </div>
+                        </div>
+            
+                        <div class="stat-card">
+                            <div class="stat-content">
+                                <div class="stat-icon purple">
+                                    <svg class="icon" viewBox="0 0 24 24" width="24" height="24">
+                                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                                    </svg>
+                                </div>
+                                <div class="stat-value">5</div>
+                                <p class="stat-label">Difficulty Levels</p>
+                            </div>
+                        </div>
+            
+                        <div class="stat-card">
+                            <div class="stat-content">
+                                <div class="stat-icon green">
+                                    <svg class="icon" viewBox="0 0 24 24" width="24" height="24">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                        <line x1="16" y1="2" x2="16" y2="6"/>
+                                        <line x1="8" y1="2" x2="8" y2="6"/>
+                                        <line x1="3" y1="10" x2="21" y2="10"/>
+                                    </svg>
+                                </div>
+                                <div class="stat-value-small">August 5, 2023</div>
+                                <p class="stat-label">Created On</p>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Student Progress</h2>
+                            <p class="card-description">Track student progress through mastery levels</p>
+                        </div>
+                        <div class="card-content">
+                            <div class="student-list">
+                                <div class="student-list-header">
+                                    <div class="student-info">Student</div>
+                                    <div class="student-progress">Progress</div>
+                                    <div class="student-attempts">Attempts</div>
+                                    <div class="student-last-attempt">Last Attempt</div>
+                                    <div class="student-status">Status</div>
+                                    <div class="student-actions">Details</div>
+                                </div>
+            
+                                <div class="student-item">
+                                    <div class="student-info">
+                                        <img src="https://i.pravatar.cc/150?img=1" alt="Sarah Johnson" class="student-avatar">
+                                        <div class="student-name">Sarah Johnson</div>
+                                    </div>
+                                    <div class="student-progress">
+                                        <div class="progress-container">
+                                            <div class="progress-bar">
+                                                <div class="progress-value" style="width: 85%"></div>
+                                            </div>
+                                            <span class="progress-text">85%</span>
+                                        </div>
+                                    </div>
+                                    <div class="student-attempts">12</div>
+                                    <div class="student-last-attempt">2 hours ago</div>
+                                    <div class="student-status">
+                                        <span class="badge green">Mastered</span>
+                                    </div>
+                                    <div class="student-actions">
+                                        <a href="#" class="link-button">View Details</a>
+                                    </div>
+                                </div>
+            
+                                <div class="student-item">
+                                    <div class="student-info">
+                                        <img src="https://i.pravatar.cc/150?img=2" alt="Michael Chen" class="student-avatar">
+                                        <div class="student-name">Michael Chen</div>
+                                    </div>
+                                    <div class="student-progress">
+                                        <div class="progress-container">
+                                            <div class="progress-bar">
+                                                <div class="progress-value" style="width: 65%"></div>
+                                            </div>
+                                            <span class="progress-text">65%</span>
+                                        </div>
+                                    </div>
+                                    <div class="student-attempts">8</div>
+                                    <div class="student-last-attempt">1 day ago</div>
+                                    <div class="student-status">
+                                        <span class="badge amber">In Progress</span>
+                                    </div>
+                                    <div class="student-actions">
+                                        <a href="#" class="link-button">View Details</a>
+                                    </div>
+                                </div>
+            
+                                <div class="student-item">
+                                    <div class="student-info">
+                                        <img src="https://i.pravatar.cc/150?img=3" alt="Emma Rodriguez" class="student-avatar">
+                                        <div class="student-name">Emma Rodriguez</div>
+                                    </div>
+                                    <div class="student-progress">
+                                        <div class="progress-container">
+                                            <div class="progress-bar">
+                                                <div class="progress-value" style="width: 45%"></div>
+                                            </div>
+                                            <span class="progress-text">45%</span>
+                                        </div>
+                                    </div>
+                                    <div class="student-attempts">5</div>
+                                    <div class="student-last-attempt">5 hours ago</div>
+                                    <div class="student-status">
+                                        <span class="badge amber">In Progress</span>
+                                    </div>
+                                    <div class="student-actions">
+                                        <a href="#" class="link-button">View Details</a>
+                                    </div>
+                                </div>
+            
+                                <div class="student-item">
+                                    <div class="student-info">
+                                        <img src="https://i.pravatar.cc/150?img=4" alt="David Kim" class="student-avatar">
+                                        <div class="student-name">David Kim</div>
+                                    </div>
+                                    <div class="student-progress">
+                                        <div class="progress-container">
+                                            <div class="progress-bar">
+                                                <div class="progress-value" style="width: 25%"></div>
+                                            </div>
+                                            <span class="progress-text">25%</span>
+                                        </div>
+                                    </div>
+                                    <div class="student-attempts">3</div>
+                                    <div class="student-last-attempt">3 days ago</div>
+                                    <div class="student-status">
+                                        <span class="badge amber">In Progress</span>
+                                    </div>
+                                    <div class="student-actions">
+                                        <a href="#" class="link-button">View Details</a>
+                                    </div>
+                                </div>
+            
+                                <div class="student-item">
+                                    <div class="student-info">
+                                        <img src="https://i.pravatar.cc/150?img=5" alt="Sophia Patel" class="student-avatar">
+                                        <div class="student-name">Sophia Patel</div>
+                                    </div>
+                                    <div class="student-progress">
+                                        <div class="progress-container">
+                                            <div class="progress-bar">
+                                                <div class="progress-value" style="width: 95%"></div>
+                                            </div>
+                                            <span class="progress-text">95%</span>
+                                        </div>
+                                    </div>
+                                    <div class="student-attempts">15</div>
+                                    <div class="student-last-attempt">1 hour ago</div>
+                                    <div class="student-status">
+                                        <span class="badge green">Mastered</span>
+                                    </div>
+                                    <div class="student-actions">
+                                        <a href="#" class="link-button">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+
+        </div>
+    </div>
+</div>
+
+s

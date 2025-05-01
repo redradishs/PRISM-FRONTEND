@@ -10,6 +10,9 @@ import { ProfileInstComponent } from './instructor/profile-inst/profile-inst.com
 import { ResponseReviewComponent } from './instructor/response-review/response-review.component';
 import { StudentAssessmentsComponent } from './instructor/student-assessments/student-assessments.component';
 import { ManageComponent } from './instructor/manage/manage.component';
+import { CoordinatorComponent } from './instructor/coordinator/coordinator.component';
+import { EvaluateComponent } from './instructor/evaluate/evaluate.component';
+import { MasteryResultComponent } from './instructor/mastery-result/mastery-result.component';
 
 export const INSTRUCTOR_ROUTES: Routes = [
     { path: 'dashboard', component: HomeComponent },
@@ -19,6 +22,9 @@ export const INSTRUCTOR_ROUTES: Routes = [
     { path: 'create', component: GenerateAssessmentComponent },
     { path: 'takeassessment', component: TakeAssessmentComponent },
     { path: 'result', component: ResultComponent },
+    { path: 'result/mastery', component: MasteryResultComponent },
+    {path: 'coordinator', component: CoordinatorComponent},
+    {path: 'evaluate', component: EvaluateComponent},
     {path: 'response', component: ResponseReviewComponent},
     {path: 'students/assessments', component: StudentAssessmentsComponent},
     {path: 'manage', component: ManageComponent},

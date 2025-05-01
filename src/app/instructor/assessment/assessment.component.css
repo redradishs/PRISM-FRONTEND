@@ -24,12 +24,28 @@
 }
 
 .titlemet h2 {
-    font-size: 1.75rem;
-    font-weight: 600;
-    color: #111827;
+    font-size: 30px;
+    font-weight: 700;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     margin: 0;
     white-space: nowrap;
 }
+
+.titlemet-ic {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    white-space: nowrap;
+}
+.titlemet-ic i {
+    font-size: 30px;
+    color: #4f46e5;
+
+}   
 
 .titlemet button {
     display: flex;
