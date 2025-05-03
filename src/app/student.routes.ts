@@ -7,12 +7,14 @@ import { StudHistoryComponent } from './students/stud-history/stud-history.compo
 import { StudConfirmationComponent } from './students/stud-confirmation/stud-confirmation.component';
 import { ProfileComponent } from './students/profile/profile.component';
 import { StudeAssessmentresultComponent } from './students/stude-assessmentresult/stude-assessmentresult.component';
+import { StudTakeexamsecureComponent } from './students/stud-takeexamsecure/stud-takeexamsecure.component';
 
 export const STUDENT_ROUTES: Routes = [
     { path: 'dashboard', component: StudHomeComponent },
     { path: 'classes', component: StudClassesComponent },
     { path: 'classes/details', component: StudClassDetailsComponent },
     { path: 'assessment/take', component: StudTakeexamComponent },
+    {path: 'assessment/take/normal', component: StudTakeexamsecureComponent},
     { path: 'history', component: StudHistoryComponent },
     { path: 'profile', component: ProfileComponent },
     { path: 'result', component: StudeAssessmentresultComponent },

@@ -1,0 +1,133 @@
+<!-- Assessment Header -->
+<header class="assessment-header">
+    <div class="header-container">
+        <div class="header-content">
+            <h1 class="assessment-title">{{assessmentTitle}}</h1>
+            <div class="header-controls">
+                <div class="timer-container" [class.timer-warning]="timeRemaining < 300" id="timer">
+                    <svg class="timer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                        <path d="M12 6v6l4 2" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span class="timer-text">{{formatTime(timeRemaining)}}</span>
+                </div>
+                <div class="question-counter">
+                    Question {{currentQuestionIndex + 1}} of {{questions.length}}
+                </div>
+            </div>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar" [style.width.%]="((currentQuestionIndex + 1) / questions.length) * 100"></div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<main class="main-content">
+    <div class="question-container">
+        <ng-container *ngFor="let question of questions; let i = index">
+            <div class="question-card" [class.hidden]="currentQuestionIndex !== i">
+                <div class="decorative-circle decorative-circle-top"></div>
+                <div class="decorative-circle decorative-circle-bottom"></div>
+                
+                <div class="question-type">
+                    {{question.type | uppercase}}
+                </div>
+                
+                <h2 class="question-text">
+                    {{question.question}}
+                </h2>
+
+                <!-- Multiple Choice Options -->
+                <div class="answer-options" *ngIf="question.type === 'multiple-choice'">
+                    <button *ngFor="let option of question.options; let optIndex = index" 
+                            class="answer-option" 
+                            [class.selected]="selectedAnswer === option"
+                            (click)="selectOption(option)">
+                        <div class="option-indicator" [class.selected]="selectedAnswer === option">
+                            {{['A', 'B', 'C', 'D'][optIndex]}}
+                        </div>
+                        <span class="option-text">{{option}}</span>
+                    </button>
+                </div>
+
+                <!-- True/False Options -->
+                <div class="true-false-options" *ngIf="question.type === 'true-false'">
+                    <button class="true-false-option" 
+                            [class.selected]="selectedAnswer === 'True'"
+                            [attr.data-value]="'True'"
+                            (click)="selectOption('True')">
+                        <div class="true-false-indicator true-indicator">T</div>
+                        <span class="option-text">True</span>
+                    </button>
+                    <button class="true-false-option"
+                            [class.selected]="selectedAnswer === 'False'"
+                            [attr.data-value]="'False'"
+                            (click)="selectOption('False')">
+                        <div class="true-false-indicator false-indicator">F</div>
+                        <span class="option-text">False</span>
+                    </button>
+                </div>
+
+                <!-- Short Answer -->
+                <div class="short-answer" *ngIf="question.type === 'short-answer'">
+                    <textarea class="short-answer-input" 
+                              [(ngModel)]="selectedAnswer"
+                              placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <!-- Multiple Select Options -->
+                <div class="answer-options" *ngIf="question.type === 'multiple-select'">
+                    <button *ngFor="let option of question.options; let optIndex = index" 
+                            class="answer-option" 
+                            [class.selected]="isOptionSelected(option)"
+                            (click)="toggleMultiSelect(option)">
+                        <div class="option-indicator checkbox-indicator" [class.selected]="isOptionSelected(option)">
+                            <svg *ngIf="isOptionSelected(option)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                        </div>
+                        <span class="option-text">{{option}}</span>
+                    </button>
+                </div>
+
+                <!-- Enumeration -->
+                <div class="enumeration-container" *ngIf="question.type === 'enumeration'">
+                    <div class="enumeration-inputs">
+                        <div class="enumeration-input-group" *ngFor="let _ of [1,2,3]; let i = index">
+                            <span class="enumeration-number">{{i + 1}}.</span>
+                            <input type="text" 
+                                   class="enumeration-input" 
+                                   [(ngModel)]="enumerationAnswers[i]"
+                                   placeholder="Enter answer...">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="navigation-button">
+                    <button class="next-button" 
+                            [disabled]="!canProceed(question)"
+                            (click)="nextQuestion()">
+                        {{i === questions.length - 1 ? 'Submit Assessment' : 'Next Question'}}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</main>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" *ngIf="isSubmitting">
+    <div class="loading-content">
+        <div class="loading-spinner">
+            <div class="spinner-ring spinner-ring-1"></div>
+            <div class="spinner-ring spinner-ring-2"></div>
+        </div>
+        <p class="loading-title">Submitting Assessment</p>
+        <p class="loading-subtitle">Please wait while we process your answers</p>
+    </div>
+</div>
