@@ -109,9 +109,21 @@ export class StudConfirmationComponent {
     this.api.recordStartTime(data).subscribe({
       next: (resp: any) => {
         console.log('Successfully recorded start time', resp);
-        this.router.navigate(['/student/assessment/take'], {
-          state: { assessmentId: this.assignedAssessmentId },
-        });
+        console.log('assessment mode: ', this.confirmationData.typeAss);
+        if(this.confirmationData.typeAss === 'assessment' || this.confirmationData.type === 'public') {
+            console.log('Navigating to assessment mode of assessment');
+            this.router.navigate(['/student/assessment/take/normal'], {
+              state: { assessmentId: this.assignedAssessmentId },
+            });
+        } else if(this.confirmationData.typeAss === 'mastery') {
+          console.log('Navigating to mastery mode of assessment');
+            this.router.navigate(['/student/assessment/take'], {
+              state: { assessmentId: this.assignedAssessmentId },
+            });
+        } else {
+          console.error('Invalid assessment type');
+          this.router.navigate(['/student/dashboard']);
+        }
       },
       error: (err: any) => {
         console.error('Error recording start time:', err);
@@ -121,9 +133,20 @@ export class StudConfirmationComponent {
 
   continue() {
     console.log('Continuing assessment');
-    this.router.navigate(['/student/assessment/take'], {
-      state: { assessmentId: this.assignedAssessmentId },
-    });
+    if(this.confirmationData.typeAss === 'assessment' || this.confirmationData.type === 'public') {
+      console.log('Navigating to assessment mode of assessment');
+      this.router.navigate(['/student/assessment/take/normal'], {
+        state: { assessmentId: this.assignedAssessmentId },
+      });
+    } else if(this.confirmationData.typeAss ==='mastery') {
+      console.log('Navigating to mastery mode of assessment');
+      this.router.navigate(['/student/assessment/take'], {
+        state: { assessmentId: this.assignedAssessmentId },
+      });
+    } else {
+      console.error('Invalid assessment type');
+      this.router.navigate(['/student/dashboard']);
+    }
   }
 
   result() {

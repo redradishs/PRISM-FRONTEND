@@ -7,9 +7,45 @@ import { StudentService } from '../../services/student.service';
 
 interface Question {
   _id: string;
-  question: string;
+  expectedAnswer: number;
+  isComplete: boolean;
+  isLastQuestion: boolean;
+  progress: {
+    current: number;
+    remaining: number;
+    total: number;
+  }
+  question: {
+    options?: string[];
+    points: number;
+    questionText: string;
+    type: 'multiple-choice' | 'true-false' |'short-answer' |'multiple-select' | 'enumeration';
+    _id: string;
+  }
   type: 'multiple-choice' | 'true-false' | 'short-answer' | 'multiple-select' | 'enumeration';
   options?: string[];
+}
+
+interface QuestionResponse {
+  remarks: string;
+  data: {
+    isComplete: boolean;
+    question: {
+      type: 'multiple-choice' | 'true-false' | 'short-answer' | 'multiple-select' | 'enumeration';
+      questionText: string;
+      options?: string[];
+      points: number;
+      _id: string;
+    };
+    progress: {
+      current: number;
+      total: number;
+      remaining: number;
+    };
+    expectedAnswers: any;
+    isLastQuestion: boolean;
+  };
+  message: string;
 }
 
 @Component({
@@ -20,7 +56,7 @@ interface Question {
 })
 export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
   userId: string = '';
-  assignedAssessmentId: string = '6815f4b19314d70baf2331c8';
+  assignedAssessmentId: string = '';
   assessmentTitle: string = '';
 
   currentQuestionIndex = 0;
@@ -30,16 +66,24 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
   enumerationAnswers: string[] = ['', '', ''];
   isSubmitting = false;
   timerInterval: any;
+  data: any;
 
   questions: Question[] = [];
 
-  constructor(private router: Router, private auth: AuthService, private api: StudentService) {}
+  constructor(private router: Router, private auth: AuthService, private api: StudentService) {
+    const navigation = this.router.getCurrentNavigation();
+    if(navigation?.extras.state) {
+      this.assignedAssessmentId = navigation.extras.state['assessmentId'];
+      console.log('Assessment ID:', this.assignedAssessmentId);
+    }
+  }
 
   ngOnInit() {
     this.auth.getCurrentUser().subscribe((user) => {
       if(user) {
         this.userId = user.id;
-        this.assessmentQuestions();
+        this.getSecureData(this.userId, this.assignedAssessmentId);
+        this.nextQuestionA();
       } else {
         console.error('User not found');
       }
@@ -61,32 +105,123 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
     }, 1000);
   }
 
-  assessmentQuestions() {
-    this.api.getAssessmentData(this.assignedAssessmentId, this.userId).subscribe({
+
+  getSecureData(studentId: string, assessmentId: string) {
+    this.api.getSecureData(this.userId, this.assignedAssessmentId).subscribe({
       next: (resp: any) => {
         if (resp.remarks === 'Success' && resp.data) {
+          console.log('Secure data fetched successfully:', resp.data);
           this.assessmentTitle = resp.data.title;
-          this.questions = resp.data.questions;
-          this.timeRemaining = resp.data.remainingSeconds || 1800; 
-
+          this.timeRemaining = resp.data.time.remaining || 1800; 
+          console.log('Time remaining:', this.timeRemaining);
           this.resetEnumerationAnswers();
           this.startTimer();
+          if(resp.data.status === 'submitted'){
+            this.router.navigate(['/student/assessment/result'], {
+              state: { assessmentId: this.assignedAssessmentId }
+            })
+          }
         } else {
-          console.error('Invalid assessment data format', resp);
+          console.error('Invalid secure data format', resp);
         }
       },
       error: (err: any) => {
-        console.log('Error fetching assessment data:', err);
+        console.log('Error fetching secure data:', err);
       }
-    });
+    })
+  }
+
+  nextQuestionA() {
+    this.api.nextQuestionGrabber(this.userId, this.assignedAssessmentId).subscribe({
+      next: (resp: any) => {
+        if (resp.remarks === 'Success' && resp.data) {
+          console.log('Next question fetched successfully:', resp.data);
+          this.selectedAnswer = null;
+          this.multiSelectAnswers = {};
+          this.enumerationAnswers = ['', '', ''];
+          this.data = resp.data;
+          console.log('Data:', this.data);
+        } else {
+          console.error('Invalid next question format', resp);
+        }
+      },
+      error: (err: any) => {
+        console.log('Error fetching next question:', err);
+      }
+    })
+  }
+
+  finalizeAssessment() {
+    this.api.finalizeAssessment(this.userId, this.assignedAssessmentId).subscribe({
+      next: (resp: any) => {
+        if (resp.remarks === 'Success') {
+          console.log('Assessment finalized successfully');
+          this.router.navigate(['/student/assessment/result'], {
+            state: {
+              assessmentId: this.assignedAssessmentId
+            }
+          });
+        } else {
+          console.error('Failed to finalize assessment', resp);
+        }
+      },
+      error: (err: any) => {
+        console.log('Error finalizing assessment:', err);
+      }
+    })
+  }
+
+  submitAnswer() {
+    if (!this.data?.question) return;
+    let givenAnswer: any = null;
+    const q = this.data.question;
+    switch (q.type) {
+      case 'multiple-choice':
+      case 'true-false':
+      case 'short-answer':
+        givenAnswer = this.selectedAnswer;
+        break;
+      case'multiple-select':
+        givenAnswer = this.multiSelectAnswers[q._id] || [];
+        break;
+      case 'enumeration':
+        givenAnswer = this.enumerationAnswers;
+        break;
+      default:
+        console.warn('Unsupported question type:', q.type);
+    }
+
+    const data = {
+      studentId: this.userId,
+      assignedAssessmentId: this.assignedAssessmentId,
+      questionId: q._id,
+      givenAnswer
+    }
+    this.api.submitAnswer(data).subscribe({
+      next: (resp: any) => {
+        if (resp.remarks === 'Success') {
+          console.log('Answer submitted successfully:', resp);
+          if(this.data.isLastQuestion) {
+            this.finalizeAssessment();
+          } else {
+            this.selectedAnswer = null;
+            this.nextQuestionA();
+          }
+        } else {
+          console.error('Failed to submit answer', resp);
+        }
+      },
+      error: (err: any) => {
+        console.log('Error submitting answer:', err);
+      }
+    })
   }
 
   resetEnumerationAnswers() {
-    // For enumeration questions, initialize with empty strings
     const enumerationQuestions = this.questions.filter(q => q.type === 'enumeration');
     if (enumerationQuestions.length > 0) {
-      // Default to 3 answers per enumeration question
-      this.enumerationAnswers = Array(3).fill('');
+      let expectedAnswers = this.data.expectedAnswers;
+      this.enumerationAnswers = Array(expectedAnswers).fill('');
     }
   }
 
@@ -98,11 +233,12 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
 
   handleTimeUp() {
     clearInterval(this.timerInterval);
-    this.submitAssessment();
+    this.finalizeAssessment();
   }
 
   selectOption(option: string) {
     this.selectedAnswer = option;
+    console.log('Selected option:', option);
   }
 
   isOptionSelected(option: string): boolean {
@@ -130,6 +266,7 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
   }
 
   canProceed(question: Question): boolean {
+    if(!question) return false;
     switch (question.type) {
       case 'multiple-choice':
       case 'true-false':
@@ -146,14 +283,6 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
     }
   }
 
-  nextQuestion() {
-    if (this.currentQuestionIndex < this.questions.length - 1) {
-      this.currentQuestionIndex++;
-      this.selectedAnswer = null;
-    } else {
-      this.submitAssessment();
-    }
-  }
 
   submitAssessment() {
     this.isSubmitting = true;
