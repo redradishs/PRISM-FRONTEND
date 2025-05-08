@@ -9,7 +9,7 @@
                         <div class="flex items-center">
                             <div class="hidden md:flex items-center mr-4">
                                 <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
-                                <button
+                                <button (click)="toggleShowSettings()"
                                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2">
                                     Show Settings
                                 </button>
@@ -48,9 +48,74 @@
 
             <!-- Main Content -->
             <div class="p-4 md:p-8 space-y-8">
+
+                <div *ngIf="showSettings" class="header-section">
+                    <div class="header-content">
+                        <div class="header-icon" [ngStyle]="{
+                            'background-color': getAssessmentTypeColor(classOverview.mode) + '10',
+                            'color': getAssessmentTypeColor(classOverview.mode)
+                        }">
+                            <i class="fas {{getAssessmentTypeIcon(classOverview.mode)}}"></i>
+                        </div>
+                        <div class="header-text">
+                            <h1 class="header-title">{{classOverview.title}}</h1>
+                            <div class="header-badges">
+                                <span class="badge"
+                                    [ngStyle]="{'background-color': getAssessmentTypeColor(classOverview.mode) + '10', 'color': getAssessmentTypeColor(classOverview.mode)}">
+                                    {{classOverview.mode | titlecase}}
+                                </span>
+                                <span class="badge green">{{classOverview.status |
+                                    titlecase}}</span>
+                            </div>
+                            <p class="header-description">Targetted Personal Assessment Result under class
+                                {{classOverview.classes[0].className}} -
+                                {{classOverview.classes[0].classCode}}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button *ngIf="classOverview.status === 'scheduled'" (click)="startAssessment()"
+                            class="button start-now">
+                            <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
+                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M5 3v18M19 21V3M9 21v-6.75c0-.997.746-1.85 1.738-1.98a9.004 9.004 0 0 1 2.524 0c.992.13 1.738.983 1.738 1.98V21" />
+                            </svg>
+                            Start Now
+                        </button>
+                        <button *ngIf="classOverview.status === 'in-progress'" (click)="endAssessment()"
+                            class="button end-now">
+                            <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
+                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
+                            </svg>
+                            End Now
+                        </button>
+                        <button *ngIf="classOverview.status === 'completed'" (click)="extendAssessment()"
+                            class="button extend">
+                            <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
+                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
+                            </svg>
+                            Extend 1HR
+                        </button>
+                        <button class="button primary">
+                            <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
+                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                            </svg>
+                            Export Result
+                        </button>
+                    </div>
+                </div>
+
+
+
                 <!-- Class Overview Section -->
                 <div class="grid gap-6 md:grid-cols-2 section">
-                    <!-- PRISM Insights Card -->
                     <div class="insights-card">
                         <div class="insights-header">
                             <i class="fas fa-star"></i>
@@ -204,7 +269,7 @@
                 </div>
 
                 <!-- Detailed Question Analysis Card -->
-                <div class="card">
+                <div *ngIf="classOverview.status === 'completed'" class="card">
                     <div class="card-header p-4 border-b border-gray-100">
                         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div>
@@ -344,8 +409,18 @@
                     </div>
                 </div>
 
+                <div *ngIf="classOverview.status !== 'completed'" class="information">
+                    <div class="text-center">
+                        <h3>Assessment in Progress</h3>
+                        <p>
+                            The detailed statistics and analytics for this assessment will be available once all
+                            students have completed their submissions.
+                        </p>
+                    </div>
+                </div>
+
                 <!-- Performance Analytics Section -->
-                <div class="space-y-4 section">
+                <div *ngIf="classOverview.status === 'completed'" class="space-y-4 section">
                     <div class="mb-4">
                         <div class="flex items-center gap-2 mb-1">
                             <i class="fas fa-chart-bar text-indigo-600 text-lg"></i>
@@ -366,21 +441,21 @@
                             </div>
                             <div class="card-body p-4">
                                 <div class="flex items-center justify-between">
-                                    <!-- Left side: Large Circle with Percentage -->
+
                                     <div class="relative w-40 h-40">
                                         <svg class="w-full h-full transform -rotate-90">
-                                            <!-- Background circle -->
+
                                             <circle cx="80" cy="80" r="74" stroke="#e0e7ff" stroke-width="10"
                                                 fill="white" class="opacity-25">
                                             </circle>
-                                            <!-- Progress circle -->
+
                                             <circle cx="80" cy="80" r="74" stroke="#4f46e5" stroke-width="10"
                                                 fill="none" stroke-linecap="round" [attr.stroke-dasharray]="464.96"
                                                 [attr.stroke-dashoffset]="464.96 * (1 - ((submissionStatus.submitted || 0) / (submissionStatus.total || 1)))"
                                                 class="transition-all duration-1000 ease-out">
                                             </circle>
                                         </svg>
-                                        <!-- Centered Text -->
+
                                         <div class="absolute inset-0 flex flex-col items-center justify-center">
                                             <div class="text-4xl font-bold text-indigo-600">
                                                 {{((submissionStatus.submitted || 0) / (submissionStatus.total || 1) *
@@ -390,7 +465,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- Right side: Status List -->
+
                                     <div class="space-y-3 flex-1 ml-6">
                                         <div
                                             class="flex items-center justify-between p-2 bg-white rounded-lg border border-indigo-50">
@@ -496,7 +571,7 @@
                 </div>
 
                 <!-- Student Insights Section -->
-                <div class="space-y-4 section">
+                <div *ngIf="classOverview.status === 'completed'" class="space-y-4 section">
                     <div class="mb-4">
                         <div class="flex items-center gap-2 mb-1">
                             <i class="fas fa-users text-indigo-600 text-lg"></i>
@@ -506,7 +581,6 @@
                     </div>
 
                     <div class="grid gap-4 md:grid-cols-2">
-                        <!-- Top Performers Card -->
                         <div class="card">
                             <div class="card-header p-4 border-b border-gray-100">
                                 <div class="flex items-center gap-2 mb-1">
@@ -538,8 +612,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Struggling Students Card -->
                         <div class="card">
                             <div class="card-header p-4 border-b border-gray-100">
                                 <div class="flex items-center gap-2 mb-1">

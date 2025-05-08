@@ -225,4 +225,39 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
       question.grading.pointsEarned = question.maxPoints || 1;
     }
   }
+
+  getInitials(name: string | undefined): string {
+    if (!name) return '';
+    const nameParts = name.trim().split(' ');
+    const firstInitial = nameParts[0] ? nameParts[0].charAt(0).toUpperCase() : '';
+    const lastInitial = nameParts[nameParts.length - 1] ? 
+      nameParts[nameParts.length - 1].charAt(0).toUpperCase() : '';
+    return nameParts.length > 1 ? `${firstInitial}${lastInitial}` : firstInitial;
+  }
+
+  getAssessmentTypeIcon(assessment: string): string {
+    switch (assessment) {
+      case 'mastery':
+        return 'fa-trophy';
+      case 'public assessment':
+        return 'fa-globe';
+      case 'assessment':
+        return 'fa-clipboard-check';
+      default:
+        return 'fa-clipboard-check';
+    }
+  }
+
+  getAssessmentTypeColor(assessment: string): string {
+    switch (assessment) {
+      case 'mastery':
+        return '#d97706'; 
+      case 'public assessment':
+        return '#2563eb'; 
+      case 'assessment':
+        return '#4f46e5'; 
+      default:
+        return '#4f46e5'; 
+    }
+  }
 }

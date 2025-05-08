@@ -368,6 +368,21 @@ export class ManageComponent {
     }
   }
 
+  gotoResult(assessment: any) {
+    console.log('Navigating to result for:', assessment.type);
+    if(assessment.type === 'Assessment' || assessment.type === 'Public') {
+      this.router.navigate(['/instructor/result'], {
+        state: { assessmentId: assessment.id }
+      })
+    } else if (assessment.type === 'Mastery') {
+      this.router.navigate(['/instructor/result/mastery'], {
+        state: { assessmentId: assessment.id }
+      })
+    } else {
+      this.router.navigate(['/instructor/dashboard'])
+    }
+  }
+
   createNewAssessment() {
     this.router.navigate(['/instructor/generate']);
   }

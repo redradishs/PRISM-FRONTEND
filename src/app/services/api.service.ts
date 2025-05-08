@@ -224,6 +224,17 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/assessment/result/score/${id}`);
   }
 
+  startNow(data: any) {
+    return this.http.post(`${this.apiUrl}/assessment/start`, data);
+  }
+  endNow(data: any) {
+    return this.http.post(`${this.apiUrl}/assessment/end`, data);
+  }
+
+  extendNow(data: any) {
+    return this.http.post(`${this.apiUrl}/assessment/extend`, data);
+  }
+
   //profile page instructor
   getTeachingSummary(id: string) {
     return this.http.get(`${this.apiUrl}/instructorstats/${id}`);

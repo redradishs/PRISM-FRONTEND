@@ -6,6 +6,7 @@ import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
+import Swal from 'sweetalert2';
 
 interface Student {
   id: number;
@@ -49,9 +50,10 @@ export class ResultComponent implements OnInit {
       this.sidebarOpen = true;
     }
   }
-
+  showSettings: boolean = false;
   assessmentId: string = '';
   classOverview: any = {
+    mode: String,
     totalStudents: 0,
     averageScore: 0,
     highestScore: 0, 
@@ -87,6 +89,7 @@ export class ResultComponent implements OnInit {
   isLoading: boolean = true;
   selectedQuestionType: string = 'all';
   allQuestions: any[] = [];
+  userId: String = '';
 
   constructor(private api: ApiService, private auth: AuthService, private router: Router, private titleService: Title) {
     this.titleService.setTitle('PRISM | Result');
@@ -113,6 +116,7 @@ export class ResultComponent implements OnInit {
     }
 
     this.auth.getCurrentUser().subscribe((user) => {
+      this.userId = user.id,
       this.username = user.name;
     });
   }
@@ -187,6 +191,10 @@ export class ResultComponent implements OnInit {
     });
   }
 
+  toggleShowSettings(){
+    this.showSettings =!this.showSettings;
+  } 
+
   filterStudents() {
     this.filteredStudents = this.allStudents.filter(student => {
       const statusMatch = this.selectedStatus === 'all' || 
@@ -250,6 +258,155 @@ export class ResultComponent implements OnInit {
       default:
         return "";
     }
+  }
+
+  getAssessmentTypeIcon(assessment: string): string {
+    switch (assessment) {
+      case 'mastery':
+        return 'fa-trophy';
+      case 'public assessment':
+        return 'fa-globe';
+      case 'assessment':
+        return 'fa-clipboard-check';
+      default:
+        return 'fa-clipboard-check';
+    }
+  }
+
+  getAssessmentTypeColor(assessment: string): string {
+    switch (assessment) {
+      case 'mastery':
+        return '#d97706'; 
+      case 'public assessment':
+        return '#2563eb'; 
+      case 'assessment':
+        return '#4f46e5'; 
+      default:
+        return '#4f46e5'; 
+    }
+  }
+
+  endAssessment() {
+    Swal.fire({
+      title: 'End Assessment?',
+      text: 'This will end the assessment for all students. Are you sure you want to proceed?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, end it',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#6b7280',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const data = {
+          instructorId: this.userId,
+          assignedAssessmentId: this.assessmentId
+        }
+        this.api.endNow(data).subscribe({
+          next: (resp: any) => {
+            Swal.fire({
+              title: 'Assessment Ended',
+              text: 'The assessment has been ended successfully',
+              icon: 'success',
+              timer: 2000,
+              showConfirmButton: false
+            });
+            this.getResultOverview(this.assessmentId);
+          },
+          error: (error) => {
+            Swal.fire({
+              title: 'Error',
+              text: 'Failed to end the assessment. Please try again.',
+              icon: 'error',
+              confirmButtonColor: '#dc2626'
+            });
+            console.error('Error ending assessment:', error);
+          }
+        });
+      }
+    });
+  }
+
+  extendAssessment() {
+    Swal.fire({
+      title: 'Extend Assessment?',
+      text: 'This will extend the assessment time by 1 hour. Do you want to continue?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, extend it',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#4f46e5',
+      cancelButtonColor: '#6b7280',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const data = {
+          instructorId: this.userId,
+          assignedAssessmentId: this.assessmentId
+        }
+        this.api.extendNow(data).subscribe({
+          next: (resp: any) => {
+            Swal.fire({
+              title: 'Assessment Extended',
+              text: 'The assessment time has been extended by 1 hour',
+              icon: 'success',
+              timer: 2000,
+              showConfirmButton: false
+            });
+            this.getResultOverview(this.assessmentId);
+          },
+          error: (error) => {
+            Swal.fire({
+              title: 'Error',
+              text: 'Failed to extend the assessment. Please try again.',
+              icon: 'error',
+              confirmButtonColor: '#dc2626'
+            });
+            console.error('Error extending assessment:', error);
+          }
+        });
+      }
+    });
+  }
+
+  startAssessment() {
+    Swal.fire({
+      title: 'Start Assessment?',
+      text: 'This will start the assessment for all students. Are you sure?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, start it',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#4f46e5',
+      cancelButtonColor: '#6b7280',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const data = {
+          instructorId: this.userId,
+          assignedAssessmentId: this.assessmentId
+        }
+        this.api.startNow(data).subscribe({
+          next: (resp: any) => {
+            Swal.fire({
+              title: 'Assessment Started',
+              text: 'The assessment has been started successfully',
+              icon: 'success',
+              timer: 2000,
+              showConfirmButton: false
+            });
+            this.getResultOverview(this.assessmentId);
+          },
+          error: (error) => {
+            Swal.fire({
+              title: 'Error',
+              text: 'Failed to start the assessment. Please try again.',
+              icon: 'error',
+              confirmButtonColor: '#dc2626'
+            });
+            console.error('Error starting assessment:', error);
+          }
+        });
+      }
+    });
   }
 
   getProgressWidth(score: number): string {
