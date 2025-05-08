@@ -83,7 +83,7 @@
                             </svg>
                             Start Now
                         </button>
-                        <button *ngIf="classOverview.status === 'in-progress'" (click)="endAssessment()"
+                        <button *ngIf="classOverview.status === 'ongoing'" (click)="endAssessment()"
                             class="button end-now">
                             <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
                                 <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -245,7 +245,7 @@
                                                 class="inline-flex px-2 py-1 md:px-3 md:py-1.5 text-xs md:text-sm font-medium rounded-full"
                                                 [ngClass]="{
                                                     'bg-green-100 text-green-800': student.status?.toLowerCase() === 'submitted',
-                                                    'bg-yellow-100 text-yellow-800': student.status?.toLowerCase() === 'ongoing',
+                                                    'bg-yellow-100 text-yellow-800': student.status?.toLowerCase() === 'in-progress',
                                                     'bg-gray-100 text-gray-800': student.status?.toLowerCase() === 'not_started'
                                                 }">
                                                 {{student.status}}

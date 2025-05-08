@@ -224,6 +224,10 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/assessment/result/score/${id}`);
   }
 
+  getScoreStream(id: string): EventSource {
+    return new EventSource(`${this.apiUrl}/assessment/result/score/stream/${id}/rt`);
+  }
+
   startNow(data: any) {
     return this.http.post(`${this.apiUrl}/assessment/start`, data);
   }

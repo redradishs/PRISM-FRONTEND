@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, ViewChild, OnInit } from '@angular/core';
+import { Component, HostListener, ViewChild, OnInit, OnDestroy, NgZone } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
 import { ApiService } from '../../services/api.service';
@@ -38,7 +38,7 @@ interface SubmissionStatus {
   templateUrl: './result.component.html',
   styleUrl: './result.component.css'
 })
-export class ResultComponent implements OnInit {
+export class ResultComponent implements OnInit, OnDestroy {
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
   isMobile = window.innerWidth < 768;
   sidebarOpen = !this.isMobile;
@@ -90,8 +90,15 @@ export class ResultComponent implements OnInit {
   selectedQuestionType: string = 'all';
   allQuestions: any[] = [];
   userId: String = '';
+  private scoreStream: EventSource | null = null;
 
-  constructor(private api: ApiService, private auth: AuthService, private router: Router, private titleService: Title) {
+  constructor(
+    private api: ApiService,
+    private auth: AuthService,
+    private router: Router,
+    private titleService: Title,
+    private ngZone: NgZone
+  ) {
     this.titleService.setTitle('PRISM | Result');
   }
 
@@ -103,8 +110,6 @@ export class ResultComponent implements OnInit {
       this.isLoading = true;
       Promise.all([
         this.getResultOverview(this.assessmentId),
-        this.getItemAnalysis(this.assessmentId),
-        this.getStudentPerformance(this.assessmentId),
         this.getClassResult(this.assessmentId)
       ]).finally(() => {
         this.isLoading = false;
@@ -121,6 +126,118 @@ export class ResultComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    if (this.scoreStream) {
+      this.scoreStream.close();
+    }
+  }
+
+  /**
+   * Sets up a real-time connection to receive student score updates
+   * This allows us to see changes in scores and status immediately
+   */
+  private setupScoreStream(): void {
+    // Create a connection to get real-time updates
+    this.scoreStream = this.api.getScoreStream(this.assessmentId);
+
+    // Handle incoming messages
+    this.scoreStream.onmessage = (event) => {
+      this.ngZone.run(() => {
+        try {
+          // Convert the received data from text to an object we can use
+          const data = JSON.parse(event.data);
+          console.log('Received update:', data);
+
+          // If this is just a connection message, log it and stop
+          if (data.type === 'connected') {
+            console.log('Connected to score updates!');
+            return;
+          }
+
+          // Make sure this update is for our assessment and includes student data
+          if (data.assessmentId === this.assessmentId && data.student) {
+            // Find the student in our list
+            const studentIndex = this.allStudents.findIndex(s => s.id === data.student.id);
+            
+            if (studentIndex !== -1) {
+              // Get the student's current data
+              const student = this.allStudents[studentIndex];
+
+              // Log what kind of update we received
+              if (data.operation === 'insert') {
+                console.log(`${student.name} started the assessment`);
+              } else if (data.operation === 'update') {
+                console.log(`${student.name}'s score updated to ${data.student.score}`);
+              }
+
+              // Create a new list with the updated student data
+              const updatedStudents = [...this.allStudents];
+              updatedStudents[studentIndex] = {
+                ...student,                    // Keep existing student data
+                score: data.student.score,     // Update the score
+                status: data.student.status,   // Update the status
+                violationCount: data.student.violationCount,  // Update violations
+                block: data.student.block || student.block    // Keep existing block if new one is null
+              };
+
+              // Update our lists with the new data
+              this.allStudents = updatedStudents;
+              this.filteredStudents = [...updatedStudents];
+              
+              // Re-sort and filter the list
+              this.filterStudents();
+
+              // Update the counts of students by status
+              const counts = {
+                submitted: 0,
+                inProgress: 0,
+                notStarted: 0,
+                total: this.allStudents.length
+              };
+
+              // Count students in each status
+              this.allStudents.forEach(s => {
+                switch(s.status.toLowerCase()) {
+                  case 'submitted':
+                    counts.submitted++;
+                    break;
+                  case 'in-progress':
+                    counts.inProgress++;
+                    break;
+                  case 'not_started':
+                    counts.notStarted++;
+                    break;
+                }
+              });
+
+              // Update the status counts
+              this.submissionStatus = counts;
+              this.completionStatistics = { ...counts };
+            }
+          }
+        } catch (error) {
+          console.error('Problem processing update:', error);
+        }
+      });
+    };
+
+    // Handle any errors with the connection
+    this.scoreStream.onerror = (error) => {
+      console.error('Connection error:', error);
+      
+      // Try to reconnect after 5 seconds
+      setTimeout(() => {
+        if (this.scoreStream) {
+          this.scoreStream.close();
+          this.setupScoreStream();
+          console.log('Attempting to reconnect...');
+        }
+      }, 5000);
+    };
+
+    console.log('Started listening for score updates');
+  }
+
   getResultOverview(id: string) {
     this.api.getClassOverview(this.assessmentId).subscribe({
       next: (resp: any) => {
@@ -129,6 +246,13 @@ export class ResultComponent implements OnInit {
         if (resp.data.classes && resp.data.classes.length > 0) {
           this.className = resp.data.classes[0].className;
           this.classCode = resp.data.classes[0].classCode;
+        }
+        if(resp.data.status !== 'completed') {
+          this.setupScoreStream();
+        }
+        if(resp.data.status === 'completed') {
+          this.getItemAnalysis(this.assessmentId),
+          this.getStudentPerformance(this.assessmentId)
         }
         console.log('Assessment Title:', this.assessmentTitle);
         console.log('Class Code:', this.classCode);
@@ -196,16 +320,46 @@ export class ResultComponent implements OnInit {
   } 
 
   filterStudents() {
-    this.filteredStudents = this.allStudents.filter(student => {
+    // Step 1: Filter students based on search term and selected status
+    let filtered = this.allStudents.filter(student => {
+      // Check if status matches the filter (or if "all" is selected)
       const statusMatch = this.selectedStatus === 'all' || 
                          student.status.toLowerCase() === this.selectedStatus;
 
+      // Check if name or block matches the search term
       const searchMatch = !this.searchTerm ||
                          student.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
                          (student.block && student.block.toLowerCase().includes(this.searchTerm.toLowerCase()));
 
       return statusMatch && searchMatch;
     });
+
+    // Step 2: Sort the filtered students
+    filtered.sort((a, b) => {
+      // Convert status to lowercase to make comparisons easier
+      const statusA = a.status.toLowerCase();
+      const statusB = b.status.toLowerCase();
+
+      // First, handle students who haven't started
+      // We want them at the bottom of the list
+      if (statusA === 'not_started' && statusB !== 'not_started') {
+        return 1; // Move 'a' down
+      }
+      if (statusB === 'not_started' && statusA !== 'not_started') {
+        return -1; // Move 'b' down
+      }
+
+      // If both students haven't started, sort them by name
+      if (statusA === 'not_started' && statusB === 'not_started') {
+        return a.name.localeCompare(b.name);
+      }
+
+      // For students who have started or submitted, sort by score
+      return b.score - a.score; // Higher scores come first
+    });
+
+    // Step 3: Update the filtered list
+    this.filteredStudents = filtered;
   }
 
   filterQuestions() {
