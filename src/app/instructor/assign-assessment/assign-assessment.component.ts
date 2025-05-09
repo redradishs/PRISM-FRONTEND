@@ -1,0 +1,721 @@
+import { CommonModule } from '@angular/common';
+import { Component, HostListener, ViewChild, OnInit } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
+import { ApiService } from '../../services/api.service';
+import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
+import { Title } from '@angular/platform-browser';
+import { StudentService } from '../../services/student.service';
+import Swal from 'sweetalert2';
+
+interface Student {
+  _id: string;
+  name: string;
+  email: string;
+  program: string | null;
+  yearLevel: string | null;
+}
+
+interface Assessment {
+  _id: string;
+  title: string;
+  totalQuestions: number;
+  totalPoints: number;
+  status: string;
+  createdAt: string;
+  questionTypes: {
+    [key: string]: number;
+  };
+}
+
+interface ClassData {
+  _id: string;
+  className: string;
+  classCode: string;
+  block: string;
+  year: string;
+  totalStudents: number;
+}
+
+interface DatePreset {
+  label: string;
+  startDate: Date;
+  dueDate: Date;
+}
+
+interface StudentPaginationResponse {
+  data: {
+    students: Student[];
+    totalItems: number;
+    totalPages: number;
+  };
+}
+
+type AssignmentType = 'classes' | 'individual';
+
+interface AssignmentData {
+  assessmentId: string;
+  startDate: string;
+  dueDate: string;
+  timeLimit: number;
+  instructions: string;
+  createdBy: string;
+  assignmentMode: 'assessment' | 'mastery' | 'public';
+  classCodes: string[];
+  maxAttempts: number;
+  totalPoints?: number;
+  modeSettings: {
+    masteryScore?: number;
+    joiningCode?: string;
+    randomizeQuestions: boolean;
+    showResults: 'immediate' | 'after_due' | 'manual';
+    allowLateSubmissions: boolean;
+    passingScore: number;
+  };
+}
+
+@Component({
+  selector: 'app-assign-assessment',
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, SidebarComponent],
+  templateUrl: './assign-assessment.component.html',
+  styleUrls: ['./assign-assessment.component.css'],
+  standalone: true
+})
+export class AssignAssessmentComponent implements OnInit {
+  // User state
+  userId: string = '';
+  username: string = '';
+  
+  // UI state
+  isMobile: boolean = window.innerWidth <= 768;
+  currentStep: number = 1;
+  selectedMode: 'assessment' | 'mastery' | 'public' = 'assessment';
+  
+  // Assessment configuration
+  startDate: string = '';
+  dueDate: string = '';
+  timeLimit: number = 60;
+  allowLateSubmissions: boolean = false;
+  showResults: 'immediate' | 'after_due' | 'manual' = 'after_due';
+  passingScore: number = 70;
+  attemptsAllowed: number = 1;
+  randomizeQuestions: boolean = true;
+  specialInstructions: string = '';
+  
+  // Mastery mode settings
+  masteryScore: number = 90;
+  
+  // Public mode settings
+  isPublic: boolean = false;
+  joiningCode: string = '';
+  
+  // Date presets
+  startDatePresets: DatePreset[] = [
+    {
+      label: 'Now',
+      startDate: new Date(),
+      dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000)
+    },
+    {
+      label: 'Tomorrow',
+      startDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      dueDate: new Date(Date.now() + 48 * 60 * 60 * 1000)
+    },
+    {
+      label: 'Next Week',
+      startDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
+    }
+  ];
+
+  dueDatePresets: DatePreset[] = [
+    {
+      label: '1hr',
+      startDate: new Date(),
+      dueDate: new Date(Date.now() + 60 * 60 * 1000)
+    },
+    {
+      label: '24hrs',
+      startDate: new Date(),
+      dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000)
+    },
+    {
+      label: '1 week',
+      startDate: new Date(),
+      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+    }
+  ];
+
+  assessments: Assessment[] = [];
+  searchQuery: string = '';
+  selectedType: string = 'All Types';
+  selectedAssessments: Set<string> = new Set();
+  loading: boolean = false;
+  error: string | null = null;
+
+  // Recipients state
+  assignmentType: AssignmentType = 'classes';
+  classes: ClassData[] = [];
+  classSearchQuery: string = '';
+  selectedClasses: Set<string> = new Set();
+
+  // Student pagination
+  currentPage: number = 1;
+  pageSize: number = 20;
+  totalStudents: number = 0;
+  totalPages: number = 0;
+  sortBy: string = 'name';
+  sortOrder: 'asc' | 'desc' = 'asc';
+
+  students: Student[] = [];
+  studentSearchQuery: string = '';
+  selectedStudents: Set<string> = new Set();
+
+  // Add debounce timer property
+  private searchTimeout: any;
+  isSearching: boolean = false;
+  
+  // Separate loading state for search
+  isSearchLoading: boolean = false;
+
+  // Add this property to track total points
+  selectedAssessmentPoints: number = 0;
+
+  @HostListener('window:resize')
+  onResize() {
+    this.isMobile = window.innerWidth <= 768;
+  }
+
+  @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
+
+  constructor(
+    private api: ApiService,
+    private auth: AuthService,
+    private studentService: StudentService,
+    private router: Router,
+    private titleService: Title
+  ) {
+    this.titleService.setTitle('PRISM | Assign Assessment');
+  }
+
+  ngOnInit(): void {
+    // Load user data
+    this.auth.getCurrentUser().subscribe({
+      next: (user) => {
+        this.userId = user.id;
+        this.username = user.name;
+        this.loadAssessments(this.userId);
+        this.loadClasses(this.userId);
+        this.loadStudents();
+      },
+      error: (err) => {
+        this.error = 'Failed to load user data';
+        console.error('Error loading user:', err);
+      }
+    });
+  }
+
+  loadAssessments(id: string) {
+    this.loading = true;
+    this.api.getOwnAssessments(this.userId).subscribe({
+      next: (resp: any) => {
+        this.assessments = resp.data;
+        this.loading = false;
+        console.log('Loaded assessments:', this.assessments);
+      },
+      error: (err) => {
+        this.error = 'Failed to load assessments';
+        this.loading = false;
+        console.error('Error loading assessments:', err);
+      }
+    });
+  }
+
+  loadClasses(id: string) {
+    this.loading = true;
+    this.api.getSpecifiedClasses(this.userId).subscribe({
+      next: (resp: any) => {
+        this.classes = resp.data;
+        this.loading = false;
+        console.log('Loaded classes:', this.classes);
+      },
+      error: (err) => {
+        this.error = 'Failed to load classes';
+        this.loading = false;
+        console.error('Error loading classes:', err);
+      }
+    });
+  }
+
+  toggleSidebar() {
+    if (this.sidebar) {
+      this.sidebar.toggleSidebar();
+    }
+  }
+
+  setStep(step: number) {
+    if (step >= 1 && step <= 4) {
+      this.currentStep = step;
+      this.updatePageTitle();
+    }
+  }
+
+  private updatePageTitle() {
+    const stepTitles = {
+      1: 'Select Assessment',
+      2: 'Choose Recipients',
+      3: 'Configure Settings',
+      4: 'Review & Confirm'
+    };
+    this.titleService.setTitle(`PRISM | Assign Assessment - ${stepTitles[this.currentStep as keyof typeof stepTitles]}`);
+  }
+
+  setAssignmentType(type: AssignmentType) {
+    this.assignmentType = type;
+    this.selectedClasses.clear();
+    this.selectedStudents.clear();
+  }
+
+  toggleClassSelection(classId: string) {
+    const selectedClass = this.classes.find(c => c._id === classId);
+    if (!selectedClass) return;
+
+    const classCode = selectedClass.classCode;
+    if (this.selectedClasses.has(classCode)) {
+      this.selectedClasses.delete(classCode);
+    } else {
+      this.selectedClasses.add(classCode);
+    }
+  }
+
+  get selectedClassCount(): number {
+    return this.selectedClasses.size;
+  }
+
+  clearSelectedClasses() {
+    this.selectedClasses.clear();
+  }
+
+  toggleStudentSelection(studentId: string) {
+    if (this.selectedStudents.has(studentId)) {
+      this.selectedStudents.delete(studentId);
+    } else {
+      this.selectedStudents.add(studentId);
+    }
+  }
+
+  toggleAssessmentSelection(assessmentId: string) {
+    if (this.selectedAssessments.has(assessmentId)) {
+      this.selectedAssessments.delete(assessmentId);
+      this.selectedAssessmentPoints = 0;
+    } else {
+      this.selectedAssessments.clear(); // Only allow one assessment at a time
+      this.selectedAssessments.add(assessmentId);
+      // Update total points
+      const assessment = this.assessments.find(a => a._id === assessmentId);
+      if (assessment) {
+        this.selectedAssessmentPoints = assessment.totalPoints;
+        // If in mastery mode, validate the mastery score
+        if (this.selectedMode === 'mastery') {
+          this.validateMasteryScore();
+        }
+      }
+    }
+  }
+
+  isClassSelected(classId: string): boolean {
+    const selectedClass = this.classes.find(c => c._id === classId);
+    return selectedClass ? this.selectedClasses.has(selectedClass.classCode) : false;
+  }
+
+  isStudentSelected(studentId: string): boolean {
+    return this.selectedStudents.has(studentId);
+  }
+
+  isAssessmentSelected(assessmentId: string): boolean {
+    return this.selectedAssessments.has(assessmentId);
+  }
+
+  get filteredAssessments(): Assessment[] {
+    return this.assessments.filter(assessment => {
+      const matchesSearch = assessment.title.toLowerCase().includes(this.searchQuery.toLowerCase());
+      const matchesType = this.selectedType === 'All Types' || assessment.status === this.selectedType.toLowerCase();
+      return matchesSearch && matchesType;
+    });
+  }
+
+  get filteredClasses(): ClassData[] {
+    return this.classes.filter(cls => {
+      const searchTerm = this.classSearchQuery.toLowerCase();
+      return cls.className.toLowerCase().includes(searchTerm) ||
+             cls.classCode.toLowerCase().includes(searchTerm) ||
+             cls.block.toLowerCase().includes(searchTerm) ||
+             cls.year.toLowerCase().includes(searchTerm);
+    });
+  }
+
+  get filteredStudents(): Student[] {
+    return this.students;
+  }
+
+  onBack() {
+    if (this.currentStep > 1) {
+      this.setStep(this.currentStep - 1);
+    }
+  }
+
+  async onNext() {
+    if (this.currentStep === 1 && this.selectedAssessments.size > 0) {
+      this.setStep(2);
+    } else if (this.currentStep === 2 && 
+              ((this.assignmentType === 'classes' && this.selectedClasses.size > 0) ||
+               (this.assignmentType === 'individual' && this.selectedStudents.size > 0))) {
+      this.setStep(3);
+    } else if (this.currentStep === 3) {
+      this.setStep(4);
+    } else if (this.currentStep === 4) {
+      await this.saveAssignment();
+    }
+  }
+
+  getStudentName(studentId: string): string {
+    const student = this.students.find(s => s._id === studentId);
+    return student ? student.name : '';
+  }
+
+  getClassName(classId: string): string {
+    const classObj = this.classes.find(c => c._id === classId);
+    return classObj ? classObj.className : '';
+  }
+
+  clearSelection() {
+    if (this.assignmentType === 'individual') {
+        this.selectedStudents.clear();
+    } else {
+        this.selectedClasses.clear();
+    }
+  }
+
+  setAssessmentMode(mode: 'assessment' | 'mastery' | 'public') {
+    this.selectedMode = mode;
+    
+    // Reset settings based on mode
+    if (mode === 'mastery') {
+      this.attemptsAllowed = 3;
+      this.showResults = 'immediate';
+      this.randomizeQuestions = true;
+      // Set initial mastery score
+      this.masteryScore = Math.min(90, this.selectedAssessmentPoints);
+    } else if (mode === 'public') {
+      this.attemptsAllowed = 1;
+      this.showResults = 'immediate';
+      this.isPublic = true;
+      this.generateJoiningCode();
+    } else {
+      this.attemptsAllowed = 1;
+      this.showResults = 'after_due';
+      this.isPublic = false;
+    }
+  }
+
+  generateJoiningCode() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let code = '';
+    for (let i = 0; i < 6; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    this.joiningCode = code;
+  }
+
+  applyStartDatePreset(preset: DatePreset) {
+    this.startDate = this.formatDate(preset.startDate);
+  }
+
+  applyDueDatePreset(preset: DatePreset) {
+    this.dueDate = this.formatDate(preset.dueDate);
+  }
+
+  private formatDate(date: Date): string {
+    return date.toISOString().slice(0, 16);
+  }
+
+  getCurrentDateTime(): string {
+    return this.formatDate(new Date());
+  }
+
+  getMinDueDate(): string {
+    return this.startDate || this.getCurrentDateTime();
+  }
+
+  validateMasteryScore() {
+    if (this.selectedAssessmentPoints > 0 && this.masteryScore > this.selectedAssessmentPoints) {
+      this.masteryScore = this.selectedAssessmentPoints;
+      // Show warning to user
+      Swal.fire({
+        icon: 'warning',
+        title: 'Mastery Score Adjusted',
+        text: `Mastery score cannot exceed the total points (${this.selectedAssessmentPoints}). It has been automatically adjusted.`,
+        timer: 3000,
+        timerProgressBar: true
+      });
+    }
+  }
+
+  getQuestionTypes(questionTypes: { [key: string]: number }): { type: string; count: number }[] {
+    return Object.entries(questionTypes).map(([type, count]) => ({
+      type: type.replace(/-/g, ' '),
+      count
+    }));
+  }
+
+  loadStudents() {
+    this.isSearchLoading = true;
+    this.api.retrieveStudents(this.userId, {
+      page: this.currentPage,
+      limit: this.pageSize,
+      sortBy: this.sortBy,
+      sortOrder: this.sortOrder
+    }).subscribe({
+      next: (response: any) => {
+        const paginatedResponse = response as StudentPaginationResponse;
+        console.log('Paginated response:', paginatedResponse);
+        this.students = paginatedResponse.data.students;
+        this.totalStudents = paginatedResponse.data.totalItems;
+        this.totalPages = paginatedResponse.data.totalPages;
+        this.isSearchLoading = false;
+      },
+      error: (err) => {
+        this.error = 'Failed to load students';
+        this.isSearchLoading = false;
+        console.error('Error loading students:', err);
+      }
+    });
+  }
+
+  onPageChange(page: number) {
+    this.currentPage = page;
+    this.loadStudents();
+  }
+
+  onSortChange(sortBy: string) {
+    if (this.sortBy === sortBy) {
+      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortBy = sortBy;
+      this.sortOrder = 'asc';
+    }
+    this.loadStudents();
+  }
+
+  // Update the search method
+  onStudentSearch(searchTerm: string) {
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+    }
+
+    this.studentSearchQuery = searchTerm;
+
+    if (!searchTerm.trim()) {
+      this.loadStudents();
+      return;
+    }
+
+    this.searchTimeout = setTimeout(() => {
+      this.isSearching = true;
+      this.isSearchLoading = true; // Use separate loading state for search
+      
+      this.api.searchStudentUniversal(this.userId, searchTerm).subscribe({
+        next: (response: any) => {
+          if (this.studentSearchQuery === searchTerm) {
+            this.students = response.data.students || [];
+            this.totalStudents = response.data.totalItems || 0;
+            this.totalPages = response.data.totalPages || 1;
+          }
+          this.isSearchLoading = false;
+          this.isSearching = false;
+        },
+        error: (err) => {
+          console.error('Error searching students:', err);
+          this.error = 'Failed to search students';
+          this.isSearchLoading = false;
+          this.isSearching = false;
+        }
+      });
+    }, 300);
+  }
+
+  private getAssignmentData(): AssignmentData {
+    const assignmentData: AssignmentData = {
+      assessmentId: Array.from(this.selectedAssessments)[0], // Get the first selected assessment
+      startDate: this.startDate,
+      dueDate: this.dueDate,
+      timeLimit: this.timeLimit,
+      instructions: this.specialInstructions,
+      createdBy: this.userId,
+      assignmentMode: this.selectedMode,
+      classCodes: this.assignmentType === 'classes' 
+        ? Array.from(this.selectedClasses)
+        : Array.from(this.selectedStudents),
+      maxAttempts: this.attemptsAllowed,
+      modeSettings: {
+        randomizeQuestions: this.randomizeQuestions,
+        showResults: this.showResults,
+        allowLateSubmissions: this.allowLateSubmissions,
+        passingScore: this.passingScore
+      }
+    };
+
+    console.log(assignmentData.classCodes);
+
+    // Add mode-specific settings
+    if (this.selectedMode === 'mastery') {
+      assignmentData.modeSettings.masteryScore = this.masteryScore;
+    } else if (this.selectedMode === 'public') {
+      assignmentData.modeSettings.joiningCode = this.joiningCode;
+    }
+
+    return assignmentData;
+  }
+
+  private validateAssignmentData(): string | null {
+    if (!this.startDate || !this.dueDate) {
+      return 'Please set both start and due dates.';
+    }
+
+    if (new Date(this.startDate) >= new Date(this.dueDate)) {
+      return 'Start date must be before due date.';
+    }
+
+    if (this.timeLimit < 1) {
+      return 'Time limit must be at least 1 minute.';
+    }
+
+    if (this.selectedMode === 'mastery') {
+      if (this.masteryScore < 1 || this.masteryScore > 100) {
+        return 'Mastery score must be between 1 and 100.';
+      }
+    }
+
+    if (this.selectedMode !== 'public' && 
+        this.assignmentType === 'classes' && 
+        this.selectedClasses.size === 0) {
+      return 'Please select at least one class.';
+    }
+
+    if (this.selectedMode !== 'public' && 
+        this.assignmentType === 'individual' && 
+        this.selectedStudents.size === 0) {
+      return 'Please select at least one student.';
+    }
+
+    return null;
+  }
+
+  async saveAssignment() {
+    const validationError = this.validateAssignmentData();
+    if (validationError) {
+      await Swal.fire({
+        icon: 'error',
+        title: 'Validation Error',
+        text: validationError
+      });
+      return;
+    }
+
+    try {
+      // Show loading state
+      Swal.fire({
+        title: 'Assigning Assessment',
+        text: 'Please wait while we assign the assessment...',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
+      const assignmentData = this.getAssignmentData();
+      console.log('Assignment Data:', assignmentData);
+
+      // For public mode, send without recipients
+      if (this.selectedMode === 'public') {
+        assignmentData.classCodes = [];
+        this.api.assignAssessment(assignmentData).subscribe({
+          next: (response) => {
+            console.log('Public Assignment Response:', response);
+            this.showSuccessAndNavigate();
+          },
+          error: (error) => {
+            this.handleAssignmentError(error);
+          }
+        });
+      } else {
+        // For other modes, assign to each recipient sequentially
+        const recipients = this.assignmentType === 'classes' 
+          ? Array.from(this.selectedClasses)
+          : Array.from(this.selectedStudents);
+
+        console.log('Recipients:', recipients);
+
+        // Create an array of observables for each assignment
+        const assignments = recipients.map(recipient => {
+          const singleAssignment = {
+            ...assignmentData,
+            classCodes: [recipient]
+          };
+          console.log('Single Assignment Data:', singleAssignment);
+          return this.api.assignAssessment(singleAssignment);
+        });
+
+        // Execute all assignments in sequence
+        let completed = 0;
+        assignments.reduce((promise, assignment) => {
+          return promise.then(() => {
+            return new Promise((resolve, reject) => {
+              assignment.subscribe({
+                next: (response: any) => {
+                  completed++;
+                  console.log(`Assignment ${completed}/${assignments.length} completed:`, response);
+                  resolve(response);
+                },
+                error: (error) => {
+                  reject(error);
+                }
+              });
+            });
+          });
+        }, Promise.resolve())
+        .then(() => {
+          this.showSuccessAndNavigate();
+        })
+        .catch((error) => {
+          this.handleAssignmentError(error);
+        });
+      }
+    } catch (error) {
+      this.handleAssignmentError(error);
+    }
+  }
+
+  private showSuccessAndNavigate() {
+    Swal.fire({
+      icon: 'success',
+      title: 'Assessment Assigned',
+      text: this.selectedMode === 'public'
+        ? 'The public assessment has been successfully created.'
+        : `The assessment has been successfully assigned to ${this.assignmentType === 'classes' ? 'all selected classes' : 'all selected students'}.`
+    }).then(() => {
+      this.router.navigate(['/instructor/assessment']);
+    });
+  }
+
+  private handleAssignmentError(error: any) {
+    console.error('Error assigning assessment:', error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Assignment Failed',
+      text: error.error?.message || error.message || 'There was an error assigning the assessment. Please try again.',
+      footer: 'If this issue persists, please contact support.'
+    });
+  }
+}

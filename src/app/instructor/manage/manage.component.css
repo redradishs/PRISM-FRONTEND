@@ -58,7 +58,7 @@
 }
 
 .create-assessment-btn {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
@@ -77,9 +77,11 @@
     background: linear-gradient(to right, #4338ca, #7e22ce);
 }
 
-.btn-icon {
-    height: 16px;
-    width: 16px;
+.create-assessment-btn i,
+.create-assessment-btn svg {
+    color: white;
+    fill: white;
+    stroke: white;
 }
 
 /* Search and filters */

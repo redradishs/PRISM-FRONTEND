@@ -13,6 +13,7 @@ import { ManageComponent } from './instructor/manage/manage.component';
 import { CoordinatorComponent } from './instructor/coordinator/coordinator.component';
 import { EvaluateComponent } from './instructor/evaluate/evaluate.component';
 import { MasteryResultComponent } from './instructor/mastery-result/mastery-result.component';
+import { AssignAssessmentComponent } from './instructor/assign-assessment/assign-assessment.component';
 
 export const INSTRUCTOR_ROUTES: Routes = [
     { path: 'dashboard', component: HomeComponent },
@@ -20,6 +21,7 @@ export const INSTRUCTOR_ROUTES: Routes = [
     { path: 'assessment', component: AssessmentComponent },
     { path: 'profile', component: ProfileInstComponent },
     { path: 'create', component: GenerateAssessmentComponent },
+    { path: 'assign', component: AssignAssessmentComponent },
     { path: 'takeassessment', component: TakeAssessmentComponent },
     { path: 'result', component: ResultComponent },
     { path: 'result/mastery', component: MasteryResultComponent },

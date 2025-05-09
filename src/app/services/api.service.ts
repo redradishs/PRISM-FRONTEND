@@ -7,12 +7,13 @@ interface AIPromptRequest {
 }
 
 interface AIResponse {
-  // Define the structure of the response from the API
 }
 
 interface PaginationParams {
   page?: number;
   limit?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
 }
 
 @Injectable({
@@ -178,6 +179,24 @@ export class ApiService {
 
   // Student assessment page
 
+  retrieveStudents(instructorId: string, params: PaginationParams = {}) {
+    const defaultParams: PaginationParams = {
+      page: 1,
+      limit: 20,
+      sortBy: 'name',
+      sortOrder: 'asc'
+    };
+    const queryParams = { ...defaultParams, ...params };
+
+    return this.http.get(`${this.apiUrl}/students/all/${instructorId}/getData`, {
+      params: queryParams as any
+    });
+  }
+
+  searchStudentUniversal(id: string, query: string) {
+    return this.http.get(`${this.apiUrl}/search/student/universal/?query=${query}`);
+  }
+
   getInstructorClasses(id: string) {
     return this.http.get(`${this.apiUrl}/getDetailedClasses/${id}`);
   }
@@ -323,5 +342,7 @@ export class ApiService {
   getAssessmentCounts(instructorId: string) {
     return this.http.get(`${this.apiUrl}/assessments/counts/${instructorId}`);
   }
+
+  
 
 }

@@ -215,8 +215,11 @@
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
-                                    <tr (click)="assessmentDetails(student.id)" *ngFor="let student of filteredStudents"
-                                        class="hover:bg-gray-50">
+                                    <tr (click)="student.status?.toLowerCase() === 'submitted' ? assessmentDetails(student.id) : null"
+                                        *ngFor="let student of filteredStudents"
+                                        [class.hover:bg-green-50]="student.status?.toLowerCase() === 'submitted'"
+                                        [class.cursor-pointer]="student.status?.toLowerCase() === 'submitted'"
+                                        [class.hover:bg-red-50]="student.status?.toLowerCase() !== 'submitted'">
                                         <td class="sticky left-0 bg-white px-3 py-2 md:px-6 md:py-4 whitespace-nowrap">
                                             <div class="flex items-center gap-2 md:gap-3">
                                                 <div
@@ -233,11 +236,11 @@
                                         </td>
                                         <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap">
                                             <span class="text-sm md:text-base font-medium" [class]="{
-                                                    'text-green-600': (student.score / questionLength * 100) >= 75,
-                                                    'text-yellow-600': (student.score / questionLength * 100) >= 50 && (student.score / questionLength * 100) < 75,
-                                                    'text-red-600': (student.score / questionLength * 100) < 50
+                                                    'text-green-600': (student.score / classOverview.totalScore * 100) >= 75,
+                                                    'text-yellow-600': (student.score / classOverview.totalScore * 100) >= 50 && (student.score / classOverview.totalScore * 100) < 75,
+                                                    'text-red-600': (student.score / classOverview.totalScore * 100) < 50
                                                 }">
-                                                {{student.score}}/{{questionLength}}
+                                                {{student.score}}/{{classOverview.totalScore}}
                                             </span>
                                         </td>
                                         <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap">

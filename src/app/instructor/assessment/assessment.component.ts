@@ -253,7 +253,7 @@ export class AssessmentComponent {
       file: '',
       createdBy: this.userId,
       assignmentMode: this.selectedMode,
-      totalPoints: currentTotalPoints, // Preserve the total points
+      totalPoints: currentTotalPoints, 
       modeSettings: {
         masteryScore: Math.min(90, currentTotalPoints) 
       }
@@ -284,7 +284,7 @@ export class AssessmentComponent {
     this.api.getSpecifiedClasses(id).subscribe({
       next: (resp: any) => {
         this.classes = resp.data;
-        console.log(this.classes);
+        console.log("These are the classes", this.classes);
       },
       error: (error) => {
         console.log(error);
@@ -468,12 +468,9 @@ export class AssessmentComponent {
   }
 
   openAssignModal(assessmentId: string) {
-    // Find the assessment to get its total points
     const assessment = this.ownAssessments.find(a => a._id === assessmentId);
     console.log("Assessment found:", assessment);
     console.log("All assessments:", this.ownAssessments);
-    
-    // Safely access totalPoints with proper type checking
     let totalPoints = 0;
     if (assessment && typeof assessment.totalPoints === 'number') {
       totalPoints = assessment.totalPoints;
@@ -491,7 +488,7 @@ export class AssessmentComponent {
       assignmentMode: this.selectedMode,
       totalPoints: totalPoints,
       modeSettings: {
-        masteryScore: Math.min(90, totalPoints) // Initialize mastery score as min of 90 or total points
+        masteryScore: Math.min(90, totalPoints)
       }
     };
 
