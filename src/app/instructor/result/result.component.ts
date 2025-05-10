@@ -150,7 +150,7 @@ export class ResultComponent implements OnInit, OnDestroy {
 
           // If this is just a connection message, log it and stop
           if (data.type === 'connected') {
-            console.log('Connected to score updates!');
+            console.log('PRISM: Connected to RealTime Updates');
             return;
           }
 

@@ -56,107 +56,111 @@
                     <div class="header-actions">
                         <button class="button">
                             <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
                             </svg>
                             Export
                         </button>
                         <button class="button primary">
                             <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                                <circle cx="9" cy="7" r="4"/>
-                                <line x1="19" y1="8" x2="19" y2="14"/>
-                                <line x1="16" y1="11" x2="22" y2="11"/>
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                                <line x1="19" y1="8" x2="19" y2="14" />
+                                <line x1="16" y1="11" x2="22" y2="11" />
                             </svg>
                             Add Student
                         </button>
                     </div>
                 </div>
-        
-                <!-- Stats Grid -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <svg class="icon" viewBox="0 0 24 24">
-                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                                <circle cx="9" cy="7" r="4"/>
-                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                            </svg>
-                            Total Students
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-value">1,248</div>
-                            <div class="stat-change up">
-                                <svg class="icon" viewBox="0 0 24 24" width="14" height="14">
-                                    <polyline points="18 15 12 9 6 15"/>
-                                </svg>
-                                +12%
-                            </div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <svg class="icon" viewBox="0 0 24 24">
-                                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-                            </svg>
-                            Active Students
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-value">1,186</div>
-                            <div class="stat-change up">
-                                <svg class="icon" viewBox="0 0 24 24" width="14" height="14">
-                                    <polyline points="18 15 12 9 6 15"/>
-                                </svg>
-                                +8%
-                            </div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <svg class="icon" viewBox="0 0 24 24">
-                                <path d="M12 20V10"/>
-                                <path d="M18 20V4"/>
-                                <path d="M6 20v-4"/>
-                            </svg>
-                            Average Performance
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-value">78%</div>
-                            <div class="stat-change up">
-                                <svg class="icon" viewBox="0 0 24 24" width="14" height="14">
-                                    <polyline points="18 15 12 9 6 15"/>
-                                </svg>
-                                +3%
-                            </div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <svg class="icon" viewBox="0 0 24 24">
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                            </svg>
-                            At-Risk Students
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-value">42</div>
-                            <div class="stat-change down">
-                                <svg class="icon" viewBox="0 0 24 24" width="14" height="14">
-                                    <polyline points="6 9 12 15 18 9"/>
-                                </svg>
-                                -5%
-                            </div>
-                        </div>
-                    </div>
-                </div>
-        
+
+                                <!-- Stats Grid -->
+                                <div class="stats-grid">
+                                    <div class="stat-card cursor-pointer hover:shadow-lg transition-all" (click)="defaultview()">
+                                        <div class="stat-header">
+                                            <svg class="icon" viewBox="0 0 24 24">
+                                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                                                <circle cx="9" cy="7" r="4" />
+                                                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                            </svg>
+                                            Total Students
+                                        </div>
+                                        <div class="stat-content">
+                                            <div class="stat-value">{{totalStudents}}</div>
+                                            <div class="stat-change up">
+                                                <svg class="icon" viewBox="0 0 24 24" width="14" height="14">
+                                                    <polyline points="18 15 12 9 6 15" />
+                                                </svg>
+                                                All Students
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="stat-card cursor-pointer hover:shadow-lg transition-all">
+                                        <div class="stat-header">
+                                            <svg class="icon" viewBox="0 0 24 24">
+                                                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                                            </svg>
+                                            Active Students
+                                        </div>
+                                        <div class="stat-content">
+                                            <div class="stat-value">{{activeStudents}}</div>
+                                            <div class="stat-change up">
+                                                <svg class="icon" viewBox="0 0 24 24" width="14" height="14">
+                                                    <polyline points="18 15 12 9 6 15" />
+                                                </svg>
+                                                Verified
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-header">
+                                            <svg class="icon" viewBox="0 0 24 24">
+                                                <path d="M12 20V10" />
+                                                <path d="M18 20V4" />
+                                                <path d="M6 20v-4" />
+                                            </svg>
+                                            Average Performance
+                                        </div>
+                                        <div class="stat-content">
+                                            <div class="stat-value">{{averagePerformance}}%</div>
+                                            <div class="stat-change" [ngClass]="{'up': averagePerformance >= 75, 'down': averagePerformance < 75}">
+                                                <svg class="icon" viewBox="0 0 24 24" width="14" height="14">
+                                                    <polyline [attr.points]="averagePerformance >= 75 ? '18 15 12 9 6 15' : '6 9 12 15 18 9'" />
+                                                </svg>
+                                                {{averagePerformance >= 75 ? 'Good' : 'Needs Improvement'}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="stat-card cursor-pointer hover:shadow-lg transition-all" (click)="showAtRiskStudents()">
+                                        <div class="stat-header">
+                                            <svg class="icon" viewBox="0 0 24 24">
+                                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                            </svg>
+                                            At-Risk Students
+                                        </div>
+                                        <div class="stat-content">
+                                            <div class="stat-value">{{atRiskCount}}</div>
+                                            <div class="stat-change down">
+                                                <svg class="icon" viewBox="0 0 24 24" width="14" height="14">
+                                                    <polyline points="6 9 12 15 18 9" />
+                                                </svg>
+                                                Needs Attention
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                 <!-- Filters Section -->
                 <div class="filters-section">
                     <div class="search-container">
                         <svg class="icon search" viewBox="0 0 24 24" width="18" height="18">
-                            <circle cx="11" cy="11" r="8"/>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
                         </svg>
-                        <input type="text" placeholder="Search students..." class="search-input">
+                        <input type="text" 
+                               placeholder="Search students..." 
+                               class="search-input"
+                               (input)="onSearchChange($event)"
+                               [value]="searchQuery">
                     </div>
                     <div class="filters-container">
                         <select class="select">
@@ -180,7 +184,7 @@
                         </select>
                     </div>
                 </div>
-        
+
                 <!-- Students Table -->
                 <div class="table-container">
                     <div class="table-wrapper">
@@ -191,7 +195,7 @@
                                         <div class="th-content">
                                             Student Name
                                             <svg class="icon sort" viewBox="0 0 24 24" width="14" height="14">
-                                                <path d="M7 15l5 5 5-5M7 9l5-5 5 5"/>
+                                                <path d="M7 15l5 5 5-5M7 9l5-5 5 5" />
                                             </svg>
                                         </div>
                                     </th>
@@ -200,242 +204,80 @@
                                     <th>Year</th>
                                     <th class="text-center">Assessments</th>
                                     <th class="text-center">Avg. Score</th>
-                                    <th>Last Active</th>
                                     <th>Status</th>
-                                    <th class="text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="font-medium">Alex Johnson</td>
-                                    <td>ST-2023-001</td>
-                                    <td>BS Information Technology</td>
-                                    <td>3rd Year</td>
-                                    <td class="text-center">12</td>
+      
+
+                                <tr *ngFor="let s of students" (click)="viewStudent(s)">
+                                    <td class="font-medium">{{s.name}}</td>
+                                    <td>{{s.email.split('@')[0]}}</td>
+                                    <td *ngIf="s.program !== null">{{s.program}}</td>
+                                    <td *ngIf="s.program == null">unassigned</td>
+                                    <td *ngIf="s.yearLevel === '1'">{{s.yearLevel}}st Year</td>
+                                    <td *ngIf="s.yearLevel === '2'">{{s.yearLevel}}nd Year</td>
+                                    <td *ngIf="s.yearLevel === '3'">{{s.yearLevel}}rd Year</td>
+                                    <td *ngIf="s.yearLevel === '4'">{{s.yearLevel}}th Year</td>
+                                    <td *ngIf="s.yearLevel === null">unassigned</td>
+                                    <td class="text-center">{{s.assessmentsTaken}}</td>
                                     <td class="text-center">
-                                        <span class="score-badge high">92%</span>
+                                        <span class="score-badge high">{{s.averageScore}}%</span>
                                     </td>
-                                    <td>2 hours ago</td>
                                     <td>
-                                        <span class="status-badge active">Active</span>
-                                    </td>
-                                    <td class="text-right">
-                                        <div class="dropdown">
-                                            <button class="button ghost icon-only">
-                                                <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                                    <circle cx="12" cy="12" r="1"/>
-                                                    <circle cx="19" cy="12" r="1"/>
-                                                    <circle cx="5" cy="12" r="1"/>
-                                                </svg>
-                                            </button>
-                                            <div class="dropdown-menu">
-                                                <div class="dropdown-header">Actions</div>
-                                                <a href="#" class="dropdown-item">View Profile</a>
-                                                <a href="#" class="dropdown-item">View Assessments</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a href="#" class="dropdown-item">Edit Details</a>
-                                                <a href="#" class="dropdown-item text-red">Remove Student</a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="font-medium">Sarah Chen</td>
-                                    <td>ST-2023-002</td>
-                                    <td>BS Computer Science</td>
-                                    <td>2nd Year</td>
-                                    <td class="text-center">8</td>
-                                    <td class="text-center">
-                                        <span class="score-badge medium">85%</span>
-                                    </td>
-                                    <td>1 day ago</td>
-                                    <td>
-                                        <span class="status-badge active">Active</span>
-                                    </td>
-                                    <td class="text-right">
-                                        <div class="dropdown">
-                                            <button class="button ghost icon-only">
-                                                <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                                    <circle cx="12" cy="12" r="1"/>
-                                                    <circle cx="19" cy="12" r="1"/>
-                                                    <circle cx="5" cy="12" r="1"/>
-                                                </svg>
-                                            </button>
-                                            <div class="dropdown-menu">
-                                                <div class="dropdown-header">Actions</div>
-                                                <a href="#" class="dropdown-item">View Profile</a>
-                                                <a href="#" class="dropdown-item">View Assessments</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a href="#" class="dropdown-item">Edit Details</a>
-                                                <a href="#" class="dropdown-item text-red">Remove Student</a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="font-medium">Michael Rodriguez</td>
-                                    <td>ST-2023-003</td>
-                                    <td>BS Information Systems</td>
-                                    <td>4th Year</td>
-                                    <td class="text-center">15</td>
-                                    <td class="text-center">
-                                        <span class="score-badge high">94%</span>
-                                    </td>
-                                    <td>3 hours ago</td>
-                                    <td>
-                                        <span class="status-badge active">Active</span>
-                                    </td>
-                                    <td class="text-right">
-                                        <div class="dropdown">
-                                            <button class="button ghost icon-only">
-                                                <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                                    <circle cx="12" cy="12" r="1"/>
-                                                    <circle cx="19" cy="12" r="1"/>
-                                                    <circle cx="5" cy="12" r="1"/>
-                                                </svg>
-                                            </button>
-                                            <div class="dropdown-menu">
-                                                <div class="dropdown-header">Actions</div>
-                                                <a href="#" class="dropdown-item">View Profile</a>
-                                                <a href="#" class="dropdown-item">View Assessments</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a href="#" class="dropdown-item">Edit Details</a>
-                                                <a href="#" class="dropdown-item text-red">Remove Student</a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="font-medium">Emma Wilson</td>
-                                    <td>ST-2023-004</td>
-                                    <td>BS Information Technology</td>
-                                    <td>1st Year</td>
-                                    <td class="text-center">5</td>
-                                    <td class="text-center">
-                                        <span class="score-badge low">65%</span>
-                                    </td>
-                                    <td>5 days ago</td>
-                                    <td>
-                                        <span class="status-badge at-risk">At Risk</span>
-                                    </td>
-                                    <td class="text-right">
-                                        <div class="dropdown">
-                                            <button class="button ghost icon-only">
-                                                <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                                    <circle cx="12" cy="12" r="1"/>
-                                                    <circle cx="19" cy="12" r="1"/>
-                                                    <circle cx="5" cy="12" r="1"/>
-                                                </svg>
-                                            </button>
-                                            <div class="dropdown-menu">
-                                                <div class="dropdown-header">Actions</div>
-                                                <a href="#" class="dropdown-item">View Profile</a>
-                                                <a href="#" class="dropdown-item">View Assessments</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a href="#" class="dropdown-item">Edit Details</a>
-                                                <a href="#" class="dropdown-item text-red">Remove Student</a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="font-medium">James Kim</td>
-                                    <td>ST-2023-005</td>
-                                    <td>BS Computer Science</td>
-                                    <td>3rd Year</td>
-                                    <td class="text-center">10</td>
-                                    <td class="text-center">
-                                        <span class="score-badge medium">82%</span>
-                                    </td>
-                                    <td>1 week ago</td>
-                                    <td>
-                                        <span class="status-badge inactive">Inactive</span>
-                                    </td>
-                                    <td class="text-right">
-                                        <div class="dropdown">
-                                            <button class="button ghost icon-only">
-                                                <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                                    <circle cx="12" cy="12" r="1"/>
-                                                    <circle cx="19" cy="12" r="1"/>
-                                                    <circle cx="5" cy="12" r="1"/>
-                                                </svg>
-                                            </button>
-                                            <div class="dropdown-menu">
-                                                <div class="dropdown-header">Actions</div>
-                                                <a href="#" class="dropdown-item">View Profile</a>
-                                                <a href="#" class="dropdown-item">View Assessments</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a href="#" class="dropdown-item">Edit Details</a>
-                                                <a href="#" class="dropdown-item text-red">Remove Student</a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="font-medium">Sophia Patel</td>
-                                    <td>ST-2023-006</td>
-                                    <td>BS Information Systems</td>
-                                    <td>2nd Year</td>
-                                    <td class="text-center">7</td>
-                                    <td class="text-center">
-                                        <span class="score-badge high">88%</span>
-                                    </td>
-                                    <td>2 days ago</td>
-                                    <td>
-                                        <span class="status-badge active">Active</span>
-                                    </td>
-                                    <td class="text-right">
-                                        <div class="dropdown">
-                                            <button class="button ghost icon-only">
-                                                <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                                    <circle cx="12" cy="12" r="1"/>
-                                                    <circle cx="19" cy="12" r="1"/>
-                                                    <circle cx="5" cy="12" r="1"/>
-                                                </svg>
-                                            </button>
-                                            <div class="dropdown-menu">
-                                                <div class="dropdown-header">Actions</div>
-                                                <a href="#" class="dropdown-item">View Profile</a>
-                                                <a href="#" class="dropdown-item">View Assessments</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a href="#" class="dropdown-item">Edit Details</a>
-                                                <a href="#" class="dropdown-item text-red">Remove Student</a>
-                                            </div>
-                                        </div>
+                                        <span *ngIf="s.isVerified" class="status-badge verified">Verified</span>
+                                        <span *ngIf="!s.isVerified" class="status-badge unverified">Unverified</span>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-        
+
                     <!-- Pagination -->
                     <div class="pagination">
                         <div class="pagination-info">
-                            Showing <span class="font-medium">1</span> to <span class="font-medium">10</span> of 
-                            <span class="font-medium">1,248</span> students
+                            Showing <span class="font-medium">{{startItem}}</span> to <span class="font-medium">{{endItem}}</span> of
+                            <span class="font-medium">{{totalItems}}</span> students
                         </div>
                         <div class="pagination-controls">
-                            <button class="button icon-only">
+                            <!-- Previous page button -->
+                            <button class="button icon-only" 
+                                    [disabled]="currentPage === 1"
+                                    (click)="goToPage(currentPage - 1)">
                                 <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                    <polyline points="15 18 9 12 15 6"/>
+                                    <polyline points="15 18 9 12 15 6" />
                                 </svg>
                             </button>
-                            <button class="button active">1</button>
-                            <button class="button">2</button>
-                            <button class="button">3</button>
-                            <button class="button">...</button>
-                            <button class="button">125</button>
-                            <button class="button icon-only">
+
+                            <!-- Page numbers -->
+                            <ng-container *ngFor="let page of pages">
+                                <button *ngIf="page !== -1" 
+                                        class="button" 
+                                        [ngClass]="{'active': page === currentPage}"
+                                        (click)="goToPage(page)">
+                                    {{page}}
+                                </button>
+                                <button *ngIf="page === -1" 
+                                        class="button" 
+                                        disabled>
+                                    ...
+                                </button>
+                            </ng-container>
+
+                            <!-- Next page button -->
+                            <button class="button icon-only" 
+                                    [disabled]="currentPage === totalPages"
+                                    (click)="goToPage(currentPage + 1)">
                                 <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                    <polyline points="9 18 15 12 9 6"/>
+                                    <polyline points="9 18 15 12 9 6" />
                                 </svg>
                             </button>
                         </div>
                     </div>
                 </div>
-            </div>      
+            </div>
 
-    
+
 
         </div>
     </div>

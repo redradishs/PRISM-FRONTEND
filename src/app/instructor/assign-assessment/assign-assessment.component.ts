@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterModule } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { StudentService } from '../../services/student.service';
 import Swal from 'sweetalert2';
@@ -24,6 +24,7 @@ interface Assessment {
   totalPoints: number;
   status: string;
   createdAt: string;
+  category?: string;
   questionTypes: {
     [key: string]: number;
   };
@@ -77,7 +78,7 @@ interface AssignmentData {
 
 @Component({
   selector: 'app-assign-assessment',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, SidebarComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, SidebarComponent, RouterModule],
   templateUrl: './assign-assessment.component.html',
   styleUrls: ['./assign-assessment.component.css'],
   standalone: true
@@ -149,7 +150,6 @@ export class AssignAssessmentComponent implements OnInit {
 
   assessments: Assessment[] = [];
   searchQuery: string = '';
-  selectedType: string = 'All Types';
   selectedAssessments: Set<string> = new Set();
   loading: boolean = false;
   error: string | null = null;
@@ -181,6 +181,11 @@ export class AssignAssessmentComponent implements OnInit {
 
   // Add this property to track total points
   selectedAssessmentPoints: number = 0;
+
+  // Add these properties
+  displayLimit: number = 9;
+  showingAll: boolean = false;
+  dateFilter: string = 'all'; // 'all', 'today', 'week', 'month'
 
   @HostListener('window:resize')
   onResize() {
@@ -340,8 +345,7 @@ export class AssignAssessmentComponent implements OnInit {
   get filteredAssessments(): Assessment[] {
     return this.assessments.filter(assessment => {
       const matchesSearch = assessment.title.toLowerCase().includes(this.searchQuery.toLowerCase());
-      const matchesType = this.selectedType === 'All Types' || assessment.status === this.selectedType.toLowerCase();
-      return matchesSearch && matchesType;
+      return matchesSearch;
     });
   }
 
@@ -385,7 +389,9 @@ export class AssignAssessmentComponent implements OnInit {
   }
 
   getClassName(classId: string): string {
-    const classObj = this.classes.find(c => c._id === classId);
+    console.log(this.classes);
+    const classObj = this.classes.find(c => String(c.classCode) === String(classId));
+    console.log(classObj)
     return classObj ? classObj.className : '';
   }
 
@@ -717,5 +723,83 @@ export class AssignAssessmentComponent implements OnInit {
       text: error.error?.message || error.message || 'There was an error assigning the assessment. Please try again.',
       footer: 'If this issue persists, please contact support.'
     });
+  }
+
+  // Update the getter to remove type filtering
+  get displayedAssessments(): Assessment[] {
+    let filtered = this.assessments.filter(assessment => {
+      const matchesSearch = assessment.title.toLowerCase().includes(this.searchQuery.toLowerCase());
+      const matchesDate = this.filterByDate(assessment.createdAt);
+      return matchesSearch && matchesDate;
+    });
+
+    filtered = filtered.sort((a, b) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+
+    return this.showingAll ? filtered : filtered.slice(0, this.displayLimit);
+  }
+
+  get remainingCount(): number {
+    const filtered = this.assessments.filter(assessment => {
+      const matchesSearch = assessment.title.toLowerCase().includes(this.searchQuery.toLowerCase());
+      const matchesDate = this.filterByDate(assessment.createdAt);
+      return matchesSearch && matchesDate;
+    });
+    return Math.max(0, filtered.length - this.displayLimit);
+  }
+
+  toggleShowAll(): void {
+    this.showingAll = !this.showingAll;
+  }
+
+  filterByDate(dateStr: string): boolean {
+    if (this.dateFilter === 'all') return true;
+
+    const assessmentDate = new Date(dateStr);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    switch (this.dateFilter) {
+      case 'today':
+        return assessmentDate >= today;
+      case 'week': {
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        weekAgo.setHours(0, 0, 0, 0);
+        return assessmentDate >= weekAgo;
+      }
+      case 'month': {
+        const monthAgo = new Date();
+        monthAgo.setMonth(monthAgo.getMonth() - 1);
+        monthAgo.setHours(0, 0, 0, 0);
+        return assessmentDate >= monthAgo;
+      }
+      default:
+        return true;
+    }
+  }
+
+  canProceed(): boolean {
+    switch (this.currentStep) {
+      case 1:
+        return this.selectedAssessments.size > 0;
+      case 2:
+        return (this.assignmentType === 'classes' && this.selectedClasses.size > 0) ||
+               (this.assignmentType === 'individual' && this.selectedStudents.size > 0);
+      case 3:
+        return true; // All settings have default values
+      case 4:
+        return true; // Review step can always proceed
+      default:
+        return false;
+    }
+  }
+
+  scrollToTop() {
+    const element = document.getElementById('page-top');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 }

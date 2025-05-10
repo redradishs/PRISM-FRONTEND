@@ -36,6 +36,7 @@ export class SidebarComponent {
     { icon: 'fas fa-home', label: 'Home', id: 'home', route: '/instructor/dashboard' },
     { icon: 'fas fa-users', label: 'Students', id: 'students', route: '/instructor/students' },
     { icon: 'fas fa-layer-group', label: 'Manage', id: 'manage', route: '/instructor/manage' },
+    { icon: 'fas fa-square-check', label: 'Assign', id: 'assessment', route: '/instructor/assign' },
     { icon: 'fas fa-tasks', label: 'Assessment', id: 'assessment', route: '/instructor/assessment' },
     { icon: 'fas fa-star', label: 'Generate', id: 'Generate', route: '/instructor/generate' },
     {icon: 'fas fa-user-group', label: 'Coordinator', id: 'coordinator', route: '/instructor/coordinator'},

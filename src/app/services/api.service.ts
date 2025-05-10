@@ -175,6 +175,38 @@ export class ApiService {
     return this.http.put(`${this.apiUrl}/class/removeStudent/${id}/${classCode}`, data);
   }
 
+  //coordinator page
+
+  studentData(instructorId: string, params: PaginationParams = {}) {
+    const defaultParams: PaginationParams = {
+      page: 1,
+      limit: 20,
+      sortBy: 'name',
+      sortOrder: 'asc'
+    };
+    const queryParams = { ...defaultParams, ...params };
+
+    return this.http.get(`${this.apiUrl}/students/coordinator/all/${instructorId}/getData`, {
+      params: queryParams as any
+    });
+  }
+
+  coordinatorStats(instructorId: string) {
+    return this.http.get(`${this.apiUrl}/students/coordinator/stats/${instructorId}/getData`);
+  }
+
+  coordinatorSearch(id: string, searchQuery: string) {
+    return this.http.get(`${this.apiUrl}/students/coordinator/search/${id}/searchData?searchQuery=${searchQuery}`);
+  }
+
+  //evaluate the student
+  evaluateAssessmentHistory(studentId: string) {
+    return this.http.get(`${this.apiUrl}/students/pastAssessments/${studentId}/getData`);
+  }
+
+  evaluateStudentData(id: string) {
+    return this.http.get(`${this.apiUrl}/students/evaluate/profile/${id}/studentData`);
+  }
 
 
   // Student assessment page

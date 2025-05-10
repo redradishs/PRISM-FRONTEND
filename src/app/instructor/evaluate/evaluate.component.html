@@ -47,133 +47,139 @@
             <div class="h-[65px] md:h-[68px] w-full"></div>
 
             <div class="container">
-                <!-- Header -->
-                <div class="header">
-                    <div class="header-content">
-                        <button class="button ghost" onclick="history.back()">
-                            <svg class="icon" viewBox="0 0 24 24" width="20" height="20">
-                                <path d="M19 12H5M12 19l-7-7 7-7"/>
-                            </svg>
-                        </button>
-                        <div>
-                            <h1>Student Evaluation</h1>
-                            <p>Comprehensive performance analysis</p>
-                        </div>
+
+                <div class="page-header">
+                    <div class="page-title-container">
+                        <h1 class="page-title">
+                
+                            Evaluate Student
+                        </h1>
+                        <p class="page-subtitle">Evaluate the student's performance and provide feedback</p>
                     </div>
-                    <div class="header-actions">
-                        <button class="button outline">
-                            <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
-                            </svg>
-                            Export Report
-                        </button>
-                        <button class="button outline">
-                            <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
-                                <polyline points="16 6 12 2 8 6"/>
-                                <line x1="12" y1="2" x2="12" y2="15"/>
-                            </svg>
-                            Share
+                    <div class="header-buttons">
+                        <button class="create-assessment-btn" (click)="createNewAssessment()">
+                            <i class="fas fa-plus btn-icon"></i>
+                            Assign Assessment
                         </button>
                     </div>
                 </div>
-        
+
+
                 <!-- Student Profile -->
-                <div class="profile-card">
-                    <div class="profile-content">
-                        <div class="profile-info">
+                <div *ngIf="studentData" class="profile-card">
+                    <!-- Profile Header -->
+                    <div class="profile-header">
+                        <!-- Profile Image with Initials -->
+                        <div class="profile-image-wrapper">
                             <div class="profile-image">
-                                <img src="/placeholder.svg" alt="Alex Johnson">
+                                <span class="profile-initials">
+                                    {{getStudentInitials(studentData.student?.name)}}
+                                </span>
                             </div>
-                            <div class="profile-details">
-                                <h2>Alex Johnson</h2>
-                                <p class="student-id">ST-2023-001</p>
-                                <span class="badge green">Active</span>
-                                <div class="program-info">
-                                    <p><span>Program:</span> BS Information Technology</p>
-                                    <p><span>Year & Section:</span> 3rd Year, IT-3A</p>
-                                </div>
-                            </div>
+                            <div class="status-indicator"></div>
                         </div>
-        
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-header">
-                                    <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                        <path d="M12 15l-2-5h4l-2 5z"/>
-                                        <path d="M20 7h-8V3H6v4H2v2l2 6h16l2-6V7z"/>
-                                        <path d="M6 21h12"/>
-                                    </svg>
-                                    Overall Performance
+
+                        <!-- Student Info -->
+                        <div class="student-info">
+                            <div class="student-header">
+                                <div>
+                                    <h2 class="student-name">{{studentData.student?.name}}</h2>
+                                    <p class="student-email">{{studentData.student?.email}}</p>
                                 </div>
-                                <div class="stat-content">
-                                    <div class="stat-value">92%</div>
-                                    <div class="progress-bar">
-                                        <div class="progress" style="width: 92%"></div>
-                                    </div>
-                                </div>
+                                <span class="status-badge">Active</span>
                             </div>
-        
-                            <div class="stat-card">
-                                <div class="stat-header">
-                                    <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
-                                    </svg>
-                                    Assessments Taken
+                            <div class="student-details">
+                                <div class="detail-group">
+                                    <p class="detail-label">Program</p>
+                                    <p class="detail-value">{{studentData.student?.program}} - Information Technology</p>
                                 </div>
-                                <div class="stat-content">
-                                    <div class="stat-value">24</div>
-                                    <p>Last: 2 days ago</p>
-                                </div>
-                            </div>
-        
-                            <div class="stat-card">
-                                <div class="stat-header">
-                                    <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                        <circle cx="12" cy="12" r="10"/>
-                                        <polyline points="12 6 12 12 16 14"/>
-                                    </svg>
-                                    Avg. Completion Time
-                                </div>
-                                <div class="stat-content">
-                                    <div class="stat-value">32 minutes</div>
-                                    <p>Per assessment</p>
-                                </div>
-                            </div>
-        
-                            <div class="stat-card">
-                                <div class="stat-header">
-                                    <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                                        <line x1="16" y1="2" x2="16" y2="6"/>
-                                        <line x1="8" y1="2" x2="8" y2="6"/>
-                                        <line x1="3" y1="10" x2="21" y2="10"/>
-                                    </svg>
-                                    Enrollment Date
-                                </div>
-                                <div class="stat-content">
-                                    <div class="stat-value">August 15, 2021</div>
-                                    <p>Active student</p>
+                                <div class="detail-group">
+                                    <p class="detail-label">Year & Section</p>
+                                    <p class="detail-value">{{studentData.student?.yearLevel}}rd Year, {{studentData.student?.program}}-{{studentData.student?.yearLevel}}{{studentData.student?.block}}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <!-- Overall Performance -->
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon-wrapper icon-indigo">
+                                    <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="stat-title">Overall Performance</h3>
+                            </div>
+                            <p class="stat-value">{{studentData.stats?.averagePerformance}}%</p>
+                            <div class="progress-bar">
+                                <div class="progress-value" [style.width]="studentData.stats?.averagePerformance + '%'"></div>
+                            </div>
+                        </div>
+
+                        <!-- Assessments Taken -->
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon-wrapper icon-blue">
+                                    <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="stat-title">Assessments Taken</h3>
+                            </div>
+                            <p class="stat-value">{{studentData.stats?.totalAssessmentsTaken}}</p>
+                            <p class="stat-subtitle">Last: {{getRelativeTime(studentData.stats?.lastAssessmentDate)}}</p>
+                        </div>
+
+                        <!-- Avg. Completion Time -->
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon-wrapper icon-green">
+                                    <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="stat-title">Avg. Completion Time</h3>
+                            </div>
+                            <p class="stat-value">{{studentData.stats?.averageCompletionTime / 60 | number: '1.2-2'}} min</p>
+                            <p class="stat-subtitle">Per assessment</p>
+                        </div>
+
+                        <!-- Last Assessment -->
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon-wrapper icon-purple">
+                                    <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="stat-title">Last Assessment</h3>
+                            </div>
+                            <p class="stat-value">{{studentData.stats?.lastAssessmentTitle}}</p>
+                            <p class="stat-subtitle">{{studentData.stats?.lastAssessmentDate | date:'MMM d, y, h:mm a'}}</p>
+                        </div>
+                    </div>
                 </div>
-        
+
                 <!-- Tabs Section -->
                 <div class="tabs">
                     <div class="tabs-list">
-                        <button class="tab-trigger" [class.active]="activeTab === 'skills'" (click)="setActiveTab('skills')">
+                        <button class="tab-trigger" [class.active]="activeTab === 'skills'"
+                            (click)="setActiveTab('skills')">
                             Skill Performance
                         </button>
-                        <button class="tab-trigger" [class.active]="activeTab === 'assessments'" (click)="setActiveTab('assessments')">
+                        <button class="tab-trigger" [class.active]="activeTab === 'assessments'"
+                            (click)="setActiveTab('assessments')">
                             Assessment History
                         </button>
-                        <button class="tab-trigger" [class.active]="activeTab === 'recommendations'" (click)="setActiveTab('recommendations')">
+                        <button class="tab-trigger" [class.active]="activeTab === 'recommendations'"
+                            (click)="setActiveTab('recommendations')">
                             Recommendations
                         </button>
                     </div>
-        
+
                     <!-- Skills Tab Content -->
                     <div class="tab-content" [class.active]="activeTab === 'skills'" id="skills">
                         <div class="tab-header">
@@ -181,11 +187,11 @@
                             <button class="filter-button">
                                 All Levels
                                 <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                    <path d="M6 9l6 6 6-6"/>
+                                    <path d="M6 9l6 6 6-6" />
                                 </svg>
                             </button>
                         </div>
-        
+
                         <div class="skills-grid">
                             <div class="skill-card">
                                 <div class="skill-header">
@@ -206,7 +212,7 @@
                                     </div>
                                 </div>
                             </div>
-        
+
                             <div class="skill-card">
                                 <div class="skill-header">
                                     <h3>SQL Commands</h3>
@@ -226,7 +232,7 @@
                                     </div>
                                 </div>
                             </div>
-        
+
                             <div class="skill-card">
                                 <div class="skill-header">
                                     <h3>Database Management</h3>
@@ -246,7 +252,7 @@
                                     </div>
                                 </div>
                             </div>
-        
+
                             <div class="skill-card">
                                 <div class="skill-header">
                                     <h3>PC Troubleshooting</h3>
@@ -268,7 +274,7 @@
                             </div>
                         </div>
                     </div>
-        
+
                     <!-- Assessments Tab Content -->
                     <div class="tab-content" [class.active]="activeTab === 'assessments'" id="assessments">
                         <div class="tab-header">
@@ -276,39 +282,39 @@
                             <button class="filter-button">
                                 All Modes
                                 <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                    <path d="M6 9l6 6 6-6"/>
+                                    <path d="M6 9l6 6 6-6" />
                                 </svg>
                             </button>
                         </div>
-        
+
                         <div class="assessment-list">
-                            <div class="assessment-item">
+                            <div *ngFor="let i of assessments" class="assessment-item">
                                 <div class="assessment-main">
                                     <div class="assessment-info">
-                                        <h3>Advanced Networking Concepts</h3>
-                                        <span class="badge pink">Mastery - Level 3</span>
+                                        <h3>{{i.title}}</h3>
+                                        <span class="badge blue">{{i.category | uppercase}}</span>
                                     </div>
                                     <div class="assessment-score">
-                                        <span class="score">95%</span>
-                                        <span class="details">24 of 25 correct</span>
+                                        <span class="score">{{i.percentage}}%</span>
+                                        <span class="details">{{i.score}} of {{i.totalPoints}} correct</span>
                                     </div>
                                 </div>
                                 <div class="assessment-meta">
                                     <div class="meta-info">
                                         <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                                            <line x1="16" y1="2" x2="16" y2="6"/>
-                                            <line x1="8" y1="2" x2="8" y2="6"/>
-                                            <line x1="3" y1="10" x2="21" y2="10"/>
+                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                            <line x1="16" y1="2" x2="16" y2="6" />
+                                            <line x1="8" y1="2" x2="8" y2="6" />
+                                            <line x1="3" y1="10" x2="21" y2="10" />
                                         </svg>
-                                        Oct 15, 2023
+                                        {{i.submittedAt | date:'MMM d, y, h:mm a'}}
                                     </div>
                                     <div class="meta-info">
                                         <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                            <circle cx="12" cy="12" r="10"/>
-                                            <polyline points="12 6 12 12 16 14"/>
+                                            <circle cx="12" cy="12" r="10" />
+                                            <polyline points="12 6 12 12 16 14" />
                                         </svg>
-                                        45 minutes
+                                        {{ i.minutesSpent / 60 | number:'1.2-2' }} minutes
                                     </div>
                                 </div>
                                 <div class="progress-bar">
@@ -316,90 +322,20 @@
                                 </div>
                                 <a href="#" class="view-details">View Details</a>
                             </div>
-        
-                            <div class="assessment-item">
-                                <div class="assessment-main">
-                                    <div class="assessment-info">
-                                        <h3>SQL Database Management</h3>
-                                        <span class="badge blue">Standard</span>
-                                    </div>
-                                    <div class="assessment-score">
-                                        <span class="score">88%</span>
-                                        <span class="details">18 of 20 correct</span>
-                                    </div>
-                                </div>
-                                <div class="assessment-meta">
-                                    <div class="meta-info">
-                                        <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                                            <line x1="16" y1="2" x2="16" y2="6"/>
-                                            <line x1="8" y1="2" x2="8" y2="6"/>
-                                            <line x1="3" y1="10" x2="21" y2="10"/>
-                                        </svg>
-                                        Oct 10, 2023
-                                    </div>
-                                    <div class="meta-info">
-                                        <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                            <circle cx="12" cy="12" r="10"/>
-                                            <polyline points="12 6 12 12 16 14"/>
-                                        </svg>
-                                        30 minutes
-                                    </div>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress blue" style="width: 88%"></div>
-                                </div>
-                                <a href="#" class="view-details">View Details</a>
-                            </div>
-        
-                            <div class="assessment-item">
-                                <div class="assessment-main">
-                                    <div class="assessment-info">
-                                        <h3>Hardware Troubleshooting</h3>
-                                        <span class="badge purple">Public</span>
-                                    </div>
-                                    <div class="assessment-score">
-                                        <span class="score">92%</span>
-                                        <span class="details">23 of 25 correct</span>
-                                    </div>
-                                </div>
-                                <div class="assessment-meta">
-                                    <div class="meta-info">
-                                        <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                                            <line x1="16" y1="2" x2="16" y2="6"/>
-                                            <line x1="8" y1="2" x2="8" y2="6"/>
-                                            <line x1="3" y1="10" x2="21" y2="10"/>
-                                        </svg>
-                                        Oct 5, 2023
-                                    </div>
-                                    <div class="meta-info">
-                                        <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                            <circle cx="12" cy="12" r="10"/>
-                                            <polyline points="12 6 12 12 16 14"/>
-                                        </svg>
-                                        35 minutes
-                                    </div>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress green" style="width: 92%"></div>
-                                </div>
-                                <a href="#" class="view-details">View Details</a>
-                            </div>
                         </div>
                     </div>
-        
+
                     <!-- Recommendations Tab Content -->
                     <div class="tab-content" [class.active]="activeTab === 'recommendations'" id="recommendations">
                         <div class="recommendations-section">
                             <h2>Improvement Areas</h2>
                             <p class="section-description">Based on assessment performance analysis</p>
-        
+
                             <div class="improvement-list">
                                 <div class="improvement-item">
                                     <div class="improvement-header">
                                         <svg class="icon warning" viewBox="0 0 24 24" width="20" height="20">
-                                            <path d="M12 9v4M12 17h.01M12 3l9 18H3L12 3z"/>
+                                            <path d="M12 9v4M12 17h.01M12 3l9 18H3L12 3z" />
                                         </svg>
                                         <h3>Cloud Computing Fundamentals</h3>
                                         <span class="score">65%</span>
@@ -409,16 +345,17 @@
                                     </div>
                                     <div class="improvement-action">
                                         <svg class="icon star" viewBox="0 0 24 24" width="16" height="16">
-                                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                                            <polygon
+                                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
                                         </svg>
                                         <span>Review AWS/Azure basics</span>
                                     </div>
                                 </div>
-        
+
                                 <div class="improvement-item">
                                     <div class="improvement-header">
                                         <svg class="icon warning" viewBox="0 0 24 24" width="20" height="20">
-                                            <path d="M12 9v4M12 17h.01M12 3l9 18H3L12 3z"/>
+                                            <path d="M12 9v4M12 17h.01M12 3l9 18H3L12 3z" />
                                         </svg>
                                         <h3>Advanced SQL Joins</h3>
                                         <span class="score">72%</span>
@@ -428,16 +365,17 @@
                                     </div>
                                     <div class="improvement-action">
                                         <svg class="icon star" viewBox="0 0 24 24" width="16" height="16">
-                                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                                            <polygon
+                                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
                                         </svg>
                                         <span>Practice complex join operations</span>
                                     </div>
                                 </div>
-        
+
                                 <div class="improvement-item">
                                     <div class="improvement-header">
                                         <svg class="icon warning" viewBox="0 0 24 24" width="20" height="20">
-                                            <path d="M12 9v4M12 17h.01M12 3l9 18H3L12 3z"/>
+                                            <path d="M12 9v4M12 17h.01M12 3l9 18H3L12 3z" />
                                         </svg>
                                         <h3>Network Security Protocols</h3>
                                         <span class="score">68%</span>
@@ -447,14 +385,15 @@
                                     </div>
                                     <div class="improvement-action">
                                         <svg class="icon star" viewBox="0 0 24 24" width="16" height="16">
-                                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                                            <polygon
+                                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
                                         </svg>
                                         <span>Study encryption methods</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-        
+
                         <div class="recommendations-section">
                             <h2>Recommended Resources</h2>
                             <div class="resources-grid">
@@ -463,7 +402,7 @@
                                     <p>Comprehensive course covering AWS, Azure, and Google Cloud basics.</p>
                                     <a href="#" class="resource-link">Access Resource</a>
                                 </div>
-        
+
                                 <div class="resource-card">
                                     <h3>Advanced SQL Workshop</h3>
                                     <p>Interactive exercises focusing on complex joins and query optimization.</p>
@@ -474,9 +413,6 @@
                     </div>
                 </div>
             </div>
-
-    
-
         </div>
     </div>
 </div>

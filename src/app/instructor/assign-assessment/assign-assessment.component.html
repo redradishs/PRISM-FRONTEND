@@ -9,12 +9,14 @@
                         <div class="flex items-center">
                             <div *ngIf="!isMobile" class="flex items-center">
                                 <div class="relative mr-3">
-                                    <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center">
                                         <span class="text-base md:text-lg font-medium text-gray-600">
                                             {{username.charAt(0) || 'A'}}
                                         </span>
                                     </div>
-                                    <div class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
                                     </div>
                                 </div>
                                 <div class="text-left">
@@ -22,7 +24,7 @@
                                     <div class="text-xs text-gray-500">Instructor</div>
                                 </div>
                             </div>
-                            <button *ngIf="isMobile" (click)="toggleSidebar()" 
+                            <button *ngIf="isMobile" (click)="toggleSidebar()"
                                 class="p-2 rounded-md hover:bg-gray-100 transition-colors">
                                 <i class="fas fa-bars w-5 h-5 text-gray-600"></i>
                             </button>
@@ -34,6 +36,22 @@
             <div class="h-[65px] md:h-[68px] w-full"></div>
 
             <div class="page-content">
+                <div class="page-header">
+                    <div class="page-title-container">
+                        <h1 class="page-title">
+                            Assign Assessment
+                        </h1>
+                        <p class="page-subtitle">Assign assessments to students or classes</p>
+                    </div>
+                    <div class="header-buttons">
+                        <button class="create-assessment-btn" routerLink="/instructor/generate">
+                            <i class="fas fa-plus btn-icon"></i>
+                            Create Assessment
+                        </button>
+                    </div>
+                </div>
+
+
                 <!-- Error Message -->
                 <div *ngIf="error" class="error-message">
                     {{error}}
@@ -46,540 +64,587 @@
 
                 <div *ngIf="!loading && !error">
                     <!-- Stepper -->
-                    <div class="stepper">
-                        <div class="step">
-                            <div class="step-number" [class.active]="currentStep === 1" [class.inactive]="currentStep !== 1">1</div>
+                    <div class="steps-container" id="page-top">
+                        <div class="step" [class.active]="currentStep === 1" [class.completed]="currentStep > 1">
+                            <div class="step-number">1</div>
                             <span class="step-label">Select Assessment</span>
                         </div>
-                        <div class="step-line"></div>
-                        <div class="step">
-                            <div class="step-number" [class.active]="currentStep === 2" [class.inactive]="currentStep !== 2">2</div>
+                        <div class="step" [class.active]="currentStep === 2" [class.completed]="currentStep > 2">
+                            <div class="step-number">2</div>
                             <span class="step-label">Choose Recipients</span>
                         </div>
-                        <div class="step-line"></div>
-                        <div class="step">
-                            <div class="step-number" [class.active]="currentStep === 3" [class.inactive]="currentStep !== 3">3</div>
+                        <div class="step" [class.active]="currentStep === 3" [class.completed]="currentStep > 3">
+                            <div class="step-number">3</div>
                             <span class="step-label">Configure Settings</span>
                         </div>
-                        <div class="step-line"></div>
-                        <div class="step">
-                            <div class="step-number" [class.active]="currentStep === 4" [class.inactive]="currentStep !== 4">4</div>
+                        <div class="step" [class.active]="currentStep === 4" [class.completed]="currentStep > 4">
+                            <div class="step-number">4</div>
                             <span class="step-label">Review & Confirm</span>
+                        </div>
+                        <div class="step-line">
+                            <div class="step-line-progress" [style.width]="((currentStep - 1) / 3 * 100) + '%'"></div>
                         </div>
                     </div>
 
                     <!-- Step 1: Select Assessment -->
                     <div *ngIf="currentStep === 1">
-                        <div class="section-header">
-                            <h2 class="section-title">Select Assessment</h2>
-                            <p class="section-description">Choose the assessment(s) you want to assign</p>
+                        <div class="review-header">
+                            <h2>Select Assessment</h2>
+                            <p>Choose the assessment you want to assign</p>
                         </div>
 
-                        <!-- Assessment Search and Filter -->
-                        <div class="search-container">
-                            <div class="search-wrapper">
-                                <input type="text" 
-                                       [(ngModel)]="searchQuery"
-                                       placeholder="Search assessments..." 
-                                       class="search-input">
-                                <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                                </svg>
+                        <div class="review-content">
+                            <!-- Assessment Search and Filter -->
+                            <div class="search-container">
+                                <div class="search-wrapper">
+                                    <input type="text" [(ngModel)]="searchQuery" placeholder="Search assessments..."
+                                        class="search-input">
+                                    <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                </div>
+                                <select [(ngModel)]="dateFilter" class="filter-select">
+                                    <option value="all">All Time</option>
+                                    <option value="today">Today</option>
+                                    <option value="week">Last 7 Days</option>
+                                    <option value="month">Last 30 Days</option>
+                                </select>
                             </div>
-                            <select [(ngModel)]="selectedType" class="filter-select">
-                                <option>All Types</option>
-                                <option>Standard</option>
-                                <option>Mastery</option>
-                                <option>Public</option>
-                            </select>
-                        </div>
 
-                        <!-- Assessment Cards -->
-                        <div class="assessment-grid">
-                            <div *ngFor="let assessment of filteredAssessments" 
-                                 class="assessment-card"
-                                 (click)="toggleAssessmentSelection(assessment._id)">
-                                <!-- Status Badge -->
-                                <div class="status-badge" [ngClass]="assessment.status">
-                                    {{assessment.status | titlecase}}
-                                </div>
-
-                                <!-- Checkbox -->
-                                <div class="assessment-checkbox">
-                                    <input type="checkbox" 
-                                           [checked]="isAssessmentSelected(assessment._id)"
-                                           (click)="$event.stopPropagation()">
-                                </div>
-
-                                <!-- Content -->
-                                <div class="assessment-content">
-                                    <h3 class="assessment-title">{{assessment.title}}</h3>
-                                    
-                                    <!-- Info Grid -->
-                                    <div class="assessment-info">
-                                        <div class="info-item">
-                                            <svg class="info-icon" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                                            </svg>
-                                            <span>{{assessment.totalQuestions}} Questions</span>
-                                        </div>
-                                        <div class="info-item">
-                                            <svg class="info-icon" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
-                                            </svg>
-                                            <span>{{assessment.totalPoints}} Points</span>
-                                        </div>
-                                        <div class="info-item">
-                                            <svg class="info-icon" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                            </svg>
-                                            <span>{{assessment.createdAt | date:'mediumDate'}}</span>
-                                        </div>
+                            <!-- Assessment Cards -->
+                            <div class="assessment-grid">
+                                <div *ngFor="let assessment of displayedAssessments" class="assessment-card"
+                                    (click)="toggleAssessmentSelection(assessment._id)">
+                                    <!-- Checkbox -->
+                                    <div class="assessment-checkbox">
+                                        <input type="checkbox" [checked]="isAssessmentSelected(assessment._id)"
+                                            (click)="$event.stopPropagation()">
                                     </div>
 
-                                    <!-- Question Types -->
-                                    <div class="question-types" *ngIf="assessment.questionTypes">
-                                        <h4 class="question-types-title">Question Types:</h4>
-                                        <div class="question-type-tags">
-                                            <span *ngFor="let type of getQuestionTypes(assessment.questionTypes)" 
-                                                  class="type-tag"
-                                                  [ngClass]="type.type.split(' ')[0]">
+                                    <!-- Content -->
+                                    <div class="assessment-content">
+                                        <h3 class="assessment-title">{{assessment.title}}</h3>
+
+                                        <!-- Info Grid -->
+                                        <div class="assessment-info">
+                                            <div class="info-row">
+                                                <div class="info-item">
+                                                    <i class="fas fa-file-alt info-icon"></i>
+                                                    <span class="info-value">{{assessment.totalQuestions}}
+                                                        Questions</span>
+                                                </div>
+                                                <div class="info-item">
+                                                    <i class="fas fa-star info-icon"></i>
+                                                    <span class="info-value">{{assessment.totalPoints}} Points</span>
+                                                </div>
+                                            </div>
+                                            <div class="info-row">
+                                                <div class="info-item">
+                                                    <i class="fas fa-calendar info-icon"></i>
+                                                    <span class="info-value">{{assessment.createdAt |
+                                                        date:'mediumDate'}}</span>
+                                                </div>
+                                                <div class="info-item">
+                                                    <i class="fas fa-tag info-icon"></i>
+                                                    <span class="info-value">{{assessment.category || 'No category' |
+                                                        uppercase}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Question Types -->
+                                        <div class="question-types" *ngIf="assessment.questionTypes">
+                                            <span *ngFor="let type of getQuestionTypes(assessment.questionTypes)"
+                                                class="type-tag" [ngClass]="type.type.split(' ')[0].toLowerCase()">
                                                 {{type.type | titlecase}}: {{type.count}}
                                             </span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Show More Button -->
+                            <div *ngIf="remainingCount > 0" class="show-more-container">
+                                <button (click)="toggleShowAll()" class="show-more-button">
+                                    <span *ngIf="!showingAll">Show {{remainingCount}} More</span>
+                                    <span *ngIf="showingAll">Show Less</span>
+                                    <i class="fas" [class.fa-chevron-down]="!showingAll"
+                                        [class.fa-chevron-up]="showingAll"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Step 2: Choose Recipients -->
                     <div *ngIf="currentStep === 2">
-                        <div class="section-header">
-                            <h2 class="section-title">Choose Recipients</h2>
-                            <p class="section-description">Select who will receive this assessment</p>
+                        <div class="review-header">
+                            <h2>Choose Recipients</h2>
+                            <p>Select who will receive this assessment</p>
                         </div>
 
-                        <!-- Assignment Type Selection -->
-                        <div class="assignment-options">
-                            <div class="option-card" 
-                                 [class.selected]="assignmentType === 'classes'"
-                                 (click)="setAssignmentType('classes')">
-                                <h3 class="option-title">Assign to Classes</h3>
-                                <p class="option-description">Assign to entire classes of students</p>
-                            </div>
-                            <div class="option-card"
-                                 [class.selected]="assignmentType === 'individual'"
-                                 (click)="setAssignmentType('individual')">
-                                <h3 class="option-title">Assign to Individual Students</h3>
-                                <p class="option-description">Select specific students to assign</p>
-                            </div>
-                        </div>
-
-                        <!-- Class View -->
-                        <div *ngIf="assignmentType === 'classes'" class="recipients-container">
-                            <div class="search-box">
-                                <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                                </svg>
-                                <input type="text" 
-                                       [(ngModel)]="classSearchQuery"
-                                       placeholder="Search classes..." 
-                                       class="search-input">
-                            </div>
-
-                            <div class="class-list">
-                                <div *ngFor="let class of filteredClasses" 
-                                     class="class-row" 
-                                     [class.selected]="isClassSelected(class._id)"
-                                     (click)="toggleClassSelection(class._id)">
-                                    <!-- Class Card Content -->
-                                    <div class="class-info">
-                                        <div class="class-header">
-                                            <div class="class-title">
-                                                <h3 class="class-name">{{class.className}}</h3>
-                                                <span class="class-code-badge">{{class.classCode}}</span>
-                                            </div>
-                                            <div class="selection-checkbox">
-                                                <input type="checkbox" 
-                                                       [checked]="isClassSelected(class._id)"
-                                                       (click)="$event.stopPropagation()">
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="class-details">
-                                            <div class="details-group">
-                                                <span class="detail-label">Year:</span>
-                                                <span class="detail-value" [class.not-available]="class.year === 'N/A'">
-                                                    {{class.year}}
-                                                </span>
-                                            </div>
-                                            <div class="details-separator">•</div>
-                                            <div class="details-group">
-                                                <span class="detail-label">Block:</span>
-                                                <span class="detail-value" [class.not-available]="class.block === 'N/A'">
-                                                    {{class.block}}
-                                                </span>
-                                            </div>
-                                            <div class="details-separator">•</div>
-                                            <div class="student-count" [class.no-students]="class.totalStudents === 0">
-                                                <svg class="student-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                                </svg>
-                                                <span>{{class.totalStudents}} {{class.totalStudents === 1 ? 'Student' : 'Students'}}</span>
-                                            </div>
-                                        </div>
+                        <div class="review-content">
+                            <!-- Assignment Type Selection -->
+                            <div class="assignment-options">
+                                <div class="option-card" [class.selected]="assignmentType === 'classes'"
+                                    (click)="setAssignmentType('classes')">
+                                    <div class="option-icon">
+                                        <i class="fas fa-chalkboard-teacher"></i>
+                                    </div>
+                                    <div class="option-content">
+                                        <h3 class="option-title">Assign to Classes</h3>
+                                        <p class="option-description">Assign to entire classes of students</p>
+                                    </div>
+                                </div>
+                                <div class="option-card" [class.selected]="assignmentType === 'individual'"
+                                    (click)="setAssignmentType('individual')">
+                                    <div class="option-icon">
+                                        <i class="fas fa-user-graduate"></i>
+                                    </div>
+                                    <div class="option-content">
+                                        <h3 class="option-title">Assign to Individual Students</h3>
+                                        <p class="option-description">Select specific students to assign</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Selection Summary for Classes - Moved below list -->
-                            <div class="selection-summary mt-4" *ngIf="selectedClasses.size > 0">
-                                <div class="summary-text">
-                                    {{selectedClasses.size}} {{selectedClasses.size === 1 ? 'class' : 'classes'}} selected
-                                </div>
-                                <button class="clear-button" (click)="clearSelection()">Clear All</button>
-                            </div>
-                        </div>
-
-                        <!-- Individual Students View -->
-                        <div *ngIf="assignmentType === 'individual'" class="recipients-container">
-                            <div class="student-section">
-                                <!-- Search box -->
+                            <!-- Class View -->
+                            <div *ngIf="assignmentType === 'classes'" class="recipients-container">
                                 <div class="search-box">
-                                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                     </svg>
-                                    <input type="text" 
-                                           #searchInput
-                                           [ngModel]="studentSearchQuery"
-                                           (ngModelChange)="onStudentSearch($event)"
-                                           placeholder="Search students by name, email, or program..." 
-                                           class="search-input"
-                                           [class.searching]="isSearching">
+                                    <input type="text" [(ngModel)]="classSearchQuery" placeholder="Search classes..."
+                                        class="search-input">
                                 </div>
 
-                                <!-- Table section with loading overlay -->
-                                <div class="table-container relative">
-                                    <!-- Loading overlay -->
-                                    <div *ngIf="isSearchLoading" class="loading-overlay">
-                                        <div class="spinner"></div>
-                                        <span>Searching students...</span>
-                                    </div>
-
-                                    <!-- Student table -->
-                                    <div class="student-table" [class.loading]="isSearchLoading">
-                                        <div class="table-header">
-                                            <div class="header-checkbox"></div>
-                                            <div class="header-name cursor-pointer" (click)="onSortChange('name')">
-                                                Name
-                                                <span class="sort-indicator" *ngIf="sortBy === 'name'">
-                                                    {{ sortOrder === 'asc' ? '↑' : '↓' }}
-                                                </span>
-                                            </div>
-                                            <div class="header-program cursor-pointer" (click)="onSortChange('program')">
-                                                Program
-                                                <span class="sort-indicator" *ngIf="sortBy === 'program'">
-                                                    {{ sortOrder === 'asc' ? '↑' : '↓' }}
-                                                </span>
-                                            </div>
-                                            <div class="header-year cursor-pointer" (click)="onSortChange('yearLevel')">
-                                                Year Level
-                                                <span class="sort-indicator" *ngIf="sortBy === 'yearLevel'">
-                                                    {{ sortOrder === 'asc' ? '↑' : '↓' }}
-                                                </span>
-                                            </div>
-                                            <div class="header-email">Email</div>
-                                        </div>
-                                        <div class="table-body">
-                                            <div *ngFor="let student of filteredStudents" 
-                                                 class="student-row"
-                                                 [class.selected]="selectedStudents.has(student._id)"
-                                                 (click)="toggleStudentSelection(student._id)">
+                                <div class="class-list">
+                                    <div *ngFor="let class of filteredClasses" class="class-row"
+                                        [class.selected]="isClassSelected(class._id)"
+                                        (click)="toggleClassSelection(class._id)">
+                                        <!-- Class Card Content -->
+                                        <div class="class-info">
+                                            <div class="class-header">
+                                                <div class="class-title">
+                                                    <h3 class="class-name">{{class.className}}</h3>
+                                                    <span class="class-code-badge">{{class.classCode}}</span>
+                                                </div>
                                                 <div class="selection-checkbox">
-                                                    <input type="checkbox" 
-                                                           [checked]="selectedStudents.has(student._id)"
-                                                           (click)="$event.stopPropagation()">
+                                                    <input type="checkbox" [checked]="isClassSelected(class._id)"
+                                                        (click)="$event.stopPropagation()">
                                                 </div>
-                                                <div class="student-name">{{student.name}}</div>
-                                                <div class="student-program">
-                                                    <span *ngIf="student.program">BS{{student.program}}</span>
-                                                    <span *ngIf="!student.program" class="text-gray-400 italic">Not specified</span>
+                                            </div>
+
+                                            <div class="class-details">
+                                                <div class="details-group">
+                                                    <span class="detail-label">Year:</span>
+                                                    <span class="detail-value"
+                                                        [class.not-available]="class.year === 'N/A'">
+                                                        {{class.year}}
+                                                    </span>
                                                 </div>
-                                                <div class="student-year">
-                                                    <span *ngIf="student.yearLevel">{{student.yearLevel}}</span>
-                                                    <span *ngIf="!student.yearLevel" class="text-gray-400 italic">Not specified</span>
+                                                <div class="details-separator">•</div>
+                                                <div class="details-group">
+                                                    <span class="detail-label">Block:</span>
+                                                    <span class="detail-value"
+                                                        [class.not-available]="class.block === 'N/A'">
+                                                        {{class.block}}
+                                                    </span>
                                                 </div>
-                                                <div class="student-email">{{student.email}}</div>
+                                                <div class="details-separator">•</div>
+                                                <div class="student-count"
+                                                    [class.no-students]="class.totalStudents === 0">
+                                                    <svg class="student-icon" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                                    </svg>
+                                                    <span>{{class.totalStudents}} {{class.totalStudents === 1 ?
+                                                        'Student' : 'Students'}}</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <!-- Empty state -->
-                                    <div *ngIf="!isSearchLoading && filteredStudents.length === 0" class="empty-state">
-                                        <p class="text-gray-500 text-center py-8">No students found</p>
+                                <!-- Selection Summary for Classes - Moved below list -->
+                                <div class="selection-summary mt-4" *ngIf="selectedClasses.size > 0">
+                                    <div class="summary-text">
+                                        {{selectedClasses.size}} {{selectedClasses.size === 1 ? 'class' : 'classes'}}
+                                        selected
                                     </div>
-
-                                    <!-- Pagination -->
-                                    <div class="pagination" *ngIf="totalPages > 1">
-                                        <button class="pagination-button" 
-                                                [disabled]="currentPage === 1"
-                                                (click)="onPageChange(currentPage - 1)">
-                                            Previous
-                                        </button>
-                                        <span class="pagination-info">
-                                            Page {{currentPage}} of {{totalPages}}
-                                        </span>
-                                        <button class="pagination-button" 
-                                                [disabled]="currentPage === totalPages"
-                                                (click)="onPageChange(currentPage + 1)">
-                                            Next
-                                        </button>
-                                    </div>
+                                    <button class="clear-button" (click)="clearSelection()">Clear All</button>
                                 </div>
                             </div>
 
-                            <!-- Selection Summary -->
-                            <div class="selection-summary mt-4" *ngIf="selectedStudents.size > 0">
-                                <div class="summary-text">
-                                    {{selectedStudents.size}} {{selectedStudents.size === 1 ? 'student' : 'students'}} selected
+                            <!-- Individual Students View -->
+                            <div *ngIf="assignmentType === 'individual'" class="recipients-container">
+                                <div class="student-section">
+                                    <!-- Search box -->
+                                    <div class="search-box">
+                                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                        </svg>
+                                        <input type="text" #searchInput [ngModel]="studentSearchQuery"
+                                            (ngModelChange)="onStudentSearch($event)"
+                                            placeholder="Search students by name, email, or program..."
+                                            class="search-input" [class.searching]="isSearching">
+                                    </div>
+
+                                    <!-- Table section with loading overlay -->
+                                    <div class="table-container">
+                                        <!-- Loading overlay -->
+                                        <div *ngIf="isSearchLoading" class="loading-overlay">
+                                            <div class="spinner"></div>
+                                            <span>Searching students...</span>
+                                        </div>
+
+                                        <!-- Student table -->
+                                        <div class="student-table" [class.loading]="isSearchLoading">
+                                            <div class="table-header">
+                                                <div class="header-checkbox"></div>
+                                                <div class="header-name cursor-pointer" (click)="onSortChange('name')">
+                                                    Name
+                                                    <span class="sort-indicator" *ngIf="sortBy === 'name'">
+                                                        {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                                                    </span>
+                                                </div>
+                                                <div class="header-program cursor-pointer"
+                                                    (click)="onSortChange('program')">
+                                                    Program
+                                                    <span class="sort-indicator" *ngIf="sortBy === 'program'">
+                                                        {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                                                    </span>
+                                                </div>
+                                                <div class="header-year cursor-pointer"
+                                                    (click)="onSortChange('yearLevel')">
+                                                    Year Level
+                                                    <span class="sort-indicator" *ngIf="sortBy === 'yearLevel'">
+                                                        {{ sortOrder === 'asc' ? '↑' : '↓' }}
+                                                    </span>
+                                                </div>
+                                                <div class="header-email d-none d-md-block">Email</div>
+                                            </div>
+                                            <div class="table-body">
+                                                <div *ngFor="let student of filteredStudents" class="student-row"
+                                                    [class.selected]="selectedStudents.has(student._id)"
+                                                    (click)="toggleStudentSelection(student._id)">
+                                                    <div class="selection-checkbox">
+                                                        <input type="checkbox"
+                                                            [checked]="selectedStudents.has(student._id)"
+                                                            (click)="$event.stopPropagation()">
+                                                    </div>
+                                                    <div class="student-name">{{student.name}}</div>
+                                                    <div class="student-program">
+                                                        <span *ngIf="student.program">BS{{student.program}}</span>
+                                                        <span *ngIf="!student.program" class="text-gray-400 italic">Not
+                                                            specified</span>
+                                                    </div>
+                                                    <div class="student-year">
+                                                        <span *ngIf="student.yearLevel">{{student.yearLevel}}</span>
+                                                        <span *ngIf="!student.yearLevel"
+                                                            class="text-gray-400 italic">Not specified</span>
+                                                    </div>
+                                                    <div class="student-email d-none d-md-block">{{student.email}}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Empty state -->
+                                        <div *ngIf="!isSearchLoading && filteredStudents.length === 0"
+                                            class="empty-state">
+                                            <p class="text-gray-500 text-center py-8">No students found</p>
+                                        </div>
+
+                                        <!-- Pagination -->
+                                        <div class="pagination" *ngIf="totalPages > 1">
+                                            <button class="pagination-button" [disabled]="currentPage === 1"
+                                                (click)="onPageChange(currentPage - 1)">
+                                                Previous
+                                            </button>
+                                            <span class="pagination-info">
+                                                Page {{currentPage}} of {{totalPages}}
+                                            </span>
+                                            <button class="pagination-button" [disabled]="currentPage === totalPages"
+                                                (click)="onPageChange(currentPage + 1)">
+                                                Next
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <button class="clear-button" (click)="clearSelection()">Clear All</button>
+
+                                <!-- Selection Summary -->
+                                <div class="selection-summary mt-4" *ngIf="selectedStudents.size > 0">
+                                    <div class="summary-text">
+                                        {{selectedStudents.size}} {{selectedStudents.size === 1 ? 'student' :
+                                        'students'}} selected
+                                    </div>
+                                    <button class="clear-button" (click)="clearSelection()">Clear All</button>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Step 3: Configure Settings -->
                     <div *ngIf="currentStep === 3">
-                        <div class="section-header">
-                            <h2 class="section-title">Configure Settings</h2>
-                            <p class="section-description">Set up assessment parameters</p>
+                        <div class="review-header">
+                            <h2>Configure Settings</h2>
+                            <p>Set up assessment parameters</p>
                         </div>
 
-                        <!-- Assessment Mode Selection -->
-                        <div class="bg-white rounded-lg p-6 shadow-sm mb-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Assessment Mode</h3>
-                            <p class="text-sm text-gray-600 mb-4">Choose how students will interact with this assessment</p>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div class="mode-card" 
-                                     [class.selected]="selectedMode === 'assessment'"
-                                     (click)="setAssessmentMode('assessment')">
-                                    <div class="mode-icon">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                                        </svg>
-                                    </div>
-                                    <h4 class="mode-title">Assessment</h4>
-                                    <p class="mode-description">Standard assessment with customizable settings and scoring</p>
-                                </div>
+                        <div class="review-content">
+                            <!-- Assessment Mode Selection -->
+                            <div class="bg-white rounded-lg p-6 shadow-sm mb-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Assessment Mode</h3>
+                                <p class="text-sm text-gray-600 mb-4">Choose how students will interact with this
+                                    assessment</p>
 
-                                <div class="mode-card"
-                                     [class.selected]="selectedMode === 'mastery'"
-                                     (click)="setAssessmentMode('mastery')">
-                                    <div class="mode-icon">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
-                                        </svg>
-                                    </div>
-                                    <h4 class="mode-title">Mastery Mode</h4>
-                                    <p class="mode-description">Progressive learning with mastery-based advancement</p>
-                                </div>
-
-                                <div class="mode-card"
-                                     [class.selected]="selectedMode === 'public'"
-                                     (click)="setAssessmentMode('public')">
-                                    <div class="mode-icon">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
-                                        </svg>
-                                    </div>
-                                    <h4 class="mode-title">Public</h4>
-                                    <p class="mode-description">Open access assessment available to all students</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Due Date & Time -->
-                            <div class="bg-white rounded-lg p-6 shadow-sm">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Schedule</h3>
-                                <p class="text-sm text-gray-600 mb-4">Set when the assessment starts and ends</p>
-                                
-                                <div class="space-y-4">
-                                    <!-- Start Date -->
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Start Date & Time</label>
-                                        <div class="date-presets mb-2">
-                                            <button *ngFor="let preset of startDatePresets" 
-                                                    (click)="applyStartDatePreset(preset)"
-                                                    type="button"
-                                                    class="preset-button">
-                                                {{preset.label}}
-                                            </button>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div class="mode-card" [class.selected]="selectedMode === 'assessment'"
+                                        (click)="setAssessmentMode('assessment')">
+                                        <div class="mode-icon">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                            </svg>
                                         </div>
-                                        <input type="datetime-local" 
-                                               [(ngModel)]="startDate" 
-                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                               [min]="getCurrentDateTime()">
+                                        <h4 class="mode-title">Assessment</h4>
+                                        <p class="mode-description">Standard assessment with customizable settings and
+                                            scoring</p>
                                     </div>
 
-                                    <!-- Due Date -->
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Due Date & Time</label>
-                                        <div class="date-presets mb-2">
-                                            <button *ngFor="let preset of dueDatePresets" 
-                                                    (click)="applyDueDatePreset(preset)"
-                                                    type="button"
-                                                    class="preset-button">
-                                                {{preset.label}}
-                                            </button>
+                                    <div class="mode-card" [class.selected]="selectedMode === 'mastery'"
+                                        (click)="setAssessmentMode('mastery')">
+                                        <div class="mode-icon">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                                            </svg>
                                         </div>
-                                        <input type="datetime-local" 
-                                               [(ngModel)]="dueDate" 
-                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                               [min]="getMinDueDate()">
-                                    </div>
-
-                                    <div class="flex items-start">
-                                        <div class="flex items-center h-5">
-                                            <input type="checkbox" [(ngModel)]="allowLateSubmissions" class="checkbox">
-                                        </div>
-                                        <div class="ml-3">
-                                            <label class="text-sm font-medium text-gray-700">Allow Late Submissions</label>
-                                            <p class="text-sm text-gray-500">Students can submit after the due date</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Results & Scoring -->
-                            <div class="bg-white rounded-lg p-6 shadow-sm">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Results & Scoring</h3>
-                                <p class="text-sm text-gray-600 mb-4">Configure how results are shown to students</p>
-                                
-                                <div class="space-y-4">
-                                    <!-- Show Results -->
-                                    <div *ngIf="selectedMode !== 'mastery'">
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Show Results</label>
-                                        <div class="space-y-2">
-                                            <div class="flex items-center">
-                                                <input type="radio" [(ngModel)]="showResults" value="immediate" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
-                                                <label class="ml-2 text-sm text-gray-700">Immediately after submission</label>
-                                            </div>
-                                            <div class="flex items-center">
-                                                <input type="radio" [(ngModel)]="showResults" value="after_due" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
-                                                <label class="ml-2 text-sm text-gray-700">After due date</label>
-                                            </div>
-                                            <div class="flex items-center">
-                                                <input type="radio" [(ngModel)]="showResults" value="manual" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
-                                                <label class="ml-2 text-sm text-gray-700">Manually release results</label>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Mastery Score Input -->
-                                    <div *ngIf="selectedMode === 'mastery'" class="mastery-score-container">
-                                        <label class="form-label">Mastery Score Required</label>
-                                        <div class="score-input-wrapper">
-                                            <input type="number" 
-                                                   [(ngModel)]="masteryScore"
-                                                   (input)="validateMasteryScore()"
-                                                   [min]="1"
-                                                   [max]="selectedAssessmentPoints"
-                                                   class="form-control" 
-                                                   required>
-                                            <div class="total-points-indicator">
-                                                <span>/ {{selectedAssessmentPoints}} points</span>
-                                            </div>
-                                        </div>
-                                        <div class="score-hint">
-                                            <i class="fas fa-info-circle"></i>
-                                            <span>Score required to achieve mastery (cannot exceed total points)</span>
-                                        </div>
-                                    </div>
-
-
-
-                                    <!-- Attempts -->
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Number of Attempts Allowed</label>
-                                        <input type="number" 
-                                               [(ngModel)]="attemptsAllowed" 
-                                               [min]="1" 
-                                               [max]="selectedMode === 'mastery' ? 10 : 5"
-                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                        <p class="mt-1 text-sm text-gray-500">
-                                            {{selectedMode === 'mastery' 
-                                                ? 'Maximum 10 attempts for mastery mode' 
-                                                : 'Maximum 5 attempts allowed'}}
+                                        <h4 class="mode-title">Mastery Mode</h4>
+                                        <p class="mode-description">Progressive learning with mastery-based advancement
                                         </p>
                                     </div>
-                                </div>
-                            </div>
 
-                            <!-- Time Settings -->
-                            <div class="bg-white rounded-lg p-6 shadow-sm">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Time Settings</h3>
-                                <p class="text-sm text-gray-600 mb-4">Configure time-related parameters</p>
-                                
-                                <div class="space-y-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Time Limit (minutes)</label>
-                                        <input type="number" 
-                                               [(ngModel)]="timeLimit" 
-                                               min="1"
-                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    </div>
-
-                                    <div class="flex items-start">
-                                        <div class="flex items-center h-5">
-                                            <input type="checkbox" [(ngModel)]="randomizeQuestions" class="checkbox">
+                                    <div class="mode-card" [class.selected]="selectedMode === 'public'"
+                                        (click)="setAssessmentMode('public')">
+                                        <div class="mode-icon">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                                            </svg>
                                         </div>
-                                        <div class="ml-3">
-                                            <label class="text-sm font-medium text-gray-700">Randomize Questions</label>
-                                            <p class="text-sm text-gray-500">Questions will appear in random order for each student</p>
-                                        </div>
+                                        <h4 class="mode-title">Public</h4>
+                                        <p class="mode-description">Open access assessment available to all students</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Public Mode Settings -->
-                            <div *ngIf="selectedMode === 'public'" class="bg-white rounded-lg p-6 shadow-sm">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Public Access</h3>
-                                <p class="text-sm text-gray-600 mb-4">Settings for public assessment access</p>
-                                
-                                <div class="space-y-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Joining Code</label>
-                                        <div class="flex items-center space-x-2">
-                                            <input type="text" 
-                                                   [value]="joiningCode" 
-                                                   readonly
-                                                   class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md">
-                                            <button type="button"
-                                                    (click)="generateJoiningCode()"
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Due Date & Time -->
+                                <div class="bg-white rounded-lg p-6 shadow-sm">
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Schedule</h3>
+                                    <p class="text-sm text-gray-600 mb-4">Set when the assessment starts and ends</p>
+
+                                    <div class="space-y-4">
+                                        <!-- Start Date -->
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Start Date &
+                                                Time</label>
+                                            <div class="date-presets mb-2">
+                                                <button *ngFor="let preset of startDatePresets"
+                                                    (click)="applyStartDatePreset(preset)" type="button"
+                                                    class="preset-button">
+                                                    {{preset.label}}
+                                                </button>
+                                            </div>
+                                            <input type="datetime-local" [(ngModel)]="startDate"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                [min]="getCurrentDateTime()">
+                                        </div>
+
+                                        <!-- Due Date -->
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Due Date &
+                                                Time</label>
+                                            <div class="date-presets mb-2">
+                                                <button *ngFor="let preset of dueDatePresets"
+                                                    (click)="applyDueDatePreset(preset)" type="button"
+                                                    class="preset-button">
+                                                    {{preset.label}}
+                                                </button>
+                                            </div>
+                                            <input type="datetime-local" [(ngModel)]="dueDate"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                [min]="getMinDueDate()">
+                                        </div>
+
+                                        <div class="flex items-start">
+                                            <div class="flex items-center h-5">
+                                                <input type="checkbox" [(ngModel)]="allowLateSubmissions"
+                                                    class="checkbox">
+                                            </div>
+                                            <div class="ml-3">
+                                                <label class="text-sm font-medium text-gray-700">Allow Late
+                                                    Submissions</label>
+                                                <p class="text-sm text-gray-500">Students can submit after the due date
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Results & Scoring -->
+                                <div class="bg-white rounded-lg p-6 shadow-sm">
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Results & Scoring</h3>
+                                    <p class="text-sm text-gray-600 mb-4">Configure how results are shown to students
+                                    </p>
+
+                                    <div class="space-y-4">
+                                        <!-- Show Results -->
+                                        <div *ngIf="selectedMode !== 'mastery'">
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Show
+                                                Results</label>
+                                            <div class="space-y-2">
+                                                <div class="flex items-center">
+                                                    <input type="radio" [(ngModel)]="showResults" value="immediate"
+                                                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
+                                                    <label class="ml-2 text-sm text-gray-700">Immediately after
+                                                        submission</label>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <input type="radio" [(ngModel)]="showResults" value="after_due"
+                                                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
+                                                    <label class="ml-2 text-sm text-gray-700">After due date</label>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <input type="radio" [(ngModel)]="showResults" value="manual"
+                                                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
+                                                    <label class="ml-2 text-sm text-gray-700">Manually release
+                                                        results</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Mastery Score Input -->
+                                        <div *ngIf="selectedMode === 'mastery'" class="mastery-score-container">
+                                            <label class="form-label">Mastery Score Required</label>
+                                            <div class="score-input-wrapper">
+                                                <input type="number" [(ngModel)]="masteryScore"
+                                                    (input)="validateMasteryScore()" [min]="1"
+                                                    [max]="selectedAssessmentPoints" class="form-control" required>
+                                                <div class="total-points-indicator">
+                                                    <span>/ {{selectedAssessmentPoints}} points</span>
+                                                </div>
+                                            </div>
+                                            <div class="score-hint">
+                                                <i class="fas fa-info-circle"></i>
+                                                <span>Score required to achieve mastery (cannot exceed total
+                                                    points)</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Attempts -->
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Number of
+                                                Attempts Allowed</label>
+                                            <input type="number" [(ngModel)]="attemptsAllowed" [min]="1"
+                                                [max]="selectedMode === 'mastery' ? 10 : 5"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            <p class="mt-1 text-sm text-gray-500">
+                                                {{selectedMode === 'mastery'
+                                                ? 'Maximum 10 attempts for mastery mode'
+                                                : 'Maximum 5 attempts allowed'}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Time Settings -->
+                                <div class="bg-white rounded-lg p-6 shadow-sm">
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Time Settings</h3>
+                                    <p class="text-sm text-gray-600 mb-4">Configure time-related parameters</p>
+
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Time Limit
+                                                (minutes)</label>
+                                            <input type="number" [(ngModel)]="timeLimit" min="1"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        </div>
+
+                                        <div class="flex items-start">
+                                            <div class="flex items-center h-5">
+                                                <input type="checkbox" [(ngModel)]="randomizeQuestions"
+                                                    class="checkbox">
+                                            </div>
+                                            <div class="ml-3">
+                                                <label class="text-sm font-medium text-gray-700">Randomize
+                                                    Questions</label>
+                                                <p class="text-sm text-gray-500">Questions will appear in random order
+                                                    for each student</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Public Mode Settings or Additional Instructions based on mode -->
+                                <div *ngIf="selectedMode === 'public'" class="bg-white rounded-lg p-6 shadow-sm">
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Public Access</h3>
+                                    <p class="text-sm text-gray-600 mb-4">Settings for public assessment access</p>
+
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Joining
+                                                Code</label>
+                                            <div class="flex items-center space-x-2">
+                                                <input type="text" [value]="joiningCode" readonly
+                                                    class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md">
+                                                <button type="button" (click)="generateJoiningCode()"
                                                     class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-md">
-                                                <i class="fas fa-sync-alt"></i>
-                                            </button>
+                                                    <i class="fas fa-sync-alt"></i>
+                                                </button>
+                                            </div>
+                                            <p class="mt-1 text-sm text-gray-500">Share this code with students to join
+                                                the assessment</p>
                                         </div>
-                                        <p class="mt-1 text-sm text-gray-500">Share this code with students to join the assessment</p>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Additional Instructions -->
-                            <div class="bg-white rounded-lg p-6 shadow-sm md:col-span-2">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Additional Instructions</h3>
-                                <p class="text-sm text-gray-600 mb-4">Provide any special instructions for students</p>
-                                
-                                <div class="space-y-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Special Instructions (Optional)</label>
-                                        <textarea [(ngModel)]="specialInstructions" 
-                                                  rows="4" 
-                                                  placeholder="Add any special instructions for students..."
-                                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+                                <div *ngIf="selectedMode !== 'public'" class="bg-white rounded-lg p-6 shadow-sm">
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Additional Instructions</h3>
+                                    <p class="text-sm text-gray-600 mb-4">Provide any special instructions for students
+                                    </p>
+
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Special
+                                                Instructions (Optional)</label>
+                                            <textarea [(ngModel)]="specialInstructions" rows="4"
+                                                placeholder="Add any special instructions for students..."
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Additional Instructions when in public mode -->
+                                <div *ngIf="selectedMode === 'public'"
+                                    class="bg-white rounded-lg p-6 shadow-sm md:col-span-2">
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Additional Instructions</h3>
+                                    <p class="text-sm text-gray-600 mb-4">Provide any special instructions for students
+                                    </p>
+
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Special
+                                                Instructions (Optional)</label>
+                                            <textarea [(ngModel)]="specialInstructions" rows="4"
+                                                placeholder="Add any special instructions for students..."
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -588,84 +653,66 @@
 
                     <!-- Step 4: Review & Confirm -->
                     <div *ngIf="currentStep === 4">
-                        <div class="section-header">
-                            <h2 class="section-title">Assignment Summary</h2>
-                            <p class="section-description">Review the details before finalizing the assignment</p>
+                        <div class="review-header">
+                            <h2>Assignment Summary</h2>
+                            <p>Review all details before finalizing the assignment</p>
                         </div>
 
-                        <div class="bg-white rounded-lg p-6 shadow-sm space-y-8">
+                        <div class="review-content">
                             <!-- Selected Assessment -->
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Selected Assessment</h3>
-                                <div class="bg-gray-50 rounded-lg p-4">
-                                    <ng-container *ngIf="filteredAssessments.length > 0">
-                                        <ng-container *ngTemplateOutlet="assessmentDetails; context: { $implicit: filteredAssessments[0] }">
-                                        </ng-container>
-                                    </ng-container>
+                            <div class="review-section-card">
+                                <div class="review-section-title">
+                                    <i class="fas fa-file-alt"></i>
+                                    <h3>Selected Assessment</h3>
+                                </div>
+
+                                <div *ngIf="filteredAssessments.length > 0" class="review-grid">
+                                    <div class="review-item">
+                                        <span class="review-item-label">Title</span>
+                                        <span class="review-item-value">{{filteredAssessments[0].title}}</span>
+                                    </div>
+                                    <div class="review-item">
+                                        <span class="review-item-label">Questions</span>
+                                        <span class="review-item-value">{{filteredAssessments[0].totalQuestions}}</span>
+                                    </div>
+                                    <div class="review-item">
+                                        <span class="review-item-label">Total Points</span>
+                                        <span class="review-item-value">{{filteredAssessments[0].totalPoints}}</span>
+                                    </div>
+                                    <div class="review-item">
+                                        <span class="review-item-label">Created Date</span>
+                                        <span class="review-item-value">{{filteredAssessments[0].createdAt |
+                                            date:'mediumDate'}}</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <ng-template #assessmentDetails let-selectedAssessment>
-                                <div class="flex items-start justify-between mb-2">
-                                    <div>
-                                        <div class="flex items-center gap-2">
-                                            <span [class]="'badge-' + selectedAssessment.status.toLowerCase()">
-                                                {{selectedAssessment.status | titlecase}}
-                                            </span>
-                                            <h4 class="text-base font-medium text-gray-900">{{selectedAssessment.title}}</h4>
-                                        </div>
-                                    </div>
+                            <!-- Recipients -->
+                            <div class="review-section-card">
+                                <div class="review-section-title">
+                                    <i class="fas fa-users"></i>
+                                    <h3>Recipients</h3>
                                 </div>
-                                <div class="flex items-center gap-4 text-sm text-gray-600">
-                                    <span class="flex items-center">
-                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                                        </svg>
-                                        {{selectedAssessment.totalQuestions}} Questions
-                                    </span>
-                                    <span class="flex items-center">
-                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
-                                        </svg>
-                                        {{selectedAssessment.totalPoints}} Points
-                                    </span>
-                                    <span class="flex items-center">
-                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                        </svg>
-                                        {{selectedAssessment.createdAt | date:'mediumDate'}}
-                                    </span>
-                                </div>
-                                
-                                <!-- Question Types -->
-                                <div class="mt-4" *ngIf="selectedAssessment.questionTypes">
-                                    <div class="text-sm text-gray-600 font-medium mb-2">Question Types:</div>
-                                    <div class="flex flex-wrap gap-2">
-                                        <span *ngFor="let type of getQuestionTypes(selectedAssessment.questionTypes)" 
-                                              class="px-2 py-1 bg-gray-100 rounded-full text-xs text-gray-700">
-                                            {{type.type | titlecase}}: {{type.count}}
-                                        </span>
-                                    </div>
-                                </div>
-                            </ng-template>
 
-                            <!-- Assigned To -->
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Assigned To</h3>
-                                <div *ngIf="assignmentType === 'individual'" class="space-y-2">
-                                    <p class="text-sm text-gray-600">{{selectedStudents.size}} Individual Students</p>
-                                    <div class="flex flex-wrap gap-2">
-                                        <span *ngFor="let studentId of selectedStudents" 
-                                              class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-800">
+                                <div *ngIf="assignmentType === 'individual'" class="review-item">
+                                    <span class="review-item-label">Selected Students</span>
+                                    <span class="review-item-value">{{selectedStudents.size}} Students</span>
+                                </div>
+                                <div *ngIf="assignmentType === 'classes'" class="review-item">
+                                    <span class="review-item-label">Selected Classes</span>
+                                    <span class="review-item-value">{{selectedClasses.size}} Classes</span>
+                                </div>
+
+                                <div class="recipient-chips">
+                                    <div *ngIf="assignmentType === 'individual'">
+                                        <span *ngFor="let studentId of selectedStudents" class="recipient-chip">
+                                            <i class="fas fa-user"></i>
                                             {{getStudentName(studentId)}}
                                         </span>
                                     </div>
-                                </div>
-                                <div *ngIf="assignmentType === 'classes'" class="space-y-2">
-                                    <p class="text-sm text-gray-600">{{selectedClasses.size}} Classes</p>
-                                    <div class="flex flex-wrap gap-2">
-                                        <span *ngFor="let classId of selectedClasses" 
-                                              class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-800">
+                                    <div *ngIf="assignmentType === 'classes'">
+                                        <span *ngFor="let classId of selectedClasses" class="recipient-chip">
+                                            <i class="fas fa-users"></i>
                                             {{getClassName(classId)}}
                                         </span>
                                     </div>
@@ -673,88 +720,96 @@
                             </div>
 
                             <!-- Assignment Settings -->
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Assignment Settings</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <!-- Due Date & Time -->
-                                    <div class="bg-gray-50 rounded-lg p-4">
-                                        <h4 class="font-medium text-gray-900 mb-3">Due Date & Time</h4>
-                                        <div class="space-y-2 text-sm">
-                                            <div class="flex justify-between">
-                                                <span class="text-gray-600">Due Date:</span>
-                                                <span class="text-gray-900">{{dueDate | date:'mediumDate'}}</span>
-                                            </div>
-                                            <div class="flex justify-between">
-                                                <span class="text-gray-600">Time Limit:</span>
-                                                <span class="text-gray-900">{{timeLimit || 'Default'}} minutes</span>
-                                            </div>
-                                            <div class="flex justify-between">
-                                                <span class="text-gray-600">Late Submissions:</span>
-                                                <span class="text-gray-900">{{allowLateSubmissions ? 'Allowed' : 'Not Allowed'}}</span>
-                                            </div>
+                            <div class="review-section-card">
+                                <div class="review-section-title">
+                                    <i class="fas fa-cog"></i>
+                                    <h3>Assignment Settings</h3>
+                                </div>
+
+                                <div class="review-grid">
+                                    <div class="review-item">
+                                        <span class="review-item-label">Mode</span>
+                                        <span class="review-item-value">{{selectedMode | titlecase}}</span>
+                                    </div>
+                                    <div class="review-item">
+                                        <span class="review-item-label">Time Limit</span>
+                                        <span class="review-item-value">{{timeLimit}} minutes</span>
+                                    </div>
+                                    <div class="review-item">
+                                        <span class="review-item-label">Start Date</span>
+                                        <span class="review-item-value">{{startDate | date:'medium'}}</span>
+                                    </div>
+                                    <div class="review-item">
+                                        <span class="review-item-label">Due Date</span>
+                                        <span class="review-item-value">{{dueDate | date:'medium'}}</span>
+                                    </div>
+                                    <div class="review-item">
+                                        <span class="review-item-label">Attempts Allowed</span>
+                                        <span class="review-item-value">{{attemptsAllowed}}</span>
+                                    </div>
+                                    <div class="review-item">
+                                        <span class="review-item-label">Show Results</span>
+                                        <span class="review-item-value">
+                                            {{showResults === 'immediate' ? 'Immediately' :
+                                            showResults === 'after_due' ? 'After Due Date' : 'Manual Release'}}
+                                        </span>
+                                    </div>
+                                    <div class="review-item">
+                                        <span class="review-item-label">Late Submissions</span>
+                                        <span class="review-item-value">{{allowLateSubmissions ? 'Allowed' : 'Not
+                                            Allowed'}}</span>
+                                    </div>
+                                    <div class="review-item">
+                                        <span class="review-item-label">Randomize Questions</span>
+                                        <span class="review-item-value">{{randomizeQuestions ? 'Yes' : 'No'}}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Mode-specific settings -->
+                                <div *ngIf="selectedMode === 'mastery'" class="review-summary">
+                                    <div class="summary-title">Mastery Mode Settings</div>
+                                    <div class="summary-items">
+                                        <div class="summary-item">
+                                            <div class="summary-label">Required Score</div>
+                                            <div class="summary-value">{{masteryScore}} points</div>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <!-- Results & Attempts -->
-                                    <div class="bg-gray-50 rounded-lg p-4">
-                                        <h4 class="font-medium text-gray-900 mb-3">Results & Attempts</h4>
-                                        <div class="space-y-2 text-sm">
-                                            <div class="flex justify-between">
-                                                <span class="text-gray-600">Show Results:</span>
-                                                <span class="text-gray-900">
-                                                    {{showResults === 'immediate' ? 'Immediately after submission' : 
-                                                       showResults === 'after_due' ? 'After due date' : 'Manually release results'}}
-                                                </span>
-                                            </div>
-                                            <div class="flex justify-between">
-                                                <span class="text-gray-600">Passing Score:</span>
-                                                <span class="text-gray-900">{{passingScore}}%</span>
-                                            </div>
-                                            <div class="flex justify-between">
-                                                <span class="text-gray-600">Attempts:</span>
-                                                <span class="text-gray-900">{{attemptsAllowed}}</span>
-                                            </div>
-                                            <div class="flex justify-between">
-                                                <span class="text-gray-600">Randomize Questions:</span>
-                                                <span class="text-gray-900">{{randomizeQuestions ? 'Yes' : 'No'}}</span>
-                                            </div>
+                                <div *ngIf="selectedMode === 'public'" class="review-summary">
+                                    <div class="summary-title">Public Access Settings</div>
+                                    <div class="summary-items">
+                                        <div class="summary-item">
+                                            <div class="summary-label">Joining Code</div>
+                                            <div class="summary-value">{{joiningCode}}</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Special Instructions -->
-                            <div *ngIf="specialInstructions">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Special Instructions</h3>
-                                <div class="bg-gray-50 rounded-lg p-4">
-                                    <p class="text-sm text-gray-600 whitespace-pre-line">{{specialInstructions}}</p>
+                            <div *ngIf="specialInstructions" class="review-section-card">
+                                <div class="review-section-title">
+                                    <i class="fas fa-info-circle"></i>
+                                    <h3>Special Instructions</h3>
+                                </div>
+                                <div class="special-instructions">
+                                    {{specialInstructions}}
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Navigation Buttons -->
-                    <div class="navigation-buttons">
-                        <button (click)="onBack()" 
-                                class="button button-cancel"
-                                [disabled]="currentStep === 1">
+                    <!-- Navigation buttons at the bottom of each step -->
+                    <div class="nav-buttons">
+                        <button *ngIf="currentStep > 1" class="nav-btn btn-back" (click)="onBack()">
+                            <i class="fas fa-arrow-left mr-2"></i>
                             Back
                         </button>
-                        <button (click)="onNext()"
-                                class="button"
-                                [ngClass]="{'button-next': 
-                                    (currentStep === 1 && selectedAssessments.size > 0) ||
-                                    (currentStep === 2 && ((assignmentType === 'classes' && selectedClasses.size > 0) || 
-                                                         (assignmentType === 'individual' && selectedStudents.size > 0))) ||
-                                    (currentStep === 3) ||
-                                    (currentStep === 4)
-                                }"
-                                [disabled]="
-                                    (currentStep === 1 && selectedAssessments.size === 0) ||
-                                    (currentStep === 2 && ((assignmentType === 'classes' && selectedClasses.size === 0) || 
-                                                         (assignmentType === 'individual' && selectedStudents.size === 0)))
-                                ">
-                            {{currentStep === 4 ? 'Confirm' : 'Next'}}
+                        <div></div> <!-- Spacer when back button is hidden -->
+                        <button class="nav-btn btn-next" [disabled]="!canProceed()" (click)="onNext(); scrollToTop()">
+                            {{currentStep === 4 ? 'Assign Assessment' : 'Next'}}
+                            <i class="fas fa-arrow-right ml-2"></i>
                         </button>
                     </div>
                 </div>
@@ -762,4 +817,3 @@
         </div>
     </div>
 </div>
-
