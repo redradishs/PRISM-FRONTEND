@@ -215,7 +215,7 @@
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
-                                    <tr (click)="student.status?.toLowerCase() === 'submitted' ? assessmentDetails(student.id) : null"
+                                    <tr (click)="assessmentDetails(student)"
                                         *ngFor="let student of filteredStudents"
                                         [class.hover:bg-green-50]="student.status?.toLowerCase() === 'submitted'"
                                         [class.cursor-pointer]="student.status?.toLowerCase() === 'submitted'"

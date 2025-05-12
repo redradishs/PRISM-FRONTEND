@@ -379,10 +379,25 @@ export class ResultComponent implements OnInit, OnDestroy {
     "Students Struggled Most with understanding each Layer specifically the 3rd Layer",
   ];
 
-  assessmentDetails(id: string) {
-    this.router.navigate(['/instructor/response'], {
-      state: { studentId: id, assessmentId: this.assessmentId }
-    });
+  assessmentDetails(student: any) {
+    if(student.status?.toLowerCase() === 'submitted') {
+      this.router.navigate(['/instructor/response'], {
+        state: { studentId: student.id, assessmentId: this.assessmentId }
+      });
+    } else {
+      Swal.fire({
+        title: 'No Submission',
+        text: `${student.name} hasn\'t taken the assessment yet`,
+        icon: 'info',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 1000,
+        timerProgressBar: true,
+        background: '#fff',
+        iconColor: '#3b82f6'
+      });
+    }
   }
 
   toggleSidebar() {

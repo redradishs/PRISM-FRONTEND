@@ -46,6 +46,7 @@ interface Question {
   type: string;
   id: number;
   question: string;
+  questionNumber: number;
   answer: string | string[] | boolean;
   options?: { [key: string]: string };
   points: number;
@@ -55,6 +56,8 @@ interface Question {
 interface NewQuestion {
   type: string;
   count: number;
+  selectedTypes: { [key: string]: boolean };
+  counts: { [key: string]: number };
 }
 
 @Component({
@@ -80,9 +83,7 @@ export class CreateAssessmentComponent implements OnInit {
   assessmentData = {
     title: '',
     category: '',
-    timelimit: '60',
     passingScore: '70',
-    maxAttempts: '1',
   };
 
   aiGeneration = {
@@ -91,6 +92,12 @@ export class CreateAssessmentComponent implements OnInit {
     questionCount: '5',
     instructions: '',
   };
+  defaultPoints = {
+    'multiple-choice': 1,
+    'short-answer': 1,
+    'true-false': 1,
+    enumeration: 1,
+  }
   username: string = '';
   userId: number = 0;
   multipleChoiceOptions: string[] = Array(4).fill('');
@@ -110,11 +117,78 @@ export class CreateAssessmentComponent implements OnInit {
   newQuestion: NewQuestion = {
     type: 'multiple-choice',
     count: 1,
+    selectedTypes: {
+      'multiple-choice': false,
+      'enumeration': false,
+      'short-answer': false,
+      'true-false': false
+    },
+    counts: {
+      'multiple-choice': 1,
+      'enumeration': 1,
+      'short-answer': 1,
+      'true-false': 1
+    }
   };
   basicInfoError: string | null = null;
   extractedText: string = '';
   selectedFileName: string = '';
   showUploadSection = false;
+  showCategories = false;
+
+  questionTypes = [
+    {
+      value: 'multiple-choice',
+      label: 'Multiple Choice',
+      desc: 'Questions with several options',
+      icon: 'fas fa-file-text',
+      color: '#4f46e5'
+    },
+    {
+      value: 'enumeration',
+      label: 'Enumeration',
+      desc: 'List-based answers',
+      icon: 'fas fa-list',
+      color: '#9333ea'
+    },
+    {
+      value: 'short-answer',
+      label: 'Short Answer',
+      desc: 'Brief text responses',
+      icon: 'fas fa-comment',
+      color: '#ec4899'
+    },
+    {
+      value: 'true-false',
+      label: 'True/False',
+      desc: 'Binary choice questions',
+      icon: 'fas fa-check',
+      color: '#22c55e'
+    }
+  ];
+
+  categoryOptions = [
+    { value: 'programming', label: 'Programming Fundamentals', selected: false },
+    { value: 'datastructures', label: 'Data Structures', selected: false },
+    { value: 'algorithms', label: 'Algorithms', selected: false },
+    { value: 'networking', label: 'Networking', selected: false },
+    { value: 'os', label: 'Operating Systems', selected: false },
+    { value: 'databases', label: 'Databases', selected: false },
+    { value: 'webdevelopment', label: 'Web Development', selected: false },
+    { value: 'cybersecurity', label: 'Cybersecurity', selected: false },
+    { value: 'softwareengineering', label: 'Software Engineering', selected: false },
+    { value: 'discrete', label: 'Discrete Mathematics', selected: false },
+    { value: 'ai', label: 'Artificial Intelligence', selected: false },
+    { value: 'machinelearning', label: 'Machine Learning', selected: false },
+    { value: 'humancomputerinteraction', label: 'Human-Computer Interaction', selected: false },
+    { value: 'itfundamentals', label: 'IT Fundamentals', selected: false },
+    { value: 'mobiledevelopment', label: 'Mobile Development', selected: false },
+    { value: 'cloudcomputing', label: 'Cloud Computing', selected: false },
+    { value: 'devops', label: 'DevOps', selected: false },
+    { value: 'ethics', label: 'Ethics and IT Law', selected: false },
+    { value: 'iot', label: 'Internet of Things (IoT)', selected: false },
+    { value: 'robotics', label: 'Robotics', selected: false }
+  ];
 
   constructor(
     private api: ApiService,
@@ -295,9 +369,11 @@ export class CreateAssessmentComponent implements OnInit {
 
       if (Array.isArray(questions)) {
         questions.forEach((question: AIQuestion) => {
+          const questionType = this.mapQuestionType(question.type);
           const formattedQuestion: Question = {
-            type: this.mapQuestionType(question.type),
+            type: questionType,
             id: this.nextId++,
+            questionNumber: this.questions.length + 1,
             question: question.question,
             options:
               question.type.toLowerCase() === 'multiple choice'
@@ -312,7 +388,7 @@ export class CreateAssessmentComponent implements OnInit {
               question.type.toLowerCase() === 'true/false'
                 ? String(question.answer)
                 : question.answer,
-            points: 1,
+            points: this.defaultPoints[questionType as keyof typeof this.defaultPoints] || 1,
           };
 
           if (
@@ -342,6 +418,7 @@ export class CreateAssessmentComponent implements OnInit {
 
           this.questions.push(formattedQuestion);
         });
+        this.updateQuestionNumbers();
       }
     } catch (error) {
       console.error('Error parsing AI response:', error);
@@ -349,6 +426,13 @@ export class CreateAssessmentComponent implements OnInit {
     }
   }
 
+
+  private updateQuestionNumbers() {
+    this.questions.sort((a, b) => a.id - b.id);
+    this.questions.forEach((q, index) => {
+      q.questionNumber = index + 1;
+    });
+}
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
   }
@@ -395,68 +479,151 @@ export class CreateAssessmentComponent implements OnInit {
   }
 
   deleteQuestion(questionId: number) {
-    this.questions = this.questions.filter((q) => q.id !== questionId);
-    // Renumber remaining questions
-    this.questions = this.questions.map((q, index) => ({
-      ...q,
-      id: index + 1,
-    }));
-  }
-
-  editQuestion(questionId: number) {
-    const question = this.questions.find((q) => q.id === questionId);
-    if (question) {
-      // Set question for editing (you can implement modal/form logic here)
-      console.log('Editing question:', question);
+    const index = this.questions.findIndex((q) => q.id === questionId);
+    if (index !== -1) {
+      this.questions.splice(index, 1);
+      this.updateQuestionNumbers();
     }
   }
 
-  toggleEdit(questionId: number) {
-    this.editingQuestionId =
-      this.editingQuestionId === questionId ? null : questionId;
+  updateQuestionPoints(questionId: number, newPoints: number) {
+    const question = this.questions.find((q) => q.id === questionId);
+    if (question) {
+      question.points = Math.max(1, Math.round(newPoints));
+    }
+  }
+
+  toggleEditAndSave(question: Question) {
+    if (this.isEditing(question.id)) {
+      // Just exit edit mode
+      this.editingQuestionId = null;
+    } else {
+      this.editingQuestionId = question.id;
+    }
   }
 
   isEditing(questionId: number): boolean {
     return this.editingQuestionId === questionId;
   }
 
+  preventClose(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  handleKeyPress(event: any, questionId: number, type?: string, key?: string, index?: number) {
+    // Cast event to KeyboardEvent inside the method
+    const keyEvent = event as KeyboardEvent;
+    
+    if (keyEvent.key === 'Enter' && !keyEvent.shiftKey) {
+      event.preventDefault();
+      
+      // Get the value from the event target
+      const value = (event.target as HTMLTextAreaElement)?.value;
+      
+      // Save changes based on the type of input
+      const question = this.questions.find(q => q.id === questionId);
+      if (!question) return;
+
+      if (type === 'option' && key && value !== undefined) {
+        if (question.options) {
+          question.options[key] = value;
+        }
+      } else if (type === 'enum' && index !== undefined && value !== undefined) {
+        if (Array.isArray(question.answer)) {
+          question.answer[index] = value;
+        }
+      } else if (type === 'question' && value !== undefined) {
+        question.question = value;
+      }
+
+      // Exit edit mode
+      this.toggleEditAndSave(question);
+    }
+  }
+
   getEnumAnswer(answer: string | boolean | string[], index: number): string {
     return Array.isArray(answer) ? answer[index] : '';
   }
 
-  setEnumAnswer(question: Question, index: number, value: string): void {
+  setEnumAnswer(question: Question, index: number, value: string, event?: Event): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
     if (Array.isArray(question.answer)) {
       question.answer[index] = value;
     }
   }
 
+  setOptionAnswer(question: Question, key: string, value: string, event?: Event): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    if (question.options) {
+      console.log(`Setting option ${key} to "${value}"`); // Debug log
+      question.options[key] = value;
+    }
+  }
+
   addNewQuestions() {
     const startId = this.questions.length + 1;
-    for (let i = 0; i < this.newQuestion.count; i++) {
-      const question: Question = {
-        id: startId + i,
-        type: this.newQuestion.type,
-        question: '',
-        points: 1,
-        answer:
-          this.newQuestion.type === 'true-false'
-            ? 'True'
-            : this.newQuestion.type === 'enumeration'
-            ? []
-            : '',
-        options:
-          this.newQuestion.type === 'multiple-choice'
-            ? {
-                A: '',
-                B: '',
-                C: '',
-                D: '',
-              }
-            : undefined,
-      };
-      this.questions.push(question);
-    }
+    let added = 0;
+
+    Object.keys(this.newQuestion.selectedTypes).forEach(type => {
+      if (this.newQuestion.selectedTypes[type]) {
+        const count = Math.max(1, Math.round(this.newQuestion.counts[type] || 1));
+        for (let i = 0; i < count; i++) {
+          const question: Question = {
+            id: startId + added,
+            questionNumber: this.questions.length + 1 + added,
+            type: type,
+            question: '',
+            points: this.defaultPoints[type as keyof typeof this.defaultPoints] || 1,
+            answer:
+              type === 'true-false'
+                ? 'True'
+                : type === 'enumeration'
+                ? []
+                : '',
+            options:
+              type === 'multiple-choice'
+                ? {
+                    A: '',
+                    B: '',
+                    C: '',
+                    D: '',
+                  }
+                : undefined,
+          };
+          this.questions.push(question);
+          added++;
+        }
+      }
+    });
+
     this.showAddDialog = false;
+    this.resetModalQuestions();
+    this.updateQuestionNumbers();
+  }
+  resetModalQuestions() {
+    this.newQuestion = {
+      type: 'multiple-choice',
+      count: 1,
+      selectedTypes: {
+        'multiple-choice': false,
+        'enumeration': false,
+        'short-answer': false,
+        'true-false': false
+      },
+      counts: {
+        'multiple-choice': 1,
+        'enumeration': 1,
+        'short-answer': 1,
+        'true-false': 1
+      }
+    };
   }
 
   confirmPublish() {
@@ -484,14 +651,17 @@ export class CreateAssessmentComponent implements OnInit {
   publishAssessment() {
     if (
       this.assessmentData.title === '' ||
-      this.assessmentData.category === '' ||
-      this.assessmentData.timelimit === '' ||
-      this.assessmentData.passingScore === '' ||
-      this.assessmentData.maxAttempts === ''
+      this.getSelectedCount() === 0 ||
+      this.assessmentData.passingScore === ''
     ) {
       this.basicInfoError = 'Please fill in all fields';
       return;
     }
+
+    const categoryString = this.categoryOptions
+      .filter(cat => cat.selected)
+      .map(cat => cat.label)
+      .join(', ');
 
     const format = this.questions.map((q) => {
       const base = {
@@ -516,13 +686,15 @@ export class CreateAssessmentComponent implements OnInit {
 
       return base;
     });
+    
+    const totalPoints = this.questions.reduce((sum, q) => sum + (q.points || 0), 0);
 
     const assessmentData = {
       title: this.assessmentData.title,
       passingScore: this.assessmentData.passingScore,
-      category: this.assessmentData.category,
+      category: categoryString,
       questions: format,
-      totalPoints: format.length,
+      totalPoints: totalPoints,
       createdBy: this.userId,
       status: 'draft',
     };
@@ -542,9 +714,7 @@ export class CreateAssessmentComponent implements OnInit {
           this.assessmentData = {
             title: '',
             category: '',
-            timelimit: '60',
             passingScore: '70',
-            maxAttempts: '1',
           };
 
           this.aiGeneration = {
@@ -569,7 +739,7 @@ export class CreateAssessmentComponent implements OnInit {
         console.error('Error creating assessment', error);
         Swal.fire({
           title: 'Error!',
-          text: 'Failed to create assessment. Please try again.',
+          text: error.message || 'Failed to create assessment. Please try again.',
           icon: 'error',
           confirmButtonColor: '#6366f1',
           customClass: {
@@ -692,6 +862,50 @@ export class CreateAssessmentComponent implements OnInit {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  toggleNewQuestionType(type: string) {
+    this.newQuestion.selectedTypes[type] = !this.newQuestion.selectedTypes[type];
+  }
+
+  addEnumItem(question: Question) {
+    if (Array.isArray(question.answer)) {
+      question.answer.push('');
+    }
+  }
+  removeEnumItem(question: Question, index: number) {
+    if (Array.isArray(question.answer) && question.answer.length > 1) {
+      question.answer.splice(index, 1);
+    }
+  }
+
+  updateHiddenInput(value: string, hiddenInputId: string) {
+    const hiddenInput = document.getElementById(hiddenInputId) as HTMLInputElement;
+    if (hiddenInput) {
+      hiddenInput.value = value;
+    }
+  }
+
+  toggleCategories() {
+    this.showCategories = !this.showCategories;
+  }
+
+  getSelectedCount(): number {
+    return this.categoryOptions.filter(c => c.selected).length;
+  }
+
+  getSelectedCategories(): string[] {
+    return this.categoryOptions
+      .filter(c => c.selected)
+      .map(c => c.label)
+      .slice(0, 3); // Show only first 3 in pills
+  }
+
+  deselectCategory(label: string) {
+    const category = this.categoryOptions.find(c => c.label === label);
+    if (category) {
+      category.selected = false;
     }
   }
 }

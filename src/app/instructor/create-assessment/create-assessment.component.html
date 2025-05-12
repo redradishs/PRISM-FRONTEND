@@ -76,46 +76,44 @@
                     </div>
 
                     <div class="basicform-content">
-                        <div class="basicform-grid-2">
-                            <div class="basicform-field">
-                                <label for="title">Title</label>
-                                <input id="title" [(ngModel)]="assessmentData.title" type="text" class="basicform-input"
-                                    placeholder="Enter assessment title">
-                            </div>
+                        <div class="basicform-field">
+                            <label for="title">Title</label>
+                            <input id="title" [(ngModel)]="assessmentData.title" type="text" class="basicform-input"
+                                placeholder="Enter assessment title">
+                        </div>
 
-                            <div class="basicform-field">
-                                <label for="category">Subject/Category</label>
-                                <select id="category" class="basicform-select" [(ngModel)]="assessmentData.category">
-                                    <option value="" disabled>Select a category</option>
-                                    <option value="technical" selected>Technical & Programming</option>
-                                    <option value="stem">STEM</option>
-                                    <option value="business">Business & Management</option>
-                                    <option value="humanities">Humanities & Social Sciences</option>
-                                    <option value="language">Language & Communication</option>
-                                    <option value="professional">Professional Development</option>
-                                    <option value="general">General Education</option>
-                                </select>
+                        <div class="basicform-field category-section">
+                            <div class="category-header">
+                                <label>Subject/Category</label>
+                                <button type="button" class="toggle-btn" (click)="toggleCategories()">
+                                    {{ showCategories ? 'Hide' : 'Show' }} Categories
+                                    <i class="fas" [ngClass]="showCategories ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="selected-pills" *ngIf="getSelectedCount() > 0">
+                                <span class="pill" *ngFor="let cat of getSelectedCategories()">
+                                    {{ cat }}
+                                    <i class="fas fa-times" (click)="deselectCategory(cat)"></i>
+                                </span>
+                                <span class="count-badge" *ngIf="getSelectedCount() > 3">+{{ getSelectedCount() - 3 }} more</span>
+                            </div>
+                            
+                            <div class="categories-container" [class.hidden]="!showCategories">
+                                <div class="categories-grid">
+                                    <label class="category-item" *ngFor="let cat of categoryOptions">
+                                        <input type="checkbox" [(ngModel)]="cat.selected">
+                                        <span class="checkmark"></span>
+                                        <span class="label-text">{{ cat.label }}</span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="basicform-grid-3">
-                            <div class="basicform-field">
-                                <label for="time">Time Limit (minutes)</label>
-                                <input id="time" type="number" class="basicform-input" placeholder="60"
-                                    [(ngModel)]="assessmentData.timelimit">
-                            </div>
-
-                            <div class="basicform-field">
-                                <label for="score">Passing Score (%)</label>
-                                <input id="score" type="number" class="basicform-input" placeholder="75"
-                                    [(ngModel)]="assessmentData.passingScore">
-                            </div>
-
-                            <div class="basicform-field">
-                                <label for="attempts">Maximum Attempts</label>
-                                <input id="attempts" type="number" class="basicform-input" placeholder="1"
-                                    [(ngModel)]="assessmentData.maxAttempts">
-                            </div>
+                        <div class="basicform-field">
+                            <label for="score">Passing Score (%)</label>
+                            <input id="score" type="number" class="basicform-input" placeholder="75"
+                                [(ngModel)]="assessmentData.passingScore">
                         </div>
                     </div>
 
@@ -424,12 +422,21 @@
                     <div class="qtype-card" *ngFor="let question of getQuestionsByType('multiple-choice')">
                         <div class="qtype-header">
                             <div class="qtype-badge-group">
-                                <span class="qtype-number">Question {{ question.id }}</span>
-                                <span class="qtype-points">{{ question.points }} points</span>
+                                <span class="qtype-number">Question {{ question.questionNumber }}</span>
+                                <div class="qtype-points-container">
+                                    <input type="number" 
+                                           [readonly]="!isEditing(question.id)"
+                                           [(ngModel)]="question.points"
+                                           (change)="updateQuestionPoints(question.id, question.points)"
+                                           class="qtype-points-input"
+                                           min="1">
+                                    <span class="qtype-points-label">points</span>
+                                </div>
                             </div>
                             <div class="qtype-actions">
-                                <button class="qtype-btn" (click)="toggleEdit(question.id)">
+                                <button class="qtype-btn qtype-text-btn" (click)="toggleEditAndSave(question)">
                                     <i class="fas" [ngClass]="isEditing(question.id) ? 'fa-check' : 'fa-edit'"></i>
+                                    <span class="btn-text">{{ isEditing(question.id) ? 'Double Click to Save' : 'Double Click to Edit' }}</span>
                                 </button>
                                 <button class="qtype-btn qtype-btn-delete" (click)="deleteQuestion(question.id)">
                                     <i class="fas fa-trash"></i>
@@ -437,17 +444,33 @@
                             </div>
                         </div>
 
-                        <div class="qtype-content">
-                            <textarea class="qtype-question-edit" [(ngModel)]="question.question"
-                                [readonly]="!isEditing(question.id)" rows="2">
+                        <div class="qtype-content" (dblclick)="toggleEditAndSave(question)">
+                            <textarea class="qtype-question-edit" 
+                                [(ngModel)]="question.question"
+                                [placeholder]="!question.question ? 'Double click to edit this question' : ''"
+                                [readonly]="!isEditing(question.id)" 
+                                rows="2"
+                                (keydown)="handleKeyPress($event, question.id, question.question, 'question')">
                             </textarea>
                             <div class="qtype-options">
-                                <div class="qtype-option" *ngFor="let opt of question.options | keyvalue">
+                                <div class="qtype-option" *ngFor="let opt of question.options | keyvalue" (click)="preventClose($event)">
                                     <input type="radio" [name]="'q' + question.id"
-                                        [id]="'q' + question.id + '-' + opt.key" [checked]="opt.key === question.answer"
-                                        (click)="isEditing(question.id) && (question.answer = opt.key)">
-                                    <input *ngIf="isEditing(question.id)" type="text"
-                                        [(ngModel)]="question.options![opt.key]" class="qtype-option-edit">
+                                        [id]="'q' + question.id + '-' + opt.key" 
+                                        [checked]="opt.key === question.answer"
+                                        (click)="isEditing(question.id) && (question.answer = opt.key); $event.stopPropagation()"
+                                        (keydown)="handleKeyPress($event, question.id, 'option', opt.key)">
+                                    <textarea *ngIf="isEditing(question.id)" 
+                                        [ngModel]="question.options![opt.key]"
+                                        (ngModelChange)="setOptionAnswer(question, opt.key, $event, $event)"
+                                        class="qtype-option-edit"
+                                        [attr.data-opt-key]="opt.key"
+                                        rows="1"
+                                        [readOnly]="!isEditing(question.id)"
+                                        (click)="$event.stopPropagation()"
+                                        (focus)="$event.stopPropagation()"
+                                        (blur)="$event.stopPropagation()"
+                                        (keydown)="handleKeyPress($event, question.id, 'option', opt.key)">
+                                    </textarea>
                                     <label *ngIf="!isEditing(question.id)" [for]="'q' + question.id + '-' + opt.key">
                                         {{ question.options ? opt.value : '' }}
                                     </label>
@@ -461,12 +484,21 @@
                     <div class="qtype-card" *ngFor="let question of getQuestionsByType('enumeration')">
                         <div class="qtype-header">
                             <div class="qtype-badge-group">
-                                <span class="qtype-number">Question {{ question.id }}</span>
-                                <span class="qtype-points">{{ question.points }} points</span>
+                                <span class="qtype-number">Question {{ question.questionNumber }}</span>
+                                <div class="qtype-points-container">
+                                    <input type="number" 
+                                           [readonly]="!isEditing(question.id)"
+                                           [(ngModel)]="question.points"
+                                           (change) ="updateQuestionPoints(question.id, question.points)"
+                                           class="qtype-points-input"
+                                           min="1">
+                                    <span class="qtype-points-label">points</span>
+                                </div>
                             </div>
                             <div class="qtype-actions">
-                                <button class="qtype-btn" (click)="toggleEdit(question.id)">
+                                <button class="qtype-btn qtype-text-btn" (click)="toggleEditAndSave(question)">
                                     <i class="fas" [ngClass]="isEditing(question.id) ? 'fa-check' : 'fa-edit'"></i>
+                                    <span class="btn-text">{{ isEditing(question.id) ? 'Double Click to Save' : 'Double Click to Edit' }}</span>
                                 </button>
                                 <button class="qtype-btn qtype-btn-delete" (click)="deleteQuestion(question.id)">
                                     <i class="fas fa-trash"></i>
@@ -474,18 +506,37 @@
                             </div>
                         </div>
 
-                        <div class="qtype-content">
-                            <textarea class="qtype-question-edit" [(ngModel)]="question.question"
-                                [readonly]="!isEditing(question.id)" rows="2">
+                        <div class="qtype-content" (dblclick)="toggleEditAndSave(question)">
+                            <textarea class="qtype-question-edit" 
+                                [(ngModel)]="question.question"
+                                [placeholder]="!question.question ? 'Double click to edit this question' : ''"
+                                [readonly]="!isEditing(question.id)" 
+                                rows="2"
+                                (keydown)="handleKeyPress($event, question.id, question.question, 'question')">
                             </textarea>
                             <div class="qtype-enum-answers">
                                 <div class="qtype-enum-item"
-                                    *ngFor="let answer of isArray(question.answer) ? question.answer : []; let i = index">
+                                    *ngFor="let answer of isArray(question.answer) ? question.answer : []; let i = index"
+                                    (click)="preventClose($event)">
                                     <span class="qtype-enum-number">{{ i + 1 }}.</span>
-                                    <input type="text" [ngModel]="getEnumAnswer(question.answer, i)"
-                                        (ngModelChange)="setEnumAnswer(question, i, $event)"
-                                        [readonly]="!isEditing(question.id)" class="qtype-enum-edit">
+                                    <textarea 
+                                        [ngModel]="getEnumAnswer(question.answer, i)"
+                                        (ngModelChange)="setEnumAnswer(question, i, $event, $event)"
+                                        [readonly]="!isEditing(question.id)" 
+                                        class="qtype-enum-edit"
+                                        rows="1"
+                                        (click)="$event.stopPropagation()"
+                                        (focus)="$event.stopPropagation()"
+                                        (blur)="$event.stopPropagation()"
+                                        (keydown)="handleKeyPress($event, question.id, 'enum', undefined, i)">
+                                    </textarea>
+                                    <button *ngIf="isEditing(question.id)" class="qtype-btn qtype-btn-delete" (click)="removeEnumItem(question, i)">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
                                 </div>
+                                <button *ngIf="isEditing(question.id)" class="qtype-btn qtype-btn-add" (click)="addEnumItem(question)">
+                                    <i class="fas fa-plus"></i> Add Item
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -494,12 +545,21 @@
                     <div class="qtype-card" *ngFor="let question of getQuestionsByType('short-answer')">
                         <div class="qtype-header">
                             <div class="qtype-badge-group">
-                                <span class="qtype-number">Question {{ question.id }}</span>
-                                <span class="qtype-points">{{ question.points }} points</span>
+                                <span class="qtype-number">Question {{ question.questionNumber }}</span>
+                                <div class="qtype-points-container">
+                                    <input type="number" 
+                                           [readonly]="!isEditing(question.id)"
+                                           [(ngModel)]="question.points"
+                                           (change)="updateQuestionPoints(question.id, question.points)"
+                                           class="qtype-points-input"
+                                           min="1">
+                                    <span class="qtype-points-label">points</span>
+                                </div>
                             </div>
                             <div class="qtype-actions">
-                                <button class="qtype-btn" (click)="toggleEdit(question.id)">
+                                <button class="qtype-btn qtype-text-btn" (click)="toggleEditAndSave(question)">
                                     <i class="fas" [ngClass]="isEditing(question.id) ? 'fa-check' : 'fa-edit'"></i>
+                                    <span class="btn-text">{{ isEditing(question.id) ? 'Double Click to Save' : 'Double Click to Edit' }}</span>
                                 </button>
                                 <button class="qtype-btn qtype-btn-delete" (click)="deleteQuestion(question.id)">
                                     <i class="fas fa-trash"></i>
@@ -507,12 +567,24 @@
                             </div>
                         </div>
 
-                        <div class="qtype-content">
-                            <textarea class="qtype-question-edit" [(ngModel)]="question.question"
-                                [readonly]="!isEditing(question.id)" rows="2">
+                        <div class="qtype-content" (dblclick)="toggleEditAndSave(question)">
+                            <textarea class="qtype-question-edit" 
+                                [(ngModel)]="question.question"
+                                [placeholder]="!question.question ? 'Double click to edit this question' : ''"
+                                [readonly]="!isEditing(question.id)" 
+                                rows="2"
+                                (keydown)="handleKeyPress($event, question.id, question.question, 'question')">
                             </textarea>
                             <div class="qtype-answer-box">
-                                <p>{{ question.answer }}</p>
+                                <input
+                                    *ngIf="isEditing(question.id)"
+                                    type="text"
+                                    [(ngModel)]="question.answer"
+                                    class="qtype-short-edit"
+                                    placeholder="Short answer"
+                                    (keydown.enter)="handleKeyPress($event, question.id, 'short-answer', undefined)"
+                                />
+                                <p *ngIf="!isEditing(question.id)">{{ question.answer }}</p>
                             </div>
                         </div>
                     </div>
@@ -521,12 +593,21 @@
                     <div class="qtype-card" *ngFor="let question of getQuestionsByType('true-false')">
                         <div class="qtype-header">
                             <div class="qtype-badge-group">
-                                <span class="qtype-number">Question {{ question.id }}</span>
-                                <span class="qtype-points">{{ question.points }} points</span>
+                                <span class="qtype-number">Question {{ question.questionNumber }}</span>
+                                <div class="qtype-points-container">
+                                    <input type="number" 
+                                           [readonly]="!isEditing(question.id)"
+                                           [(ngModel)]="question.points"
+                                           (change)="updateQuestionPoints(question.id, question.points)"
+                                           class="qtype-points-input"
+                                           min="1">
+                                    <span class="qtype-points-label">points</span>
+                                </div>
                             </div>
                             <div class="qtype-actions">
-                                <button class="qtype-btn" (click)="toggleEdit(question.id)">
+                                <button class="qtype-btn qtype-text-btn" (click)="toggleEditAndSave(question)">
                                     <i class="fas" [ngClass]="isEditing(question.id) ? 'fa-check' : 'fa-edit'"></i>
+                                    <span class="btn-text">{{ isEditing(question.id) ? 'Double Click to Save' : 'Double Click to Edit' }}</span>
                                 </button>
                                 <button class="qtype-btn qtype-btn-delete" (click)="deleteQuestion(question.id)">
                                     <i class="fas fa-trash"></i>
@@ -534,9 +615,13 @@
                             </div>
                         </div>
 
-                        <div class="qtype-content">
-                            <textarea class="qtype-question-edit" [(ngModel)]="question.question"
-                                [readonly]="!isEditing(question.id)" rows="2">
+                        <div class="qtype-content" (dblclick)="toggleEditAndSave(question)">
+                            <textarea class="qtype-question-edit" 
+                                [(ngModel)]="question.question"
+                                [placeholder]="!question.question ? 'Double click to edit this question' : ''"
+                                [readonly]="!isEditing(question.id)" 
+                                rows="2"
+                                (keydown)="handleKeyPress($event, question.id, question.question, 'question')">
                             </textarea>
                             <div class="qtype-options">
                                 <div class="qtype-option">
@@ -565,37 +650,48 @@
     </div>
 </div>
 
-<div class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50" *ngIf="showAddDialog">
-    <div class="bg-white rounded-lg p-6 w-96">
-        <h3 class="text-lg font-semibold mb-4">Add New Question</h3>
-
-        <div class="space-y-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Question Type</label>
-                <select [(ngModel)]="newQuestion.type" class="w-full border border-gray-300 rounded-md px-3 py-2">
-                    <option value="multiple-choice">Multiple Choice</option>
-                    <option value="true-false">True/False</option>
-                    <option value="enumeration">Enumeration</option>
-                    <option value="short-answer">Short Answer</option>
-                </select>
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Number of Questions</label>
-                <input type="number" [(ngModel)]="newQuestion.count" min="1" max="20"
-                    class="w-full border border-gray-300 rounded-md px-3 py-2">
-            </div>
-        </div>
-
-        <div class="mt-6 flex justify-end space-x-3">
-            <button (click)="showAddDialog = false"
-                class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
-                Cancel
-            </button>
-            <button (click)="addNewQuestions()"
-                class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
-                Add Questions
-            </button>
-        </div>
+<!-- Add Question Modal -->
+<div class="modal-overlay" *ngIf="showAddDialog">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3>Add New Question</h3>
+      <button class="modal-close" (click)="showAddDialog = false">&times;</button>
     </div>
+    <div class="modal-content">
+      <label class="modal-section-title center">Question Types</label>
+      <div class="modal-qtype-grid">
+        <div
+          class="modal-qtype-card"
+          *ngFor="let type of questionTypes"
+          [class.selected]="newQuestion.selectedTypes[type.value]"
+        >
+          <input
+            type="checkbox"
+            [checked]="newQuestion.selectedTypes[type.value]"
+            (change)="toggleNewQuestionType(type.value)"
+          />
+          <div class="modal-qtype-info">
+            <i [class]="type.icon + ' modal-qtype-icon'" [style.color]="type.color"></i>
+            <div>
+              <div class="modal-qtype-label">{{ type.label }}</div>
+              <div class="modal-qtype-desc">{{ type.desc }}</div>
+            </div>
+          </div>
+          <input
+            *ngIf="newQuestion.selectedTypes[type.value]"
+            type="number"
+            min="1"
+            max="20"
+            [(ngModel)]="newQuestion.counts[type.value]"
+            class="modal-qtype-count"
+            [placeholder]="'How many?'"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" (click)="showAddDialog = false">Cancel</button>
+      <button class="modal-btn primary" (click)="addNewQuestions()">Add Questions</button>
+    </div>
+  </div>
 </div>
