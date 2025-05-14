@@ -3091,3 +3091,26 @@ input:checked + .toggle-slider:before {
     padding: 8px 12px;
   }
 }
+
+.performance-badge {
+    padding: 0.35rem 0.6rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.performance-poor {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.performance-average {
+    background-color: #fef3c7;
+    color: #b45309;
+}
+
+.performance-good {
+    background-color: #dcfce7;
+    color: #15803d;
+}

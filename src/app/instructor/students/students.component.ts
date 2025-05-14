@@ -89,6 +89,7 @@ export class StudentsComponent implements OnInit {
   totalPages: number = 0;
   totalAssessments: number = 0;
   totalPages2: number = 0;
+  performanceOverall: number = 0;
 
   showPendingModal = false;
   autoAdmission = false;
@@ -137,8 +138,19 @@ export class StudentsComponent implements OnInit {
 
   dateError: string = "";
 
+  initialClassCodeToSelect: string | null = null;
+
   constructor(private api: ApiService, private auth: AuthService, private titleService: Title, private router: Router) {
     this.titleService.setTitle('PRISM | Students');
+    
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation?.extras?.state) {
+      const state = navigation.extras.state as { selectedClassCode?: string };
+      if (state.selectedClassCode) {
+        // Store the class code to select after classes are loaded
+        this.initialClassCodeToSelect = state.selectedClassCode;
+      }
+    }
   }
   
 
@@ -159,11 +171,23 @@ export class StudentsComponent implements OnInit {
       next: (resp: any) => {
         this.classes = resp.data;
         this.isLoading = false;
-        if(this.classes && this.classes.length > 0){
-          this.selectedClass = this.classes[0];
+        
+        if (this.classes && this.classes.length > 0) {
+          if (this.initialClassCodeToSelect) {
+            // Find and select the class with the matching code
+            const classToSelect = this.classes.find(c => c.classCode === this.initialClassCodeToSelect);
+            if (classToSelect) {
+              this.selectedClass = classToSelect;
+            } else {
+              this.selectedClass = this.classes[0];
+            }
+          } else {
+            this.selectedClass = this.classes[0];
+          }
           this.onClassSelect();
         }
-      }, error: (err) => {
+      },
+      error: (err) => {
         this.error = err.message;
         this.isLoading = false;
       }
@@ -219,6 +243,7 @@ export class StudentsComponent implements OnInit {
         this.admittedCount = resp.data.stats.admitted;
         this.pendingCount = resp.data.stats.pending;
         this.pendingRequests = resp.data.pendingStudents;
+        this.performanceOverall = resp.data.overallPerformance;
         this.allowJoining = resp.data.allowJoining;
         this.autoAdmission = resp.data.autoAdmission;
       }, error: (err) => {
@@ -370,10 +395,25 @@ export class StudentsComponent implements OnInit {
     }, this.DEBOUNCE_TIME);
   }
 
-  studentInfo(studentId: string) {
-    this.router.navigate(['instructor/students/assessments'], {
-      state: {studentId: studentId, classCode: this.selectedClass.classCode}
-    });
+  studentInfo(student: any) {
+    if(student.completion.charAt(0) > 0){
+      this.router.navigate(['instructor/students/assessments'], {
+        state: {studentId: student._id, classCode: this.selectedClass.classCode}
+      });
+    } else {
+      Swal.fire({
+        title: 'No Submission',
+        text: `${student.name} hasn\'t taken any assessment yet.`,
+        icon: 'info',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 1000,
+        timerProgressBar: true,
+        background: '#fff',
+        iconColor: '#3b82f6'
+      });
+    }
   }
 
 

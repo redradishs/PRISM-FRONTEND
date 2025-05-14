@@ -102,7 +102,7 @@
                         <div class="demo-stat-content">
                             <div class="demo-stat-info">
                                 <span class="demo-stat-label">PERFORMANCE</span>
-                                <div class="demo-stat-value">87%</div>
+                                <div class="demo-stat-value">{{performanceOverall}}%</div>
                                 <p class="demo-stat-description">Performance of this class</p>
                             </div>
                             <div class="demo-stat-icon performance">
@@ -183,7 +183,7 @@
                                                 No students found matching your search.
                                             </td>
                                         </tr>
-                                        <tr (click)="studentInfo(student._id)"
+                                        <tr (click)="studentInfo(student)"
                                             *ngFor="let student of currentStudentsInfo || []" class="demo-table-row">
                                             <td class="demo-table-cell">
                                                 <div class="demo-student-info">
@@ -197,11 +197,14 @@
                                             <td class="demo-table-cell">{{student.block ? 'Block ' + student.block :
                                                 'N/A'}}</td>
                                             <td class="demo-table-cell">
-                                                <!-- <span
-                                                    [class]="'demo-performance-value ' + getPerformanceColor(student.performance)">
-                                                    {{student.performance}}%
-                                                </span> -->
-                                                {{student.performance || 'NA'}}
+                                                <span class="performance-badge" 
+                                                [ngClass]="{
+                                                    'performance-poor': student.performancePercent < 50,
+                                                    'performance-average': student.performancePercent >= 50 && student.performancePercent <= 80,
+                                                    'performance-good': student.performancePercent > 80
+                                                }">
+                                              {{student.performancePercent}}%
+                                          </span>
                                             </td>
                                             <td class="demo-table-cell">
                                                 <div class="demo-completion-info">

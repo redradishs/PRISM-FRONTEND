@@ -950,4 +950,42 @@
 
 .resource-link:hover {
     background-color: #e5e7eb;
+}
+
+/* Progress bar color classes */
+.progress.red {
+    background-color: #ef4444;
+}
+
+.progress.orange {
+    background-color: #f97316;
+}
+
+.progress.green {
+    background-color: #22c55e;
+}
+
+
+.assessment-score .score.red {
+    color: #ef4444 !important;
+}
+
+.assessment-score .score.orange {
+    color: #f97316 !important;
+}
+
+.assessment-score .score.green {
+    color: #22c55e !important;
+}
+
+.progress-bar .progress.red {
+    background-color: #ef4444 !important;
+}
+
+.progress-bar .progress.orange {
+    background-color: #f97316 !important;
+}
+
+.progress-bar .progress.green {
+    background-color: #22c55e !important;
 } 

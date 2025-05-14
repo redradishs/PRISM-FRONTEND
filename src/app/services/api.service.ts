@@ -73,6 +73,14 @@ export class ApiService {
   // The AI CONTENT GENERATION ENDS HERE
 
   //normal api calls here, starts with dashboard
+
+  getStudentPerformance(id: string) {
+    return this.http.get(`${this.apiUrl}/students/performance/${id}/getData`);
+  }
+
+  getClassesCharts(id: string) {
+    return this.http.get(`${this.apiUrl}/classes/performance/${id}/charts`);
+  }
   getInstructorTotalStudents(id: string) {
     return this.http.get(`${this.apiUrl}/getInstructorTotalStudents/${id}`);
   }

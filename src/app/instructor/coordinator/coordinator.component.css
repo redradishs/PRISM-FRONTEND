@@ -682,4 +682,56 @@
     stroke-linecap: round;
     stroke-linejoin: round;
     fill: none;
+}
+
+/* Add this CSS rule for basic button active state */
+.pagination-controls .button.active {
+    background-color: #4f46e5;
+    border-color: #4f46e5;
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(79, 70, 229, 0.1);
+}
+
+/* Style for pagination buttons */
+.pagination-controls .button {
+    min-width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid #e5e7eb;
+    background-color: white;
+    color: #4b5563;
+    transition: all 0.2s ease;
+    margin: 0 0.125rem;
+}
+
+.pagination-controls .button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #f3f4f6;
+    border-color: #e5e7eb;
+}
+
+.pagination-controls .button:hover:not(.active):not(:disabled) {
+    background-color: #f3f4f6;
+    border-color: #d1d5db;
+    color: #111827;
+    transform: translateY(-1px);
+}
+
+.pagination-controls .button.icon-only {
+    width: 2.25rem;
+}
+
+.pagination-controls .button.icon-only svg {
+    width: 1rem;
+    height: 1rem;
+    stroke: currentColor;
+    stroke-width: 2.5;
 } 

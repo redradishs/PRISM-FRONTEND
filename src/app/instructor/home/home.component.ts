@@ -67,6 +67,8 @@ export class HomeComponent implements OnInit {
   scheduledAssessments: AssessmentProgress[] = [];
   totalScheduledAssessments: number = 0;
   remainingScheduledAssessments: number = 0;
+  topPerformingStudents: any[] = [];
+  charts: any[] = [];
 
   isMobile = window.innerWidth < 768;
   @HostListener('window:resize')
@@ -127,11 +129,110 @@ export class HomeComponent implements OnInit {
       try {
         console.log('Total classes:', resp.data);
         this.totalClasses = resp.data;
+        if(this.totalClasses > 0){
+          this.getClassesCharts();
+          this.getStudentPerformance(this.userId);
+        }
 
       } catch (error) {
         console.error('Error getting total classes:', error);
       }
     })
+  }
+
+  getStudentPerformance(id: string) {
+    this.api.getStudentPerformance(id).subscribe({
+      next: (resp: any) => {
+        this.topPerformingStudents = resp.data;
+        console.log('Top performing students:', this.topPerformingStudents);
+      },
+      error: (error) => {
+        console.error('Error getting student performance:', error);
+      }
+    })
+  }
+
+  getInitials(name: string){
+    const names = name.split(' ');
+    return names[0][0] + names[names.length - 1][0];
+  }
+
+  studentDetails(student: any) {
+    this.router.navigate(['instructor/students/assessments'], {
+      state: {studentId: student._id, classCode: student.classes[0].classCode}
+    })
+  }
+
+  navigateToStudentClass(event: Event, studentId: string, classCode: string) {
+    event.stopPropagation();
+    
+    console.log('Navigating to student class:', studentId, classCode);
+    this.router.navigate(['instructor/students/assessments'], {
+      state: {studentId: studentId, classCode: classCode}
+    });
+  }
+
+  getClassesCharts(){
+    this.api.getClassesCharts(this.userId).subscribe({
+      next: (resp: any) => {
+        this.charts = resp.data;
+        console.log('Class charts:', this.charts);
+        
+        // Update charts with real data
+        this.updateBarChartData();
+        this.updatePieChartData();
+      },
+      error: (error) => {
+        console.error('Error getting class charts:', error);
+      }
+    })
+  }
+
+  updateBarChartData() {
+    if (!this.charts || this.charts.length === 0) return;
+    
+    // Extract class names and performance data
+    const labels = this.charts.map(c => c.className);
+    const performanceData = this.charts.map(c => c.overallPerformance || 0);
+    const averageScores = this.charts.map(c => c.averageScore || 0);
+    const completionRates = this.charts.map(c => c.completionRate || 0);
+    
+    this.barChartData = {
+      labels: labels,
+      datasets: [
+        {
+          data: performanceData,
+          backgroundColor: '#0052CC',
+          label: 'Overall Performance'
+        },
+        {
+          data: averageScores,
+          backgroundColor: '#4C2A85',
+          label: 'Average Score'
+        },
+        {
+          data: completionRates,
+          backgroundColor: '#40C4AA',
+          label: 'Completion Rate'
+        }
+      ]
+    };
+  }
+
+  updatePieChartData() {
+    if (!this.charts || this.charts.length === 0) return;
+    
+    // Extract class names and student counts for pie chart
+    const labels = this.charts.map(c => c.className);
+    const studentCounts = this.charts.map(c => c.studentCount || 0);
+    
+    this.pieChartData = {
+      labels: labels,
+      datasets: [{
+        data: studentCounts,
+        backgroundColor: ['#0052CC', '#4C2A85', '#E63946', '#40C4AA', '#F59E0B', '#10B981']
+      }]
+    };
   }
 
   viewAll() {
@@ -207,15 +308,57 @@ export class HomeComponent implements OnInit {
 
   barChartOptions: ChartConfiguration<'bar'>['options'] = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: false
+        display: true,
+        position: 'bottom',
+        labels: {
+          usePointStyle: true,
+          padding: 20,
+          font: {
+            size: 12
+          }
+        }
+      },
+      tooltip: {
+        mode: 'index',
+        intersect: false,
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        titleColor: '#1f2937',
+        bodyColor: '#4b5563',
+        borderColor: '#e5e7eb',
+        borderWidth: 1,
+        padding: 12,
+        cornerRadius: 8,
+        titleFont: {
+          weight: 'bold'
+        }
       }
     },
     scales: {
       y: {
         beginAtZero: true,
-        max: 100
+        max: 100,
+        grid: {
+          display: true,
+          color: 'rgba(0, 0, 0, 0.05)'
+        },
+        ticks: {
+          font: {
+            size: 11
+          }
+        }
+      },
+      x: {
+        grid: {
+          display: false
+        },
+        ticks: {
+          font: {
+            size: 11
+          }
+        }
       }
     }
   };
@@ -231,9 +374,33 @@ export class HomeComponent implements OnInit {
 
   pieChartOptions: ChartConfiguration<'pie'>['options'] = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'bottom'
+        position: 'bottom',
+        labels: {
+          usePointStyle: true,
+          padding: 20,
+          font: {
+            size: 12
+          }
+        }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        titleColor: '#1f2937',
+        bodyColor: '#4b5563',
+        borderColor: '#e5e7eb',
+        borderWidth: 1,
+        padding: 12,
+        cornerRadius: 8,
+        callbacks: {
+          label: function(context) {
+            const label = context.label || '';
+            const value = context.raw || 0;
+            return `${label}: ${value} students`;
+          }
+        }
       }
     }
   };
@@ -293,6 +460,24 @@ export class HomeComponent implements OnInit {
         console.error('Error getting scheduled assessments:', error);
       }
     })
+  }
+
+  navigateToClass(classCode: string) {
+    console.log('Navigating to class:', classCode);
+    this.router.navigate(['instructor/students'], {
+      state: { selectedClassCode: classCode }
+    });
+  }
+
+  onChartClick(event: any) {
+    if (event.active && event.active.length > 0) {
+      const dataIndex = event.active[0].index;
+      if (this.charts && this.charts.length > dataIndex) {
+        const selectedClass = this.charts[dataIndex];
+        console.log('Chart clicked:', selectedClass);
+        this.navigateToClass(selectedClass.classCode);
+      }
+    }
   }
 
 }

@@ -295,7 +295,11 @@
                                         <span class="badge blue">{{i.category | uppercase}}</span>
                                     </div>
                                     <div class="assessment-score">
-                                        <span class="score">{{i.percentage}}%</span>
+                                        <span class="score" [ngClass]="{
+                                            'red': i.percentage < 50,
+                                            'orange': i.percentage >= 50 && i.percentage <= 80,
+                                            'green': i.percentage > 80
+                                        }">{{i.percentage}}%</span>
                                         <span class="details">{{i.score}} of {{i.totalPoints}} correct</span>
                                     </div>
                                 </div>
@@ -318,7 +322,14 @@
                                     </div>
                                 </div>
                                 <div class="progress-bar">
-                                    <div class="progress green" style="width: 95%"></div>
+                                    <div class="progress" 
+                                         [ngClass]="{
+                                           'red': i.percentage < 50,
+                                           'orange': i.percentage >= 50 && i.percentage <= 80,
+                                           'green': i.percentage > 80
+                                         }"
+                                         [style.width.%]="i.percentage">
+                                    </div>
                                 </div>
                                 <a href="#" class="view-details">View Details</a>
                             </div>
