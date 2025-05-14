@@ -141,8 +141,16 @@
                                 <span>Class Highest:</span>
                                 <span>{{assessmentDetails.assessment?.classPerformance?.highest}}%</span>
                             </div>
+                            <div class="infoitem violations-toggle" (click)="toggleViolationsView()" *ngIf="assessmentDetails.violations && assessmentDetails.violations.count > 0">
+                                <span>Violation Count: </span>
+                                <div class="violation-count-badge">
+                                    <span>{{assessmentDetails.violations?.count}}x</span>
+                                    <i class="fas" [ngClass]="{'fa-chevron-down': !showViolations, 'fa-chevron-up': showViolations}"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    
 
                     <!-- Score Overview Card -->
                     <div class="contauko">
@@ -252,6 +260,46 @@
                                         date: 'M/d/yyyy h:mm a'}}</span>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="assessmentDetails.violations && assessmentDetails.violations.count > 0 && showViolations" class="simple-violations-box">
+                    <div class="simple-violations-header">
+                        <div class="simple-violations-title">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Integrity Violations
+                        </div>
+                        <div class="simple-violations-counter">{{assessmentDetails.violations.count}} detected</div>
+                    </div>
+                    <div class="simple-violations-list">
+                        <div *ngFor="let violation of assessmentDetails.violations.details" class="simple-violation-item">
+                            <div class="simple-violation-left-border" [ngClass]="{
+                                'window-border': violation.type.includes('Window') || violation.type.includes('resize'),
+                                'tab-border': violation.type.includes('tab') || violation.type.includes('Tab'),
+                                'screenshot-border': violation.type.includes('Screenshot') || violation.type.includes('screenshot')
+                            }"></div>
+                            <div class="simple-violation-icon" [ngClass]="{
+                                'window-icon': violation.type.includes('Window') || violation.type.includes('resize'),
+                                'tab-icon': violation.type.includes('tab') || violation.type.includes('Tab'),
+                                'screenshot-icon': violation.type.includes('Screenshot') || violation.type.includes('screenshot'),
+                                'generic-icon': violation.type === 'integrity_violation'
+                            }">
+                                <i class="fas" [ngClass]="{
+                                    'fa-window-restore': violation.type.includes('tab') || violation.type.includes('Tab'),
+                                    'fa-expand-arrows-alt': violation.type.includes('Window') || violation.type.includes('resize'),
+                                    'fa-camera': violation.type.includes('Screenshot') || violation.type.includes('screenshot'),
+                                    'fa-exclamation-circle': violation.type === 'integrity_violation'
+                                }"></i>
+                            </div>
+                            <div class="simple-violation-content">
+                                <div class="simple-violation-type">{{violation.type === 'integrity_violation' ? 'Integrity Violation' : violation.type}}</div>
+                                <div class="simple-violation-question" *ngIf="violation.question">
+                                    <span class="question-label">Question {{violation.question?.number || '–'}}:</span>
+                                    <span class="question-content">{{violation.question?.text || 'Unknown question'}}</span>
+                                </div>
+                            </div>
+                            <div class="simple-violation-time">{{violation.timestamp | date:'M/dd/yy, h:mm a'}}</div>
                         </div>
                     </div>
                 </div>

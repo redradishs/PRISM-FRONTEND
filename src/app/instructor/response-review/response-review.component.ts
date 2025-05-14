@@ -24,6 +24,7 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
   studentId: string = '';
   assessmentDetails: any = {};
   qna: any[] = [];
+  showViolations: boolean = false;
 
   
   @HostListener('window:resize')
@@ -259,5 +260,9 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
       default:
         return '#4f46e5'; 
     }
+  }
+
+  toggleViolationsView(): void {
+    this.showViolations = !this.showViolations;
   }
 }

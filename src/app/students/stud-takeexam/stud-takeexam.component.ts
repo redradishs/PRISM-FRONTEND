@@ -351,7 +351,7 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
         console.log('Assessment submitted successfully');
         localStorage.removeItem('violations');
         sessionStorage.removeItem('violations');
-        this.is.resetViolations();
+        this.is.resetAllViolations();
         this.router.navigate(['/student/assessment/result'], {
           state: {assessmentId: this.assignedAssessmentId}
         });

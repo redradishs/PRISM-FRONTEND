@@ -83,6 +83,9 @@ export class IntegrityMonitoringService {
     window.addEventListener('resize', () => this.onWindowResize());
     window.addEventListener('beforeunload', (e) => this.beforeUnloadHandler(e));
     window.addEventListener('storage', (e) => this.handleStorageChange(e));
+
+    // Add DevTools detection
+    this.detectDevTools();
   }
 
   // Public methods for external components to use
@@ -148,20 +151,13 @@ export class IntegrityMonitoringService {
   }
 
   private setupAccidentalActionResets() {
-    this.tabSwitchResetTimer = setInterval(() => {
-      if (
-        this.tabSwitchCount > 0 &&
-        this.tabSwitchCount <= this.TAB_SWITCH_ALLOWANCE
-      ) {
-        this.tabSwitchCount = Math.max(0, this.tabSwitchCount - 1);
-      }
-    }, 120000);
-
-    this.altTabResetTimer = setInterval(() => {
-      if (this.altTabCount > 0 && this.altTabCount <= this.ALT_TAB_ALLOWANCE) {
-        this.altTabCount = Math.max(0, this.altTabCount - 1);
-      }
-    }, 120000);
+    // Remove the reset timers that decrease violation counts
+    // This ensures violations are permanent during the assessment session
+    
+    // Store violation data more frequently to prevent data loss
+    setInterval(() => {
+      this.secureStoreViolations();
+    }, 30000); // Every 30 seconds
   }
 
   private monitorStorageDeletion() {
@@ -391,11 +387,25 @@ export class IntegrityMonitoringService {
   }
 
   private secureStoreViolations() {
-    const encoded = btoa(JSON.stringify(this._violations.value));
+    // Use a simple encryption approach
+    const dataToStore = JSON.stringify(this._violations.value);
+    
+    // Basic encryption (in production, use a more robust approach)
+    const encoded = this.encryptData(dataToStore);
+    
+    // Store in multiple locations
     localStorage.setItem('assessment_integrity_data', encoded);
     sessionStorage.setItem('assessment_integrity_data', encoded);
-
-    document.cookie = `assessment_count=${this._cheatingCount.value};path=/;max-age=86400`;
+    
+    // Add timestamp to make tampering more difficult
+    const timestamp = Date.now().toString();
+    const hashedTimestamp = this.hashString(timestamp);
+    
+    localStorage.setItem('assessment_integrity_time', hashedTimestamp);
+    sessionStorage.setItem('assessment_integrity_time', hashedTimestamp);
+    
+    // Use HTTP-only cookie if possible (simulated here)
+    document.cookie = `assessment_count=${this._cheatingCount.value};path=/;max-age=86400;secure`;
   }
 
   private secureStoreCheatingCount() {
@@ -453,28 +463,102 @@ export class IntegrityMonitoringService {
   }
 
   getViolations() {
-    return this._violations.value.map(violation => {
-      // Format timestamp to readable time (e.g., "3:15 PM")
-      const date = new Date(violation.timestamp);
-      const formattedTime = date.toLocaleTimeString('en-US', { 
-        hour: 'numeric', 
-        minute: '2-digit', 
-        hour12: true 
-      });
-      
-      return {
-        type: violation.type,
-        time: formattedTime
-      };
-    });
+    // Simply return the raw violation objects
+    return this._violations.value.map(violation => ({
+      type: violation.type,       // Keep the exact violation type
+      severity: violation.severity,
+      timestamp: violation.timestamp
+    }));
   }
 
-  resetViolations() {
+  // New method to only clear UI alerts but keep violation tracking
+  clearAlerts(): void {
+    this._cheatMessage.next(null);
+  }
+
+  // Original resetViolations renamed to track it's only called on assessment end
+  resetAllViolations() {
     this._violations.next([]);
     this._cheatingCount.next(0);
     this._cheatMessage.next(null);
     
-    localStorage.removeItem('violations');
-    sessionStorage.removeItem('violations');
+    // Clear all storage mechanisms to ensure complete reset
+    localStorage.removeItem('assessment_integrity_data');
+    sessionStorage.removeItem('assessment_integrity_data');
+    localStorage.removeItem('assessment_integrity_count');
+    sessionStorage.removeItem('assessment_integrity_count');
+    localStorage.removeItem('assessment_init_time');
+    sessionStorage.removeItem('assessment_init_time');
+    
+    // Clear cookie
+    document.cookie = 'assessment_count=0; path=/; max-age=0';
+    
+    // Re-initialize timestamp
+    this.storeTimestamps();
+    
+    console.log('Integrity monitoring system reset at', new Date().toISOString());
+  }
+
+  // Add encryption helper methods
+  private encryptData(data: string): string {
+    // In production, use a proper encryption library
+    // This is a simple obfuscation for demonstration
+    const key = "PRISM_ASSESSMENT_SYSTEM";
+    let result = btoa(data); // Base64 encode
+    
+    // Add a checksum
+    const checksum = this.hashString(data).substring(0, 8);
+    result = checksum + '_' + result;
+    
+    return result;
+  }
+
+  private hashString(str: string): string {
+    // Simple hash function for demonstration
+    // In production, use a cryptographic hash function
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return Math.abs(hash).toString(16);
+  }
+
+  // Detect if DevTools is open
+  private detectDevTools() {
+    // Method 1: Check for debugger
+    const startTime = new Date().getTime();
+    debugger; // This gets triggered if DevTools is open
+    const endTime = new Date().getTime();
+    
+    if (endTime - startTime > 100) {
+      this.registerViolation('Developer tools detected', 'high');
+    }
+    
+    // Method 2: Console overriding
+    const consoleCheck = () => {
+      const original = window.console.log;
+      window.console.log = (...args) => {
+        // Check if being used in DevTools
+        const stack = new Error().stack || '';
+        if (stack.includes('console-api') || stack.includes('debugger')) {
+          this.registerViolation('Console API usage detected', 'medium');
+        }
+        original(...args);
+      };
+    };
+    
+    consoleCheck();
+    
+    // Periodically check for DevTools (Firefox, Safari)
+    setInterval(() => {
+      const widthThreshold = window.outerWidth - window.innerWidth > 160;
+      const heightThreshold = window.outerHeight - window.innerHeight > 160;
+      
+      if (widthThreshold || heightThreshold) {
+        this.registerViolation('Developer tools potentially detected', 'medium');
+      }
+    }, 5000);
   }
 }

@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { StudentService } from '../../services/student.service';
+import { IntegrityMonitoringService } from '../../services/integrity-monitoring.service';
+import { Subscription } from 'rxjs';
 
 interface Question {
   _id: string;
@@ -70,7 +72,16 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
 
   questions: Question[] = [];
 
-  constructor(private router: Router, private auth: AuthService, private api: StudentService) {
+  cheatingCount = 0;
+  cheatMessage: string | null = null;
+  private subscriptions: Subscription[] = [];
+
+  constructor(
+    private router: Router, 
+    private auth: AuthService, 
+    private api: StudentService,
+    private is: IntegrityMonitoringService
+  ) {
     const navigation = this.router.getCurrentNavigation();
     if(navigation?.extras.state) {
       this.assignedAssessmentId = navigation.extras.state['assessmentId'];
@@ -84,6 +95,8 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
         this.userId = user.id;
         this.getSecureData(this.userId, this.assignedAssessmentId);
         this.nextQuestionA();
+        
+        this.setupIntegrityMonitoring();
       } else {
         console.error('User not found');
       }
@@ -94,6 +107,9 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
     }
+    
+    this.is.cleanup();
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
   startTimer() {
@@ -156,6 +172,7 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
       next: (resp: any) => {
         if (resp.remarks === 'Success') {
           console.log('Assessment finalized successfully');
+          this.is.resetAllViolations();
           this.router.navigate(['/student/assessment/result'], {
             state: {
               assessmentId: this.assignedAssessmentId
@@ -168,10 +185,11 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
       error: (err: any) => {
         console.log('Error finalizing assessment:', err);
       }
-    })
+    });
   }
 
   submitAnswer() {
+    console.log("Cheting Count: ", this.cheatingCount);
     if (!this.data?.question) return;
     let givenAnswer: any = null;
     const q = this.data.question;
@@ -191,16 +209,40 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
         console.warn('Unsupported question type:', q.type);
     }
 
-    const data = {
+    const data: any = {
       studentId: this.userId,
       assignedAssessmentId: this.assignedAssessmentId,
       questionId: q._id,
       givenAnswer
+    };
+
+    if (this.cheatingCount > 0) {
+      // Get all violations
+      const violations = this.is.getViolations();
+      
+      if (violations.length > 0) {
+        // Get the most recent violation
+        const sortedViolations = [...violations].sort((a, b) => b.timestamp - a.timestamp);
+        const latestViolation = sortedViolations[0];
+        
+        // Use the exact violation type from the monitoring service
+        data.violation = {
+          type: latestViolation.type,  // This will be "Screenshot attempt detected", "Window significantly resized", etc.
+          fromQuestionId: q._id,
+          violationCount: this.cheatingCount
+        };
+        
+        console.log('Sending exact violation type:', latestViolation.type);
+      }
     }
+
     this.api.submitAnswer(data).subscribe({
       next: (resp: any) => {
         if (resp.remarks === 'Success') {
           console.log('Answer submitted successfully:', resp);
+          
+          this.is.clearAlerts();
+          
           if(this.data.isLastQuestion) {
             this.finalizeAssessment();
           } else {
@@ -340,5 +382,19 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
       this.isSubmitting = false;
       console.log('Submitting answers:', answers);
     }, 2000);
+  }
+
+  private setupIntegrityMonitoring() {
+    this.subscriptions.push(
+      this.is.cheatingCount$.subscribe(count => {
+        this.cheatingCount = count;
+      })
+    );
+    
+    this.subscriptions.push(
+      this.is.cheatMessage$.subscribe(message => {
+        this.cheatMessage = message;
+      })
+    );
   }
 }
