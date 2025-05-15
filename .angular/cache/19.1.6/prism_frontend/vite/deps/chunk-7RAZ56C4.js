@@ -3,7 +3,7 @@ import {
   XhrFactory,
   isPlatformServer,
   parseCookieValue
-} from "./chunk-SXXY5HMD.js";
+} from "./chunk-7ODYSBMK.js";
 import {
   APP_BOOTSTRAP_LISTENER,
   ApplicationRef,
@@ -12,25 +12,32 @@ import {
   Inject,
   Injectable,
   InjectionToken,
+  Injector,
   NgModule,
   NgZone,
   PLATFORM_ID,
   PendingTasksInternal,
+  ResourceImpl,
+  ResourceStatus,
   RuntimeError,
   TransferState,
+  assertInInjectionContext,
+  computed,
   formatRuntimeError,
   inject,
+  linkedSignal,
   makeEnvironmentProviders,
   makeStateKey,
   performanceMarkFeature,
   runInInjectionContext,
   setClassMetadata,
+  signal,
   truncateMiddle,
   ɵɵdefineInjectable,
   ɵɵdefineInjector,
   ɵɵdefineNgModule,
   ɵɵinject
-} from "./chunk-IMCQXDD3.js";
+} from "./chunk-3ZOOCRNU.js";
 import {
   Observable,
   concatMap,
@@ -48,7 +55,7 @@ import {
   __spreadValues
 } from "./chunk-WXPTAMPH.js";
 
-// node_modules/@angular/common/fesm2022/http.mjs
+// node_modules/@angular/common/fesm2022/module-CYx9OwZ_.mjs
 var HttpHandler = class {
 };
 var HttpBackend = class {
@@ -57,7 +64,6 @@ var HttpHeaders = class _HttpHeaders {
   /**
    * Internal map of lowercase header names to values.
    */
-  // TODO(issue/24571): remove '!'.
   headers;
   /**
    * Internal map of lowercased header names to the normalized
@@ -650,7 +656,6 @@ var HttpRequest = class _HttpRequest {
   /**
    * Outgoing headers for this request.
    */
-  // TODO(issue/24571): remove '!'.
   headers;
   /**
    * Shared and mutable context that can be used by interceptors
@@ -690,7 +695,6 @@ var HttpRequest = class _HttpRequest {
    * new HttpParams({fromString: 'angular=awesome'})
    * ```
    */
-  // TODO(issue/24571): remove '!'.
   params;
   /**
    * The outgoing URL with all URL parameters set.
@@ -855,7 +859,6 @@ var HttpResponseBase = class {
   /**
    * Type of the response, narrowed to either the full response or the header.
    */
-  // TODO(issue/24571): remove '!'.
   type;
   /**
    * Super-constructor for all responses.
@@ -1248,13 +1251,13 @@ var FetchBackend = class _FetchBackend {
       return () => aborter.abort();
     });
   }
-  doRequest(request, signal, observer) {
+  doRequest(request, signal2, observer) {
     return __async(this, null, function* () {
       const init = this.createRequestInit(request);
       let response;
       try {
         const fetchPromise = this.ngZone.runOutsideAngular(() => this.fetchImpl(request.urlWithParams, __spreadValues({
-          signal
+          signal: signal2
         }, init)));
         silenceSuperfluousUnhandledPromiseRejection(fetchPromise);
         observer.next({
@@ -1893,7 +1896,6 @@ var HttpXsrfTokenExtractor = class {
 };
 var HttpXsrfCookieExtractor = class _HttpXsrfCookieExtractor {
   doc;
-  platform;
   cookieName;
   lastCookieString = "";
   lastToken = null;
@@ -1901,13 +1903,12 @@ var HttpXsrfCookieExtractor = class _HttpXsrfCookieExtractor {
    * @internal for testing
    */
   parseCount = 0;
-  constructor(doc, platform, cookieName) {
+  constructor(doc, cookieName) {
     this.doc = doc;
-    this.platform = platform;
     this.cookieName = cookieName;
   }
   getToken() {
-    if (this.platform === "server") {
+    if (false) {
       return null;
     }
     const cookieString = this.doc.cookie || "";
@@ -1919,7 +1920,7 @@ var HttpXsrfCookieExtractor = class _HttpXsrfCookieExtractor {
     return this.lastToken;
   }
   static ɵfac = function HttpXsrfCookieExtractor_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _HttpXsrfCookieExtractor)(ɵɵinject(DOCUMENT), ɵɵinject(PLATFORM_ID), ɵɵinject(XSRF_COOKIE_NAME));
+    return new (__ngFactoryType__ || _HttpXsrfCookieExtractor)(ɵɵinject(DOCUMENT), ɵɵinject(XSRF_COOKIE_NAME));
   };
   static ɵprov = ɵɵdefineInjectable({
     token: _HttpXsrfCookieExtractor,
@@ -1934,12 +1935,6 @@ var HttpXsrfCookieExtractor = class _HttpXsrfCookieExtractor {
     decorators: [{
       type: Inject,
       args: [DOCUMENT]
-    }]
-  }, {
-    type: void 0,
-    decorators: [{
-      type: Inject,
-      args: [PLATFORM_ID]
     }]
   }, {
     type: void 0,
@@ -2224,6 +2219,124 @@ var HttpClientJsonpModule = class _HttpClientJsonpModule {
     }]
   }], null, null);
 })();
+
+// node_modules/@angular/common/fesm2022/http.mjs
+var httpResource = (() => {
+  const jsonFn = makeHttpResourceFn("json");
+  jsonFn.arrayBuffer = makeHttpResourceFn("arraybuffer");
+  jsonFn.blob = makeHttpResourceFn("blob");
+  jsonFn.text = makeHttpResourceFn("text");
+  return jsonFn;
+})();
+function makeHttpResourceFn(responseType) {
+  return function httpResourceRef(request, options) {
+    options?.injector || assertInInjectionContext(httpResource);
+    const injector = options?.injector ?? inject(Injector);
+    return new HttpResourceImpl(injector, () => normalizeRequest(request, responseType), options?.defaultValue, options?.parse, options?.equal);
+  };
+}
+function normalizeRequest(request, responseType) {
+  let unwrappedRequest = typeof request === "function" ? request() : request;
+  if (unwrappedRequest === void 0) {
+    return void 0;
+  } else if (typeof unwrappedRequest === "string") {
+    unwrappedRequest = {
+      url: unwrappedRequest
+    };
+  }
+  const headers = unwrappedRequest.headers instanceof HttpHeaders ? unwrappedRequest.headers : new HttpHeaders(unwrappedRequest.headers);
+  const params = unwrappedRequest.params instanceof HttpParams ? unwrappedRequest.params : new HttpParams({
+    fromObject: unwrappedRequest.params
+  });
+  return new HttpRequest(unwrappedRequest.method ?? "GET", unwrappedRequest.url, unwrappedRequest.body ?? null, {
+    headers,
+    params,
+    reportProgress: unwrappedRequest.reportProgress,
+    withCredentials: unwrappedRequest.withCredentials,
+    responseType,
+    context: unwrappedRequest.context,
+    transferCache: unwrappedRequest.transferCache
+  });
+}
+var HttpResourceImpl = class extends ResourceImpl {
+  client;
+  _headers = linkedSignal({
+    source: this.extRequest,
+    computation: () => void 0
+  });
+  _progress = linkedSignal({
+    source: this.extRequest,
+    computation: () => void 0
+  });
+  _statusCode = linkedSignal({
+    source: this.extRequest,
+    computation: () => void 0
+  });
+  headers = computed(() => this.status() === ResourceStatus.Resolved || this.status() === ResourceStatus.Error ? this._headers() : void 0);
+  progress = this._progress.asReadonly();
+  statusCode = this._statusCode.asReadonly();
+  constructor(injector, request, defaultValue, parse, equal) {
+    super(request, ({
+      request: request2,
+      abortSignal
+    }) => {
+      let sub;
+      const onAbort = () => sub.unsubscribe();
+      abortSignal.addEventListener("abort", onAbort);
+      const stream = signal({
+        value: void 0
+      });
+      let resolve;
+      const promise = new Promise((r) => resolve = r);
+      const send = (value) => {
+        stream.set(value);
+        resolve?.(stream);
+        resolve = void 0;
+      };
+      sub = this.client.request(request2).subscribe({
+        next: (event) => {
+          switch (event.type) {
+            case HttpEventType.Response:
+              this._headers.set(event.headers);
+              this._statusCode.set(event.status);
+              try {
+                send({
+                  value: parse ? parse(event.body) : event.body
+                });
+              } catch (error) {
+                send({
+                  error
+                });
+              }
+              break;
+            case HttpEventType.DownloadProgress:
+              this._progress.set(event);
+              break;
+          }
+        },
+        error: (error) => {
+          if (error instanceof HttpErrorResponse) {
+            this._headers.set(error.headers);
+            this._statusCode.set(error.status);
+          }
+          send({
+            error
+          });
+        },
+        complete: () => {
+          if (resolve) {
+            send({
+              error: new Error("Resource completed before producing a value")
+            });
+          }
+          abortSignal.removeEventListener("abort", onAbort);
+        }
+      });
+      return promise;
+    }, defaultValue, equal, injector);
+    this.client = injector.get(HttpClient);
+  }
+};
 var HTTP_TRANSFER_CACHE_ORIGIN_MAP = new InjectionToken(ngDevMode ? "HTTP_TRANSFER_CACHE_ORIGIN_MAP" : "");
 var BODY = "b";
 var HEADERS = "h";
@@ -2348,8 +2461,7 @@ function withHttpTransferCache(cacheOptions) {
   }, {
     provide: HTTP_ROOT_INTERCEPTOR_FNS,
     useValue: transferCacheInterceptorFn,
-    multi: true,
-    deps: [TransferState, CACHE_OPTIONS]
+    multi: true
   }, {
     provide: APP_BOOTSTRAP_LISTENER,
     multi: true,
@@ -2423,16 +2535,24 @@ export {
   HttpClientXsrfModule,
   HttpClientModule,
   HttpClientJsonpModule,
+  httpResource,
   HTTP_TRANSFER_CACHE_ORIGIN_MAP,
   withHttpTransferCache
 };
 /*! Bundled license information:
 
+@angular/common/fesm2022/module-CYx9OwZ_.mjs:
+  (**
+   * @license Angular v19.2.10
+   * (c) 2010-2025 Google LLC. https://angular.io/
+   * License: MIT
+   *)
+
 @angular/common/fesm2022/http.mjs:
   (**
-   * @license Angular v19.1.5
-   * (c) 2010-2024 Google LLC. https://angular.io/
+   * @license Angular v19.2.10
+   * (c) 2010-2025 Google LLC. https://angular.io/
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-X7FEVMWG.js.map
+//# sourceMappingURL=chunk-7RAZ56C4.js.map

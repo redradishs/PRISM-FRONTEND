@@ -1,4 +1,8 @@
 import {
+  DOCUMENT,
+  isPlatformBrowser
+} from "./chunk-7ODYSBMK.js";
+import {
   ApplicationRef,
   Attribute,
   ChangeDetectorRef,
@@ -46,7 +50,6 @@ import {
   stringify,
   untracked,
   unwrapSafeValue,
-  ɵɵInputTransformsFeature,
   ɵɵNgOnChangesFeature,
   ɵɵdefineDirective,
   ɵɵdefineInjectable,
@@ -57,7 +60,7 @@ import {
   ɵɵinject,
   ɵɵinjectAttribute,
   ɵɵstyleProp
-} from "./chunk-IMCQXDD3.js";
+} from "./chunk-3ZOOCRNU.js";
 import {
   Subject
 } from "./chunk-FHTVLBLO.js";
@@ -67,7 +70,7 @@ import {
   __spreadValues
 } from "./chunk-WXPTAMPH.js";
 
-// node_modules/@angular/common/fesm2022/common.mjs
+// node_modules/@angular/common/fesm2022/location-DpBxd_aX.mjs
 var _DOM = null;
 function getDOM() {
   return _DOM;
@@ -77,26 +80,6 @@ function setRootDomAdapter(adapter) {
 }
 var DomAdapter = class {
 };
-var PlatformNavigation = class _PlatformNavigation {
-  static ɵfac = function PlatformNavigation_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _PlatformNavigation)();
-  };
-  static ɵprov = ɵɵdefineInjectable({
-    token: _PlatformNavigation,
-    factory: () => (() => window.navigation)(),
-    providedIn: "platform"
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(PlatformNavigation, [{
-    type: Injectable,
-    args: [{
-      providedIn: "platform",
-      useFactory: () => window.navigation
-    }]
-  }], null, null);
-})();
-var DOCUMENT = new InjectionToken(ngDevMode ? "DocumentToken" : "");
 var PlatformLocation = class _PlatformLocation {
   historyGo(relativePosition) {
     throw new Error(ngDevMode ? "Not implemented" : "");
@@ -211,13 +194,11 @@ function joinWithSlash(start, end) {
   return end.startsWith("/") ? start + end : `${start}/${end}`;
 }
 function stripTrailingSlash(url) {
-  const match = url.match(/#|\?|$/);
-  const pathEndIdx = match && match.index || url.length;
-  const droppedSlashIdx = pathEndIdx - (url[pathEndIdx - 1] === "/" ? 1 : 0);
-  return url.slice(0, droppedSlashIdx) + url.slice(pathEndIdx);
+  const pathEndIdx = url.search(/#|\?|$/);
+  return url[pathEndIdx - 1] === "/" ? url.slice(0, pathEndIdx - 1) + url.slice(pathEndIdx) : url;
 }
 function normalizeQueryParams(params) {
-  return params && params[0] !== "?" ? "?" + params : params;
+  return params && params[0] !== "?" ? `?${params}` : params;
 }
 var LocationStrategy = class _LocationStrategy {
   historyGo(relativePosition) {
@@ -306,86 +287,6 @@ var PathLocationStrategy = class _PathLocationStrategy extends LocationStrategy 
     args: [{
       providedIn: "root"
     }]
-  }], () => [{
-    type: PlatformLocation
-  }, {
-    type: void 0,
-    decorators: [{
-      type: Optional
-    }, {
-      type: Inject,
-      args: [APP_BASE_HREF]
-    }]
-  }], null);
-})();
-var HashLocationStrategy = class _HashLocationStrategy extends LocationStrategy {
-  _platformLocation;
-  _baseHref = "";
-  _removeListenerFns = [];
-  constructor(_platformLocation, _baseHref) {
-    super();
-    this._platformLocation = _platformLocation;
-    if (_baseHref != null) {
-      this._baseHref = _baseHref;
-    }
-  }
-  /** @nodoc */
-  ngOnDestroy() {
-    while (this._removeListenerFns.length) {
-      this._removeListenerFns.pop()();
-    }
-  }
-  onPopState(fn) {
-    this._removeListenerFns.push(this._platformLocation.onPopState(fn), this._platformLocation.onHashChange(fn));
-  }
-  getBaseHref() {
-    return this._baseHref;
-  }
-  path(includeHash = false) {
-    const path = this._platformLocation.hash ?? "#";
-    return path.length > 0 ? path.substring(1) : path;
-  }
-  prepareExternalUrl(internal) {
-    const url = joinWithSlash(this._baseHref, internal);
-    return url.length > 0 ? "#" + url : url;
-  }
-  pushState(state, title, path, queryParams) {
-    let url = this.prepareExternalUrl(path + normalizeQueryParams(queryParams));
-    if (url.length == 0) {
-      url = this._platformLocation.pathname;
-    }
-    this._platformLocation.pushState(state, title, url);
-  }
-  replaceState(state, title, path, queryParams) {
-    let url = this.prepareExternalUrl(path + normalizeQueryParams(queryParams));
-    if (url.length == 0) {
-      url = this._platformLocation.pathname;
-    }
-    this._platformLocation.replaceState(state, title, url);
-  }
-  forward() {
-    this._platformLocation.forward();
-  }
-  back() {
-    this._platformLocation.back();
-  }
-  getState() {
-    return this._platformLocation.getState();
-  }
-  historyGo(relativePosition = 0) {
-    this._platformLocation.historyGo?.(relativePosition);
-  }
-  static ɵfac = function HashLocationStrategy_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _HashLocationStrategy)(ɵɵinject(PlatformLocation), ɵɵinject(APP_BASE_HREF, 8));
-  };
-  static ɵprov = ɵɵdefineInjectable({
-    token: _HashLocationStrategy,
-    factory: _HashLocationStrategy.ɵfac
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(HashLocationStrategy, [{
-    type: Injectable
   }], () => [{
     type: PlatformLocation
   }, {
@@ -655,6 +556,82 @@ function _stripOrigin(baseHref) {
   }
   return baseHref;
 }
+
+// node_modules/@angular/common/fesm2022/common_module-BukMeiI7.mjs
+var HashLocationStrategy = class _HashLocationStrategy extends LocationStrategy {
+  _platformLocation;
+  _baseHref = "";
+  _removeListenerFns = [];
+  constructor(_platformLocation, _baseHref) {
+    super();
+    this._platformLocation = _platformLocation;
+    if (_baseHref != null) {
+      this._baseHref = _baseHref;
+    }
+  }
+  /** @nodoc */
+  ngOnDestroy() {
+    while (this._removeListenerFns.length) {
+      this._removeListenerFns.pop()();
+    }
+  }
+  onPopState(fn) {
+    this._removeListenerFns.push(this._platformLocation.onPopState(fn), this._platformLocation.onHashChange(fn));
+  }
+  getBaseHref() {
+    return this._baseHref;
+  }
+  path(includeHash = false) {
+    const path = this._platformLocation.hash ?? "#";
+    return path.length > 0 ? path.substring(1) : path;
+  }
+  prepareExternalUrl(internal) {
+    const url = joinWithSlash(this._baseHref, internal);
+    return url.length > 0 ? "#" + url : url;
+  }
+  pushState(state, title, path, queryParams) {
+    const url = this.prepareExternalUrl(path + normalizeQueryParams(queryParams)) || this._platformLocation.pathname;
+    this._platformLocation.pushState(state, title, url);
+  }
+  replaceState(state, title, path, queryParams) {
+    const url = this.prepareExternalUrl(path + normalizeQueryParams(queryParams)) || this._platformLocation.pathname;
+    this._platformLocation.replaceState(state, title, url);
+  }
+  forward() {
+    this._platformLocation.forward();
+  }
+  back() {
+    this._platformLocation.back();
+  }
+  getState() {
+    return this._platformLocation.getState();
+  }
+  historyGo(relativePosition = 0) {
+    this._platformLocation.historyGo?.(relativePosition);
+  }
+  static ɵfac = function HashLocationStrategy_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _HashLocationStrategy)(ɵɵinject(PlatformLocation), ɵɵinject(APP_BASE_HREF, 8));
+  };
+  static ɵprov = ɵɵdefineInjectable({
+    token: _HashLocationStrategy,
+    factory: _HashLocationStrategy.ɵfac
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(HashLocationStrategy, [{
+    type: Injectable
+  }], () => [{
+    type: PlatformLocation
+  }, {
+    type: void 0,
+    decorators: [{
+      type: Optional
+    }, {
+      type: Inject,
+      args: [APP_BASE_HREF]
+    }]
+  }], null);
+})();
 var CURRENCIES_EN = {
   "ADP": [void 0, void 0, 0],
   "AFN": [void 0, "؋", 0],
@@ -1098,7 +1075,7 @@ function formatDate(value, format, locale, timezone) {
   let dateTimezoneOffset = date.getTimezoneOffset();
   if (timezone) {
     dateTimezoneOffset = timezoneToOffset(timezone, dateTimezoneOffset);
-    date = convertTimezoneToLocal(date, timezone, true);
+    date = convertTimezoneToLocal(date, timezone);
   }
   let text = "";
   parts.forEach((value2) => {
@@ -1609,7 +1586,7 @@ function addDateMinutes(date, minutes) {
   return date;
 }
 function convertTimezoneToLocal(date, timezone, reverse) {
-  const reverseValue = reverse ? -1 : 1;
+  const reverseValue = -1;
   const dateTimezoneOffset = date.getTimezoneOffset();
   const timezoneOffset = timezoneToOffset(timezone, dateTimezoneOffset);
   return addDateMinutes(date, reverseValue * (timezoneOffset - dateTimezoneOffset));
@@ -2007,20 +1984,6 @@ var NgLocaleLocalization = class _NgLocaleLocalization extends NgLocalization {
     }]
   }], null);
 })();
-function registerLocaleData2(data, localeId, extraData) {
-  return registerLocaleData(data, localeId, extraData);
-}
-function parseCookieValue(cookieStr, name) {
-  name = encodeURIComponent(name);
-  for (const cookie of cookieStr.split(";")) {
-    const eqIndex = cookie.indexOf("=");
-    const [cookieName, cookieValue] = eqIndex == -1 ? [cookie, ""] : [cookie.slice(0, eqIndex), cookie.slice(eqIndex + 1)];
-    if (cookieName.trim() === name) {
-      return decodeURIComponent(cookieValue);
-    }
-  }
-  return null;
-}
 var WS_REGEXP = /\s+/;
 var EMPTY_ARRAY = [];
 var NgClass = class _NgClass {
@@ -2371,7 +2334,6 @@ var NgForOf = class _NgForOf {
   _ngForOf = null;
   _ngForOfDirty = true;
   _differ = null;
-  // TODO(issue/24571): remove '!'
   // waiting for microsoft/typescript#43662 to allow the return type `TrackByFunction|undefined` for
   // the getter
   _trackByFn;
@@ -2517,7 +2479,7 @@ var NgIf = class _NgIf {
    * A template to show if the condition expression evaluates to true.
    */
   set ngIfThen(templateRef) {
-    assertTemplate("ngIfThen", templateRef);
+    assertTemplate(templateRef, (typeof ngDevMode === "undefined" || ngDevMode) && "ngIfThen");
     this._thenTemplateRef = templateRef;
     this._thenViewRef = null;
     this._updateView();
@@ -2526,7 +2488,7 @@ var NgIf = class _NgIf {
    * A template to show if the condition expression evaluates to false.
    */
   set ngIfElse(templateRef) {
-    assertTemplate("ngIfElse", templateRef);
+    assertTemplate(templateRef, (typeof ngDevMode === "undefined" || ngDevMode) && "ngIfElse");
     this._elseTemplateRef = templateRef;
     this._elseViewRef = null;
     this._updateView();
@@ -2609,10 +2571,9 @@ var NgIfContext = class {
   $implicit = null;
   ngIf = null;
 };
-function assertTemplate(property, templateRef) {
-  const isTemplateRefOrNull = !!(!templateRef || templateRef.createEmbeddedView);
-  if (!isTemplateRefOrNull) {
-    throw new Error(`${property} must be a TemplateRef, but received '${stringify(templateRef)}'.`);
+function assertTemplate(templateRef, property) {
+  if (templateRef && !templateRef.createEmbeddedView) {
+    throw new RuntimeError(2020, (typeof ngDevMode === "undefined" || ngDevMode) && `${property} must be a TemplateRef, but received '${stringify(templateRef)}'.`);
   }
 }
 var SwitchView = class {
@@ -3073,11 +3034,22 @@ var SubscribableStrategy = class {
 };
 var PromiseStrategy = class {
   createSubscription(async, updateLatestValue) {
-    return async.then(updateLatestValue, (e) => {
-      throw e;
-    });
+    async.then(
+      // Using optional chaining because we may have set it to `null`; since the promise
+      // is async, the view might be destroyed by the time the promise resolves.
+      (v) => updateLatestValue?.(v),
+      (e) => {
+        throw e;
+      }
+    );
+    return {
+      unsubscribe: () => {
+        updateLatestValue = null;
+      }
+    };
   }
   dispose(subscription) {
+    subscription.unsubscribe();
   }
 };
 var _promiseStrategy = new PromiseStrategy();
@@ -3643,13 +3615,11 @@ function strToNumber(value) {
 var SlicePipe = class _SlicePipe {
   transform(value, start, end) {
     if (value == null) return null;
-    if (!this.supports(value)) {
+    const supports = typeof value === "string" || Array.isArray(value);
+    if (!supports) {
       throw invalidPipeArgumentError(_SlicePipe, value);
     }
     return value.slice(start, end);
-  }
-  supports(obj) {
-    return typeof obj === "string" || Array.isArray(obj);
   }
   static ɵfac = function SlicePipe_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _SlicePipe)();
@@ -3690,15 +3660,33 @@ var CommonModule = class _CommonModule {
     }]
   }], null, null);
 })();
-var PLATFORM_BROWSER_ID = "browser";
-var PLATFORM_SERVER_ID = "server";
-function isPlatformBrowser(platformId) {
-  return platformId === PLATFORM_BROWSER_ID;
+
+// node_modules/@angular/common/fesm2022/platform_navigation-B45Jeakb.mjs
+var PlatformNavigation = class _PlatformNavigation {
+  static ɵfac = function PlatformNavigation_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _PlatformNavigation)();
+  };
+  static ɵprov = ɵɵdefineInjectable({
+    token: _PlatformNavigation,
+    factory: () => (() => window.navigation)(),
+    providedIn: "platform"
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(PlatformNavigation, [{
+    type: Injectable,
+    args: [{
+      providedIn: "platform",
+      useFactory: () => window.navigation
+    }]
+  }], null, null);
+})();
+
+// node_modules/@angular/common/fesm2022/common.mjs
+function registerLocaleData2(data, localeId, extraData) {
+  return registerLocaleData(data, localeId, extraData);
 }
-function isPlatformServer(platformId) {
-  return platformId === PLATFORM_SERVER_ID;
-}
-var VERSION = new Version("19.1.5");
+var VERSION = new Version("19.2.10");
 var ViewportScroller = class _ViewportScroller {
   // De-sugared tree-shakable injection
   // See #23917
@@ -3833,8 +3821,6 @@ var NullViewportScroller = class {
    */
   setHistoryScrollRestoration(scrollRestoration) {
   }
-};
-var XhrFactory = class {
 };
 var PLACEHOLDER_QUALITY = "20";
 function getUrl(src, win) {
@@ -4181,9 +4167,8 @@ var PreconnectLinkChecker = class _PreconnectLinkChecker {
   }
   queryPreconnectLinks() {
     const preconnectUrls = /* @__PURE__ */ new Set();
-    const selector = "link[rel=preconnect]";
-    const links = Array.from(this.document.querySelectorAll(selector));
-    for (let link of links) {
+    const links = this.document.querySelectorAll("link[rel=preconnect]");
+    for (const link of links) {
       const url = getUrl(link.href, this.window);
       preconnectUrls.add(url.origin);
     }
@@ -4223,6 +4208,7 @@ var PRELOADED_IMAGES = new InjectionToken(typeof ngDevMode === "undefined" || ng
 var PreloadLinkCreator = class _PreloadLinkCreator {
   preloadedImages = inject(PRELOADED_IMAGES);
   document = inject(DOCUMENT);
+  errorShown = false;
   /**
    * @description Add a preload `<link>` to the `<head>` of the `index.html` that is served from the
    * server while using Angular Universal and SSR to kick off image loads for high priority images.
@@ -4240,10 +4226,9 @@ var PreloadLinkCreator = class _PreloadLinkCreator {
    * @param sizes The value of the `sizes` attribute passed in to the `<img>` tag
    */
   createPreloadLinkTag(renderer, src, srcset, sizes) {
-    if (ngDevMode) {
-      if (this.preloadedImages.size >= DEFAULT_PRELOADED_IMAGES_LIMIT) {
-        throw new RuntimeError(2961, ngDevMode && `The \`NgOptimizedImage\` directive has detected that more than ${DEFAULT_PRELOADED_IMAGES_LIMIT} images were marked as priority. This might negatively affect an overall performance of the page. To fix this, remove the "priority" attribute from images with less priority.`);
-      }
+    if (ngDevMode && !this.errorShown && this.preloadedImages.size >= DEFAULT_PRELOADED_IMAGES_LIMIT) {
+      this.errorShown = true;
+      console.warn(formatRuntimeError(2961, `The \`NgOptimizedImage\` directive has detected that more than ${DEFAULT_PRELOADED_IMAGES_LIMIT} images were marked as priority. This might negatively affect an overall performance of the page. To fix this, remove the "priority" attribute from images with less priority.`));
     }
     if (this.preloadedImages.has(src)) {
       return;
@@ -4668,7 +4653,7 @@ var NgOptimizedImage = class _NgOptimizedImage {
       src: "src",
       srcset: "srcset"
     },
-    features: [ɵɵInputTransformsFeature, ɵɵNgOnChangesFeature]
+    features: [ɵɵNgOnChangesFeature]
   });
 };
 (() => {
@@ -5039,8 +5024,6 @@ export {
   getDOM,
   setRootDomAdapter,
   DomAdapter,
-  PlatformNavigation,
-  DOCUMENT,
   PlatformLocation,
   LOCATION_INITIALIZED,
   BrowserPlatformLocation,
@@ -5048,8 +5031,8 @@ export {
   LocationStrategy,
   APP_BASE_HREF,
   PathLocationStrategy,
-  HashLocationStrategy,
   Location,
+  HashLocationStrategy,
   NumberFormatStyle,
   Plural,
   FormStyle,
@@ -5084,8 +5067,6 @@ export {
   formatNumber,
   NgLocalization,
   NgLocaleLocalization,
-  registerLocaleData2 as registerLocaleData,
-  parseCookieValue,
   NgClass,
   NgComponentOutlet,
   NgForOfContext,
@@ -5115,14 +5096,11 @@ export {
   CurrencyPipe,
   SlicePipe,
   CommonModule,
-  PLATFORM_BROWSER_ID,
-  PLATFORM_SERVER_ID,
-  isPlatformBrowser,
-  isPlatformServer,
+  PlatformNavigation,
+  registerLocaleData2 as registerLocaleData,
   VERSION,
   ViewportScroller,
   NullViewportScroller,
-  XhrFactory,
   IMAGE_LOADER,
   provideCloudflareLoader,
   provideCloudinaryLoader,
@@ -5134,11 +5112,32 @@ export {
 };
 /*! Bundled license information:
 
+@angular/common/fesm2022/location-DpBxd_aX.mjs:
+  (**
+   * @license Angular v19.2.10
+   * (c) 2010-2025 Google LLC. https://angular.io/
+   * License: MIT
+   *)
+
+@angular/common/fesm2022/common_module-BukMeiI7.mjs:
+  (**
+   * @license Angular v19.2.10
+   * (c) 2010-2025 Google LLC. https://angular.io/
+   * License: MIT
+   *)
+
+@angular/common/fesm2022/platform_navigation-B45Jeakb.mjs:
+  (**
+   * @license Angular v19.2.10
+   * (c) 2010-2025 Google LLC. https://angular.io/
+   * License: MIT
+   *)
+
 @angular/common/fesm2022/common.mjs:
   (**
-   * @license Angular v19.1.5
-   * (c) 2010-2024 Google LLC. https://angular.io/
+   * @license Angular v19.2.10
+   * (c) 2010-2025 Google LLC. https://angular.io/
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-SXXY5HMD.js.map
+//# sourceMappingURL=chunk-BCI2OXNY.js.map

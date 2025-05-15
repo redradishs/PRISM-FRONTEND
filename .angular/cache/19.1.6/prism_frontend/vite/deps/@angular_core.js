@@ -116,6 +116,7 @@ import {
   Renderer2,
   RendererFactory2,
   RendererStyleFlags2,
+  ResourceImpl,
   ResourceStatus,
   RuntimeError,
   SIGNAL,
@@ -230,9 +231,11 @@ import {
   isSignal,
   isStandalone,
   isSubscribable,
+  isViewDirty,
   linkedSignal,
   makeEnvironmentProviders,
   makeStateKey,
+  markForRefresh,
   mergeApplicationConfig,
   microtaskEffect,
   model,
@@ -298,7 +301,6 @@ import {
   ɵɵExternalStylesFeature,
   ɵɵHostDirectivesFeature,
   ɵɵInheritDefinitionFeature,
-  ɵɵInputTransformsFeature,
   ɵɵNgOnChangesFeature,
   ɵɵProvidersFeature,
   ɵɵadvance,
@@ -493,7 +495,7 @@ import {
   ɵɵvalidateIframeAttribute,
   ɵɵviewQuery,
   ɵɵviewQuerySignal
-} from "./chunk-IMCQXDD3.js";
+} from "./chunk-3ZOOCRNU.js";
 import "./chunk-4N4GOYJH.js";
 import "./chunk-5OPE3T2R.js";
 import "./chunk-FHTVLBLO.js";
@@ -692,6 +694,7 @@ export {
   ComponentFactory as ɵRender3ComponentFactory,
   ComponentRef as ɵRender3ComponentRef,
   NgModuleRef as ɵRender3NgModuleRef,
+  ResourceImpl as ɵResourceImpl,
   RuntimeError as ɵRuntimeError,
   SIGNAL as ɵSIGNAL,
   SSR_CONTENT_INTEGRITY_MARKER as ɵSSR_CONTENT_INTEGRITY_MARKER,
@@ -757,6 +760,8 @@ export {
   isNgModule as ɵisNgModule,
   isPromise as ɵisPromise,
   isSubscribable as ɵisSubscribable,
+  isViewDirty as ɵisViewDirty,
+  markForRefresh as ɵmarkForRefresh,
   microtaskEffect as ɵmicrotaskEffect,
   noSideEffects as ɵnoSideEffects,
   patchComponentDefWithScope as ɵpatchComponentDefWithScope,
@@ -799,7 +804,6 @@ export {
   FactoryTarget as ɵɵFactoryTarget,
   ɵɵHostDirectivesFeature,
   ɵɵInheritDefinitionFeature,
-  ɵɵInputTransformsFeature,
   ɵɵNgOnChangesFeature,
   ɵɵProvidersFeature,
   ɵɵadvance,

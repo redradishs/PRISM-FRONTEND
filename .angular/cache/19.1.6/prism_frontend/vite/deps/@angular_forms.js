@@ -1,6 +1,7 @@
 import {
   getDOM
-} from "./chunk-SXXY5HMD.js";
+} from "./chunk-BCI2OXNY.js";
+import "./chunk-7ODYSBMK.js";
 import {
   ChangeDetectorRef,
   Directive,
@@ -41,7 +42,7 @@ import {
   ɵɵdirectiveInject,
   ɵɵgetInheritedFactory,
   ɵɵlistener
-} from "./chunk-IMCQXDD3.js";
+} from "./chunk-3ZOOCRNU.js";
 import {
   forkJoin
 } from "./chunk-4N4GOYJH.js";
@@ -288,10 +289,17 @@ var DefaultValueAccessor = class _DefaultValueAccessor extends BaseControlValueA
   }], null);
 })();
 function isEmptyInputValue(value) {
-  return value == null || (typeof value === "string" || Array.isArray(value)) && value.length === 0;
+  return value == null || lengthOrSize(value) === 0;
 }
-function hasValidLength(value) {
-  return value != null && typeof value.length === "number";
+function lengthOrSize(value) {
+  if (value == null) {
+    return null;
+  } else if (Array.isArray(value) || typeof value === "string") {
+    return value.length;
+  } else if (value instanceof Set) {
+    return value.size;
+  }
+  return null;
 }
 var NG_VALIDATORS = new InjectionToken(ngDevMode ? "NgValidators" : "");
 var NG_ASYNC_VALIDATORS = new InjectionToken(ngDevMode ? "NgAsyncValidators" : "");
@@ -314,7 +322,7 @@ var Validators = class {
    * @returns A validator function that returns an error map with the
    * `min` property if the validation check fails, otherwise `null`.
    *
-   * @see {@link updateValueAndValidity()}
+   * @see {@link /api/forms/AbstractControl#updateValueAndValidity updateValueAndValidity}
    *
    */
   static min(min) {
@@ -337,7 +345,7 @@ var Validators = class {
    * @returns A validator function that returns an error map with the
    * `max` property if the validation check fails, otherwise `null`.
    *
-   * @see {@link updateValueAndValidity()}
+   * @see {@link /api/forms/AbstractControl#updateValueAndValidity updateValueAndValidity}
    *
    */
   static max(max) {
@@ -360,7 +368,7 @@ var Validators = class {
    * @returns An error map with the `required` property
    * if the validation check fails, otherwise `null`.
    *
-   * @see {@link updateValueAndValidity()}
+   * @see {@link /api/forms/AbstractControl#updateValueAndValidity updateValueAndValidity}
    *
    */
   static required(control) {
@@ -384,7 +392,7 @@ var Validators = class {
    * @returns An error map that contains the `required` property
    * set to `true` if the validation check fails, otherwise `null`.
    *
-   * @see {@link updateValueAndValidity()}
+   * @see {@link /api/forms/AbstractControl#updateValueAndValidity updateValueAndValidity}
    *
    */
   static requiredTrue(control) {
@@ -423,7 +431,7 @@ var Validators = class {
    * @returns An error map with the `email` property
    * if the validation check fails, otherwise `null`.
    *
-   * @see {@link updateValueAndValidity()}
+   * @see {@link /api/forms/AbstractControl#updateValueAndValidity updateValueAndValidity}
    *
    */
   static email(control) {
@@ -431,13 +439,14 @@ var Validators = class {
   }
   /**
    * @description
-   * Validator that requires the length of the control's value to be greater than or equal
-   * to the provided minimum length. This validator is also provided by default if you use the
+   * Validator that requires the number of items in the control's value to be greater than or equal
+   * to the provided minimum length. This validator is also provided by default if you use
    * the HTML5 `minlength` attribute. Note that the `minLength` validator is intended to be used
-   * only for types that have a numeric `length` property, such as strings or arrays. The
-   * `minLength` validator logic is also not invoked for values when their `length` property is 0
-   * (for example in case of an empty string or an empty array), to support optional controls. You
-   * can use the standard `required` validator if empty values should not be considered valid.
+   * only for types that have a numeric `length` or `size` property, such as strings, arrays or
+   * sets. The `minLength` validator logic is also not invoked for values when their `length` or
+   * `size` property is 0 (for example in case of an empty string or an empty array), to support
+   * optional controls. You can use the standard `required` validator if empty values should not be
+   * considered valid.
    *
    * @usageNotes
    *
@@ -456,7 +465,7 @@ var Validators = class {
    * @returns A validator function that returns an error map with the
    * `minlength` property if the validation check fails, otherwise `null`.
    *
-   * @see {@link updateValueAndValidity()}
+   * @see {@link /api/forms/AbstractControl#updateValueAndValidity updateValueAndValidity}
    *
    */
   static minLength(minLength) {
@@ -464,10 +473,11 @@ var Validators = class {
   }
   /**
    * @description
-   * Validator that requires the length of the control's value to be less than or equal
-   * to the provided maximum length. This validator is also provided by default if you use the
+   * Validator that requires the number of items in the control's value to be less than or equal
+   * to the provided maximum length. This validator is also provided by default if you use
    * the HTML5 `maxlength` attribute. Note that the `maxLength` validator is intended to be used
-   * only for types that have a numeric `length` property, such as strings or arrays.
+   * only for types that have a numeric `length` or `size` property, such as strings, arrays or
+   * sets.
    *
    * @usageNotes
    *
@@ -486,7 +496,7 @@ var Validators = class {
    * @returns A validator function that returns an error map with the
    * `maxlength` property if the validation check fails, otherwise `null`.
    *
-   * @see {@link updateValueAndValidity()}
+   * @see {@link /api/forms/AbstractControl#updateValueAndValidity updateValueAndValidity}
    *
    */
   static maxLength(maxLength) {
@@ -538,7 +548,7 @@ var Validators = class {
    * @returns A validator function that returns an error map with the
    * `pattern` property if the validation check fails, otherwise `null`.
    *
-   * @see {@link updateValueAndValidity()}
+   * @see {@link /api/forms/AbstractControl#updateValueAndValidity updateValueAndValidity}
    *
    */
   static pattern(pattern) {
@@ -548,11 +558,11 @@ var Validators = class {
    * @description
    * Validator that performs no operation.
    *
-   * @see {@link updateValueAndValidity()}
+   * @see {@link /api/forms/AbstractControl#updateValueAndValidity updateValueAndValidity}
    *
    */
   static nullValidator(control) {
-    return nullValidator(control);
+    return nullValidator();
   }
   static compose(validators) {
     return compose(validators);
@@ -565,7 +575,7 @@ var Validators = class {
    * @returns A validator function that returns an error map with the
    * merged error objects of the async validators if the validation check fails, otherwise `null`.
    *
-   * @see {@link updateValueAndValidity()}
+   * @see {@link /api/forms/AbstractControl#updateValueAndValidity updateValueAndValidity}
    *
    */
   static composeAsync(validators) {
@@ -574,7 +584,7 @@ var Validators = class {
 };
 function minValidator(min) {
   return (control) => {
-    if (isEmptyInputValue(control.value) || isEmptyInputValue(min)) {
+    if (control.value == null || min == null) {
       return null;
     }
     const value = parseFloat(control.value);
@@ -588,7 +598,7 @@ function minValidator(min) {
 }
 function maxValidator(max) {
   return (control) => {
-    if (isEmptyInputValue(control.value) || isEmptyInputValue(max)) {
+    if (control.value == null || max == null) {
       return null;
     }
     const value = parseFloat(control.value);
@@ -620,25 +630,30 @@ function emailValidator(control) {
 }
 function minLengthValidator(minLength) {
   return (control) => {
-    if (isEmptyInputValue(control.value) || !hasValidLength(control.value)) {
+    const length = control.value?.length ?? lengthOrSize(control.value);
+    if (length === null || length === 0) {
       return null;
     }
-    return control.value.length < minLength ? {
+    return length < minLength ? {
       "minlength": {
         "requiredLength": minLength,
-        "actualLength": control.value.length
+        "actualLength": length
       }
     } : null;
   };
 }
 function maxLengthValidator(maxLength) {
   return (control) => {
-    return hasValidLength(control.value) && control.value.length > maxLength ? {
-      "maxlength": {
-        "requiredLength": maxLength,
-        "actualLength": control.value.length
-      }
-    } : null;
+    const length = control.value?.length ?? lengthOrSize(control.value);
+    if (length !== null && length > maxLength) {
+      return {
+        "maxlength": {
+          "requiredLength": maxLength,
+          "actualLength": length
+        }
+      };
+    }
+    return null;
   };
 }
 function patternValidator(pattern) {
@@ -1030,7 +1045,6 @@ var ControlContainer = class extends AbstractControlDirective {
    * @description
    * The name for the control
    */
-  // TODO(issue/24571): remove '!'.
   name;
   /**
    * @description
@@ -1699,8 +1713,6 @@ var AbstractControl = class {
    * accessing a value of a parent control (using the `value` property) from the callback of this
    * event might result in getting a value that has not been updated yet. Subscribe to the
    * `valueChanges` event of the parent control instead.
-   *
-   * TODO: this should be piped from events() but is breaking in G3
    */
   valueChanges;
   /**
@@ -1709,8 +1721,6 @@ var AbstractControl = class {
    *
    * @see {@link FormControlStatus}
    * @see {@link AbstractControl.status}
-   *
-   * TODO: this should be piped from events() but is breaking in G3
    */
   statusChanges;
   /**
@@ -2925,7 +2935,6 @@ var NgForm = class _NgForm extends ControlContainer {
    * Possible values: `'change'` | `'blur'` | `'submit'`.
    *
    */
-  // TODO(issue/24571): remove '!'.
   options;
   constructor(validators, asyncValidators, callSetDisabledState) {
     super();
@@ -3079,6 +3088,7 @@ var NgForm = class _NgForm extends ControlContainer {
     this.submittedReactive.set(true);
     syncPendingControls(this.form, this._directives);
     this.ngSubmit.emit($event);
+    this.form._events.next(new FormSubmittedEvent(this.control));
     return $event?.target?.method === "dialog";
   }
   /**
@@ -3097,6 +3107,7 @@ var NgForm = class _NgForm extends ControlContainer {
   resetForm(value = void 0) {
     this.form.reset(value);
     this.submittedReactive.set(false);
+    this.form._events.next(new FormResetEvent(this.form));
   }
   _setUpdateStrategy() {
     if (this.options && this.options.updateOn != null) {
@@ -3303,7 +3314,6 @@ var AbstractFormGroupDirective = class _AbstractFormGroupDirective extends Contr
    *
    * @internal
    */
-  // TODO(issue/24571): remove '!'.
   _parent;
   /** @nodoc */
   ngOnInit() {
@@ -3518,7 +3528,6 @@ var NgModel = class _NgModel extends NgControl {
    * @description
    * Tracks whether the control is disabled.
    */
-  // TODO(issue/24571): remove '!'.
   isDisabled;
   /**
    * @description
@@ -3541,7 +3550,6 @@ var NgModel = class _NgModel extends NgControl {
    * Defaults to 'change'. Possible values: `'change'` | `'blur'` | `'submit'`.
    *
    */
-  // TODO(issue/24571): remove '!'.
   options;
   /**
    * @description
@@ -3632,18 +3640,9 @@ var NgModel = class _NgModel extends NgControl {
   }
   _checkForErrors() {
     if ((typeof ngDevMode === "undefined" || ngDevMode) && !this._isStandalone()) {
-      this._checkParentType();
+      checkParentType$1(this._parent);
     }
     this._checkName();
-  }
-  _checkParentType() {
-    if (typeof ngDevMode === "undefined" || ngDevMode) {
-      if (!(this._parent instanceof NgModelGroup) && this._parent instanceof AbstractFormGroupDirective) {
-        throw formGroupNameException();
-      } else if (!(this._parent instanceof NgModelGroup) && !(this._parent instanceof NgForm)) {
-        throw modelParentException();
-      }
-    }
   }
   _checkName() {
     if (this.options && this.options.name) this.name = this.options.name;
@@ -3778,6 +3777,13 @@ var NgModel = class _NgModel extends NgControl {
     }]
   });
 })();
+function checkParentType$1(parent) {
+  if (!(parent instanceof NgModelGroup) && parent instanceof AbstractFormGroupDirective) {
+    throw formGroupNameException();
+  } else if (!(parent instanceof NgModelGroup) && !(parent instanceof NgForm)) {
+    throw modelParentException();
+  }
+}
 var ɵNgNoValidate = class _ɵNgNoValidate {
   static ɵfac = function ɵNgNoValidate_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _ɵNgNoValidate)();
@@ -3928,13 +3934,10 @@ var RadioControlValueAccessor = class _RadioControlValueAccessor extends BuiltIn
   _registry;
   _injector;
   /** @internal */
-  // TODO(issue/24571): remove '!'.
   _state;
   /** @internal */
-  // TODO(issue/24571): remove '!'.
   _control;
   /** @internal */
-  // TODO(issue/24571): remove '!'.
   _fn;
   setDisabledStateFired = false;
   /**
@@ -3950,14 +3953,12 @@ var RadioControlValueAccessor = class _RadioControlValueAccessor extends BuiltIn
    * @description
    * Tracks the name of the radio input element.
    */
-  // TODO(issue/24571): remove '!'.
   name;
   /**
    * @description
    * Tracks the name of the `FormControl` bound to the directive. The name corresponds
    * to a key in the parent `FormGroup` or `FormArray`.
    */
-  // TODO(issue/24571): remove '!'.
   formControlName;
   /**
    * @description
@@ -4156,7 +4157,6 @@ var FormControlDirective = class _FormControlDirective extends NgControl {
    * @description
    * Tracks the `FormControl` instance bound to the directive.
    */
-  // TODO(issue/24571): remove '!'.
   form;
   /**
    * @description
@@ -4406,7 +4406,9 @@ var FormGroupDirective = class _FormGroupDirective extends ControlContainer {
   }
   /** @nodoc */
   ngOnChanges(changes) {
-    this._checkFormPresent();
+    if ((typeof ngDevMode === "undefined" || ngDevMode) && !this.form) {
+      throw missingFormException();
+    }
     if (changes.hasOwnProperty("form")) {
       this._updateValidators();
       this._updateDomValue();
@@ -4630,11 +4632,6 @@ var FormGroupDirective = class _FormGroupDirective extends ControlContainer {
       cleanUpValidators(this._oldForm, this);
     }
   }
-  _checkFormPresent() {
-    if (!this.form && (typeof ngDevMode === "undefined" || ngDevMode)) {
-      throw missingFormException();
-    }
-  }
   static ɵfac = function FormGroupDirective_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _FormGroupDirective)(ɵɵdirectiveInject(NG_VALIDATORS, 10), ɵɵdirectiveInject(NG_ASYNC_VALIDATORS, 10), ɵɵdirectiveInject(CALL_SET_DISABLED_STATE, 8));
   };
@@ -4735,7 +4732,7 @@ var FormGroupName = class _FormGroupName extends AbstractFormGroupDirective {
   }
   /** @internal */
   _checkParentType() {
-    if (_hasInvalidParent(this._parent) && (typeof ngDevMode === "undefined" || ngDevMode)) {
+    if (hasInvalidParent(this._parent) && (typeof ngDevMode === "undefined" || ngDevMode)) {
       throw groupParentException();
     }
   }
@@ -4825,8 +4822,8 @@ var FormArrayName = class _FormArrayName extends ControlContainer {
    * @nodoc
    */
   ngOnInit() {
-    if (typeof ngDevMode === "undefined" || ngDevMode) {
-      this._checkParentType();
+    if (hasInvalidParent(this._parent) && (typeof ngDevMode === "undefined" || ngDevMode)) {
+      throw arrayParentException();
     }
     this.formDirective.addFormArray(this);
   }
@@ -4835,9 +4832,7 @@ var FormArrayName = class _FormArrayName extends ControlContainer {
    * @nodoc
    */
   ngOnDestroy() {
-    if (this.formDirective) {
-      this.formDirective.removeFormArray(this);
-    }
+    this.formDirective?.removeFormArray(this);
   }
   /**
    * @description
@@ -4860,11 +4855,6 @@ var FormArrayName = class _FormArrayName extends ControlContainer {
    */
   get path() {
     return controlPath(this.name == null ? this.name : this.name.toString(), this._parent);
-  }
-  _checkParentType() {
-    if (_hasInvalidParent(this._parent) && (typeof ngDevMode === "undefined" || ngDevMode)) {
-      throw arrayParentException();
-    }
   }
   static ɵfac = function FormArrayName_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _FormArrayName)(ɵɵdirectiveInject(ControlContainer, 13), ɵɵdirectiveInject(NG_VALIDATORS, 10), ɵɵdirectiveInject(NG_ASYNC_VALIDATORS, 10));
@@ -4923,7 +4913,7 @@ var FormArrayName = class _FormArrayName extends ControlContainer {
     }]
   });
 })();
-function _hasInvalidParent(parent) {
+function hasInvalidParent(parent) {
   return !(parent instanceof FormGroupName) && !(parent instanceof FormGroupDirective) && !(parent instanceof FormArrayName);
 }
 var controlNameBinding = {
@@ -4942,7 +4932,6 @@ var FormControlName = class _FormControlName extends NgControl {
    * @description
    * Tracks the `FormControl` instance bound to the directive.
    */
-  // TODO(issue/24571): remove '!'.
   control;
   /**
    * @description
@@ -5034,18 +5023,9 @@ var FormControlName = class _FormControlName extends NgControl {
   get formDirective() {
     return this._parent ? this._parent.formDirective : null;
   }
-  _checkParentType() {
-    if (typeof ngDevMode === "undefined" || ngDevMode) {
-      if (!(this._parent instanceof FormGroupName) && this._parent instanceof AbstractFormGroupDirective) {
-        throw ngModelGroupException();
-      } else if (!(this._parent instanceof FormGroupName) && !(this._parent instanceof FormGroupDirective) && !(this._parent instanceof FormArrayName)) {
-        throw controlParentException(this.name);
-      }
-    }
-  }
   _setUpControl() {
     if (typeof ngDevMode === "undefined" || ngDevMode) {
-      this._checkParentType();
+      checkParentType(this._parent, this.name);
     }
     this.control = this.formDirective.addControl(this);
     this._added = true;
@@ -5142,6 +5122,13 @@ var FormControlName = class _FormControlName extends NgControl {
     }]
   });
 })();
+function checkParentType(parent, name) {
+  if (!(parent instanceof FormGroupName) && parent instanceof AbstractFormGroupDirective) {
+    throw ngModelGroupException();
+  } else if (!(parent instanceof FormGroupName) && !(parent instanceof FormGroupDirective) && !(parent instanceof FormArrayName)) {
+    throw controlParentException(name);
+  }
+}
 var SELECT_VALUE_ACCESSOR = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => SelectControlValueAccessor),
@@ -5261,7 +5248,6 @@ var NgSelectOption = class _NgSelectOption {
    * @description
    * ID of the option element
    */
-  // TODO(issue/24571): remove '!'.
   id;
   constructor(_element, _renderer, _select) {
     this._element = _element;
@@ -5492,7 +5478,6 @@ var ɵNgSelectMultipleOption = class _ɵNgSelectMultipleOption {
   _element;
   _renderer;
   _select;
-  // TODO(issue/24571): remove '!'.
   id;
   /** @internal */
   _value;
@@ -6723,7 +6708,7 @@ var UntypedFormBuilder = class _UntypedFormBuilder extends FormBuilder {
     }]
   }], null, null);
 })();
-var VERSION = new Version("19.1.5");
+var VERSION = new Version("19.2.10");
 var FormsModule = class _FormsModule {
   /**
    * @description
@@ -6876,8 +6861,8 @@ export {
 
 @angular/forms/fesm2022/forms.mjs:
   (**
-   * @license Angular v19.1.5
-   * (c) 2010-2024 Google LLC. https://angular.io/
+   * @license Angular v19.2.10
+   * (c) 2010-2025 Google LLC. https://angular.io/
    * License: MIT
    *)
 */
