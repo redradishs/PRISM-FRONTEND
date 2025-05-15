@@ -287,6 +287,10 @@ export class AssignAssessmentComponent implements OnInit {
     if (!selectedClass) return;
 
     const classCode = selectedClass.classCode;
+    if(selectedClass.totalStudents === 0) {
+      this.showNoStudentsAlert();
+      return;
+    }
     if (this.selectedClasses.has(classCode)) {
       this.selectedClasses.delete(classCode);
     } else {
@@ -327,6 +331,9 @@ export class AssignAssessmentComponent implements OnInit {
         }
       }
     }
+  }
+  clearAssessmentSelection() {
+    this.selectedAssessments.clear();
   }
 
   isClassSelected(classId: string): boolean {
@@ -801,5 +808,23 @@ export class AssignAssessmentComponent implements OnInit {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+  }
+
+  showNoStudentsAlert(): void {
+    Swal.fire({
+      title: 'No students in this class',
+      icon: 'warning',
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 1500,
+      timerProgressBar: true,
+      background: '#fee2e2',
+      color: '#b91c1c',
+      iconColor: '#ef4444',
+      customClass: {
+        popup: 'swal2-toast'
+      }
+    });
   }
 }

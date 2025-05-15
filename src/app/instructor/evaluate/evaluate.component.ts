@@ -97,6 +97,13 @@ export class EvaluateComponent implements OnInit {
     return name[0].toUpperCase();
   }
 
+  assessmentDetails(i: any){
+    console.log("This is the data:", i)
+    this.router.navigate(['/instructor/response'], {
+      state: {studentId: this.studentId, assessmentId: i._id, show: false}
+    }); 
+  }
+
   checkMobile(): void {
     this.isMobile = window.innerWidth < 768;
   }

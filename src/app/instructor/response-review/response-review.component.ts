@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { ApiService } from '../../services/api.service';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-response-review',
@@ -25,6 +26,7 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
   assessmentDetails: any = {};
   qna: any[] = [];
   showViolations: boolean = false;
+  show: boolean = true;
 
   
   @HostListener('window:resize')
@@ -37,8 +39,10 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
     if(navigation?.extras?.state) {
       this.studentId = navigation.extras.state['studentId'];
       this.assignedAssessmentId = navigation.extras.state['assessmentId'];
+      this.show = navigation.extras.state['show'] !== false;
+      console.log('Show:', this.show);  
       console.log('Student ID:', this.studentId);
-      console.log('Assessment ID:', this.assignedAssessmentId);
+      console.log('Assessment ID:', this.assignedAssessmentId); 
       this.assessmentData();
       this.qandAs();
     }
@@ -152,9 +156,33 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
         question.isGrading = false;
         delete question.grading;
         this.assessmentData();
+        Swal.fire({
+          title: 'Grade Saved',
+          text: 'The grade has been saved successfully',
+          icon: 'success',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 1000,
+          timerProgressBar: true,
+          background: '#fff',
+          iconColor: '#3b82f6'
+        });    
       },
       error: (error) => {
         console.error('Error saving grade:', error);
+        Swal.fire({
+          title: 'Error Saving Grade',
+          text: 'Please try again',
+          icon: 'info',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 1000,
+          timerProgressBar: true,
+          background: '#fff',
+          iconColor: '#3b82f6'
+        });
       }
     });
   }

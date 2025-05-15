@@ -389,25 +389,111 @@
 
 /* Score badges */
 .score-badge {
-    padding: 4px 12px; /* Larger padding for desktop */
+    padding: 4px 12px;
     border-radius: 9999px;
-    font-size: 13px; /* Larger font size for desktop */
+    font-size: 13px;
     font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 70px;
 }
 
-.score-badge.high {
+/* Poor: Below 50% - Red */
+.score-badge.poor {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+/* Needs Improvement: 50-74% - Orange */
+.score-badge.needs-improvement {
+    background-color: #ffedd5;
+    color: #c2410c;
+}
+
+/* Average: 75-80% - Yellow */
+.score-badge.average {
+    background-color: #fef3c7;
+    color: #b45309;
+}
+
+/* Good: 81-100% - Green */
+.score-badge.good {
     background-color: #dcfce7;
     color: #15803d;
 }
 
-.score-badge.medium {
-    background-color: #dbeafe;
-    color: #1d4ed8;
+/* Add a subtle icon indicator to each badge type */
+.score-badge::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
 }
 
-.score-badge.low {
-    background-color: #fef3c7;
-    color: #b45309;
+.score-badge.poor::before {
+    background-color: #b91c1c;
+}
+
+.score-badge.needs-improvement::before {
+    background-color: #c2410c;
+}
+
+.score-badge.average::before {
+    background-color: #b45309;
+}
+
+.score-badge.good::before {
+    background-color: #15803d;
+}
+
+/* Add a tooltip for clarity on hover */
+.score-badge {
+    position: relative;
+    cursor: help;
+}
+
+.score-badge::after {
+    position: absolute;
+    content: attr(data-tooltip);
+    opacity: 0;
+    visibility: hidden;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #374151;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.score-badge.poor::after {
+    content: "Poor";
+}
+
+.score-badge.needs-improvement::after {
+    content: "Needs Improvement";
+}
+
+.score-badge.average::after {
+    content: "Average";
+}
+
+.score-badge.good::after {
+    content: "Good";
+}
+
+.score-badge:hover::after {
+    opacity: 1;
+    visibility: visible;
+    top: -25px;
 }
 
 /* Status badges */

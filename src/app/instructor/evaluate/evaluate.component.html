@@ -51,7 +51,7 @@
                 <div class="page-header">
                     <div class="page-title-container">
                         <h1 class="page-title">
-                
+
                             Evaluate Student
                         </h1>
                         <p class="page-subtitle">Evaluate the student's performance and provide feedback</p>
@@ -91,11 +91,14 @@
                             <div class="student-details">
                                 <div class="detail-group">
                                     <p class="detail-label">Program</p>
-                                    <p class="detail-value">{{studentData.student?.program}} - Information Technology</p>
+                                    <p class="detail-value">{{studentData.student?.program}} - Information Technology
+                                    </p>
                                 </div>
                                 <div class="detail-group">
                                     <p class="detail-label">Year & Section</p>
-                                    <p class="detail-value">{{studentData.student?.yearLevel}}rd Year, {{studentData.student?.program}}-{{studentData.student?.yearLevel}}{{studentData.student?.block}}</p>
+                                    <p class="detail-value">{{studentData.student?.yearLevel}}rd Year,
+                                        {{studentData.student?.program}}-{{studentData.student?.yearLevel}}{{studentData.student?.block}}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -115,7 +118,8 @@
                             </div>
                             <p class="stat-value">{{studentData.stats?.averagePerformance}}%</p>
                             <div class="progress-bar">
-                                <div class="progress-value" [style.width]="studentData.stats?.averagePerformance + '%'"></div>
+                                <div class="progress-value" [style.width]="studentData.stats?.averagePerformance + '%'">
+                                </div>
                             </div>
                         </div>
 
@@ -124,13 +128,16 @@
                             <div class="stat-header">
                                 <div class="stat-icon-wrapper icon-blue">
                                     <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                                        <path
+                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4">
+                                        </path>
                                     </svg>
                                 </div>
                                 <h3 class="stat-title">Assessments Taken</h3>
                             </div>
                             <p class="stat-value">{{studentData.stats?.totalAssessmentsTaken}}</p>
-                            <p class="stat-subtitle">Last: {{getRelativeTime(studentData.stats?.lastAssessmentDate)}}</p>
+                            <p class="stat-subtitle">Last: {{getRelativeTime(studentData.stats?.lastAssessmentDate)}}
+                            </p>
                         </div>
 
                         <!-- Avg. Completion Time -->
@@ -143,7 +150,8 @@
                                 </div>
                                 <h3 class="stat-title">Avg. Completion Time</h3>
                             </div>
-                            <p class="stat-value">{{studentData.stats?.averageCompletionTime / 60 | number: '1.2-2'}} min</p>
+                            <p class="stat-value">{{studentData.stats?.averageCompletionTime / 60 | number: '1.2-2'}}
+                                min</p>
                             <p class="stat-subtitle">Per assessment</p>
                         </div>
 
@@ -152,13 +160,16 @@
                             <div class="stat-header">
                                 <div class="stat-icon-wrapper icon-purple">
                                     <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        <path
+                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                        </path>
                                     </svg>
                                 </div>
                                 <h3 class="stat-title">Last Assessment</h3>
                             </div>
                             <p class="stat-value">{{studentData.stats?.lastAssessmentTitle}}</p>
-                            <p class="stat-subtitle">{{studentData.stats?.lastAssessmentDate | date:'MMM d, y, h:mm a'}}</p>
+                            <p class="stat-subtitle">{{studentData.stats?.lastAssessmentDate | date:'MMM d, y, h:mm a'}}
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -288,7 +299,7 @@
                         </div>
 
                         <div class="assessment-list">
-                            <div *ngFor="let i of assessments" class="assessment-item">
+                            <div (click)="assessmentDetails(i);" *ngFor="let i of assessments" class="assessment-item">
                                 <div class="assessment-main">
                                     <div class="assessment-info">
                                         <h3>{{i.title}}</h3>
@@ -322,13 +333,11 @@
                                     </div>
                                 </div>
                                 <div class="progress-bar">
-                                    <div class="progress" 
-                                         [ngClass]="{
+                                    <div class="progress" [ngClass]="{
                                            'red': i.percentage < 50,
                                            'orange': i.percentage >= 50 && i.percentage <= 80,
                                            'green': i.percentage > 80
-                                         }"
-                                         [style.width.%]="i.percentage">
+                                         }" [style.width.%]="i.percentage">
                                     </div>
                                 </div>
                                 <a href="#" class="view-details">View Details</a>

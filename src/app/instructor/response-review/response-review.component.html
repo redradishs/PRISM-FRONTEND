@@ -72,14 +72,14 @@
                         </div>
                     </div>
                     <div class="action-buttons">
-                        <button class="button">
+                        <button class="button" [disabled]="!show">
                             <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                             </svg>
                             Edit
                         </button>
-                        <button class="button">
+                        <button class="button" [disabled]="!show">
                             <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
                                 <path
                                     d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
@@ -87,7 +87,7 @@
                             </svg>
                             Settings
                         </button>
-                        <button class="button primary">
+                        <button class="button primary" [disabled]="!show">
                             <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
                                 <path d="M3 3v18h18M18 17V9M12 17V5M6 17v-3" />
                             </svg>
@@ -218,7 +218,7 @@
                                     <i class="fas fa-comment"></i>
                                     Instructor Feedback
                                 </h3>
-                                <button class="btn-ghost" (click)="toggleFeedbackEdit()">
+                                <button class="btn-ghost" (click)="toggleFeedbackEdit()" [disabled]="!show">
                                     <i class="fas" [class.fa-edit]="!isEditingFeedback"
                                         [class.fa-save]="isEditingFeedback"></i>
                                 </button>
@@ -408,7 +408,7 @@
                                         <div class="grading-header">
                                             <span class="grading-title">Grading</span>
                                             <ng-container *ngIf="!q.isGrading">
-                                                <button class="review-button" (click)="startGrading(q)">
+                                                <button class="review-button" (click)="startGrading(q)" [disabled]="!show">
                                                     Rectify Grading
                                                 </button>
                                             </ng-container>

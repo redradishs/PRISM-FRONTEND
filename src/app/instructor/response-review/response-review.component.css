@@ -196,6 +196,20 @@
     background-color: #f3f4f6;
 }
 
+.button:disabled {
+    background-color: #e5e7eb;
+    color: #9ca3af;
+    cursor: not-allowed;
+    opacity: 0.7;
+    transform: none;
+    pointer-events: none;
+}
+
+.button.primary:disabled {
+    background: linear-gradient(135deg, #a5a6f6 0%, #b69df6 100%);
+    color: #e5e7eb;
+}
+
 .icon {
     stroke: currentColor;
     stroke-width: 2;
@@ -784,6 +798,15 @@
     box-shadow: 0 2px 4px rgba(99, 102, 241, 0.1);
 }
 
+.review-button:disabled {
+    background-color: #e5e7eb;
+    color: #9ca3af;
+    cursor: not-allowed;
+    opacity: 0.7;
+    transform: none;
+    pointer-events: none;
+}
+
 .grading-form {
     background: #f8fafc;
     border-radius: 0.75rem;
@@ -890,6 +913,15 @@
 .points-wrapper input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
+}
+
+.points-wrapper input:focus {
+    outline: none;
+}
+
+.points-wrapper input:disabled {
+    background: transparent;
+    color: #9ca3af;
 }
 
 .points-max {
@@ -2316,7 +2348,7 @@ html {
     color: #b91c1c;
     padding: 4px 12px;
     border-radius: 12px;
-    font-size: 14px;
+    font-size: 14px;    
     font-weight: 500;
 }
 
@@ -2562,4 +2594,12 @@ html {
     .question-content {
         -webkit-line-clamp: 2;
     }
+}
+
+/* Add to your existing CSS */
+.btn-ghost:disabled {
+    color: #9ca3af;
+    cursor: not-allowed;
+    opacity: 0.7;
+    pointer-events: none;
 }
