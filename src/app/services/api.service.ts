@@ -24,6 +24,8 @@ export class ApiService {
   // apiUrl = 'https://prismcdn.onrender.com/api';
   apiUrl = 'https://prismapi2.onrender.com/instructor';
   aiUrl = 'https://redprismai.vercel.app';
+  // aiUrl = 'http://localhost:3000';
+
 
   constructor(private http: HttpClient) {}
   // The AI CONTENT GENERATION STARTS HERE
@@ -46,12 +48,6 @@ export class ApiService {
     return this.http.post(`${this.aiUrl}/instructorplus`, data);
   }
 
-  // Generate assessment with specific topic
-  generateTopicAssessment(topic: string, additionalInstructions: string = '') {
-    const content = `Generate an assessment for ${topic}. ${additionalInstructions}`;
-    return this.generateAssessment(content);
-  }
-
   // Generate quiz assessment
   generateQuizAssessment(
     numberOfQuestions: number,
@@ -65,9 +61,12 @@ export class ApiService {
   }
 
   // Generate performance evaluation
-  generatePerformanceEvaluation(studentData: string) {
-    const content = `Analyze and evaluate the following student performance data: ${studentData}`;
-    return this.generateAssessmentPlus(content);
+  analyzeResult(content: string) {
+    const data: AIPromptRequest = {
+      role: 'system',
+      content: content,
+    };
+    return this.http.post(`${this.aiUrl}/analytics`, data);
   }
 
   // The AI CONTENT GENERATION ENDS HERE
@@ -296,6 +295,10 @@ export class ApiService {
 
   extendNow(data: any) {
     return this.http.post(`${this.apiUrl}/assessment/extend`, data);
+  }
+
+  saveInsights(data: any) {
+    return this.http.post(`${this.apiUrl}/assessment/insights`, data);
   }
 
   //profile page instructor

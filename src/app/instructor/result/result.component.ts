@@ -91,6 +91,21 @@ export class ResultComponent implements OnInit, OnDestroy {
   allQuestions: any[] = [];
   userId: String = '';
   private scoreStream: EventSource | null = null;
+  insights: any[] = [
+    {
+      primary: "Assessment in Progress, insights will be availble once completed.",
+      secondary: "Insights will be available once the assessment is completed."
+    },
+    {
+      primary: "Real-time Student Progress in the list below.",
+      secondary: "You can monitor student progress in the student list below."
+    },
+    {
+      primary: "Student Status in the list below.",
+      secondary: "Track submission status and performance metrics in real-time."
+    }
+  ];
+  expandedIndex: number | null = null;
 
   constructor(
     private api: ApiService,
@@ -251,8 +266,8 @@ export class ResultComponent implements OnInit, OnDestroy {
           this.setupScoreStream();
         }
         if(resp.data.status === 'completed') {
-          this.getItemAnalysis(this.assessmentId),
-          this.getStudentPerformance(this.assessmentId)
+          this.getItemAnalysis(this.assessmentId);
+          this.insights = resp.data.insights;
         }
         console.log('Assessment Title:', this.assessmentTitle);
         console.log('Class Code:', this.classCode);
@@ -275,6 +290,7 @@ export class ResultComponent implements OnInit, OnDestroy {
                 this.questionLength = this.questions.length;
                 console.log('Questions loaded:', this.questions);
                 console.log('Question Length:', this.questionLength);
+                this.getStudentPerformance(this.assessmentId);
             }
         },
         error: (error) => {
@@ -295,7 +311,12 @@ export class ResultComponent implements OnInit, OnDestroy {
         this.scoreDistribution = resp.data.scoreDistribution;
         this.submissionStatus = resp.data.submissionStatus;
         this.completionStatistics = resp.data.submissionStatus;
-      }, error: (error) => {
+        console.log('Class Overview:', this.classOverview);
+        if(this.classOverview.status === 'completed' && this.insights.length === 0) {
+          this.prismInsights();
+        }
+      }, 
+      error: (error) => {
         console.error('Error getting student performance:', error);
       }
     }))
@@ -375,9 +396,47 @@ export class ResultComponent implements OnInit, OnDestroy {
     console.log('Selected Type:', this.selectedQuestionType);
   }
 
-  insights = [
-    "Students Struggled Most with understanding each Layer specifically the 3rd Layer",
-  ];
+
+  prismInsights() {
+    console.log('Binabatong data:', this.itemAnalysis);
+    const formattedQuestions = this.allQuestions && this.allQuestions.length > 0 
+      ? '\n\nQuestion Data:\n' + JSON.stringify(this.allQuestions, null, 2)
+      : '';
+    console.log('Formatted Questions:', formattedQuestions);
+    const prompt = 'Analyze the following assessment results and provide insights on the students\' performance and any areas of concern or success.' + formattedQuestions;
+    
+    this.api.analyzeResult(prompt).subscribe({
+      next: (resp: any) => {
+        console.log('Prism Insights:', resp.analysis);
+        this.insights = resp.analysis || [
+          {
+            primary: "AI analysis not available",
+            secondary: "Please check the data and try again."
+          }
+        ];
+        this.saveInsights();
+      },
+      error: (error) => {
+        console.error('Error getting prism insights:', error);
+      }
+    });
+  }
+
+  saveInsights() {
+    console.log('Saving insights:', this.insights);
+    const data = {
+      assignedAssessmentId: this.assessmentId,
+      insights: this.insights
+    }
+    this.api.saveInsights(data).subscribe({
+      next: (resp: any) => {
+        console.log('Insights saved:', resp);
+      }, 
+      error: (error) => {
+        console.error('Error saving insights:', error);
+      }
+    })
+  }
 
   assessmentDetails(student: any) {
     if(student.status?.toLowerCase() === 'submitted') {
@@ -596,6 +655,10 @@ export class ResultComponent implements OnInit, OnDestroy {
 
   setActiveTab(tab: string) {
     this.activeTab = tab;
+  }
+
+  toggleInsight(index: number) {
+    this.expandedIndex = this.expandedIndex === index ? null : index;
   }
 
 }

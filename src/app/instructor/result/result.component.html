@@ -122,9 +122,14 @@
                             <h2>PRISM - INSIGHTS</h2>
                         </div>
                         <ul class="insights-list">
-                            <li *ngFor="let insight of insights; let i = index">
-                                <span class="bullet">{{i < 3 ? '•' : '◦' }}</span>
-                                        <span>{{insight}}</span>
+                            <li *ngFor="let insight of insights; let i = index" 
+                                [class.expanded]="expandedIndex === i"
+                                (click)="toggleInsight(i)">
+                                <span class="bullet">{{i < 5 ? '•' : '◦' }}</span>
+                                <div class="content">
+                                    <span class="primary">{{insight.primary}}</span>
+                                    <span class="secondary">{{insight.secondary}}</span>
+                                </div>
                             </li>
                         </ul>
                     </div>
