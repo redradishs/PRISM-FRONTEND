@@ -271,6 +271,18 @@ export class CreateAssessmentComponent implements OnInit {
               } else {
                 this.isGenerating = false;
                 this.generated = true;
+                Swal.fire({
+                  title: 'Questions Generated',
+                  text: 'Questions generated successfully',
+                  icon: 'success',
+                  toast: true,
+                  position: 'top-end',
+                  showConfirmButton: false,
+                  timer: 2000,
+                  timerProgressBar: true,
+                  background: '#fff',
+                  iconColor: '#3b82f6'
+                });
               }
             } else {
               this.handleGenerationFailure(
@@ -428,11 +440,15 @@ export class CreateAssessmentComponent implements OnInit {
 
 
   private updateQuestionNumbers() {
+    // First sort by ID to maintain stable order
     this.questions.sort((a, b) => a.id - b.id);
-    this.questions.forEach((q, index) => {
-      q.questionNumber = index + 1;
+    
+    // Then update question numbers sequentially
+    let currentNumber = 1;
+    this.questions.forEach((q) => {
+      q.questionNumber = currentNumber++;
     });
-}
+  }
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
   }
@@ -451,7 +467,9 @@ export class CreateAssessmentComponent implements OnInit {
   }
 
   getQuestionsByType(type: string): Question[] {
-    return this.questions.filter((q) => q.type === type);
+    return this.questions
+      .filter((q) => q.type === type)
+      .sort((a, b) => a.questionNumber - b.questionNumber);
   }
 
   getQuestionTypeCount(type: string): number {
@@ -493,12 +511,17 @@ export class CreateAssessmentComponent implements OnInit {
     }
   }
 
-  toggleEditAndSave(question: Question) {
-    if (this.isEditing(question.id)) {
-      // Just exit edit mode
+  toggleEditAndSave(question: any): void {
+    const questionId = question.id;
+    
+    if (this.editingQuestionId === questionId) {
+      // Save the question
       this.editingQuestionId = null;
+      // Optional: Add any validation or save logic here
+      console.log('Saved question:', question);
     } else {
-      this.editingQuestionId = question.id;
+      // Start editing
+      this.editingQuestionId = questionId;
     }
   }
 
@@ -907,5 +930,15 @@ export class CreateAssessmentComponent implements OnInit {
     if (category) {
       category.selected = false;
     }
+  }
+
+  getTotalQuestionsBefore(type: string): number {
+    const questionTypes = ['multiple-choice', 'enumeration', 'short-answer', 'true-false'];
+    let count = 0;
+    for (const t of questionTypes) {
+      if (t === type) break;
+      count += this.getQuestionsByType(t).length;
+    }
+    return count;
   }
 }

@@ -225,7 +225,7 @@
                                         [class.hover:bg-green-50]="student.status?.toLowerCase() === 'submitted'"
                                         [class.cursor-pointer]="student.status?.toLowerCase() === 'submitted'"
                                         [class.hover:bg-red-50]="student.status?.toLowerCase() !== 'submitted'">
-                                        <td class="sticky left-0 bg-white px-3 py-2 md:px-6 md:py-4 whitespace-nowrap">
+                                        <td class="sticky left-0 bg-white px-3 py-2 md:px-6 md:py-4 whitespace-nowrap z-20">
                                             <div class="flex items-center gap-2 md:gap-3">
                                                 <div
                                                     class="w-7 h-7 md:w-9 md:h-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-xs md:text-sm font-medium">
@@ -235,11 +235,11 @@
                                                     class="font-medium text-sm md:text-base text-gray-900">{{student.name}}</span>
                                             </div>
                                         </td>
-                                        <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap">
+                                        <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap bg-white">
                                             <span class="text-sm md:text-base text-gray-900">{{student.block ||
                                                 'N/A'}}</span>
                                         </td>
-                                        <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap">
+                                        <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap bg-white">
                                             <span class="text-sm md:text-base font-medium" [class]="{
                                                     'text-green-600': (student.score / classOverview.totalScore * 100) >= 75,
                                                     'text-yellow-600': (student.score / classOverview.totalScore * 100) >= 50 && (student.score / classOverview.totalScore * 100) < 75,
@@ -248,24 +248,46 @@
                                                 {{student.score}}/{{classOverview.totalScore}}
                                             </span>
                                         </td>
-                                        <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap">
-                                            <span
-                                                class="inline-flex px-2 py-1 md:px-3 md:py-1.5 text-xs md:text-sm font-medium rounded-full"
+                                        <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap bg-white">
+                                            <div class="inline-flex items-center px-2.5 py-1.5 md:px-3.5 md:py-2 rounded-full gap-1.5"
                                                 [ngClass]="{
-                                                    'bg-green-100 text-green-800': student.status?.toLowerCase() === 'submitted',
-                                                    'bg-yellow-100 text-yellow-800': student.status?.toLowerCase() === 'in-progress',
-                                                    'bg-gray-100 text-gray-800': student.status?.toLowerCase() === 'not_started'
+                                                    'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/10': student.status?.toLowerCase() === 'submitted',
+                                                    'bg-amber-50 text-amber-700 ring-1 ring-amber-600/10 animate-pulse': student.status?.toLowerCase() === 'in-progress',
+                                                    'bg-slate-50 text-slate-600 ring-1 ring-slate-500/10': student.status?.toLowerCase() === 'not_started'
                                                 }">
-                                                {{student.status}}
-                                            </span>
+                                                <i class="fas text-xs md:text-sm" [ngClass]="{
+                                                    'fa-circle-check': student.status?.toLowerCase() === 'submitted',
+                                                    'fa-spinner fa-spin': student.status?.toLowerCase() === 'in-progress',
+                                                    'fa-circle-pause': student.status?.toLowerCase() === 'not_started'
+                                                }"></i>
+                                                <span class="text-xs md:text-sm font-medium">
+                                                    {{student.status === 'not_started' ? 'Not Started' : 
+                                                      (student.status === 'in-progress' ? 'In Progress' : 'Submitted')}}
+                                                </span>
+                                            </div>
                                         </td>
-                                        <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-right">
-                                            <div class="flex items-center justify-end gap-1 md:gap-2">
-                                                <i class="fas fa-shield-alt"
-                                                    [class]="student.violationCount > 0 ? 'text-red-600' : 'text-green-600'"></i>
-                                                <span class="text-sm md:text-base"
-                                                    [class]="student.violationCount > 0 ? 'text-red-500' : 'text-green-500'">
-                                                    {{student.violationCount > 0 ? 'Cheated' : 'Clean'}}
+                                        <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-right bg-white">
+                                            <div class="inline-flex items-center px-2.5 py-1.5 md:px-3.5 md:py-2 rounded-full gap-2"
+                                                [ngClass]="{
+                                                    'bg-green-50 text-green-700 ring-1 ring-green-600/10': student.violationCount === 0,
+                                                    'bg-amber-50 text-amber-700 ring-1 ring-amber-600/10': student.violationCount > 0 && student.violationCount <= 5,
+                                                    'bg-red-50 text-red-700 ring-1 ring-red-600/10': student.violationCount > 5
+                                                }">
+                                                <div class="flex items-center gap-1">
+                                                    <i class="fas text-xs md:text-sm" [ngClass]="{
+                                                        'fa-shield-check': student.violationCount === 0,
+                                                        'fa-shield-exclamation animate-pulse': student.violationCount > 0 && student.violationCount <= 5,
+                                                        'fa-shield-xmark': student.violationCount > 5
+                                                    }"></i>
+                                                    <i class="fas text-xs md:text-sm" [ngClass]="{
+                                                        'fa-check': student.violationCount === 0,
+                                                        'fa-triangle-exclamation': student.violationCount > 0 && student.violationCount <= 5,
+                                                        'fa-ban': student.violationCount > 5
+                                                    }"></i>
+                                                </div>
+                                                <span class="text-xs md:text-sm font-medium">
+                                                    {{student.violationCount === 0 ? 'Clean' : 
+                                                      (student.violationCount <= 5 ? 'Warning (' + student.violationCount + ')' : 'Cheated')}}
                                                 </span>
                                             </div>
                                         </td>

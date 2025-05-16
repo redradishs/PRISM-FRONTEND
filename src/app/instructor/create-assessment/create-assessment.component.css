@@ -2117,13 +2117,11 @@
 }
 
 .qtype-text-btn i {
-  font-size: 14px;
+  display: none; /* Hide icon by default on desktop */
 }
 
-.qtype-text-btn:hover {
-  background-color: #f3f4f6;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+.qtype-text-btn .btn-text {
+  display: block; /* Show text by default on desktop */
 }
 
 /* Mobile styles */
@@ -2135,8 +2133,13 @@
     justify-content: center;
   }
   
+  .qtype-text-btn i {
+    display: block; /* Show icon on mobile */
+    font-size: 14px;
+  }
+  
   .qtype-text-btn .btn-text {
-    display: none;
+    display: none; /* Hide text on mobile */
   }
 }
 

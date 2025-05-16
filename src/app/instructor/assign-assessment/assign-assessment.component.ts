@@ -116,17 +116,17 @@ export class AssignAssessmentComponent implements OnInit {
     {
       label: 'Now',
       startDate: new Date(),
-      dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000)
+      dueDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
     },
     {
       label: 'Tomorrow',
-      startDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
-      dueDate: new Date(Date.now() + 48 * 60 * 60 * 1000)
+      startDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+      dueDate: new Date(new Date().getTime() + 48 * 60 * 60 * 1000)
     },
     {
       label: 'Next Week',
-      startDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
+      startDate: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
+      dueDate: new Date(new Date().getTime() + 14 * 24 * 60 * 60 * 1000)
     }
   ];
 
@@ -134,17 +134,17 @@ export class AssignAssessmentComponent implements OnInit {
     {
       label: '1hr',
       startDate: new Date(),
-      dueDate: new Date(Date.now() + 60 * 60 * 1000)
+      dueDate: new Date(new Date().getTime() + 60 * 60 * 1000)
     },
     {
       label: '24hrs',
       startDate: new Date(),
-      dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000)
+      dueDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
     },
     {
       label: '1 week',
       startDate: new Date(),
-      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+      dueDate: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
     }
   ];
 
@@ -450,7 +450,13 @@ export class AssignAssessmentComponent implements OnInit {
   }
 
   private formatDate(date: Date): string {
-    return date.toISOString().slice(0, 16);
+    // Format date to local timezone in YYYY-MM-DDThh:mm format
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
   getCurrentDateTime(): string {
@@ -596,7 +602,10 @@ export class AssignAssessmentComponent implements OnInit {
       return 'Please set both start and due dates.';
     }
 
-    if (new Date(this.startDate) >= new Date(this.dueDate)) {
+    const startDateTime = new Date(this.startDate).getTime();
+    const dueDateTime = new Date(this.dueDate).getTime();
+    
+    if (startDateTime >= dueDateTime) {
       return 'Start date must be before due date.';
     }
 

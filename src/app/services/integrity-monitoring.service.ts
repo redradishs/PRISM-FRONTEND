@@ -31,7 +31,10 @@ export class IntegrityMonitoringService {
 
   // Window blur tracking
   private lastBlurTime = 0;
-  private readonly BLUR_COOLDOWN = 20000; // 20 seconds
+  private readonly BLUR_COOLDOWN = 3000; // 3 seconds cooldown
+  private isUserActive = true;
+  private blurCount = 0;
+  private readonly MAX_BLUR_COUNT = 3; // Max number of quick blurs before violation
 
   // Storage monitoring
   private storageCheckInterval: any;
@@ -64,24 +67,94 @@ export class IntegrityMonitoringService {
   // Set up all event listeners
   private setupEventListeners() {
     // Activity tracking
-    document.addEventListener(
-      'mousemove',
-      () => (this.lastActivity = Date.now())
-    );
+    document.addEventListener('mousemove', () => {
+      this.lastActivity = Date.now();
+      this.isUserActive = true;
+    });
+    
     document.addEventListener('keydown', (e) => {
       this.lastActivity = Date.now();
-      this.handleKeyDown(e);
+      this.isUserActive = true;
+      
+      // Screenshot detection
+      if (e.key === 'PrintScreen' || (e.key === 'S' && (e.ctrlKey || e.metaKey) && e.shiftKey)) {
+        this.registerViolation('Screenshot attempt detected', 'high');
+      }
     });
 
-    // Tab visibility
-    document.addEventListener('visibilitychange', () =>
-      this.handleVisibilityChange()
-    );
+    // Tab visibility - core functionality for detecting tab switching
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        const now = Date.now();
+        
+        // Check for rapid switching
+        if (now - this.lastActionTime < this.RAPID_ACTION_THRESHOLD) {
+          this.rapidActionCount++;
+          if (this.rapidActionCount >= 3) {
+            this.registerViolation('Rapid tab switching detected', 'high');
+          }
+        } else {
+          this.rapidActionCount = 1;
+          this.registerViolation('Tab switch detected', 'medium');
+        }
+        
+        this.lastActionTime = now;
+      }
+    });
 
-    // Window events
-    window.addEventListener('blur', () => this.onWindowBlur());
-    window.addEventListener('resize', () => this.onWindowResize());
-    window.addEventListener('beforeunload', (e) => this.beforeUnloadHandler(e));
+    // Window focus handling with improved accuracy
+    window.addEventListener('blur', () => {
+      const now = Date.now();
+      
+      // Only count blur if user was active and it's been more than the cooldown period
+      if (this.isUserActive && (now - this.lastBlurTime > this.BLUR_COOLDOWN)) {
+        this.blurCount++;
+        
+        if (this.blurCount === 1) {
+          this.showWarning('Please stay focused on the exam');
+        }
+        
+        if (this.blurCount >= this.MAX_BLUR_COUNT) {
+          this.registerViolation('Multiple window focus losses detected', 'medium');
+          this.blurCount = 0;
+        }
+        
+        this.lastBlurTime = now;
+      }
+    });
+
+    // Window resize monitoring
+    window.addEventListener('resize', () => {
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      if (!isMobile) {
+        const widthThreshold = window.outerWidth - window.innerWidth > 160;
+        const heightThreshold = window.outerHeight - window.innerHeight > 160;
+        
+        if (widthThreshold || heightThreshold) {
+          this.registerViolation('Developer tools or window resize detected', 'medium');
+        }
+      }
+    });
+
+    // Copy/Paste Prevention
+    document.addEventListener('copy', (e) => {
+      e.preventDefault();
+      this.registerViolation('Copy attempt detected', 'medium');
+    });
+
+    document.addEventListener('paste', (e) => {
+      e.preventDefault();
+      this.registerViolation('Paste attempt detected', 'medium');
+    });
+
+    // Context menu prevention
+    document.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      this.registerViolation('Right-click attempt detected', 'low');
+    });
+
+    // Storage events
     window.addEventListener('storage', (e) => this.handleStorageChange(e));
 
     // Add DevTools detection
@@ -216,8 +289,23 @@ export class IntegrityMonitoringService {
   }
 
   private onWindowResize() {
-    if (window.innerWidth < 500 || window.innerHeight < 300) {
-      this.registerViolation('Window significantly resized', 'medium');
+    // Check if it's a mobile device
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (!isMobile) {
+      // For desktop: check for significant resizing that might indicate dev tools
+      const widthThreshold = window.outerWidth - window.innerWidth > 160;
+      const heightThreshold = window.outerHeight - window.innerHeight > 160;
+      
+      if (widthThreshold || heightThreshold) {
+        this.registerViolation('Window significantly resized', 'medium');
+      }
+    } else {
+      // For mobile: only trigger if window becomes extremely small
+      // Most mobile devices won't go below these dimensions
+      if (window.innerWidth < 280 || window.innerHeight < 400) {
+        this.registerViolation('Suspicious window resizing detected', 'medium');
+      }
     }
   }
 
@@ -553,11 +641,17 @@ export class IntegrityMonitoringService {
     
     // Periodically check for DevTools (Firefox, Safari)
     setInterval(() => {
-      const widthThreshold = window.outerWidth - window.innerWidth > 160;
-      const heightThreshold = window.outerHeight - window.innerHeight > 160;
+      // Check if it's a mobile device
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       
-      if (widthThreshold || heightThreshold) {
-        this.registerViolation('Developer tools potentially detected', 'medium');
+      // Only check for DevTools on desktop devices
+      if (!isMobile) {
+        const widthThreshold = window.outerWidth - window.innerWidth > 160;
+        const heightThreshold = window.outerHeight - window.innerHeight > 160;
+        
+        if (widthThreshold || heightThreshold) {
+          this.registerViolation('Developer tools potentially detected', 'medium');
+        }
       }
     }, 5000);
   }

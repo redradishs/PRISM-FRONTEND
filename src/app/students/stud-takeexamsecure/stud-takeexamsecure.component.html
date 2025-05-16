@@ -88,7 +88,7 @@
 
                 <div class="enumeration-container" *ngIf="data.question?.type === 'enumeration'">
                     <div class="enumeration-inputs">
-                        <div class="enumeration-input-group" *ngFor="let _ of [1,2,3]; let i = index">
+                        <div class="enumeration-input-group" *ngFor="let _ of createRange(data.expectedAnswers); let i = index">
                             <span class="enumeration-number">{{i + 1}}.</span>
                             <input type="text" class="enumeration-input" [(ngModel)]="enumerationAnswers[i]"
                                 placeholder="Enter answer...">

@@ -65,7 +65,7 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
   timeRemaining = 30 * 60; 
   selectedAnswer: string | null = null;
   multiSelectAnswers: { [key: string]: string[] } = {};
-  enumerationAnswers: string[] = ['', '', ''];
+  enumerationAnswers: string[] = [];
   isSubmitting = false;
   timerInterval: any;
   data: any;
@@ -154,7 +154,7 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
           console.log('Next question fetched successfully:', resp.data);
           this.selectedAnswer = null;
           this.multiSelectAnswers = {};
-          this.enumerationAnswers = ['', '', ''];
+          this.enumerationAnswers = Array(resp.data.expectedAnswers || 0).fill('');
           this.data = resp.data;
           console.log('Data:', this.data);
         } else {
@@ -227,7 +227,7 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
         
         // Use the exact violation type from the monitoring service
         data.violation = {
-          type: latestViolation.type,  // This will be "Screenshot attempt detected", "Window significantly resized", etc.
+          type: latestViolation.type,
           fromQuestionId: q._id,
           violationCount: this.cheatingCount
         };
@@ -241,7 +241,8 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
         if (resp.remarks === 'Success') {
           console.log('Answer submitted successfully:', resp);
           
-          this.is.clearAlerts();
+          // Reset integrity monitoring for the next question
+          this.is.resetAllViolations();
           
           if(this.data.isLastQuestion) {
             this.finalizeAssessment();
@@ -396,5 +397,9 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
         this.cheatMessage = message;
       })
     );
+  }
+
+  createRange(count: number): number[] {
+    return Array(count).fill(0).map((_, i) => i);
   }
 }
