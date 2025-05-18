@@ -39,6 +39,10 @@ export class ApiService {
     return this.http.post(`${this.aiUrl}/instructor`, data);
   }
 
+  verifyQuestions(questions: any) {
+    return this.http.post(`${this.aiUrl}/verify`, questions);
+  }
+
   // Enhanced assessment with additional parameters
   generateAssessmentPlus(content: string) {
     const data: AIPromptRequest = {

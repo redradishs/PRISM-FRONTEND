@@ -924,7 +924,7 @@ export class CreateAssessmentComponent implements OnInit {
     return this.categoryOptions
       .filter(c => c.selected)
       .map(c => c.label)
-      .slice(0, 3); // Show only first 3 in pills
+      .slice(0, 3); 
   }
 
   deselectCategory(label: string) {
@@ -944,22 +944,206 @@ export class CreateAssessmentComponent implements OnInit {
     return count;
   }
 
-  // Add this method to get the display number for questions
+
   getDisplayNumber(type: string, question: Question): number {
     const orderedTypes = ['multiple-choice', 'enumeration', 'short-answer', 'true-false'];
     let displayNumber = 1;
     
-    // Count questions before this type
     for (const t of orderedTypes) {
       if (t === type) break;
       displayNumber += this.getQuestionsByType(t).length;
     }
     
-    // Add position within its own type
     const questionsOfType = this.getQuestionsByType(type);
     const index = questionsOfType.findIndex(q => q.id === question.id);
     displayNumber += index;
     
     return displayNumber;
+  }
+
+  exportQuestionsAsJson() {
+    if (this.questions.length === 0) {
+      return;
+    }
+
+    // Format the questions according to the required structure
+    const formattedQuestions = this.questions.map(question => {
+      const base: any = {
+        question: question.question,
+        type: this.formatQuestionType(question.type),
+        difficulty: this.aiGeneration.difficulty
+      };
+
+      // Handle different question types
+      if (question.type === 'multiple-choice' && question.options) {
+        base.options = {
+          A: question.options['A'],
+          B: question.options['B'],
+          C: question.options['C'],
+          D: question.options['D']
+        };
+        base.answer = question.answer as string;
+      } else if (question.type === 'true-false') {
+        // Convert string 'true'/'false' to boolean
+        base.answer = question.answer === 'true' || question.answer === true;
+      } else if (question.type === 'enumeration') {
+        base.answer = question.answer as string[];
+      } else {
+        // Short answer
+        base.answer = question.answer as string;
+      }
+
+      return base;
+    });
+
+    // Wrap questions in a parent object with "questions" key
+    const exportData = {
+      questions: formattedQuestions
+    };
+
+    this.api.verifyQuestions(exportData).subscribe({
+      next: (resp: any) => {
+        console.log('Response from verification:', resp);
+        
+        if (resp.success) {
+          // Store question IDs for possible restoration
+          const oldQuestionIds = this.questions.map(q => q.id);
+          const nextIdBackup = this.nextId;
+          
+          // Clear all existing questions
+          this.questions = [];
+          
+          // Only add the verified questions
+          if (resp.verification && resp.verification.length > 0) {
+            resp.verification.forEach((verifiedQuestion: any, index: number) => {
+              // Create a new question object from the verified question
+              const question: Question = {
+                id: this.nextId++,
+                questionNumber: index + 1,
+                type: this.mapQuestionType(verifiedQuestion.type),
+                question: verifiedQuestion.question,
+                answer: this.convertAnswer(verifiedQuestion.type, verifiedQuestion.answer),
+                points: 1, // Default points
+                options: this.getOptionsForQuestion(verifiedQuestion)
+              };
+              
+              this.questions.push(question);
+            });
+            
+            this.updateQuestionNumbers();
+            
+            // Show success notification
+            Swal.fire({
+              title: 'Questions Verified',
+              text: `${resp.verification.length} verified questions have been added. ${resp.duplicates?.count || 0} duplicates were removed.`,
+              icon: 'success',
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+              background: '#fff',
+              iconColor: '#22c55e'
+            });
+          } else {
+            // No verified questions found
+            Swal.fire({
+              title: 'No Valid Questions',
+              text: 'No verified questions were found. Your questions may have issues.',
+              icon: 'warning',
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000,
+              background: '#fff',
+              iconColor: '#f59e0b'
+            });
+          }
+        } else {
+          console.error('Verification failed:', resp);
+          Swal.fire({
+            title: 'Error',
+            text: 'Failed to verify questions',
+            icon: 'error',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            background: '#fff',
+            iconColor: '#ef4444'
+          });
+        }
+      },
+      error: (error: any) => {
+        console.error('Error verifying questions', error);
+        Swal.fire({
+          title: 'Error',
+          text: 'Failed to verify questions',
+          icon: 'error',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000,
+          background: '#fff',
+          iconColor: '#ef4444'
+        });
+      }
+    });
+
+    // Log the formatted JSON string for debugging
+    console.log(JSON.stringify(exportData, null, 4));
+  }
+
+  // Helper method to convert answer from API format to component format
+  private convertAnswer(type: string, answer: any): string | string[] | boolean {
+    if (type.toLowerCase() === 'true/false') {
+      return answer === true ? 'true' : 'false';
+    }
+    return answer;
+  }
+
+  // Helper method to extract options for multiple choice questions
+  private getOptionsForQuestion(verifiedQuestion: any): { [key: string]: string } | undefined {
+    if (verifiedQuestion.type.toLowerCase() === 'multiple choice' && verifiedQuestion.options) {
+      // Check if option E exists
+      const hasOptionE = verifiedQuestion.options.E !== undefined;
+      
+      // Create the options object
+      const options: { [key: string]: string } = {
+        A: verifiedQuestion.options.A || '',
+        C: verifiedQuestion.options.C || '',
+        D: verifiedQuestion.options.D || ''
+      };
+      
+      // If option E exists, replace B with E's content
+      if (hasOptionE) {
+        options['B'] = verifiedQuestion.options.E;
+        
+        // If the answer is E, change it to B
+        if (verifiedQuestion.answer === 'E') {
+          verifiedQuestion.answer = 'B';
+        }
+      } else {
+        // If E doesn't exist, use the original B
+        options['B'] = verifiedQuestion.options.B || '';
+      }
+      
+      return options;
+    }
+    return undefined;
+  }
+
+  // Helper to format question type strings to match the example format
+  private formatQuestionType(type: string): string {
+    switch (type) {
+      case 'multiple-choice':
+        return 'multiple choice';
+      case 'true-false':
+        return 'true/false';
+      case 'short-answer':
+        return 'short answer';
+      default:
+        return type;
+    }
   }
 }

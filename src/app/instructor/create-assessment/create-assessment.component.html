@@ -311,11 +311,18 @@
                                 <span *ngIf="!isGenerating">Generate Questions</span>
                                 <span *ngIf="isGenerating">Generating...</span>
                             </button>
+
+                            <button *ngIf="questions.length > 0" class="genform-export-btn" (click)="exportQuestionsAsJson()">
+                                <i class="fas fa-shield-check"></i>
+                                <span>Verify Questions</span>
+                            </button>
+            
                         </div>
 
 
                     </div>
                 </div>
+
 
 
 
