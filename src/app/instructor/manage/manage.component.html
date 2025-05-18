@@ -211,6 +211,16 @@
                                     <span>{{assessment.timeLimit}} minutes</span>
                                 </div>
                             </div>
+                            <div *ngIf="assessment.type !== 'Public'" class="assessment-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-file-alt detail-icon"></i>
+                                    <span>{{assessment.assignedClasses[0].classCode}} - {{assessment.assignedClasses[0].className}}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="far fa-clock detail-icon"></i>
+                                    <span>{{assessment.assignedClasses[0].stats.submitted || 0}}/{{assessment.assignedClasses[0].totalStudents || 0}} Submissions</span>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="card-footer">

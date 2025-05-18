@@ -84,11 +84,9 @@ interface AssignmentData {
   standalone: true
 })
 export class AssignAssessmentComponent implements OnInit {
-  // User state
   userId: string = '';
   username: string = '';
   
-  // UI state
   isMobile: boolean = window.innerWidth <= 768;
   currentStep: number = 1;
   selectedMode: 'assessment' | 'mastery' | 'public' = 'assessment';
@@ -130,22 +128,10 @@ export class AssignAssessmentComponent implements OnInit {
     }
   ];
 
-  dueDatePresets: DatePreset[] = [
-    {
-      label: '1hr',
-      startDate: new Date(),
-      dueDate: new Date(new Date().getTime() + 60 * 60 * 1000)
-    },
-    {
-      label: '24hrs',
-      startDate: new Date(),
-      dueDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
-    },
-    {
-      label: '1 week',
-      startDate: new Date(),
-      dueDate: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
-    }
+  dueDatePresets: { label: string; hoursToAdd: number }[] = [
+    { label: '1hr', hoursToAdd: 1 },
+    { label: '24hrs', hoursToAdd: 24 },
+    { label: '1 week', hoursToAdd: 24 * 7 }
   ];
 
   assessments: Assessment[] = [];
@@ -154,13 +140,11 @@ export class AssignAssessmentComponent implements OnInit {
   loading: boolean = false;
   error: string | null = null;
 
-  // Recipients state
   assignmentType: AssignmentType = 'classes';
   classes: ClassData[] = [];
   classSearchQuery: string = '';
   selectedClasses: Set<string> = new Set();
 
-  // Student pagination
   currentPage: number = 1;
   pageSize: number = 20;
   totalStudents: number = 0;
@@ -172,20 +156,15 @@ export class AssignAssessmentComponent implements OnInit {
   studentSearchQuery: string = '';
   selectedStudents: Set<string> = new Set();
 
-  // Add debounce timer property
   private searchTimeout: any;
   isSearching: boolean = false;
   
-  // Separate loading state for search
   isSearchLoading: boolean = false;
 
-  // Add this property to track total points
   selectedAssessmentPoints: number = 0;
-
-  // Add these properties
   displayLimit: number = 9;
   showingAll: boolean = false;
-  dateFilter: string = 'all'; // 'all', 'today', 'week', 'month'
+  dateFilter: string = 'all';
 
   @HostListener('window:resize')
   onResize() {
@@ -205,7 +184,6 @@ export class AssignAssessmentComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Load user data
     this.auth.getCurrentUser().subscribe({
       next: (user) => {
         this.userId = user.id;
@@ -251,6 +229,17 @@ export class AssignAssessmentComponent implements OnInit {
         console.error('Error loading classes:', err);
       }
     });
+  }
+
+  runUpdates() {
+    this.api.getActiveAssessments(this.userId).subscribe({
+      next: (resp: any) => {
+        console.log('Active assessments', resp.data);
+      },
+      error: (error: any) => {
+        console.error('Error getting active assessments', error);
+      }
+    })
   }
 
   toggleSidebar() {
@@ -443,10 +432,25 @@ export class AssignAssessmentComponent implements OnInit {
 
   applyStartDatePreset(preset: DatePreset) {
     this.startDate = this.formatDate(preset.startDate);
+    
+    if (this.dueDate) {
+      const startDateTime = new Date(this.startDate);
+      const newDueDate = new Date(startDateTime);
+      newDueDate.setHours(startDateTime.getHours() + 24);
+      this.dueDate = this.formatDate(newDueDate);
+    }
   }
 
-  applyDueDatePreset(preset: DatePreset) {
-    this.dueDate = this.formatDate(preset.dueDate);
+  applyDueDatePreset(preset: { label: string; hoursToAdd: number }) {
+    if (!this.startDate) {
+      const now = new Date();
+      const newDueDate = new Date(now.getTime() + preset.hoursToAdd * 60 * 60 * 1000);
+      this.dueDate = this.formatDate(newDueDate);
+    } else {
+      const startDateTime = new Date(this.startDate);
+      const newDueDate = new Date(startDateTime.getTime() + preset.hoursToAdd * 60 * 60 * 1000);
+      this.dueDate = this.formatDate(newDueDate);
+    }
   }
 
   private formatDate(date: Date): string {
@@ -464,8 +468,42 @@ export class AssignAssessmentComponent implements OnInit {
   }
 
   getMinDueDate(): string {
-    return this.startDate || this.getCurrentDateTime();
+    if (this.startDate) {
+      const start = new Date(this.startDate);
+      start.setMinutes(start.getMinutes() + 10); 
+      return this.formatDate(start); 
+    } else {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() + 1);
+      return this.formatDate(now); 
+    }
+  } 
+
+  validateDates(): string | null {
+    if (this.startDate && this.dueDate) {
+      if (new Date(this.dueDate) <= new Date(this.startDate)) {
+        Swal.fire({
+          title: 'Date is not valid',
+          text: `Please select a valid start and due date.`,
+          icon: 'info',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 1000,
+          timerProgressBar: true,
+          background: '#fff',
+          iconColor: '#3b82f6'
+        });
+  
+        const fallbackDue = new Date(this.startDate);
+        fallbackDue.setMinutes(fallbackDue.getMinutes() + 10);
+        this.dueDate = this.formatDate(fallbackDue);
+        return this.formatDate(fallbackDue);
+      }
+    }
+    return null;
   }
+  
 
   validateMasteryScore() {
     if (this.selectedAssessmentPoints > 0 && this.masteryScore > this.selectedAssessmentPoints) {
@@ -475,8 +513,10 @@ export class AssignAssessmentComponent implements OnInit {
         icon: 'warning',
         title: 'Mastery Score Adjusted',
         text: `Mastery score cannot exceed the total points (${this.selectedAssessmentPoints}). It has been automatically adjusted.`,
-        timer: 3000,
-        timerProgressBar: true
+        timer: 2000,
+        timerProgressBar: true,
+        toast: true,
+        position: 'top-end' 
       });
     }
   }
@@ -646,7 +686,6 @@ export class AssignAssessmentComponent implements OnInit {
     }
 
     try {
-      // Show loading state
       Swal.fire({
         title: 'Assigning Assessment',
         text: 'Please wait while we assign the assessment...',
@@ -728,6 +767,7 @@ export class AssignAssessmentComponent implements OnInit {
         : `The assessment has been successfully assigned to ${this.assignmentType === 'classes' ? 'all selected classes' : 'all selected students'}.`
     }).then(() => {
       this.router.navigate(['/instructor/assessment']);
+      this.runUpdates();
     });
   }
 

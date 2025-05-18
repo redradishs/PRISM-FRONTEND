@@ -500,7 +500,8 @@
                                             </div>
                                             <input type="datetime-local" [(ngModel)]="startDate"
                                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                [min]="getCurrentDateTime()">
+                                                [min]="getCurrentDateTime()"
+                                                (change)="validateDates()">
                                         </div>
 
                                         <!-- Due Date -->
@@ -516,20 +517,8 @@
                                             </div>
                                             <input type="datetime-local" [(ngModel)]="dueDate"
                                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                [min]="getMinDueDate()">
-                                        </div>
-
-                                        <div class="flex items-start">
-                                            <div class="flex items-center h-5">
-                                                <input type="checkbox" [(ngModel)]="allowLateSubmissions"
-                                                    class="checkbox">
-                                            </div>
-                                            <div class="ml-3">
-                                                <label class="text-sm font-medium text-gray-700">Allow Late
-                                                    Submissions</label>
-                                                <p class="text-sm text-gray-500">Students can submit after the due date
-                                                </p>
-                                            </div>
+                                                [min]="getMinDueDate()"
+                                                (change)="validateDates()">
                                         </div>
                                     </div>
                                 </div>
@@ -556,12 +545,6 @@
                                                     <input type="radio" [(ngModel)]="showResults" value="after_due"
                                                         class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
                                                     <label class="ml-2 text-sm text-gray-700">After due date</label>
-                                                </div>
-                                                <div class="flex items-center">
-                                                    <input type="radio" [(ngModel)]="showResults" value="manual"
-                                                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
-                                                    <label class="ml-2 text-sm text-gray-700">Manually release
-                                                        results</label>
                                                 </div>
                                             </div>
                                         </div>

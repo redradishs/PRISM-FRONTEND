@@ -69,7 +69,7 @@ export class HomeComponent implements OnInit {
   remainingScheduledAssessments: number = 0;
   topPerformingStudents: any[] = [];
   charts: any[] = [];
-
+  dueThisWeek: number = 0;
   isMobile = window.innerWidth < 768;
   @HostListener('window:resize')
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
@@ -156,6 +156,29 @@ export class HomeComponent implements OnInit {
     const names = name.split(' ');
     return names[0][0] + names[names.length - 1][0];
   }
+
+  getDueThisWeek(assessments: any[]): number {
+    const now = new Date();
+  
+    const day = now.getDay(); 
+    const diffToMonday = day === 0 ? -6 : 1 - day;
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() + diffToMonday);
+    startOfWeek.setHours(0, 0, 0, 0);
+  
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
+  
+    const dueThisWeek = assessments.filter(assessment => {
+      const dueDate = new Date(assessment.dueDate);
+      return dueDate >= startOfWeek && dueDate <= endOfWeek;
+    });
+  
+    return dueThisWeek.length;
+  }
+  
+  
 
   studentDetails(student: any) {
     this.router.navigate(['instructor/students/assessments'], {
@@ -255,6 +278,9 @@ export class HomeComponent implements OnInit {
         this.onGoingAssessments = resp.data.data;
         this.totalOngoingAssessments = resp.data.total;
         this.remainingOngoingAssessments = resp.data.left;
+        this.dueThisWeek = this.getDueThisWeek(this.onGoingAssessments);
+        console.log('On Going Assessments:', this.onGoingAssessments);
+        console.log('Due This Week:', this.dueThisWeek);
       } catch (error) {
         console.error('Error getting ongoing assessments:', error);
       }

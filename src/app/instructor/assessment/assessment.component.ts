@@ -236,6 +236,7 @@ export class AssessmentComponent {
         this.filteredClasses = this.classes;
         this.getOnGoingAssessments(this.userId);
         this.loadScheduledAssessments(this.userId);
+        this.runUpdates();  
       } else {
         console.log('No user found');
       }
@@ -600,6 +601,7 @@ export class AssessmentComponent {
       this.resetAssignData();
       this.closeAssignModal();
       this.loadAssessments(this.userId);
+      this.runUpdates();
     } catch (error) {
       console.error('Error assigning assessment:', error);
       Swal.fire({
@@ -610,6 +612,16 @@ export class AssessmentComponent {
     }
   }
 
+runUpdates() {
+  this.api.getActiveAssessments(this.userId).subscribe({
+    next: (resp: any) => {
+      console.log('Active assessments', resp.data);
+    },
+    error: (error: any) => {
+      console.error('Error getting active assessments', error);
+    }
+  })
+}
   getClassName(code: string): string {
     const classItem = this.classes.find(c => c.classCode === code);
     if (classItem) {

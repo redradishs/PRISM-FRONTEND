@@ -427,6 +427,12 @@ border-left: 4px solid #6366f1;
   color: #92400e;
 }
 
+.status-not-submitted {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
 .progress-bar {
   height: 0.5rem;
   background: #e5e7eb;
@@ -546,7 +552,10 @@ border-left: 4px solid #6366f1;
 
 .ongoing-code {
     font-size: 0.875rem;
-    color: rgb(107, 114, 128);
+    color: rgb(255, 255, 255);
+    background-color: rgb(158, 170, 250);
+    padding: 0.10rem 0.5rem   ;
+    border-radius: 0.25rem;
 }
 
 .ongoing-status {

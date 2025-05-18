@@ -422,7 +422,7 @@
                     <div class="qtype-card" *ngFor="let question of getQuestionsByType('multiple-choice')">
                         <div class="qtype-header">
                             <div class="qtype-badge-group">
-                                <span class="qtype-number">Question {{ question.questionNumber }}</span>
+                                <span class="qtype-number">Question {{ getDisplayNumber('multiple-choice', question) }}</span>
                                 <div class="qtype-points-container">
                                     <input type="number" 
                                            [readonly]="!isEditing(question.id)"
@@ -484,7 +484,7 @@
                     <div class="qtype-card" *ngFor="let question of getQuestionsByType('enumeration')">
                         <div class="qtype-header">
                             <div class="qtype-badge-group">
-                                <span class="qtype-number">Question {{ question.questionNumber }}</span>
+                                <span class="qtype-number">Question {{ getDisplayNumber('enumeration', question) }}</span>
                                 <div class="qtype-points-container">
                                     <input type="number" 
                                            [readonly]="!isEditing(question.id)"
@@ -545,7 +545,7 @@
                     <div class="qtype-card" *ngFor="let question of getQuestionsByType('short-answer')">
                         <div class="qtype-header">
                             <div class="qtype-badge-group">
-                                <span class="qtype-number">Question {{ question.questionNumber }}</span>
+                                <span class="qtype-number">Question {{ getDisplayNumber('short-answer', question) }}</span>
                                 <div class="qtype-points-container">
                                     <input type="number" 
                                            [readonly]="!isEditing(question.id)"
@@ -593,7 +593,7 @@
                     <div class="qtype-card" *ngFor="let question of getQuestionsByType('true-false')">
                         <div class="qtype-header">
                             <div class="qtype-badge-group">
-                                <span class="qtype-number">Question {{ question.questionNumber }}</span>
+                                <span class="qtype-number">Question {{ getDisplayNumber('true-false', question) }}</span>
                                 <div class="qtype-points-container">
                                     <input type="number" 
                                            [readonly]="!isEditing(question.id)"

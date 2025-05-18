@@ -99,7 +99,7 @@ export class CreateAssessmentComponent implements OnInit {
     enumeration: 1,
   }
   username: string = '';
-  userId: number = 0;
+  userId:  string = '';
   multipleChoiceOptions: string[] = Array(4).fill('');
   enumerationItems: string[] = Array(5).fill('');
   selectedTypes: string[] = [];
@@ -649,6 +649,8 @@ export class CreateAssessmentComponent implements OnInit {
     };
   }
 
+
+
   confirmPublish() {
     const title = this.assessmentData.title;
     Swal.fire({
@@ -940,5 +942,24 @@ export class CreateAssessmentComponent implements OnInit {
       count += this.getQuestionsByType(t).length;
     }
     return count;
+  }
+
+  // Add this method to get the display number for questions
+  getDisplayNumber(type: string, question: Question): number {
+    const orderedTypes = ['multiple-choice', 'enumeration', 'short-answer', 'true-false'];
+    let displayNumber = 1;
+    
+    // Count questions before this type
+    for (const t of orderedTypes) {
+      if (t === type) break;
+      displayNumber += this.getQuestionsByType(t).length;
+    }
+    
+    // Add position within its own type
+    const questionsOfType = this.getQuestionsByType(type);
+    const index = questionsOfType.findIndex(q => q.id === question.id);
+    displayNumber += index;
+    
+    return displayNumber;
   }
 }

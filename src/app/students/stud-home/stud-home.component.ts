@@ -6,6 +6,7 @@ import { AuthService } from '../../services/auth.service';
 import { StudentService } from '../../services/student.service';
 import { Router, RouterLink } from '@angular/router';
 import { Title } from '@angular/platform-browser';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-stud-home',
@@ -27,6 +28,7 @@ export class StudHomeComponent {
   onGoingAssessments: any[] = [];
   upcomingAssessments: any[] = [];
   completedAssessments: any[] = [];
+  dueThisWeek: number = 0;
   toggleSidebar() {
     if (this.sidebar) {
       this.sidebar.toggleSidebar();
@@ -62,6 +64,7 @@ export class StudHomeComponent {
         this.totalCompletedAssessments = resp.data.stats.totalCompleted;
         this.totalClasses = resp.data.stats.totalClasses;
         this.onGoingAssessments = resp.data.ongoing;
+        this.dueThisWeek = this.getDueThisWeek(this.onGoingAssessments);
         this.upcomingAssessments = resp.data.scheduled;
         this.completedAssessments = resp.data.completed;
       },
@@ -95,9 +98,43 @@ export class StudHomeComponent {
       this.router.navigate(['/student/assessment/result'], {
         state: { assessmentId: id }
       });
+    } else {
+      Swal.fire({
+        title: 'No Submission',
+        text: `You did not take ${assessment.title}`,
+        icon: 'info',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 1000,
+        timerProgressBar: true,
+        background: '#fff',
+        iconColor: '#dc2626'
+      });
     }
-    console.log("You did not take this assessment, you will not be redirected to the result page.");
   }
+
+  getDueThisWeek(assessments: any[]): number {
+    const now = new Date();
+  
+    const day = now.getDay(); 
+    const diffToMonday = day === 0 ? -6 : 1 - day;
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() + diffToMonday);
+    startOfWeek.setHours(0, 0, 0, 0);
+  
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
+  
+    const dueThisWeek = assessments.filter(assessment => {
+      const dueDate = new Date(assessment.endDate);
+      return dueDate >= startOfWeek && dueDate <= endOfWeek;
+    });
+  
+    return dueThisWeek.length;
+  }
+  
 
   getStatusClass(assessment: any): string {
     if (assessment.hasSubmitted) {
