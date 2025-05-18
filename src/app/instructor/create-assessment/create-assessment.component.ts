@@ -213,8 +213,8 @@ export class CreateAssessmentComponent implements OnInit {
   }
 
   generateNow() {
-    if (!this.aiGeneration.topic && !this.extractedText) {
-      this.errorMessage = 'Please enter a topic or upload a document';
+    if (!this.aiGeneration.topic) {
+      this.errorMessage = 'Please enter a topic';
       return;
     }
     if (this.selectedTypes.length === 0) {
@@ -233,15 +233,14 @@ export class CreateAssessmentComponent implements OnInit {
     this.errorMessage = null;
     this.generated = false;
 
-    // Set up batch processing variables
+    // 3. Set up batch processing variables
     const questionsPerBatch = 5; // Generate 5 questions at a time
     const totalQuestions = Number(this.aiGeneration.questionCount);
     let questionsGenerated = 0;
     let retryAttempts = 0;
     const maxRetries = 2;
-    let batchNumber = 1;
 
-    // Function to generate one batch of questions
+    // 4. Function to generate one batch of questions
     const generateQuestionBatch = () => {
       const remainingQuestions = totalQuestions - questionsGenerated;
       if (remainingQuestions <= 0) {
@@ -255,30 +254,17 @@ export class CreateAssessmentComponent implements OnInit {
         remainingQuestions
       );
 
-      // For first batch use detailed prompt, for subsequent batches use simple "continue" prompt
-      const prompt = batchNumber === 1
-        ? this.promptMaker(questionsToGenerate)
-        : `Continue generating ${questionsToGenerate} more questions with the same criteria as before. 
-IMPORTANT: 
-1. Stay strictly focused on ${this.aiGeneration.topic}
-2. Do NOT generate questions about unrelated topics (like SDLC, software processes, etc.) 
-3. Make questions different from previous ones
-4. Only use ${this.aiGeneration.difficulty} difficulty level
-5. Follow the exact same format as before
-[Diversity level: ${Math.floor(Math.random() * 100)}]`;
-
       this.api
         .generateQuizAssessment(
           questionsToGenerate,
           this.aiGeneration.difficulty as 'easy' | 'medium' | 'hard',
-          prompt
+          this.promptMaker(questionsToGenerate)
         )
         .subscribe({
           next: (response: any) => {
             if (response.success) {
               this.handleGeneratedQuestions(response);
               questionsGenerated += questionsToGenerate;
-              batchNumber++; 
 
               if (questionsGenerated < totalQuestions) {
                 generateQuestionBatch();
@@ -335,10 +321,8 @@ IMPORTANT:
       .map((type) => typeMapping[type as keyof typeof typeMapping])
       .join(', ');
 
-    let promptContent: string;
-    
     if (this.extractedText && this.extractedText.trim()) {
-      promptContent = [
+      return [
         'IMPORTANT: You are a strict question generator. Follow these instructions EXACTLY:',
         `1. Generate exactly ${batchSize} ${this.aiGeneration.difficulty} difficulty questions.`,
         `2. Only use these question types: ${selectedTypesText}.`,
@@ -355,17 +339,14 @@ IMPORTANT:
         'Document content for reference:',
         this.extractedText.trim(),
       ].join('\n');
-    } else {
-      promptContent = [
-        `Topic: ${this.aiGeneration.topic}`,
-        `1. Generate ${batchSize} ${this.aiGeneration.difficulty} difficulty questions`,
-        `2. Use only these question types: ${selectedTypesText}`,
-        `3. Additional requirements: ${this.aiGeneration.instructions || 'None'}`,
-      ].join('\n');
     }
-    
-    // Add diversity tag to ensure varied responses on repeated requests
-    return promptContent + ` [Diversity level: ${Math.floor(Math.random() * 100)}]`;
+
+    return [
+      `Topic: ${this.aiGeneration.topic}`,
+      `1. Generate ${batchSize} ${this.aiGeneration.difficulty} difficulty questions`,
+      `2. Use only these question types: ${selectedTypesText}`,
+      `3. Additional requirements: ${this.aiGeneration.instructions || 'None'}`,
+    ].join('\n');
   }
 
   private mapQuestionType(aiType: string): string {
