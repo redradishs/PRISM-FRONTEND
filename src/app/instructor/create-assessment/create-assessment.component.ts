@@ -51,6 +51,7 @@ interface Question {
   options?: { [key: string]: string };
   points: number;
   requiredItems?: number;
+  verified?: boolean;
 }
 
 interface NewQuestion {
@@ -401,6 +402,7 @@ export class CreateAssessmentComponent implements OnInit {
                 ? String(question.answer)
                 : question.answer,
             points: this.defaultPoints[questionType as keyof typeof this.defaultPoints] || 1,
+            verified: false
           };
 
           if (
@@ -470,6 +472,14 @@ export class CreateAssessmentComponent implements OnInit {
     return this.questions
       .filter((q) => q.type === type)
       .sort((a, b) => a.questionNumber - b.questionNumber);
+  }
+  
+  getUnverifiedQuestionCount(): number {
+    return this.questions.filter(q => !q.verified).length;
+  }
+  
+  getVerifiedQuestionCount(): number {
+    return this.questions.filter(q => q.verified).length;
   }
 
   getQuestionTypeCount(type: string): number {
@@ -619,6 +629,7 @@ export class CreateAssessmentComponent implements OnInit {
                     D: '',
                   }
                 : undefined,
+            verified: false
           };
           this.questions.push(question);
           added++;
@@ -963,11 +974,52 @@ export class CreateAssessmentComponent implements OnInit {
 
   exportQuestionsAsJson() {
     if (this.questions.length === 0) {
+      Swal.fire({
+        title: 'No Questions',
+        text: 'Please add questions first',
+        icon: 'warning',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        background: '#fff',
+        iconColor: '#f59e0b'
+      });
       return;
     }
 
-    // Format the questions according to the required structure
-    const formattedQuestions = this.questions.map(question => {
+    // Check if there are any unverified questions
+    const unverifiedQuestions = this.questions.filter(q => !q.verified);
+    
+    if (unverifiedQuestions.length === 0) {
+      Swal.fire({
+        title: 'All Verified',
+        text: 'All questions have already been verified.',
+        icon: 'info',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        background: '#fff',
+        iconColor: '#6366f1'
+      });
+      return;
+    }
+
+    // Show loading indicator
+    Swal.fire({
+      title: 'Verifying Questions',
+      text: `Verifying ${unverifiedQuestions.length} questions...`,
+      icon: 'info',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    // Format the unverified questions according to the required structure
+    const formattedQuestions = unverifiedQuestions.map(question => {
       const base: any = {
         question: question.question,
         type: this.formatQuestionType(question.type),
@@ -1006,25 +1058,34 @@ export class CreateAssessmentComponent implements OnInit {
         console.log('Response from verification:', resp);
         
         if (resp.success) {
-          // Store question IDs for possible restoration
-          const oldQuestionIds = this.questions.map(q => q.id);
-          const nextIdBackup = this.nextId;
+          // Close the loading indicator
+          Swal.close();
           
-          // Clear all existing questions
-          this.questions = [];
-          
-          // Only add the verified questions
+          // Get all verified questions from the response
           if (resp.verification && resp.verification.length > 0) {
+            // Keep track of unverified question IDs to remove later
+            const unverifiedIds = unverifiedQuestions.map(q => q.id);
+            
+            // Remove all unverified questions that were sent for verification
+            this.questions = this.questions.filter(q => !unverifiedIds.includes(q.id));
+            
+            // Add new verified questions
             resp.verification.forEach((verifiedQuestion: any, index: number) => {
+              // Process options and handle any answer updates for multiple choice
+              const { options, updatedAnswer } = this.getOptionsForQuestion(verifiedQuestion);
+              
               // Create a new question object from the verified question
               const question: Question = {
                 id: this.nextId++,
-                questionNumber: index + 1,
+                questionNumber: this.questions.length + index + 1,
                 type: this.mapQuestionType(verifiedQuestion.type),
                 question: verifiedQuestion.question,
-                answer: this.convertAnswer(verifiedQuestion.type, verifiedQuestion.answer),
+                answer: verifiedQuestion.type.toLowerCase() === 'multiple choice' 
+                  ? updatedAnswer 
+                  : this.convertAnswer(verifiedQuestion.type, verifiedQuestion.answer),
                 points: 1, // Default points
-                options: this.getOptionsForQuestion(verifiedQuestion)
+                options: options,
+                verified: true  // Mark as verified
               };
               
               this.questions.push(question);
@@ -1103,7 +1164,9 @@ export class CreateAssessmentComponent implements OnInit {
   }
 
   // Helper method to extract options for multiple choice questions
-  private getOptionsForQuestion(verifiedQuestion: any): { [key: string]: string } | undefined {
+  private getOptionsForQuestion(verifiedQuestion: any): { options: { [key: string]: string } | undefined, updatedAnswer: string | boolean | string[] } {
+    let updatedAnswer = verifiedQuestion.answer;
+    
     if (verifiedQuestion.type.toLowerCase() === 'multiple choice' && verifiedQuestion.options) {
       // Check if option E exists
       const hasOptionE = verifiedQuestion.options.E !== undefined;
@@ -1111,26 +1174,41 @@ export class CreateAssessmentComponent implements OnInit {
       // Create the options object
       const options: { [key: string]: string } = {
         A: verifiedQuestion.options.A || '',
+        B: verifiedQuestion.options.B || '',
         C: verifiedQuestion.options.C || '',
         D: verifiedQuestion.options.D || ''
       };
       
-      // If option E exists, replace B with E's content
+      // If option E exists, replace B with E's content and update answer if needed
       if (hasOptionE) {
-        options['B'] = verifiedQuestion.options.E;
+        console.log('Found question with option E:', verifiedQuestion.question);
+        console.log('Original options:', JSON.stringify(verifiedQuestion.options));
+        console.log('Original answer:', verifiedQuestion.answer);
         
-        // If the answer is E, change it to B
-        if (verifiedQuestion.answer === 'E') {
-          verifiedQuestion.answer = 'B';
+        // Store original option B's content
+        const originalB = options['B'];
+        
+        // Replace option B with E's content
+        options['B'] = verifiedQuestion.options.E || '';
+        
+        // If the answer is E, update to B
+        if (updatedAnswer === 'E') {
+          updatedAnswer = 'B';
+          console.log('Answer updated from E to B');
+        } 
+        // If the answer was B and we replaced it, we need to check if it's still valid
+        else if (updatedAnswer === 'B' && originalB !== options['B']) {
+          console.log('Warning: Answer was B but option B content was replaced with option E');
         }
-      } else {
-        // If E doesn't exist, use the original B
-        options['B'] = verifiedQuestion.options.B || '';
+        
+        console.log('Final options:', JSON.stringify(options));
+        console.log('Final answer:', updatedAnswer);
       }
       
-      return options;
+      return { options, updatedAnswer };
     }
-    return undefined;
+    
+    return { options: undefined, updatedAnswer };
   }
 
   // Helper to format question type strings to match the example format
