@@ -612,9 +612,30 @@
 }
 
 header {
-    position: relative;
-    z-index: 10;
+    width: 100%;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    position: fixed;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 768px) {
+    header > div {
+        margin-left: 80px;
+        width: calc(100% - 80px);
+    }
+}
+
+/* Add spacing for fixed header */
+.p-2.md\:p-4.w-full {
+    padding-top: 65px;
+}
+
+@media (min-width: 768px) {
+    .p-2.md\:p-4.w-full {
+        padding-top: 70px;
+    }
 }
 
 /* Status Styles */

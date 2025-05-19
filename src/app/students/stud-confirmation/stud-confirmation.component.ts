@@ -32,6 +32,7 @@ export class StudConfirmationComponent {
   assignedAssessmentId: string = '';
   confirmationData: any;
   isAgreed: boolean = false;
+  username: string = '';
 
   constructor(
     private api: StudentService,
@@ -58,6 +59,7 @@ export class StudConfirmationComponent {
       next: (resp: any) => {
         if (resp && resp.id) {
           this.userId = resp.id;
+          this.username = resp.name;
           this.getConfirmationData();
         } else {
           console.error('Invalid user response');

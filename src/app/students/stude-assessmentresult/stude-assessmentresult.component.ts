@@ -72,6 +72,8 @@ export class StudeAssessmentresultComponent implements OnInit {
   
   questions: any[] = [];
   isFinished = false;
+  analysis: any[] = [];
+  username: string = '';
   
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
   
@@ -91,8 +93,10 @@ export class StudeAssessmentresultComponent implements OnInit {
 
     this.auth.getCurrentUser().subscribe(user => {
       this.userId = user.id;
+      this.username = user.name;
+      console.log('Username:', this.username);
       this.getResult();
-      this.getPerformancePerQuestion();
+      this.getPerformancePerQuestion(); 
       console.log('User ID:', this.userId);
     });
   }
@@ -132,7 +136,13 @@ export class StudeAssessmentresultComponent implements OnInit {
     this.api.getQuestionOverview(this.userId, this.assignedAssessmentId).subscribe({
       next: (resp: any) => {
         if (resp.remarks === 'Success') {
-          this.questions = resp.data;
+          this.analysis = [];
+          
+          if (resp.data && resp.data.questions) {
+            this.analysis = resp.data.questions;
+          }
+          
+          console.log('Analysis:', this.analysis);  
           console.log('Question overview:', resp.data);
         }
       },
