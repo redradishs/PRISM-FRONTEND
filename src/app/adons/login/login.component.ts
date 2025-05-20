@@ -52,7 +52,7 @@ export class LoginComponent implements OnInit {
         '',
         [
           Validators.required,
-          Validators.pattern('^\\d+@gordoncollege\\.edu\\.ph$'),
+          Validators.pattern('^\\d+$'),
         ],
       ],
       password: [
@@ -70,7 +70,7 @@ export class LoginComponent implements OnInit {
         '',
         [
           Validators.required,
-          Validators.pattern('^\\d+@gordoncollege\\.edu\\.ph$'),
+          Validators.pattern('^\\d+$'),
         ],
       ],
       password: ['', [Validators.required, Validators.minLength(5)]],
@@ -83,20 +83,33 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.title.setTitle('PRISM | Login');
 
-    // Check remembered email
+    // Check remembered email - now just store the ID part
     const storedEmail = localStorage.getItem('rememberedEmail');
     if (storedEmail) {
-      this.loginForm.patchValue({ email: storedEmail });
+      this.loginForm.patchValue({ email: this.stripDomainFromEmail(storedEmail) });
     }
 
     this.signupForm = this.formBuilder.group({
       name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.pattern('^\\d+$')]],
       password: ['', Validators.required],
       confirmPassword: ['', Validators.required],
       role: ['', Validators.required],
       isCoordinator: ['no'] // default value is 'no'
     });
+  }
+
+  // Helper to add the domain to the ID
+  private getFullEmail(idOnly: string): string {
+    return `${idOnly}@gordoncollege.edu.ph`;
+  }
+  
+  // Helper to strip domain from full email
+  private stripDomainFromEmail(email: string): string {
+    if (email.includes('@gordoncollege.edu.ph')) {
+      return email.split('@')[0];
+    }
+    return email;
   }
 
   handleLoginSubmit(): void {
@@ -112,8 +125,7 @@ export class LoginComponent implements OnInit {
         if (emailControl.errors['required']) {
           this.formError = 'Email is required';
         } else if (emailControl.errors['pattern']) {
-          this.formError =
-            'Please enter a valid Gordon College email (e.g., 12345678@gordoncollege.edu.ph)';
+          this.formError = 'Please enter a valid Gordon College ID (numbers only)';
         }
         return;
       }
@@ -130,8 +142,11 @@ export class LoginComponent implements OnInit {
     this.loading = true;
     this.formError = '';
 
-    const { email, password } = this.loginForm.value;
-    const loginData = { email, password };
+    // Construct full email with domain
+    const idOnly = this.loginForm.value.email;
+    const fullEmail = this.getFullEmail(idOnly);
+    const { password } = this.loginForm.value;
+    const loginData = { email: fullEmail, password };
     
     console.log('About to call login API with:', loginData);
 
@@ -174,15 +189,21 @@ export class LoginComponent implements OnInit {
           confirmButtonColor: '#1976D2',
         });
 
-        // Redirect based on role
-        if (userRole === 'admin') {
-          this.router.navigate(['/admin/dashboard']);
-        } else if (userRole === 'instructor') {
-          this.router.navigate(['instructor/dashboard']);
-        } else if (userRole === 'student') {
-          this.router.navigate(['/student/dashboard']);
+        const redirectUrl = sessionStorage.getItem('redirectUrl');
+        
+        if (redirectUrl) {
+          sessionStorage.removeItem('redirectUrl');
+          this.router.navigateByUrl(redirectUrl);
         } else {
-          this.router.navigate(['/home']);
+          if (userRole === 'admin') {
+            this.router.navigate(['/admin/dashboard']);
+          } else if (userRole === 'instructor') {
+            this.router.navigate(['instructor/dashboard']);
+          } else if (userRole === 'student') {
+            this.router.navigate(['/student/dashboard']);
+          } else {
+            this.router.navigate(['/home']);
+          }
         }
       },
       error: (err) => {
@@ -237,8 +258,9 @@ export class LoginComponent implements OnInit {
   }
 
   validateGordonEmail(email: string): boolean {
-    const gordonEmailPattern = /^\d+@gordoncollege\.edu\.ph$/;
-    return gordonEmailPattern.test(email);
+    // Now we check if it's just digits since we handle the domain separately
+    const gordonIDPattern = /^\d+$/;
+    return gordonIDPattern.test(email);
   }
 
   handleSignupSubmit(event: Event): void {
@@ -256,7 +278,8 @@ export class LoginComponent implements OnInit {
     if (this.password === this.confirmPassword) {
 
       const data = {
-        email: this.email,
+        // Add the domain to the email for the API call
+        email: this.getFullEmail(this.email),
         password: this.password,
         name: this.name,
         role: this.role,

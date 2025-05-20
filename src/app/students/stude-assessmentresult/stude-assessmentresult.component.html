@@ -47,7 +47,7 @@
             <div class="h-[65px] md:h-[68px] w-full"></div>
 
             <!-- Main Content -->
-            <main class="max-w-7xl mx-auto px-4 py-5">
+            <main class="max-w-8xl mx-auto px-4 py-5">
                 <div *ngIf="!result" class="flex items-center justify-center min-h-[400px]">
                     <div class="text-center">
                         <i class="fas fa-spinner fa-spin text-4xl text-indigo-600 mb-4"></i>
@@ -250,7 +250,7 @@
                                         <div class="rank-circle">
                                             <div class="circle-background"></div>
                                             <div class="circle-progress"
-                                                [style.transform]="'rotate(' + (result.ranking.percentile * 3.6) + 'deg)'">
+                                                [style.--percentage]="calculatePercentile(result.ranking.rank, result.ranking.totalStudents) + '%'">
                                             </div>
                                             <div class="circle-content">
                                                 <div class="percentile">{{calculatePercentile(result.ranking.rank,
@@ -315,27 +315,6 @@
                             <i class="fas fa-clipboard-list mr-2"></i>
                             Question Review
                         </h2>
-
-                        <div class="question-nav-container">
-                            <div class="question-grid">
-                                <button *ngFor="let question of questions; let i = index" (click)="scrollToQuestion(i)"
-                                    class="question-nav-button" [class.current]="currentQuestionIndex === i"
-                                    [class.correct]="question.isCorrect" [class.incorrect]="!question.isCorrect">
-                                    {{i + 1}}
-                                </button>
-                            </div>
-
-                            <div class="question-legend">
-                                <div class="legend-item">
-                                    <div class="legend-indicator correct"></div>
-                                    <span>Correct</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="legend-indicator incorrect"></div>
-                                    <span>Incorrect</span>
-                                </div>
-                            </div>
-                        </div>
 
                         <!-- Individual Question Cards -->
                         <div class="questions-container">

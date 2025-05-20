@@ -943,6 +943,7 @@
     gap: 1.5rem;
 }
 
+/* Updated Chart Card Styles with modern design and better responsiveness */
 .chart-card {
     background: white;
     border-radius: 1rem;
@@ -951,11 +952,19 @@
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    border-left: 4px solid #6366f1;
+    border-right: 4px solid transparent;
 }
 
 .chart-card:hover {
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
     transform: translateY(-2px);
+}
+
+.chart-card:nth-child(even) {
+    border-left: 4px solid #8b5cf6;
+    border-right: 4px solid transparent;
 }
 
 .chart-card h3 {
@@ -980,6 +989,23 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
+}
+
+.chart-header {
+    margin-bottom: 1rem;
+}
+
+.chart-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 0.25rem;
+}
+
+.chart-subtitle {
+    font-size: 0.875rem;
+    color: #6b7280;
 }
 
 .no-data-message {
@@ -989,6 +1015,10 @@
     justify-content: center;
     height: 200px;
     color: #6b7280;
+    padding: 2rem;
+    background-color: rgba(249, 250, 251, 0.7);
+    border-radius: 0.75rem;
+    border: 1px dashed #e5e7eb;
 }
 
 .no-data-message i {
@@ -1002,290 +1032,113 @@
     text-align: center;
 }
 
-/* Responsive adjustments */
+/* Responsive adjustments - Enhanced for better chart display */
+@media (max-width: 1280px) {
+    .chart-container {
+        height: 280px;
+    }
+}
+
 @media (max-width: 1024px) {
     .charts-grid {
         grid-template-columns: 1fr;
+        gap: 1.25rem;
     }
     
     .chart-container {
-        height: 250px;
+        height: 350px;
+    }
+}
+
+@media (max-width: 768px) {
+    .performance-section {
+        padding: 1.25rem;
+    }
+    
+    .performance-section h2 {
+        font-size: 1.5rem;
+    }
+    
+    .chart-container {
+        height: 300px;
+    }
+    
+    .chart-title {
+        font-size: 1.125rem;
     }
 }
 
 @media (max-width: 640px) {
     .performance-section {
         padding: 1rem;
+        margin-top: 1.5rem;
     }
     
     .performance-section h2 {
-        font-size: 1.5rem;
+        font-size: 1.35rem;
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.5rem;
+    }
+    
+    .chart-container {
+        height: 250px;
     }
     
     .chart-card h3 {
         font-size: 1.125rem;
     }
-}
-
-@media (min-width: 768px) {
-    .metrics-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-
-    .welcome-content h1 {
-        font-size: 2rem;     
-        margin-bottom: 0.5rem;
-    }
-
-    .welcome-content p {
-        font-size: 1.125rem;  
-    }
-
-    .main-content {
+    
+    .no-data-message {
+        height: 180px;
         padding: 1.5rem;
     }
-
-    .metric-card {
-        padding: 1.5rem;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
-
-    .metric-icon {
-        font-size: 1.875rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .metric-content h3 {
-        font-size: 0.875rem;
-    }
-
-    .metric-content p {
-        font-size: 1.5rem;
-    }
-
-    .charts-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
-    }
-
-    .chart-container {
-        height: 350px;
-    }
-
-    .stat-title {
-        font-size: 1.10rem;
-    }
-
-    .stat-value {
-        font-size: 3rem;
-    }
-}
-
-/* Enhanced Responsive Design */
-@media (max-width: 1200px) {
-    .tabs {
-        gap: 0.75rem;
-    }
-
-    .card-numbers h1 {
-        font-size: 2.5rem;
-    }
-}
-
-@media (max-width: 992px) {
-    .welcome-content {
-        flex-direction: column;
-        gap: 1.5rem;
-    }
-
-    .charts-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .chart-container {
-        height: 250px;
-    }
-}
-
-@media (max-width: 768px) {
-    /* Existing styles remain */
-    .tabs {
-        flex-direction: column;
-    }
-
-    .tabs > div {
-        width: 100%;
-    }
-
-    /* Enhanced tablet responsiveness */
-    .assessments-list {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-    }
-
-    .assessment-card {
-        flex-direction: column;
-        height: 100%;
-    }
-
-    .assessment-content {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .assessment-info {
-        margin-top: auto;
-    }
-
-    .student-table {
-        font-size: 0.875rem;
-    }
-
-    .chart-container {
-        height: 200px;
-        max-height: 200px;
-    }
-}
-
-@media (max-width: 640px) {
-    .welcome-section {
-        padding: 1.25rem;
-    }
-
-    .welcome-buttons {
-        flex-direction: column;
-        width: 100%;
-    }
-
-    .btn-create, .btn-view {
-        width: 100%;
-        text-align: center;
-    }
-
-    .assessments-list {
-        grid-template-columns: 1fr;
-    }
-
-    .assessment-card {
-        padding: 0.875rem;
-    }
-
-    .student-perf {
-        margin-top: 1.5rem;
-        padding: 1rem;
-    }
-
-    .header-section {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-    }
-
-    .export-btn {
-        width: 100%;
-    }
-
-    .student-table {
-        display: block;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .student-table th,
-    .student-table td {
-        white-space: nowrap;
-        padding: 0.75rem;
+    
+    .no-data-message i {
+        font-size: 2rem;
     }
 }
 
 @media (max-width: 480px) {
-    /* Existing styles remain */
-    .welcome-section {
+    .chart-container {
+        height: 220px;
+    }
+    
+    .chart-card {
         padding: 1rem;
     }
-
-    .welcome-text h1 {
-        font-size: 1.5rem;
+    
+    .no-data-message {
+        height: 150px;
+        padding: 1rem;
     }
-
-    /* Enhanced mobile responsiveness */
-    .card-numbers {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .card-numbers h1 {
-        font-size: 2rem;
-    }
-
-    .assessment-icon {
-        width: 2.25rem;
-        height: 2.25rem;
-    }
-
-    .assessment-content h2 {
-        font-size: 0.925rem;
-    }
-
-    .course {
-        font-size: 0.8rem;
-    }
-
-    .progress-bar {
-        height: 0.375rem;
-    }
-
-    .assessment-info {
-        font-size: 0.8rem;
-    }
-
-    .performance-section h2 {
-        font-size: 1.25rem;
-    }
-
-    .chart-container {
-        height: 180px;
-        max-height: 180px;
+    
+    .no-data-message i {
+        font-size: 1.75rem;
     }
 }
 
-/* Add support for larger screens */
-@media (min-width: 1400px) {
-    .welcome-section {
-        padding: 3rem 2rem;
+/* High-resolution display support */
+@media (min-resolution: 192dpi) {
+    .chart-card {
+        box-shadow: 0 4px 8px -2px rgba(0, 0, 0, 0.06);
     }
+}
 
-    .welcome-text h1 {
-        font-size: 2.5rem;
+/* Print optimization */
+@media print {
+    .charts-grid {
+        display: block;
     }
-
-    .card-numbers h1 {
-        font-size: 3.5rem;
+    
+    .chart-card {
+        break-inside: avoid;
+        margin-bottom: 1rem;
+        box-shadow: none;
+        border: 1px solid #e5e7eb;
     }
-
+    
     .chart-container {
         height: 400px;
-    }
-}
-
-/* Add print media query for better printing */
-@media print {
-    .welcome-section {
-        background: none;
-        color: black;
-        padding: 1rem;
-    }
-
-    .btn-create,
-    .btn-view,
-    .action-btn {
-        display: none;
-    }
-
-    .student-table {
-        page-break-inside: avoid;
     }
 }
 

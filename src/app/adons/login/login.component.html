@@ -18,8 +18,11 @@
             <form [formGroup]="loginForm" *ngIf="activeTab === 'login'" (ngSubmit)="handleLoginSubmit()">
                 <div class="form-group">
                     <label for="email">Email Address</label>
-                    <input type="email" id="email" placeholder="xxxxx@gordoncollege.edu.ph" formControlName="email"
-                        [ngClass]="{'invalid': loginForm.get('email')?.touched && loginForm.get('email')?.invalid}" />
+                    <div class="email-input-container">
+                        <input type="text" id="email" placeholder="Enter your ID" formControlName="email" 
+                            [ngClass]="{'invalid': loginForm.get('email')?.touched && loginForm.get('email')?.invalid}" />
+                        <div class="email-domain">&#64;gordoncollege.edu.ph</div>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -68,8 +71,11 @@
 
                 <div class="form-group">
                     <label for="email">Email Address</label>
-                    <input type="email" id="email" placeholder="xxxxx@gordoncollege.edu.ph" formControlName="email"
-                        [ngClass]="{'invalid': loginForm.get('email')?.touched && loginForm.get('email')?.invalid}" />
+                    <div class="email-input-container">
+                        <input type="text" id="signup-email" placeholder="Enter your ID" formControlName="email" 
+                            [ngClass]="{'invalid': signupForm.get('email')?.touched && signupForm.get('email')?.invalid}" />
+                        <div class="email-domain">&#64;gordoncollege.edu.ph</div>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -156,7 +162,7 @@
             </div>
 
             <div class="version">
-                Version 1.30 • © 2025 PRISM ICTe Solutions
+                Version 0.30 • © 2025 PRISM • ICTe Solutions
             </div>
         </div>
     </div>

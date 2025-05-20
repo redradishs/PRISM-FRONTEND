@@ -1,21 +1,25 @@
 .piper {
     display: flex;
     min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
 }
 
 .wb {
     text-align: center;
     font-size: 2rem;
     font-weight: bold;
+    margin-top: 0;
 }
 
 .login-section {
     flex: 1;
-    padding: 2rem;
+    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
+    overflow: hidden;
 }
 
 .login-piper {
@@ -142,9 +146,17 @@ select.form-input {
 .login-container {
     max-width: 400px;
     width: 100%;
-    margin: 0 auto;
+    margin: auto;
     padding: 1.5rem;
     animation: fadeIn 0.6s ease-out;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    max-height: 100vh;
+}
+
+.login-container::-webkit-scrollbar {
+    display: none;
 }
 
 .form-options {
@@ -314,35 +326,35 @@ select.form-input {
 @media (max-width: 768px) {
     .piper {
         flex-direction: column;
+        height: auto;
+        min-height: 100vh;
     }
 
     .login-section {
-        padding: 3rem;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
     }
 
     .login-container {
         border: none;
         border-radius: 20px;
-
-        margin: 1rem;
-
+        margin: 0 1rem;
         background: white;
         width: 100%;
+        padding: 1.5rem;
+        max-height: none;
     }
 
     .branding-section {
         display: none;
     }
 
-    .login-section {
-        padding: 0;
-    }
-
     .social-login {
         flex-direction: column;
     }
 }
-
 
 @keyframes fadeIn {
     from {
@@ -354,7 +366,6 @@ select.form-input {
         transform: translateY(0);
     }
 }
-
 
 @keyframes slideIn {
     from {
@@ -407,6 +418,7 @@ select.form-input {
 
 .login-section form {
     animation: slideIn 0.4s ease-out;
+    overflow: hidden;
 }
 
 .logo, .wb {
@@ -469,4 +481,60 @@ form {
     padding: 0.5rem;
     background-color: #f8f9fa;
     border-radius: 4px;
+}
+
+/* Email domain input with pre-filled domain */
+.email-input-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    overflow: hidden;
+}
+
+.email-input-container input {
+    flex: 1;
+    border: none;
+    border-radius: 0;
+    padding: 0.75rem;
+    font-size: 16px; /* Prevent iOS zoom */
+    outline: none;
+}
+
+.email-input-container .email-domain {
+    background-color: #f1f5f9;
+    padding: 0.75rem 0.5rem;
+    color: #64748b;
+    font-size: 16px; /* Prevent iOS zoom */
+    white-space: nowrap;
+    border-left: 1px solid #e2e8f0;
+}
+
+.email-input-container.invalid {
+    border-color: #ef4444;
+}
+
+/* Fix iOS zoom issue on all form inputs */
+.form-input,
+.form-group input,
+.form-group select {
+    font-size: 16px; /* Minimum font size to prevent iOS zoom */
+}
+
+/* Focus state for the email container */
+.email-input-container:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+/* Ensure image isn't causing extra space */
+.logo img {
+    display: block;
+    margin: 0 auto 1rem;
+}
+
+/* Ensure form inputs don't have extra spacing */
+.form-group:first-child {
+    margin-top: 0;
 }

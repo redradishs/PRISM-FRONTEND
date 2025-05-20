@@ -271,16 +271,16 @@
                         <h1>Class Performance Dashboard</h1>
                     </div>
                     <div class="charts-grid">
-                        <div class="assessment-card">
+                        <div class="chart-card">
                             <div class="assessment-content">
-                                <div class="assessment-header">
-                                    <h2>Class Performance Metrics</h2>
+                                <div class="chart-header">
+                                    <h2 class="chart-title">Class Performance Metrics</h2>
+                                    <p class="chart-subtitle">Performance comparison across all classes</p>
                                 </div>
-                                <p class="course">Performance comparison across all classes</p>
                                 
                                 <div class="chart-container">
                                     <ng-container *ngIf="barChartData && (charts ?? []).length > 0">
-                                        <canvas [data]="barChartData" 
+                                        <canvas #barChart [data]="barChartData" 
                                                 [options]="barChartOptions" 
                                                 [type]="'bar'" 
                                                 baseChart
@@ -294,14 +294,14 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="assessment-card">
+                        <div class="chart-card">
                             <div class="assessment-content">
-                                <div class="assessment-header">
-                                    <h2>Student Distribution by Class</h2>
+                                <div class="chart-header">
+                                    <h2 class="chart-title">Student Distribution by Class</h2>
+                                    <p class="chart-subtitle">Total students enrolled in each class</p>
                                 </div>
-                                <p class="course">Total students enrolled in each class</p>
                                 <div class="chart-container">
-                                    <canvas *ngIf="pieChartData && (charts ?? []).length > 0" 
+                                    <canvas #pieChart *ngIf="pieChartData && (charts ?? []).length > 0" 
                                             baseChart 
                                             [data]="pieChartData" 
                                             [options]="pieChartOptions" 

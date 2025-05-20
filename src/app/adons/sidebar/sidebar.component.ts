@@ -18,12 +18,16 @@ export class SidebarComponent {
   username: string = '';
   currentRoute: string = '';
   role: string = '';
+  isCoordinator: boolean = false;
   navItems: any[] = [];
 
   constructor(private auth: AuthService, private router: Router){
     this.auth.getCurrentUser().subscribe((user) => {
-      this.role = user.role;
-      this.username = user.name;
+      console.log('User object in sidebar:', user);
+      this.role = user?.role || '';
+      this.username = user?.name || '';
+      this.isCoordinator = user?.isCoordinator === 'yes';
+      console.log('Is coordinator:', this.isCoordinator);
       this.navItemSet();
     })
 
@@ -39,7 +43,7 @@ export class SidebarComponent {
     { icon: 'fas fa-square-check', label: 'Assign', id: 'assessment', route: '/instructor/assign' },
     { icon: 'fas fa-tasks', label: 'Assessment', id: 'assessment', route: '/instructor/assessment' },
     { icon: 'fas fa-star', label: 'Generate', id: 'Generate', route: '/instructor/generate' },
-    {icon: 'fas fa-user-group', label: 'Coordinator', id: 'coordinator', route: '/instructor/coordinator'},
+    { icon: 'fas fa-user-group', label: 'Coordinator', id: 'coordinator', route: '/instructor/coordinator', coordinatorOnly: true },
     { icon: 'fas fa-user', label: 'Profile', id: 'profile', route: '/instructor/profile' },
   ];
   
@@ -59,7 +63,9 @@ export class SidebarComponent {
   private navItemSet(): void {
     switch (this.role.toLowerCase()) {
       case 'instructor':
-        this.navItems = this.instructorNav;
+        this.navItems = this.instructorNav.filter(item => 
+          !item.coordinatorOnly || (item.coordinatorOnly && this.isCoordinator)
+        );
         break;
       case 'student':
         this.navItems = this.userNav;
