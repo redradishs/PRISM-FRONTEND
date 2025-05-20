@@ -171,7 +171,7 @@
                             </div>
 
                             <!-- Public Assessment Joining Code -->
-                            <div class="joining-code" *ngIf="assessment.type === 'Public'">
+                            <div class="joining-code" *ngIf="assessment.type === 'Public Assessment'">
                                 <div class="code-label">Joining Code:</div>
                                 <div class="code-value">{{assessment.modeSettings.joiningCode || 'N/A'}}</div>
                             </div>
@@ -211,7 +211,7 @@
                                     <span>{{assessment.timeLimit}} minutes</span>
                                 </div>
                             </div>
-                            <div *ngIf="assessment.type !== 'Public'" class="assessment-details">
+                            <div *ngIf="assessment.type !== 'Public Assessment'" class="assessment-details">
                                 <div class="detail-item">
                                     <i class="fas fa-file-alt detail-icon"></i>
                                     <span>{{assessment.assignedClasses[0].classCode}} - {{assessment.assignedClasses[0].className}}</span>

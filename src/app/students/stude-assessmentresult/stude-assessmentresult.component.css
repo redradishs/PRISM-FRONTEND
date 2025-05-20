@@ -4,6 +4,295 @@
   background-color: #f9fafb;
 }
 
+/* START OF THE HEADER SECTION */
+
+.header-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 100%;
+    padding: 0rem 1rem;
+    margin-bottom: 1rem;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.header-icon {
+    height: 3rem;
+    width: 3rem;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.header-icon i {
+    font-size: 1.5rem;
+    transition: transform 0.2s ease;
+}
+
+.header-icon:hover i {
+    transform: scale(1.1);
+}
+
+/* Tablet Styles */
+@media (max-width: 768px) {
+    .header-icon {
+        height: 2.5rem;
+        width: 2.5rem;
+    }
+
+    .header-icon i {
+        font-size: 1.25rem;
+    }
+}
+
+/* Mobile Styles */
+@media (max-width: 480px) {
+    .header-icon {
+        height: 2rem;
+        width: 2rem;
+        border-radius: 0.5rem;
+        margin-bottom: 0rem;
+    }
+
+    .header-icon i {
+        font-size: 1rem;
+    }
+
+    .header-section {
+        gap: 0.5rem;
+    }
+
+    .badge {
+        padding: 0.15rem 0.4rem;
+        font-size: 0.65rem;
+    }
+
+    .header-badges {
+        gap: 0.25rem;
+        margin: 0.25rem 0;
+    }
+}
+
+.header-text {
+    flex: 1;
+    min-width: 0;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.header-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.2;
+}
+
+@media (max-width: 600px) {
+  .header-title {
+    font-size: 1.2rem;
+    text-align: left;
+  }
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    width: 100%;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    flex: 0 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    background: #f8fafc;
+    color: #4f46e5;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    min-height: 40px;
+    white-space: nowrap;
+}
+
+.action-btn i {
+    font-size: 0.9rem;
+}
+
+.action-btn:hover {
+    background: #ede9fe;
+    color: #3730a3;
+    border-color: #c7d2fe;
+    transform: translateY(-1px);
+}
+
+.action-btn.primary {
+    background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
+    color: #fff;
+    border: none;
+}
+
+.action-btn.primary:hover {
+    background: linear-gradient(90deg, #4f46e5 0%, #6366f1 100%);
+    color: #fff;
+}
+
+/* Tablet Styles */
+@media (max-width: 768px) {
+    .action-buttons {
+        justify-content: flex-start;
+        gap: 0.4rem;
+    }
+
+    .action-btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+        min-height: 38px;
+    }
+
+    .action-btn i {
+        font-size: 0.85rem;
+    }
+}
+
+/* Mobile Styles */
+@media (max-width: 480px) {
+    .action-buttons {
+        flex-direction: row;
+        justify-content: stretch;
+        gap: 0.3rem;
+    }
+
+    .action-btn {
+        flex: 1 1 auto;
+        padding: 0.4rem 0.5rem;
+        font-size: 0.8rem;
+        min-height: 36px;
+        gap: 0.3rem;
+    }
+
+    .action-btn i {
+        font-size: 0.8rem;
+    }
+}
+
+/* Small Mobile Styles */
+@media (max-width: 360px) {
+    .action-buttons {
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+
+    .action-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Header Responsive Styles */
+@media (min-width: 768px) {
+    .header-section {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+
+    }
+    
+    .header-content {
+        flex: 1;
+        min-width: 0;
+        max-width: calc(100% - 320px);
+    }
+    
+    .action-buttons {
+        flex: 0 0 auto;
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-end;
+        min-width: 300px;
+    }
+    
+    .button {
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+}
+
+/* High-DPI Display Support for Header */
+@media (min-width: 768px) and (min-resolution: 120dpi) {
+    .header-section {
+        flex-wrap: nowrap;
+    }
+    
+    .header-content {
+        max-width: 60%;
+    }
+    
+    .action-buttons {
+        min-width: 320px;
+        max-width: 40%;
+    }
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    background-color: #f3f4f6;
+    color: #4b5563;
+    margin-right: 0.5rem;
+  }
+  
+  .badge.green {
+    background-color: #ecfdf5;
+    color: #059669;
+  }
+  
+  .badge.pink {
+    background-color: #fdf2f8;
+    color: #db2777;
+  }
+  
+  .badge.amber {
+    background-color: #fffbeb;
+    color: #d97706;
+  }
+  
+  .header-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin: 0.3rem 0;
+  }
+
 .flex-layout {
   display: flex;
 }
@@ -12,40 +301,18 @@
   flex: 1;
 }
 
-.bugoy {
-    padding: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+
+.icon {
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
 }
 
-.bugoy h1 {
-    font-size: clamp(1rem, 2.5vw, 1.3rem);
-    font-weight: 600;
-    color: #242424;
-    margin: 0;
-}
 
-.bugoy .flex.gap-4 {
-    gap: clamp(0.5rem, 2vw, 1rem);
-}
 
-.bugoy button {
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    color: #ffffff;
-    border: none;
-    padding: clamp(0.5rem, 1.5vw, 0.75rem) clamp(0.75rem, 2vw, 1.25rem);
-    border-radius: 5px;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    font-size: clamp(0.75rem, 1.5vw, 0.875rem);
-    white-space: nowrap;
-}
-
-.bugoy button:hover {
-    transform: translateY(-2px);
-    background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
-}
+/* END OF THE HEADER SECTION */
 
 .notify {
     background-color: rgba(164, 244, 164, 0.429);

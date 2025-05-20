@@ -28,6 +28,8 @@ interface AssessmentResult {
   submittedAt: string;
   passed: boolean;
   status: string;
+  mode: string;
+  canRetake: boolean;
   questions: Question[];
   questionTypes: {
     type: string;
@@ -188,6 +190,32 @@ export class StudeAssessmentresultComponent implements OnInit {
     return `${percentage}%`;
   }
 
+  getAssessmentTypeIcon(assessment: string): string {
+    switch (assessment) {
+      case 'mastery':
+        return 'fa-trophy';
+      case 'public assessment':
+        return 'fa-globe';
+      case 'assessment':
+        return 'fa-clipboard-check';
+      default:
+        return 'fa-clipboard-check';
+    }
+  }
+
+  getAssessmentTypeColor(assessment: string): string {
+    switch (assessment) {
+      case 'mastery':
+        return '#d97706'; 
+      case 'public assessment':
+        return '#2563eb'; 
+      case 'assessment':
+        return '#4f46e5'; 
+      default:
+        return '#4f46e5'; 
+    }
+  }
+
   getQuestionTypeIcon(type: string): string {
     switch (type.toLowerCase()) {
       case 'multiple-choice':
@@ -203,6 +231,30 @@ export class StudeAssessmentresultComponent implements OnInit {
     return type.split('-').map(word => 
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
+  }
+
+  retakeAssessment() {
+    const data = {
+      assignedAssessmentId: this.assignedAssessmentId,
+      studentId: this.userId
+    }
+    this.api.recordStartTime(data).subscribe({
+      next: (resp: any) => {
+        console.log('Successfully recorded start time', resp);
+        if(this.result.mode !== 'mastery') {
+          this.router.navigate(['student/assessment/take/normal'], {
+            state: { assessmentId: this.assignedAssessmentId }
+          });
+        } else {
+          this.router.navigate(['student/assessment/take'], {
+            state: { assessmentId: this.assignedAssessmentId }
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error recording start time:', error);
+      }
+    })
   }
 
   formatAnswer(answer: string | string[]): string {

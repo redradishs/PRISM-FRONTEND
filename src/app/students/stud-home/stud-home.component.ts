@@ -80,7 +80,7 @@ export class StudHomeComponent {
 
   gotoAssessments(id: string) {
     const assessment = this.onGoingAssessments.find(a => a.assignedAssessmentId === id);
-    if (assessment && assessment.hasSubmitted) {
+    if (assessment.hasSubmitted && !assessment.canRetake) {
       this.router.navigate(['/student/assessment/result'], {
         state: { assessmentId: id }
       });

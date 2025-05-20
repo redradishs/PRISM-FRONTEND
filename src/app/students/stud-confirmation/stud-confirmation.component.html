@@ -80,33 +80,30 @@
                                 <div class="flex-row">
                                     <div class="divider">
                                         <p>Type</p>
-                                        <div [ngClass]="[
-                                            'assessment-type',
-                                            confirmationData.typeAss === 'assessment' ? 'type-exam' : '',
-                                            confirmationData.typeAss === 'quiz' ? 'type-quiz' : '',
-                                            confirmationData.typeAss === 'mastery' ? 'type-practice' : '',
-                                            confirmationData.typeAss === 'pretest' ? 'type-pretest' : '',
-                                            confirmationData.typeAss === 'posttest' ? 'type-posttest' : ''
-                                        ]">
-                                            <i class="fa-solid" [ngClass]="{
-                                                'fa-file-lines': confirmationData.typeAss === 'assessment',
-                                                'fa-question': confirmationData.typeAss === 'quiz',
-                                                'fa-dumbbell': confirmationData.typeAss === 'practice',
-                                                'fa-hourglass-start': confirmationData.typeAss === 'mastery',
-                                                'fa-hourglass-end': confirmationData.typeAss === 'posttest'
-                                            }"></i>
-                                            {{(confirmationData.typeAss || 'exam').toUpperCase()}}
+                                        <div class="assessment-type"
+                                            [ngClass]="{
+                                                'type-assessment': confirmationData.typeAss === 'assessment',
+                                                'type-mastery': confirmationData.typeAss === 'mastery',
+                                                'type-public': confirmationData.typeAss === 'public'
+                                            }">
+                                            <i class="fa-solid"
+                                                [ngClass]="{
+                                                    'fa-clipboard-check': confirmationData.typeAss === 'assessment',
+                                                    'fa-trophy': confirmationData.typeAss === 'mastery',
+                                                    'fa-globe': confirmationData.typeAss === 'public'
+                                                }"></i>
+                                            {{ (confirmationData.typeAss || 'assessment').toUpperCase() }}
                                         </div>
                                     </div>
                                     <div class="divider">
                                         <p>Attempts</p>
-                                        <h3>1 of 1 remaining</h3>
+                                        <h3>{{confirmationData.attempts.current || 0}} of {{confirmationData.attempts.max || 1}} remaining attempts</h3>
                                     </div>
                                 </div>
 
                                 <div class="divider full-width">
                                     <p>Due Date</p>
-                                    <h3>{{confirmationData.dueDate | date: 'medium'}}</h3>
+                                    <h3>{{confirmationData.dueDate |  date:'MMM d, y h:mm a'}}</h3>
                                 </div>
 
                                 <div *ngIf="confirmationData.instructor.name" class="divider full-width">
@@ -161,9 +158,9 @@
                                     <li><i class="fa-solid fa-xmark"></i> Copying or sharing assessment content is
                                         strictly
                                         prohibited</li>
-                                    <li><i class="fa-solid fa-check"></i> Your answers are automatically saved as you
+                                    <li *ngIf="confirmationData.typeAss !== 'mastery'"><i class="fa-solid fa-check"></i> Your answers are automatically saved as you
                                         click the next button.</li>
-                                    <li><i class="fa-solid fa-check"></i> You can review and change your answers before
+                                    <li *ngIf="confirmationData.typeAss === 'mastery'"><i class="fa-solid fa-check"></i> You can review and change your answers before
                                         final
                                         submission</li>
                                     <li><i class="fa-solid fa-check"></i> The assessment page will be monitored any tab
@@ -188,6 +185,12 @@
                         <button class="btn-cancel" (click)="cancel()">Cancel</button>
                         <button class="btn-enter" *ngIf="!hasStarted" [disabled]="!isAgreed" (click)="enter()">Enter
                             Assessment</button>
+                        <button class="btn-enter btn-retake"
+                            *ngIf="hasCompleted && confirmationData.attempts.remaining > 0"
+                            [disabled]="!isAgreed"
+                            (click)="enter()">
+                            Retake Assessment
+                        </button>
                         <button class="btn-enter" *ngIf="hasStarted && !hasCompleted" (click)="continue()">Continue
                             Assessment</button>
                         <button class="btn-enter" *ngIf="hasCompleted" (click)="result()">View Result</button>

@@ -26,7 +26,7 @@ interface Assessment {
   id: string;
   assessmentId: string;
   title: string;
-  type: 'Assessment' | 'Public' | 'Mastery';
+  type: 'Assessment' | 'Public Assessment' | 'Mastery';
   instructions: string;
   category: string;
   questions: number;

@@ -55,21 +55,40 @@
                     </div>
                 </div>
 
-
-                <div class="flex justify-between items-center px-4 bugoy">
-                    <h1>Midterm Exam: NETWORKING 2 ASSESSMENT</h1>
-
-                    <div class="flex gap-4">
-                        <button (click)="goAssessment()">
-                            Assessments
+                <div *ngIf="result" class="header-section">
+                    <div class="header-content">
+                        <div class="header-icon" [ngStyle]="{
+                            'background-color': getAssessmentTypeColor(result.mode) + '10',
+                            'color': getAssessmentTypeColor(result.mode)
+                        }">
+                            <i class="fas {{getAssessmentTypeIcon(result.mode)}}"></i>
+                        </div>
+                        <div class="header-text">
+                            <h1 class="header-title">{{result.assessmentTitle}}</h1>
+                            <div class="header-badges">
+                                <span class="badge"
+                                    [ngStyle]="{'background-color': getAssessmentTypeColor(result.mode) + '10', 'color': getAssessmentTypeColor(result.mode)}">
+                                    {{result.mode | titlecase}}
+                                </span>
+                                <span class="badge green">{{result.status |
+                                    titlecase}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button *ngIf="result.canRetake === true" class="action-btn" (click)="retakeAssessment()">
+                            <i class="fas fa-redo"></i>
+                            Retake Assessment
                         </button>
-
-                        <button (click)="goHome()">
+                        <button *ngIf="result.status === 'completed'" class="action-btn" (click)="goHome()">
+                            <i class="fas fa-file-export"></i>
+                            Export Results
+                        </button>
+                        <button class="action-btn primary" (click)="goHome()">
+                            <i class="fas fa-home"></i>
                             Home
                         </button>
                     </div>
-
-
                 </div>
 
 

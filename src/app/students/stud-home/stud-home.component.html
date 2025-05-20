@@ -123,35 +123,58 @@
                                     *ngFor="let assessment of onGoingAssessments" class="ongoing-card">
                                     <div class="ongoing-header">
                                         <div class="ongoing-title-section">
-                                            <div class="ongoing-icon">
-                                                <i class="fas fa-file-alt"></i>
+                                            <div class="ongoing-icon" [ngClass]="{
+                                                'bg-[#e8eaf6] text-[#3f51b5]': assessment.mode === 'assessment',
+                                                'bg-[#fffbeb] text-[#d97706]': assessment.mode === 'mastery',
+                                                'bg-[#eff6ff] text-[#2563eb]': assessment.mode === 'public'
+                                            }">
+                                                <i class="fas" [ngClass]="{
+                                                    'fa-clipboard-check': assessment.mode === 'assessment',
+                                                    'fa-trophy': assessment.mode === 'mastery',
+                                                    'fa-globe': assessment.mode === 'public'
+                                                }"></i>
                                             </div>
                                             <div>
                                                 <h4 class="ongoing-title">{{assessment.title}}</h4>
                                                 <p class="ongoing-code">{{assessment.className && assessment.classCode ? assessment.className + ' - ' + assessment.classCode : 'No Code'}}</p>
                                             </div>
                                         </div>
-                                        <span class="ongoing-status" [ngClass]="{
+                                        <div class="flex flex-col items-end">
+                                            <span class="ongoing-status" [ngClass]="{
                                                 'status-result': assessment.hasSubmitted,
                                                 'status-progress': !assessment.hasSubmitted && assessment.attemptStatus === 'in-progress',
                                                 'status-started': !assessment.hasSubmitted && assessment.attemptStatus === 'started',
                                                 'status-pending': !assessment.hasSubmitted && assessment.attemptStatus === null
                                             }">
-                                            <ng-container *ngIf="assessment.hasSubmitted">
-                                                <i class="fas fa-chart-bar mr-1"></i>
-                                                View Result
-                                            </ng-container>
-                                            <ng-container *ngIf="!assessment.hasSubmitted">
-                                                {{assessment.attemptStatus === 'in-progress' ? 'In Progress' :
-                                                assessment.attemptStatus === 'started' ? 'Started' : 'Not Started'}}
-                                            </ng-container>
-                                        </span>
+                                                <ng-container *ngIf="assessment.hasSubmitted">
+                                                    <i class="fas fa-chart-bar mr-1"></i>
+                                                    View Result
+                                                </ng-container>
+                                                <ng-container *ngIf="!assessment.hasSubmitted">
+                                                    {{assessment.attemptStatus === 'in-progress' ? 'In Progress' :
+                                                    assessment.attemptStatus === 'started' ? 'Started' : 'Not Started'}}
+                                                </ng-container>
+                                            </span>
+                                        </div>
                                     </div>
 
                                     <div class="ongoing-footer">
-                                        <span>Due: {{assessment.endDate | date:'MMM d, yyyy HH:mm a'}}</span>
+                                        <span>Due: {{assessment.endDate | date:'MMM d, y h:mm a'}}</span>
+
+                                        <span class="mode-badge" [ngClass]="{
+                                            'mode-assessment': assessment.mode === 'assessment',
+                                            'mode-mastery': assessment.mode === 'mastery',
+                                            'mode-public': assessment.mode === 'public'
+                                        }">
+                                            <i class="fas" [ngClass]="{
+                                                'fa-clipboard-check': assessment.mode === 'assessment',
+                                                'fa-trophy': assessment.mode === 'mastery',
+                                                'fa-globe': assessment.mode === 'public'
+                                            }"></i>
+                                            {{assessment.mode | titlecase}} Mode
+                                        </span> 
                                     </div>
-                                </div>
+                                </div>  
 
                                 <a routerLink="/student/history" class="view-all">
                                     View All Assessments
@@ -181,44 +204,98 @@
                             </div>
 
                             <div [ngSwitch]="activeTab">
-                                <div *ngSwitchCase="'upcoming'" class="space-y-4">
-                                    <p *ngIf="upcomingAssessments.length === 0" class="text-center text-gray-500">No
-                                        upcoming assessments</p>
-                                    <div *ngFor="let assessment of upcomingAssessments" class="ongoing-card">
-                                        <div class="upcoming-card">
-                                            <div>
-                                                <p class="ongoing-title">{{assessment.title}}</p>
-                                                <p class="ongoing-code">{{assessment.className && assessment.classCode ? assessment.className + ' - ' + assessment.classCode : 'No Code'}}</p>
+                                    <div *ngSwitchCase="'upcoming'" class="space-y-4">
+                                        <p *ngIf="upcomingAssessments.length === 0" class="text-center text-gray-500">No
+                                            upcoming assessments</p>
+                                        <div *ngFor="let assessment of upcomingAssessments" class="ongoing-card">
+                                            <div class="upcoming-card">
+                                                <div class="ongoing-title-section">
+                                                    <div class="ongoing-icon" [ngClass]="{
+                                                        'bg-[#e8eaf6] text-[#3f51b5]': assessment.mode === 'assessment',
+                                                        'bg-[#fffbeb] text-[#d97706]': assessment.mode === 'mastery',
+                                                        'bg-[#eff6ff] text-[#2563eb]': assessment.mode === 'public'
+                                                    }">
+                                                        <i class="fas" [ngClass]="{
+                                                            'fa-clipboard-check': assessment.mode === 'assessment',
+                                                            'fa-trophy': assessment.mode === 'mastery',
+                                                            'fa-globe': assessment.mode === 'public'
+                                                        }"></i>
+                                                    </div>
+                                                    <div>
+                                                        <p class="ongoing-title">{{assessment.title}}</p>
+                                                        <p class="ongoing-code">{{assessment.className && assessment.classCode ? assessment.className + ' - ' + assessment.classCode : 'No Code'}}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex flex-col items-end">
+                                                    <span class="mode-badge" [ngClass]="{
+                                                        'mode-assessment': assessment.mode === 'assessment',
+                                                        'mode-mastery': assessment.mode === 'mastery',
+                                                        'mode-public': assessment.mode === 'public'
+                                                    }">
+                                                        <i class="fas" [ngClass]="{
+                                                            'fa-clipboard-check': assessment.mode === 'assessment',
+                                                            'fa-trophy': assessment.mode === 'mastery',
+                                                            'fa-globe': assessment.mode === 'public'
+                                                        }"></i>
+                                                        {{assessment.mode | titlecase}} Mode
+                                                    </span>
+                                                </div>
                                             </div>
-                                            <span class="upcoming-due">Due: {{assessment.endDate | date:'MMM d,
-                                                yyyy HH:mm'}}</span>
-
+                                            <div class="ongoing-footer flex-between">
+                                                <span>Start: {{assessment.startDate | date:'MMM d, y h:mm a'}}</span>
+                                                <span>Due: {{assessment.endDate | date:'MMM d, y h:mm a'}}</span>
+                                            </div>
                                         </div>
-                                    </div>
                                 </div>
                                 <div *ngSwitchCase="'completed'" class="space-y-4">
                                     <p *ngIf="completedAssessments.length === 0" class="text-center text-gray-500">No
                                         completed assessments</p>
-                                    <div *ngFor="let assessment of completedAssessments" class="ongoing-card">
-                                        <div (click)="gotoResult(assessment.assignedAssessmentId)"
-                                            class="upcoming-card">
-                                            <div class="flex flex-col">
-                                                <p class="ongoing-title">{{assessment.title}}</p>
-                                                <p class="ongoing-code">{{assessment.className && assessment.classCode ? assessment.className + ' - ' + assessment.classCode : 'No Code'}}</p>
+                                        <div (click)="gotoResult(assessment.assignedAssessmentId)" *ngFor="let assessment of completedAssessments" class="ongoing-card">
+                                            <div class="upcoming-card">
+                                                <div class="ongoing-title-section">
+                                                    <div class="ongoing-icon" [ngClass]="{
+                                                        'bg-[#e8eaf6] text-[#3f51b5]': assessment.mode === 'assessment',
+                                                        'bg-[#fffbeb] text-[#d97706]': assessment.mode === 'mastery',
+                                                        'bg-[#eff6ff] text-[#2563eb]': assessment.mode === 'public'
+                                                    }">
+                                                        <i class="fas" [ngClass]="{
+                                                            'fa-clipboard-check': assessment.mode === 'assessment',
+                                                            'fa-trophy': assessment.mode === 'mastery',
+                                                            'fa-globe': assessment.mode === 'public'
+                                                        }"></i>
+                                                    </div>
+                                                    <div>
+                                                        <p class="ongoing-title">{{assessment.title}}</p>
+                                                        <p class="ongoing-code">
+                                                            {{assessment.className && assessment.classCode ? assessment.className + ' - ' + assessment.classCode : 'No Code'}}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex flex-col items-end">
+                                                    <span class="mode-badge" [ngClass]="{
+                                                        'mode-assessment': assessment.mode === 'assessment',
+                                                        'mode-mastery': assessment.mode === 'mastery',
+                                                        'mode-public': assessment.mode === 'public'
+                                                    }">
+                                                        <i class="fas" [ngClass]="{
+                                                            'fa-clipboard-check': assessment.mode === 'assessment',
+                                                            'fa-trophy': assessment.mode === 'mastery',
+                                                            'fa-globe': assessment.mode === 'public'
+                                                        }"></i>
+                                                        {{assessment.mode | titlecase}} Mode
+                                                    </span>
+                                                    <p [ngClass]="{
+                                                        'status-result': assessment.hasSubmitted && assessment.attemptStatus === 'submitted',
+                                                        'status-not-submitted': !assessment.hasSubmitted || assessment.attemptStatus !== 'submitted'
+                                                    }" class="status-badge mt-2">
+                                                        {{assessment.hasSubmitted && assessment.attemptStatus === 'submitted' ? 'View Result' : 'Not Submitted'}}
+                                                    </p>
+                                                </div>
                                             </div>
-                                            <div class="flex flex-col items-end">
-                                                <p class="upcoming-due">Ended: {{assessment.endDate | date:'MMM d,
-                                                    yyyy HH:mm'}}</p>
-                                                <p [ngClass]="{'status-result': assessment.hasSubmitted && assessment.attemptStatus === 'submitted', 'status-not-submitted': !assessment.hasSubmitted || assessment.attemptStatus !== 'submitted'}"
-                                                    class="status-badge mt-2">
-                                                    {{assessment.hasSubmitted && assessment.attemptStatus ===
-                                                    'submitted' ?
-                                                    'View Result' : 'Not Submitted'}}
-                                                </p>
+                                            <div class="ongoing-footer flex-between">
+                                                <span>Ended: {{assessment.endDate | date:'MMM d, y h:mm a'}}</span>
                                             </div>
                                         </div>
-                                    </div>
-
                                 </div>
                             </div>
                         </div>
