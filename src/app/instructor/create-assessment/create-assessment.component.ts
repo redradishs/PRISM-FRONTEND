@@ -589,14 +589,30 @@ export class CreateAssessmentComponent implements OnInit {
     }
   }
 
-  setOptionAnswer(question: Question, key: string, value: string, event?: Event): void {
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
+  //ADDED TO FIX THE MULTIPLE CHOICE OPTIONS BUG, PASSING THE ANSWER OR CHANGES
+  //FROM HANDLE OPTION BLUR THEN OPTION BLUR CALLS THE SETOPTION ANSWER
+  public setOptionAnswer(question: any, optionKey: string, newValue: string, browserEvent?: Event): void {
+
+    if (this.isEditing(question.id)) {
+      if (!question.options) {
+        question.options = {}; 
+      }
+      const updatedOptions = { ...question.options };
+      updatedOptions[optionKey] = newValue;
+      question.options = updatedOptions;
+
+      // Stop event propagation if a browser event was passed and has the method
+      if (browserEvent && typeof browserEvent.stopPropagation === 'function') {
+        browserEvent.stopPropagation();
+      }
     }
-    if (question.options) {
-      console.log(`Setting option ${key} to "${value}"`); // Debug log
-      question.options[key] = value;
+  }
+
+  public handleOptionBlur(question: any, optionKey: string, event: FocusEvent): void {
+    const target = event.target as HTMLTextAreaElement;
+    if (target && typeof target.value === 'string') {
+      const newValue = target.value;
+      this.setOptionAnswer(question, optionKey, newValue, event);
     }
   }
 

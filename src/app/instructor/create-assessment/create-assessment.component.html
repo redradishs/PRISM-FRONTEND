@@ -468,7 +468,7 @@
                                         (keydown)="handleKeyPress($event, question.id, 'option', opt.key)">
                                     <textarea *ngIf="isEditing(question.id)" 
                                         [ngModel]="question.options![opt.key]"
-                                        (ngModelChange)="setOptionAnswer(question, opt.key, $event, $event)"
+                                        (blur)="handleOptionBlur(question, opt.key, $event)"
                                         class="qtype-option-edit"
                                         [attr.data-opt-key]="opt.key"
                                         rows="1"
