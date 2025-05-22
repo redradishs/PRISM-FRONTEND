@@ -28,6 +28,7 @@ export class LoginComponent implements OnInit {
   errorMessage: string = '';
   formError: string = '';
   loading: boolean = false;
+  googleLoading: boolean = false;
   clicked = false;
   rememberMe: boolean = false;
   showPassword = false;
@@ -378,85 +379,77 @@ export class LoginComponent implements OnInit {
 
   async loginWithGoogle() {
     try {
+      this.googleLoading = true;
       const provider = new GoogleAuthProvider();
-      provider.addScope('email');
-      provider.addScope('profile');
-      
       const result = await signInWithPopup(this.auth, provider);
       
-      // Get the user's email and other details
-      const email = result.user.email;
-      const displayName = result.user.displayName;
-      const photoURL = result.user.photoURL;
-      
-      // Check if it's a Gordon College email
-      if (email && email.endsWith('@gordoncollege.edu.ph')) {
-        // Get the ID token from Firebase
-        const idToken = await result.user.getIdToken();
-        
-        // Call the Google sign-in endpoint with the ID token
-        this.authService.googleSignIn({ idToken }).subscribe({
-          next: (response: any) => {
-            this.authService.setToken(response.data.jwt);
-            const userRole = this.authService.getUserRole();
+      if (result.user) {
+        if (result.user.email && result.user.email.endsWith('@gordoncollege.edu.ph')) {
+          const idToken = await result.user.getIdToken();
+          
+          this.authService.googleSignIn({ idToken }).subscribe({
+            next: (response: any) => {
+              this.authService.setToken(response.data.jwt);
+              const userRole = this.authService.getUserRole();
+              
+              Swal.fire({
+                title: 'Login Successful',
+                text: 'You have successfully logged in with Google!',
+                icon: 'success',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#1976D2',
+              });
 
-
-            Swal.fire({
-              title: 'Login Successful',
-              text: 'You have successfully logged in!',
-              icon: 'success',
-              confirmButtonText: 'OK',
-              confirmButtonColor: '#1976D2',
-            }).then(() => {
-              if (userRole === 'admin') {
-                this.router.navigate(['/admin/dashboard']);
-              } else if (userRole === 'instructor') {
-                this.router.navigate(['/instructor/dashboard']);
-              } else if (userRole === 'student') {
-                this.router.navigate(['/student/dashboard']);
+              const redirectUrl = sessionStorage.getItem('redirectUrl');
+              if (redirectUrl) {
+                sessionStorage.removeItem('redirectUrl');
+                this.router.navigateByUrl(redirectUrl);
               } else {
-                this.router.navigate(['/home']);
+                if (userRole === 'admin') {
+                  this.router.navigate(['/admin/dashboard']);
+                } else if (userRole === 'instructor') {
+                  this.router.navigate(['instructor/dashboard']);
+                } else if (userRole === 'student') {
+                  this.router.navigate(['/student/dashboard']);
+                } else {
+                  this.router.navigate(['/home']);
+                }
               }
-            });
-          },
-          error: (err) => {
-            console.error('Google signin error:', err);
-            Swal.fire({
-              title: 'Error',
-              text: err.error?.message || 'Failed to login with Google. Please try again.',
-              icon: 'error',
-              confirmButtonText: 'OK',
-              confirmButtonColor: '#FF5733',
-            });
-          }
-        });
-      } else {
-        Swal.fire({
-          title: 'Invalid Email',
-          text: 'Please use your Gordon College email address.',
-          icon: 'error',
-          confirmButtonText: 'OK',
-          confirmButtonColor: '#FF5733',
-        });
+            },
+            error: (error) => {
+              console.error('Google sign-in error:', error);
+              Swal.fire({
+                title: 'Error',
+                text: 'Failed to sign in with Google. Please try again.',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#1976D2',
+              });
+            },
+            complete: () => {
+              this.googleLoading = false;
+            }
+          });
+        } else {
+          this.googleLoading = false;
+          Swal.fire({
+            title: 'Invalid Email',
+            text: 'Please use your Gordon College email address.',
+            icon: 'error',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#1976D2',
+          });
+        }
       }
-    } catch (error: any) {
-      console.error('Google login error:', error);
-      let errorMessage = 'Failed to login with Google. Please try again.';
-      
-      if (error.code === 'auth/configuration-not-found') {
-        errorMessage = 'Google authentication is not properly configured. Please contact support.';
-      } else if (error.code === 'auth/popup-closed-by-user') {
-        errorMessage = 'Login cancelled. Please try again.';
-      } else if (error.code === 'auth/popup-blocked') {
-        errorMessage = 'Popup was blocked by your browser. Please allow popups for this site.';
-      }
-      
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+      this.googleLoading = false;
       Swal.fire({
         title: 'Error',
-        text: errorMessage,
+        text: 'Failed to sign in with Google. Please try again.',
         icon: 'error',
         confirmButtonText: 'OK',
-        confirmButtonColor: '#FF5733',
+        confirmButtonColor: '#1976D2',
       });
     }
   }

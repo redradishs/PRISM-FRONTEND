@@ -583,6 +583,27 @@ form {
     color: #333;
     transition: all 0.3s ease;
     margin-bottom: 1rem;
+    position: relative;
+}
+
+.button span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.button .spinner {
+    margin: 0;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.button svg {
+    width: 24px;
+    height: 24px;
+    display: block;
 }
 
 .button:hover {
@@ -590,13 +611,50 @@ form {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.button svg {
-    width: 24px;
-    height: 24px;
-}
-
 .auth-link {
     color: #6C5CE7;
     text-decoration: none;
     cursor: pointer;
+}
+
+/* Loading Spinner */
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 8px;
+}
+
+.button .spinner {
+  border-color: rgba(0, 0, 0, 0.1);
+  border-top-color: #4285F4;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Disabled button styles */
+.sign-in-btn:disabled,
+.button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Loading state transitions */
+.sign-in-btn,
+.button {
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.sign-in-btn:disabled,
+.button:disabled {
+  transform: scale(0.98);
 }
