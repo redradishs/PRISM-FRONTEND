@@ -13,6 +13,8 @@ import { RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
 import { Title } from '@angular/platform-browser';
 import { AuthService } from '../../services/auth.service';
+import { GoogleAuthProvider, signInWithPopup } from '@angular/fire/auth';
+import { Auth } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-login',
@@ -45,7 +47,8 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private formBuilder: FormBuilder,
     private authService: AuthService,
-    private title: Title
+    private title: Title,
+    private auth: Auth
   ) {
     this.loginForm = this.formBuilder.group({
       email: [
@@ -371,5 +374,90 @@ export class LoginComponent implements OnInit {
 
   togglePassword() {
     this.showPassword = !this.showPassword;
+  }
+
+  async loginWithGoogle() {
+    try {
+      const provider = new GoogleAuthProvider();
+      provider.addScope('email');
+      provider.addScope('profile');
+      
+      const result = await signInWithPopup(this.auth, provider);
+      
+      // Get the user's email and other details
+      const email = result.user.email;
+      const displayName = result.user.displayName;
+      const photoURL = result.user.photoURL;
+      
+      // Check if it's a Gordon College email
+      if (email && email.endsWith('@gordoncollege.edu.ph')) {
+        // Get the ID token from Firebase
+        const idToken = await result.user.getIdToken();
+        
+        // Call the Google sign-in endpoint with the ID token
+        this.authService.googleSignIn({ idToken }).subscribe({
+          next: (response: any) => {
+            this.authService.setToken(response.data.jwt);
+            const userRole = this.authService.getUserRole();
+
+
+            Swal.fire({
+              title: 'Login Successful',
+              text: 'You have successfully logged in!',
+              icon: 'success',
+              confirmButtonText: 'OK',
+              confirmButtonColor: '#1976D2',
+            }).then(() => {
+              if (userRole === 'admin') {
+                this.router.navigate(['/admin/dashboard']);
+              } else if (userRole === 'instructor') {
+                this.router.navigate(['/instructor/dashboard']);
+              } else if (userRole === 'student') {
+                this.router.navigate(['/student/dashboard']);
+              } else {
+                this.router.navigate(['/home']);
+              }
+            });
+          },
+          error: (err) => {
+            console.error('Google signin error:', err);
+            Swal.fire({
+              title: 'Error',
+              text: err.error?.message || 'Failed to login with Google. Please try again.',
+              icon: 'error',
+              confirmButtonText: 'OK',
+              confirmButtonColor: '#FF5733',
+            });
+          }
+        });
+      } else {
+        Swal.fire({
+          title: 'Invalid Email',
+          text: 'Please use your Gordon College email address.',
+          icon: 'error',
+          confirmButtonText: 'OK',
+          confirmButtonColor: '#FF5733',
+        });
+      }
+    } catch (error: any) {
+      console.error('Google login error:', error);
+      let errorMessage = 'Failed to login with Google. Please try again.';
+      
+      if (error.code === 'auth/configuration-not-found') {
+        errorMessage = 'Google authentication is not properly configured. Please contact support.';
+      } else if (error.code === 'auth/popup-closed-by-user') {
+        errorMessage = 'Login cancelled. Please try again.';
+      } else if (error.code === 'auth/popup-blocked') {
+        errorMessage = 'Popup was blocked by your browser. Please allow popups for this site.';
+      }
+      
+      Swal.fire({
+        title: 'Error',
+        text: errorMessage,
+        icon: 'error',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#FF5733',
+      });
+    }
   }
 }

@@ -18,7 +18,7 @@ interface ProfileChanges {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root', 
 })
 export class AuthService {
   // private baseUrl = 'http://localhost:8000/user';
@@ -77,7 +77,7 @@ export class AuthService {
     if (isPlatformBrowser(this.platformId) && isLocalStorageAvailable()) {
       localStorage.setItem(this.tokenKey, token);
       const decoded = this.decodeToken(token);
-      this.currentUserSubject.next(decoded?.data || null);
+      this.currentUserSubject.next(decoded.data);
     }
   }
 
@@ -111,7 +111,13 @@ export class AuthService {
 
   private decodeToken(token: string): any {
     try {
-      return JSON.parse(atob(token.split('.')[1]));
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+
+      return JSON.parse(jsonPayload);
     } catch (e) {
       console.error('Invalid token format:', e);
       return null;
@@ -134,7 +140,8 @@ export class AuthService {
 
   getUserRole(): string | null {
     const currentUser = this.currentUserSubject.value;
-    return currentUser ? currentUser.role : null;
+    const role = currentUser?.role;
+    return role || null;
   }
 
   isStudent(): boolean {
@@ -185,6 +192,10 @@ export class AuthService {
 
   updateProfile(userId: string, changes: ProfileChanges) {
     return this.http.put(`${this.baseUrl}/profile/update/${userId}`, changes);
+  }
+
+  googleSignIn(data: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/oauth/google`, data);
   }
 
 }

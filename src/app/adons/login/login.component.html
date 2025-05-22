@@ -54,6 +54,13 @@
                     {{ loading ? 'Signing in...' : 'Sign in' }}
                 </button>
 
+                <div class="divider">or</div>
+
+                <button type="button" class="google-btn" (click)="loginWithGoogle()">
+                    <i class="fab fa-google"></i>
+                    Sign in with Google
+                </button>
+
                 <p class="create-account">
                     Don't have an account? <a (click)="activeTab = 'signup'" class="auth-link">Create an account</a>
                 </p>

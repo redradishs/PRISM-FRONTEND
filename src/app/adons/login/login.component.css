@@ -17,7 +17,7 @@
     padding: 0;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center;    
     width: 100%;
     overflow: hidden;
 }
@@ -537,4 +537,30 @@ form {
 /* Ensure form inputs don't have extra spacing */
 .form-group:first-child {
     margin-top: 0;
+}
+
+.google-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background: white;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.google-btn:hover {
+    background: #f5f5f5;
+}
+
+.google-btn i {
+    color: #4285F4;
+    font-size: 1.2rem;
 }
