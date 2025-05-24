@@ -283,14 +283,14 @@
                                                 <i class="fas fa-users"></i>
                                             </div>
                                             <div class="comparison-content">
-                                                <div class="comparison-label">{{result?.mode === 'public' ? 'Public Average' : 'Class Average'}}</div>
+                                                <div class="comparison-label">{{result.mode === 'public' ? 'Public Average' : 'Class Average'}}</div>
                                                 <div class="comparison-value">{{getAverageScore()}}</div>
                                                 <div class="comparison-diff"
-                                                    [class.positive]="(result?.score ?? 0) > getAverageScore()"
-                                                    [class.negative]="(result?.score ?? 0) < getAverageScore()">
+                                                    [class.positive]="result.score > getAverageScore()"
+                                                    [class.negative]="result.score < getAverageScore()">
                                                     <i
-                                                        [class]="(result?.score ?? 0) > getAverageScore() ? 'fas fa-arrow-up' : 'fas fa-arrow-down'"></i>
-                                                    <span>{{Math.abs((result?.score ?? 0) - getAverageScore())}}
+                                                        [class]="result.score > getAverageScore() ? 'fas fa-arrow-up' : 'fas fa-arrow-down'"></i>
+                                                    <span>{{Math.abs(result.score - getAverageScore())}}
                                                         points
                                                         difference</span>
                                                 </div>

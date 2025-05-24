@@ -30,5 +30,5 @@ export const INSTRUCTOR_ROUTES: Routes = [
     {path: 'response', component: ResponseReviewComponent},
     {path: 'students/assessments', component: StudentAssessmentsComponent},
     {path: 'manage', component: ManageComponent},
-    { path: 'generate', component: CreateAssessmentComponent }
+    { path: 'generate', component: CreateAssessmentComponent },
 ]; 

@@ -42,7 +42,8 @@ export class SidebarComponent {
     { icon: 'fas fa-layer-group', label: 'Manage', id: 'manage', route: '/instructor/manage' },
     { icon: 'fas fa-square-check', label: 'Assign', id: 'assessment', route: '/instructor/assign' },
     { icon: 'fas fa-tasks', label: 'Assessment', id: 'assessment', route: '/instructor/assessment' },
-    { icon: 'fas fa-star', label: 'Generate', id: 'Generate', route: '/instructor/generate' },
+    // { icon: 'fas fa-star', label: 'Generate', id: 'Generate', route: '/instructor/generate' },
+    { icon: 'fas fa-star', label: 'Create', id: 'Create', route: '/instructor/create' },
     { icon: 'fas fa-user-group', label: 'Coordinator', id: 'coordinator', route: '/instructor/coordinator', coordinatorOnly: true },
     { icon: 'fas fa-user', label: 'Profile', id: 'profile', route: '/instructor/profile' },
   ];

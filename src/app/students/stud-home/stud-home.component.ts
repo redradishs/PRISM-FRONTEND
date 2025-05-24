@@ -8,11 +8,23 @@ import { Router, RouterLink } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import Swal from 'sweetalert2';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { PortalModule } from '@angular/cdk/portal';
 
 @Component({
   selector: 'app-stud-home',
-  imports: [SidebarComponent, CommonModule, RouterLink, FormsModule, ReactiveFormsModule],
+  standalone: true,
+  imports: [
+    SidebarComponent, 
+    CommonModule, 
+    RouterLink, 
+    FormsModule, 
+    ReactiveFormsModule,
+    MatDialogModule,
+    OverlayModule,
+    PortalModule
+  ],
   templateUrl: './stud-home.component.html',
   styleUrl: './stud-home.component.css'
 })
