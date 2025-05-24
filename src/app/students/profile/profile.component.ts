@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Route, Router } from '@angular/router';
 import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
@@ -64,7 +65,7 @@ interface PasswordData {
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
   profile: StudentProfile = {
     _id: '',
     name: '',
@@ -148,7 +149,7 @@ export class ProfileComponent implements OnInit {
     confirmPassword: ''
   };
 
-  constructor(private api: ApiService, private auth: AuthService) {
+  constructor(private api: ApiService, private auth: AuthService, private router: Router) {
   }
 
   ngOnInit(): void {
@@ -161,13 +162,18 @@ export class ProfileComponent implements OnInit {
           this.userId = user.id;
           this.loadProfileData();
         } else {
-          this.handleError('No user ID found');
+          // Only show error if we're not on the login page
+          if (!this.router.url.includes('/login')) {
+            this.handleError('No user ID found');
+          }
           this.isLoading = false;
         }
       },
       error: (error) => {
         console.error('Error getting current user:', error);
-        this.handleError('Failed to load user data');
+        if (!this.router.url.includes('/login')) {
+          this.handleError('Failed to load user data');
+        }
         this.isLoading = false;
       }
     });
@@ -382,5 +388,9 @@ export class ProfileComponent implements OnInit {
 
   toggleSidebar(): void {
     console.log('Toggling sidebar');
+  }
+
+  ngOnDestroy(): void {
+    // Cleanup code if needed
   }
 }
