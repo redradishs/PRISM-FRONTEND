@@ -370,7 +370,8 @@ export class ManageComponent {
 
   gotoResult(assessment: any) {
     console.log('Navigating to result for:', assessment.type);
-    if(assessment.type === 'Assessment' || assessment.type === 'Public') {
+    if(assessment.type === 'Assessment' || assessment.type === 'Public Assessment') {
+      console.log('Navigating to result for:', assessment.id);
       this.router.navigate(['/instructor/result'], {
         state: { assessmentId: assessment.id }
       })

@@ -1,4 +1,4 @@
-import { Component, HostListener, ViewChild } from '@angular/core';
+import { Component, HostListener, ViewChild, OnInit } from '@angular/core';
 import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -7,15 +7,17 @@ import { StudentService } from '../../services/student.service';
 import { Router, RouterLink } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import Swal from 'sweetalert2';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-stud-home',
-  imports: [SidebarComponent, CommonModule, RouterLink],
+  imports: [SidebarComponent, CommonModule, RouterLink, FormsModule, ReactiveFormsModule],
   templateUrl: './stud-home.component.html',
   styleUrl: './stud-home.component.css'
 })
-export class StudHomeComponent {
- isMobile = window.innerWidth < 768;
+export class StudHomeComponent implements OnInit {
+  isMobile = window.innerWidth < 768;
   @HostListener('window:resize')
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
   activeTab = 'upcoming';
@@ -29,17 +31,27 @@ export class StudHomeComponent {
   upcomingAssessments: any[] = [];
   completedAssessments: any[] = [];
   dueThisWeek: number = 0;
-  toggleSidebar() {
-    if (this.sidebar) {
-      this.sidebar.toggleSidebar();
-    }
-  }
-  onResize() {
-    this.isMobile = window.innerWidth < 768;
-  }
+  joinClassForm: FormGroup;
+  joinAssessmentForm: FormGroup;
+  showJoinClassModal = false;
+  showJoinAssessmentModal = false;
 
-  constructor(private auth: AuthService, private api: StudentService, private titleService: Title, private router: Router) {
+  constructor(
+    private auth: AuthService,
+    private api: StudentService,
+    private titleService: Title,
+    private router: Router,
+    private fb: FormBuilder,
+    private dialog: MatDialog
+  ) {
     this.titleService.setTitle('PRISM | Dashboard');
+    this.joinClassForm = this.fb.group({
+      classCode: ['', [Validators.required]]
+    });
+
+    this.joinAssessmentForm = this.fb.group({
+      assessmentCode: ['', [Validators.required]]
+    });
   }
 
   ngOnInit(): void {
@@ -151,5 +163,199 @@ export class StudHomeComponent {
       default:
         return '';
     }
+  }
+
+  openJoinClassModal() {
+    this.showJoinClassModal = true;
+  }
+
+  openJoinAssessmentModal() {
+    this.showJoinAssessmentModal = true;
+  }
+
+  closeJoinClassModal() {
+    this.showJoinClassModal = false;
+    this.joinClassForm.reset();
+  }
+
+  closeJoinAssessmentModal() {
+    this.showJoinAssessmentModal = false;
+    this.joinAssessmentForm.reset();
+  }
+
+  onSubmitJoinClass() {
+    if (this.joinClassForm.valid) {
+      const data = {
+        studentId: this.userId,
+        classCode: this.joinClassForm.value.classCode
+      }
+      this.api.joinClass(data).subscribe({
+        next: (resp: any) => {
+          console.log(resp);
+          if(resp.remarks === "Success") {
+            this.getStatistics(this.userId);
+            Swal.fire({
+              title: 'Success',
+              text: 'You have joined the class successfully',
+              icon: 'success',
+              toast: true,
+              position: 'top-end',
+              timer: 3000,
+              timerProgressBar: true,
+              showConfirmButton: false,
+              background: '#fff',
+              iconColor: '#10b981',
+              color: '#1f2937',
+              customClass: {
+                popup: 'colored-toast',
+                title: 'text-base font-semibold',
+                htmlContainer: 'text-sm'
+              }
+            })
+            this.closeJoinClassModal();
+          } else if (resp.remarks === "Failed") {
+            let errorMessage = resp.message;
+            // Normalize error messages
+            if (errorMessage === "Class is not open for Joining") {
+              errorMessage = "Class is not open for joining";
+            }
+            
+            Swal.fire({
+              title: 'Error',
+              text: errorMessage,
+              icon: 'error',
+              toast: true,
+              position: 'top-end',
+              timer: 3000,
+              timerProgressBar: true,
+              showConfirmButton: false,
+              background: '#fff',
+              iconColor: '#ef4444',
+              color: '#1f2937',
+              customClass: {
+                popup: 'colored-toast',
+                title: 'text-base font-semibold',
+                htmlContainer: 'text-sm'
+              }
+            })
+            this.closeJoinClassModal();
+          }
+        },
+        error: (err) => {
+          console.error('Error joining class:', err);
+          Swal.fire({
+            title: 'Error',
+            text: 'An error occurred while joining the class',
+            icon: 'error',
+            toast: true,
+            position: 'top-end',
+            timer: 3000,
+            timerProgressBar: true,
+            showConfirmButton: false,
+            background: '#fff',
+            iconColor: '#ef4444',
+            color: '#1f2937',
+            customClass: {
+              popup: 'colored-toast',
+              title: 'text-base font-semibold',
+              htmlContainer: 'text-sm'
+            }
+          })
+        }
+      })
+    }
+  }
+
+  onSubmitJoinAssessment() {
+    if (this.joinAssessmentForm.valid) {
+      const studentId = this.userId;
+      this.api.joinPublicAssessment(this.joinAssessmentForm.value.assessmentCode, studentId).subscribe({
+        next: (resp: any) => {
+          console.log(resp);
+          if(resp.remarks === "Success") {
+            this.getStatistics(this.userId);
+            Swal.fire({
+              title: 'Success',
+              text: 'You have joined the assessment successfully',
+              icon: 'success',
+              toast: true,
+              position: 'top-end',
+              timer: 3000,
+              timerProgressBar: true,
+              showConfirmButton: false,
+              background: '#fff',
+              iconColor: '#10b981',
+              color: '#1f2937',
+              customClass: {
+                popup: 'colored-toast',
+                title: 'text-base font-semibold',
+                htmlContainer: 'text-sm'
+              }
+            })
+            this.closeJoinAssessmentModal();
+          } else if(resp.remarks === "Failed") {
+            let errorMessage = resp.message;
+            if(errorMessage === "Assessment not found") {
+              errorMessage = "The assessment you are trying to join does not exist";
+            } else if(errorMessage === "This assessment has already ended") {
+              errorMessage = "This assessment has already ended";
+            } else if(errorMessage === "You have already joined this assessment") {
+              errorMessage = "You have already joined this assessment";
+            }
+            
+            Swal.fire({
+              title: 'Error',
+              text: errorMessage,
+              icon: 'error',
+              toast: true,
+              position: 'top-end',
+              timer: 3000,
+              timerProgressBar: true,
+              showConfirmButton: false,
+              background: '#fff',
+              iconColor: '#ef4444',
+              color: '#1f2937',
+              customClass: {
+                popup: 'colored-toast',
+                title: 'text-base font-semibold',
+                htmlContainer: 'text-sm'
+              }
+            })
+            this.closeJoinAssessmentModal();
+          }
+        },
+        error: (err) => {
+          console.error('Error joining assessment:', err);
+          Swal.fire({
+            title: 'Error',
+            text: 'An error occurred while joining the assessment',
+            icon: 'error',
+            toast: true,
+            position: 'top-end',
+            timer: 3000,
+            timerProgressBar: true,
+            showConfirmButton: false,
+            background: '#fff',
+            iconColor: '#ef4444',
+            color: '#1f2937',
+            customClass: {
+              popup: 'colored-toast',
+              title: 'text-base font-semibold',
+              htmlContainer: 'text-sm'
+            }
+          })
+        }
+      });
+    }
+  }
+
+  toggleSidebar() {
+    if (this.sidebar) {
+      this.sidebar.toggleSidebar();
+    }
+  }
+
+  onResize() {
+    this.isMobile = window.innerWidth < 768;
   }
 }

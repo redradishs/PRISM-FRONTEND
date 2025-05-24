@@ -46,6 +46,19 @@
 
             <div class="h-[65px] md:h-[68px] w-full"></div>
 
+
+            <div *ngIf="showMasteryCelebration" class="party-popper-container">
+                <div class="congrats-message" [class.outro]="outroActive">
+                    <div class="congrats-icons">
+                        <i class="fas fa-gift popper-icon popper-1"></i>
+                        <i class="fas fa-medal popper-icon popper-2"></i>
+                        <i class="fas fa-star popper-icon popper-3"></i>
+                    </div>
+                    <h2>Congratulations!</h2>
+                    <p>You have reached the mastery score</p>
+                </div>
+            </div>
+
             <!-- Main Content -->
             <main class="max-w-8xl mx-auto px-4 py-5">
                 <div *ngIf="!result" class="flex items-center justify-center min-h-[400px]">
@@ -101,16 +114,18 @@
                                 <div class="score-main-section">
                                     <div class="score-header-group">
                                         <div class="icon-circle">
-                                            <i
-                                                [class]="result.passed ? 'fas fa-trophy icon-success' : 'fas fa-trophy icon-error'"></i>
+                                            <i [class]="(result.score / result.totalItems * 100) >= result.passingScore
+                                                  ? 'fas fa-trophy icon-success'
+                                                  : 'fas fa-trophy icon-error'"></i>
                                         </div>
                                         <div class="score-info">
                                             <div class="score-title-group">
                                                 <h2 class="score-value">{{(result.score / result.totalItems *
                                                     100).toFixed(0)}}%</h2>
-                                                <span class="status-badge" [class.status-passed]="result.passed"
-                                                    [class.status-failed]="!result.passed">
-                                                    {{result.passed ? 'Passed' : 'Failed'}}
+                                                <span class="status-badge"
+                                                    [class.status-passed]="(result.score / result.totalItems * 100) >= result.passingScore"
+                                                    [class.status-failed]="(result.score / result.totalItems * 100) < result.passingScore">
+                                                    {{ (result.score / result.totalItems * 100) >= result.passingScore ? 'Passed' : 'Failed' }}
                                                 </span>
                                             </div>
                                             <p class="score-detail">
@@ -147,17 +162,14 @@
                                 <!-- Stats Cards -->
                                 <div class="stats-grid">
                                     <div class="stat-card">
-                                        <div class="stat-value">{{result.ranking.rank}}</div>
-                                        <div class="stat-label">Your Rank</div>
-                                        <div class="stat-detail">out of {{result.ranking.totalStudents}} students</div>
+                                        <div class="stat-value">{{getRankingDisplay().rank}}</div>
+                                        <div class="stat-label">{{result.mode === 'public' ? 'Global Rank' : 'Your Rank'}}</div>
+                                        <div class="stat-detail">out of {{getRankingDisplay().total}} {{result.mode === 'public' ? 'participants' : 'students'}}</div>
                                     </div>
-                                    <div class="stat-card">
-                                        <div class="stat-value">{{calculatePercentile(result.ranking.rank,
-                                            result.ranking.totalStudents)}}%</div>
-                                        <div class="stat-label">Percentile</div>
-                                        <div class="stat-detail">better than {{calculatePercentile(result.ranking.rank,
-                                            result.ranking.totalStudents)}}% of students
-                                        </div>
+                                          <div class="stat-card">
+                                        <div class="stat-value">{{result.score}} / {{result.totalItems}}</div>
+                                        <div class="stat-label">Score</div>
+                                        <div class="stat-detail">Your raw score out of total items</div>
                                     </div>
                                 </div>
                             </div>
@@ -271,14 +283,14 @@
                                                 <i class="fas fa-users"></i>
                                             </div>
                                             <div class="comparison-content">
-                                                <div class="comparison-label">Class Average</div>
-                                                <div class="comparison-value">{{result.statistics.classAverage}}</div>
+                                                <div class="comparison-label">{{result?.mode === 'public' ? 'Public Average' : 'Class Average'}}</div>
+                                                <div class="comparison-value">{{getAverageScore()}}</div>
                                                 <div class="comparison-diff"
-                                                    [class.positive]="result.score > result.statistics.classAverage"
-                                                    [class.negative]="result.score < result.statistics.classAverage">
+                                                    [class.positive]="(result?.score ?? 0) > getAverageScore()"
+                                                    [class.negative]="(result?.score ?? 0) < getAverageScore()">
                                                     <i
-                                                        [class]="result.score > result.statistics.classAverage ? 'fas fa-arrow-up' : 'fas fa-arrow-down'"></i>
-                                                    <span>{{Math.abs(result.score - result.statistics.classAverage)}}
+                                                        [class]="(result?.score ?? 0) > getAverageScore() ? 'fas fa-arrow-up' : 'fas fa-arrow-down'"></i>
+                                                    <span>{{Math.abs((result?.score ?? 0) - getAverageScore())}}
                                                         points
                                                         difference</span>
                                                 </div>

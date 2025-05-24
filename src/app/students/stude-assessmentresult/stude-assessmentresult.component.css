@@ -1807,4 +1807,209 @@ main.max-w-8xl {
     }
 }
 
+/* Party Popper Animation */
+@keyframes party-popper {
+  0% {
+    opacity: 0;
+    transform: translateY(0) rotate(0deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(-100px) rotate(360deg);
+  }
+}
+
+@keyframes party-popper-1 {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-100px, -100px) rotate(-360deg);
+  }
+}
+
+@keyframes party-popper-2 {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(100px, -100px) rotate(360deg);
+  }
+}
+
+@keyframes party-popper-3 {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, -150px) rotate(720deg);
+  }
+}
+
+@keyframes message-appear {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.party-popper-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.congrats-message {
+  position: relative;
+  text-align: center;
+  color: #1f2937;
+  animation: message-appear 0.5s ease-out forwards, message-pulse 2s ease-in-out infinite;
+  animation-delay: 0.5s, 1s;
+  opacity: 0;
+  z-index: 1001;
+  background-color: white;
+  padding: 2rem 3rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-left: 8px solid #4f46e5;
+  border-right: 8px solid #8b5cf6;
+  max-width: 90%;
+  width: 500px;
+  pointer-events: auto;
+  transition: transform 0.4s cubic-bezier(.4,0,.2,1), opacity 0.4s cubic-bezier(.4,0,.2,1);
+}
+
+.congrats-message.outro {
+  opacity: 0;
+  transform: scale(0.85) translateY(30px);
+  transition: transform 0.4s cubic-bezier(.4,0,.2,1), opacity 0.4s cubic-bezier(.4,0,.2,1);
+}
+
+.congrats-icons {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 2rem;
+  margin-bottom: 1.2rem;
+}
+
+.popper-icon {
+  font-size: clamp(2.2rem, 6vw, 3.5rem);
+  opacity: 0;
+  animation: popper-bounce 0.7s cubic-bezier(.68,-0.55,.27,1.55) forwards;
+}
+
+.popper-1 {
+  color: #ef4444;
+  animation-delay: 0.1s;
+}
+.popper-2 {
+  color: #10b981;
+  animation-delay: 0.25s;
+}
+.popper-3 {
+  color: #3b82f6;
+  animation-delay: 0.4s;
+}
+
+@keyframes popper-bounce {
+  0% {
+    opacity: 0;
+    transform: translateY(40px) scale(0.7) rotate(-10deg);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-10px) scale(1.1) rotate(8deg);
+  }
+  80% {
+    transform: translateY(5px) scale(0.95) rotate(-4deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+}
+
+.congrats-message h2 {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  background: linear-gradient(135deg, #4f46e5 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.2;
+}
+
+.congrats-message p {
+  font-size: clamp(1rem, 3vw, 1.25rem);
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .congrats-message {
+    padding: 1.5rem 2rem;
+    border-left-width: 6px;
+    border-right-width: 6px;
+    width: 85%;
+  }
+  .congrats-icons {
+    gap: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .congrats-message {
+    padding: 1.25rem 1.5rem;
+    border-left-width: 4px;
+    border-right-width: 4px;
+    width: 95%;
+  }
+  .congrats-icons {
+    gap: 0.7rem;
+  }
+}
+@media (max-width: 360px) {
+  .congrats-message {
+    padding: 1rem 0.5rem;
+    width: 99%;
+  }
+}
+
+/* Add a subtle pulse animation to the message */
+@keyframes message-pulse {
+  0% {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  50% {
+    box-shadow: 0 8px 12px -1px rgba(0, 0, 0, 0.15), 0 4px 8px -1px rgba(0, 0, 0, 0.1);
+  }
+  100% {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+}
+
+.congrats-message {
+  animation: message-appear 0.5s ease-out forwards, message-pulse 2s ease-in-out infinite;
+  animation-delay: 0.5s, 1s;
+}
+
 

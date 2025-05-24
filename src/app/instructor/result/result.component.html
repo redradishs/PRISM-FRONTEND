@@ -67,7 +67,7 @@
                                 <span class="badge green">{{classOverview.status |
                                     titlecase}}</span>
                             </div>
-                            <p class="header-description">Targetted Personal Assessment Result under class
+                            <p class="header-description">Targetted Assessment Result under
                                 {{classOverview.classes[0].className}} -
                                 {{classOverview.classes[0].classCode}}
                             </p>
@@ -138,7 +138,8 @@
                     <div class="overview-card">
                         <div class="overview-header">
                             <i class="fas fa-users"></i>
-                            <h2>Class Overview</h2>
+                            <h2 *ngIf="classOverview.mode === 'public'">Public Overview</h2>
+                            <h2 *ngIf="classOverview.mode !== 'public'">Class Overview</h2>
                         </div>
                         <div class="overview-grid">
                             <div class="overview-stat">

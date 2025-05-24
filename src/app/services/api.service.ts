@@ -20,9 +20,9 @@ interface PaginationParams {
   providedIn: 'root',
 })
 export class ApiService {
-  // apiUrl = 'http://localhost:8000/instructor';
+  apiUrl = 'http://localhost:8000/instructor';
   // apiUrl = 'https://prismcdn.onrender.com/api';
-  apiUrl = 'https://prismapi2.onrender.com/instructor';
+  // apiUrl = 'https://prismapi2.onrender.com/instructor';
   aiUrl = 'https://redprismai.vercel.app';
   // aiUrl = 'http://localhost:3000';
 

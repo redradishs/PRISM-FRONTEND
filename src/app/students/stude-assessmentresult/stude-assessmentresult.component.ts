@@ -1,10 +1,11 @@
-import { Component, HostListener, ViewChild, OnInit } from '@angular/core';
+import { Component, HostListener, ViewChild, OnInit, ChangeDetectorRef } from '@angular/core';
 import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ApiService } from '../../services/api.service';
 import { StudentService } from '../../services/student.service';
+import Swal from 'sweetalert2';
 
 interface Question {
   questionId: string;
@@ -29,6 +30,8 @@ interface AssessmentResult {
   passed: boolean;
   status: string;
   mode: string;
+  remainingAttempts: number;
+  masteryAchieved: boolean;
   canRetake: boolean;
   questions: Question[];
   questionTypes: {
@@ -44,7 +47,8 @@ interface AssessmentResult {
     percentile: number;
   };
   statistics: {
-    classAverage: number;
+    classAverage?: number;
+    publicAverage?: number;
     topScore: number;
     timeSpent: {
       raw: number;
@@ -79,7 +83,10 @@ export class StudeAssessmentresultComponent implements OnInit {
   
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
   
-  constructor(private auth: AuthService, private api: StudentService, private router: Router) {
+  showMasteryCelebration = false;
+  outroActive = false;
+  
+  constructor(private auth: AuthService, private api: StudentService, private router: Router, private cdr: ChangeDetectorRef) {
     const navigation = this.router.getCurrentNavigation();
     if(navigation?.extras.state) {
       this.assignedAssessmentId = navigation.extras.state['assessmentId'];
@@ -111,6 +118,20 @@ export class StudeAssessmentresultComponent implements OnInit {
           if(this.result.status === 'completed') {
             this.viewAllQuestions();
             this.isFinished = true;
+          }
+          if (this.result?.masteryAchieved) {
+            this.showMasteryCelebration = true;
+            this.outroActive = false;
+            this.cdr.detectChanges();
+            setTimeout(() => {
+              this.outroActive = true;
+              this.cdr.detectChanges();
+              setTimeout(() => {
+                this.showMasteryCelebration = false;
+                this.outroActive = false;
+                this.cdr.detectChanges();
+              }, 400);
+            }, 2600);
           }
         }
       },
@@ -234,27 +255,44 @@ export class StudeAssessmentresultComponent implements OnInit {
   }
 
   retakeAssessment() {
-    const data = {
-      assignedAssessmentId: this.assignedAssessmentId,
-      studentId: this.userId
-    }
-    this.api.recordStartTime(data).subscribe({
-      next: (resp: any) => {
-        console.log('Successfully recorded start time', resp);
-        if(this.result.mode !== 'mastery') {
-          this.router.navigate(['student/assessment/take/normal'], {
-            state: { assessmentId: this.assignedAssessmentId }
-          });
-        } else {
-          this.router.navigate(['student/assessment/take'], {
-            state: { assessmentId: this.assignedAssessmentId }
-          });
-        }
-      },
-      error: (error) => {
-        console.error('Error recording start time:', error);
+   Swal.fire({
+    title: 'Are you sure you want to retake this assessment?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, retake it!'
+   }).then((result: any) => {
+    if(result.isConfirmed) {
+      const data = {
+        assignedAssessmentId: this.assignedAssessmentId,
+        studentId: this.userId
       }
-    })
+      this.api.recordStartTime(data).subscribe({
+        next: (resp: any) => {
+          console.log('Successfully recorded start time', resp);
+          if(this.result.mode !== 'mastery') {
+            this.router.navigate(['student/assessment/take/normal'], {
+              state: { assessmentId: this.assignedAssessmentId }
+            });
+          } else {
+            this.router.navigate(['student/assessment/take'], {
+              state: { assessmentId: this.assignedAssessmentId }
+            });
+          }
+        },
+        error: (error) => {
+          console.error('Error recording start time:', error);
+          Swal.fire({
+            title: 'Oops! ',
+            icon: 'error',
+            text: 'Error retaking the assessment. Please try again later.'          
+          })
+        }
+      })
+    }     
+    
+   })
   }
 
   formatAnswer(answer: string | string[]): string {
@@ -282,5 +320,27 @@ export class StudeAssessmentresultComponent implements OnInit {
 
   goHome() {
     this.router.navigate(['/student/dashboard']);
+  }
+
+  getRankingDisplay() {
+    if (this.result.mode === 'public') {
+      return {
+        rank: this.result.ranking.rank,
+        total: this.result.ranking.totalStudents,
+        percentile: this.result.ranking.percentile
+      };
+    }
+    return {
+      rank: this.result.ranking.rank,
+      total: this.result.ranking.totalStudents,
+      percentile: this.result.ranking.percentile
+    };
+  }
+
+  getAverageScore(): number {
+    if (this.result.mode === 'public') {
+      return this.result.statistics.publicAverage || 0;
+    }
+    return this.result.statistics.classAverage || 0;
   }
 }

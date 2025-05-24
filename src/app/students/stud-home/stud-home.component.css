@@ -774,3 +774,48 @@ border-left: 4px solid #6366f1;
     word-break: break-all;
   }
 }
+.colored-toast {
+  border-radius: 0.75rem !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
+  padding: 1rem !important;
+  margin-top: 1rem !important;
+  margin-right: 1rem !important;
+  min-width: 300px !important;
+  max-width: 400px !important;
+}
+
+.colored-toast .swal2-title {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  color: #1f2937 !important;
+}
+
+.colored-toast .swal2-html-container {
+  margin: 0.5rem 0 0 0 !important;
+  padding: 0 !important;
+  font-size: 0.875rem !important;
+  color: #4b5563 !important;
+}
+
+.colored-toast .swal2-icon {
+  margin: 0 0.75rem 0 0 !important;
+  padding: 0 !important;
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+}
+
+.colored-toast .swal2-timer-progress-bar {
+  background: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Success Toast Specific */
+.colored-toast.swal2-icon-success {
+  border-left: 4px solid #10b981 !important;
+}
+
+/* Error Toast Specific */
+.colored-toast.swal2-icon-error {
+  border-left: 4px solid #ef4444 !important;
+}
