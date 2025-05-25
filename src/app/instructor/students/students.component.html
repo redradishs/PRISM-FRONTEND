@@ -170,7 +170,7 @@
                                     <thead class="demo-table-header">
                                         <tr>
                                             <th>Name</th>
-                                            <th>Email</th>
+                                            <th>Student ID</th>
                                             <th>Block</th>
                                             <th>Performance</th>
                                             <th>Completion</th>
@@ -193,7 +193,7 @@
                                                     <span>{{student.name}}</span>
                                                 </div>
                                             </td>
-                                            <td class="demo-table-cell">{{student.email}}</td>
+                                            <td class="demo-table-cell">{{student.email.split('@')[0]}}</td>
                                             <td class="demo-table-cell">{{student.block ? 'Block ' + student.block :
                                                 'N/A'}}</td>
                                             <td class="demo-table-cell">

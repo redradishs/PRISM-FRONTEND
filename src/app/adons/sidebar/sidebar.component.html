@@ -26,7 +26,7 @@
                 routerLinkActive="bg-violet-200 text-white" #rla="routerLinkActive">
                 <i [class]="item.icon + ' w-6 h-6 text-white transition-colors duration-200'"></i>
                 <span *ngIf="isExpanded" class="text-sm ml-3 text-white">{{item.label}}</span>
-                <div *ngIf="!isExpanded"
+                <div *ngIf="!isExpanded && !isMobile"
                     class="absolute left-full ml-4 px-2 py-1 bg-gray-800 rounded-md text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
                     {{item.label}}
                 </div>

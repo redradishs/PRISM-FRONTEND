@@ -8,5 +8,5 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'prism_frontend';
+  title = 'PRISM - AI-Powered Assessment Platform | Gordon College CCS';
 }

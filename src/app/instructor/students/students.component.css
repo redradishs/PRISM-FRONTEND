@@ -1,5 +1,5 @@
 .main-content {
-    padding: 1.5rem;
+    padding: 1.3rem;
 }
 
 /* Header Section */
@@ -3113,4 +3113,53 @@ input:checked + .toggle-slider:before {
 .performance-good {
     background-color: #dcfce7;
     color: #15803d;
+}
+
+@media (max-width: 480px) {
+  .demo-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .demo-stat-card {
+    padding: 25px 16px;
+    border-radius: 10px;
+    min-height: 90px;
+  }
+  .demo-stats-grid > .demo-stat-card:nth-child(3) {
+    grid-column: 1 / 3;
+  }
+  .demo-stat-label {
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+  }
+  .demo-stat-value {
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+  }
+  .demo-stat-description {
+    font-size: 0.85rem;
+  }
+  .demo-stat-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.3rem;
+    border-radius: 10px;
+  }
+}
+
+.demo-stats-grid > .demo-stat-card:nth-child(1) {
+  background-color: #f5f3ff !important;
+  border: 1px solid #e9e7fe;
+  border-left: 4px solid #6366f1;
+}
+.demo-stats-grid > .demo-stat-card:nth-child(2) {
+  background-color: #fdf4ff !important;
+  border: 1px solid #fae8ff;
+  border-left: 4px solid #a855f7;
+}
+.demo-stats-grid > .demo-stat-card:nth-child(3) {
+  background-color: #fff1f2 !important;
+  border: 1px solid #ffe4e6;
+  border-left: 4px solid #ec4899;
 }
