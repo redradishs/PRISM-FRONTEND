@@ -69,12 +69,19 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
   isSubmitting = false;
   timerInterval: any;
   data: any;
+  isTimed: boolean = false;
+  timedQuestions: number = 0;
 
   questions: Question[] = [];
 
   cheatingCount = 0;
   cheatMessage: string | null = null;
   private subscriptions: Subscription[] = [];
+
+  questionTimer: number = 0;
+  questionTimerInterval: any;
+  isQuestionTimed: boolean = false;
+  isRandomized: boolean = false;
 
   constructor(
     private router: Router, 
@@ -101,11 +108,25 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
         console.error('User not found');
       }
     });
+
+    //this function is being used to skip answer when the page is refreshed
+    window.addEventListener('beforeunload', () => {
+      if (this.isQuestionTimed || this.isRandomized) {
+        if (this.data?.isLastQuestion) {
+          this.finalizeAssessment();
+        } else {
+          this.submitAnswer();
+        }
+      }
+    });
   }
 
   ngOnDestroy() {
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
+    }
+    if (this.questionTimerInterval) {
+      clearInterval(this.questionTimerInterval);
     }
     
     this.is.cleanup();
@@ -128,7 +149,14 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
         if (resp.remarks === 'Success' && resp.data) {
           console.log('Secure data fetched successfully:', resp.data);
           this.assessmentTitle = resp.data.title;
-          this.timeRemaining = resp.data.time.remaining || 1800; 
+          this.timeRemaining = resp.data.time.remaining || 0;
+          this.isTimed = resp.data.isTimed;
+          this.timedQuestions = resp.data.timedQuestions;
+          this.questionTimer = this.timedQuestions;
+          this.isRandomized = resp.data.randomizeQuestions;
+          console.log('Is Randomized:', this.isRandomized);
+          console.log('Is Timed:', this.isTimed);
+          console.log('Timed Questions:', this.timedQuestions);
           console.log('Time remaining:', this.timeRemaining);
           this.resetEnumerationAnswers();
           this.startTimer();
@@ -157,6 +185,13 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
           this.enumerationAnswers = Array(resp.data.expectedAnswers || 0).fill('');
           this.data = resp.data;
           console.log('Data:', this.data);
+
+          // Start per-question timer if enabled and we have the data
+          if (this.isTimed && this.timedQuestions > 0 && this.data) {
+            this.questionTimer = this.timedQuestions;
+            this.isQuestionTimed = true;
+            this.startQuestionTimer();
+          }
         } else {
           console.error('Invalid next question format', resp);
         }
@@ -189,6 +224,12 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
   }
 
   submitAnswer() {
+    // Clear question timer if it exists
+    if (this.questionTimerInterval) {
+      clearInterval(this.questionTimerInterval);
+      this.isQuestionTimed = false;
+    }
+
     console.log("Cheting Count: ", this.cheatingCount);
     if (!this.data?.question) return;
     let givenAnswer: any = null;
@@ -401,5 +442,33 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
 
   createRange(count: number): number[] {
     return Array(count).fill(0).map((_, i) => i);
+  }
+
+  //time starter per question
+  startQuestionTimer() {
+    if (this.questionTimerInterval) {
+      clearInterval(this.questionTimerInterval);
+    }
+
+    // Only start timer if we have a valid timer value
+    if (this.questionTimer > 0) {
+      this.questionTimer = this.timedQuestions;
+      this.isQuestionTimed = true;
+      
+      this.questionTimerInterval = setInterval(() => {
+        this.questionTimer--;
+        if (this.questionTimer <= 0) {
+          this.handleQuestionTimeUp();
+        }
+      }, 1000);
+    }
+  }
+
+  handleQuestionTimeUp() {
+    if (this.questionTimerInterval) {
+      clearInterval(this.questionTimerInterval);
+    }
+    this.isQuestionTimed = false;
+    this.submitAnswer();
   }
 }

@@ -60,6 +60,7 @@ interface AssignmentData {
   startDate: string;
   dueDate: string;
   timeLimit: number;
+  timeLimitPerQuestion: number;
   instructions: string;
   createdBy: string;
   assignmentMode: 'assessment' | 'mastery' | 'public';
@@ -70,8 +71,7 @@ interface AssignmentData {
     masteryScore?: number;
     joiningCode?: string;
     randomizeQuestions: boolean;
-    showResults: 'immediate' | 'after_due' | 'manual';
-    allowLateSubmissions: boolean;
+    showResults: 'immediate' | 'completed' ;
     passingScore: number;
   };
 }
@@ -96,7 +96,7 @@ export class AssignAssessmentComponent implements OnInit {
   dueDate: string = '';
   timeLimit: number = 60;
   allowLateSubmissions: boolean = false;
-  showResults: 'immediate' | 'after_due' | 'manual' = 'after_due';
+  showResults: 'immediate' | 'completed' = 'completed';
   passingScore: number = 70;
   attemptsAllowed: number = 1;
   randomizeQuestions: boolean = true;
@@ -165,6 +165,8 @@ export class AssignAssessmentComponent implements OnInit {
   displayLimit: number = 9;
   showingAll: boolean = false;
   dateFilter: string = 'all';
+
+  timeLimitPerQuestion: number = 0;
 
   @HostListener('window:resize')
   onResize() {
@@ -416,7 +418,7 @@ export class AssignAssessmentComponent implements OnInit {
       this.generateJoiningCode();
     } else {
       this.attemptsAllowed = 1;
-      this.showResults = 'after_due';
+      this.showResults = 'completed';
       this.isPublic = false;
     }
   }
@@ -610,6 +612,7 @@ export class AssignAssessmentComponent implements OnInit {
       startDate: this.startDate,
       dueDate: this.dueDate,
       timeLimit: this.timeLimit,
+      timeLimitPerQuestion: this.timeLimitPerQuestion,
       instructions: this.specialInstructions,
       createdBy: this.userId,
       assignmentMode: this.selectedMode,
@@ -620,7 +623,6 @@ export class AssignAssessmentComponent implements OnInit {
       modeSettings: {
         randomizeQuestions: this.randomizeQuestions,
         showResults: this.showResults,
-        allowLateSubmissions: this.allowLateSubmissions,
         passingScore: this.passingScore
       }
     };

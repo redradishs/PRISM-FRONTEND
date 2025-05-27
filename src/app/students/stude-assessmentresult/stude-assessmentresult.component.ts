@@ -33,6 +33,7 @@ interface AssessmentResult {
   remainingAttempts: number;
   masteryAchieved: boolean;
   canRetake: boolean;
+  showResult: string;
   questions: Question[];
   questionTypes: {
     type: string;
@@ -115,6 +116,10 @@ export class StudeAssessmentresultComponent implements OnInit {
       next: (resp: any) => {
         if (resp.remarks === 'Success') {
           this.result = resp.data;
+          if(this.result.showResult === 'immediate') {
+            this.viewAllQuestions();
+            this.isFinished = true;
+          }
           if(this.result.status === 'completed') {
             this.viewAllQuestions();
             this.isFinished = true;

@@ -30,7 +30,26 @@ export class StudConfirmationComponent {
   }
   userId: string = '';
   assignedAssessmentId: string = '';
-  confirmationData: any;
+  confirmationData: any = {
+    timeLimit: 0,
+    questionCount: 0,
+    totalPoints: 0,
+    title: '',
+    typeAss: 'assessment',
+    dueDate: new Date(),
+    status: 'scheduled',
+    attempts: {
+      current: 0,
+      max: 1
+    },
+    instructor: {
+      name: ''
+    },
+    student: {
+      name: '',
+      email: ''
+    }
+  };
   isAgreed: boolean = false;
   username: string = '';
 

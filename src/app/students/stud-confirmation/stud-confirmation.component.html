@@ -59,11 +59,9 @@
                         </div>
 
                         <div class="conf-header-info">
-
-                            <p> <i class="fa-solid fa-clock"></i> {{confirmationData.timeLimit}} Minutes</p>
-                            <p><i class="fa-solid fa-book"></i>{{confirmationData.questionCount}} Questions</p>
-                            <p><i class="fa-solid fa-star"></i>{{confirmationData.totalPoints}} Points</p>
-
+                            <p> <i class="fa-solid fa-clock"></i> {{confirmationData?.timeLimit || 0}} Minutes</p>
+                            <p><i class="fa-solid fa-book"></i>{{confirmationData?.questionCount || 0}} Questions</p>
+                            <p><i class="fa-solid fa-star"></i>{{confirmationData?.totalPoints || 0}} Points</p>
                         </div>
                     </div>
 

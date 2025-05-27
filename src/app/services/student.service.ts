@@ -7,8 +7,8 @@ import { Injectable } from '@angular/core';
 export class StudentService {
   apiUrl = 'https://prismapi2.onrender.com/student';
   Assessment = 'https://prismapi2.onrender.com/submission';
-    // apiUrl = 'http://localhost:8000/student';
-    // Assessment = 'http://localhost:8000/submission';
+  // apiUrl = 'http://localhost:8000/student';
+  // Assessment = 'http://localhost:8000/submission';
 
 
   constructor(private http: HttpClient) {}

@@ -8,7 +8,9 @@
                         <circle cx="12" cy="12" r="10" stroke-width="2" />
                         <path d="M12 6v6l4 2" stroke-width="2" stroke-linecap="round" />
                     </svg>
-                    <span class="timer-text">{{formatTime(timeRemaining)}}</span>
+                    <span *ngIf="!isTimed" class="timer-text">{{formatTime(timeRemaining)}}</span>
+                    <span *ngIf="isTimed && timedQuestions > 0" class="timer-text">{{formatTime(questionTimer)}}</span>
+
                 </div>
                 <div class="question-counter">
                     Question {{this.data?.progress?.current }} of {{this.data?.progress?.total}}
