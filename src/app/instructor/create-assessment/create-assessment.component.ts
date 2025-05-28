@@ -101,6 +101,7 @@ export class CreateAssessmentComponent implements OnInit {
   }
   username: string = '';
   userId:  string = '';
+  profile: string = '';
   multipleChoiceOptions: string[] = Array(4).fill('');
   enumerationItems: string[] = Array(5).fill('');
   selectedTypes: string[] = [];
@@ -205,6 +206,7 @@ export class CreateAssessmentComponent implements OnInit {
       (user: any) => {
         this.userId = user.id;
         this.username = user.name;
+        this.profile = user.profilePicture;
         console.log(this.userId);
       },
       (error: any) => {

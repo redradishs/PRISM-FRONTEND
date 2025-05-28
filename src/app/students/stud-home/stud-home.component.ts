@@ -35,6 +35,7 @@ export class StudHomeComponent implements OnInit {
   activeTab = 'upcoming';
   userId: string = '';
   username: string = '';
+  profile: string = '';
   totalUpcomingAssessments: number = 0;
   totalActiveAssessments: number = 0;
   totalClasses: number = 0;
@@ -71,6 +72,7 @@ export class StudHomeComponent implements OnInit {
       next: (resp: any) => {
         this.userId = resp.id;
         this.username = resp.name;
+        this.profile = resp.profilePicture;
         this.getStatistics(this.userId);
       },
       error: (err) => {

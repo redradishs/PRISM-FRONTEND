@@ -52,6 +52,7 @@ export class StudConfirmationComponent {
   };
   isAgreed: boolean = false;
   username: string = '';
+  profile: string = '';
 
   constructor(
     private api: StudentService,
@@ -79,6 +80,7 @@ export class StudConfirmationComponent {
         if (resp && resp.id) {
           this.userId = resp.id;
           this.username = resp.name;
+          this.profile = resp.profilePicture;
           this.getConfirmationData();
         } else {
           console.error('Invalid user response');

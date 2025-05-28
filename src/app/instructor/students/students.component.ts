@@ -65,6 +65,7 @@ export class StudentsComponent implements OnInit {
   }
   username: string = '';
   userId: string = '';
+  profile: string = '';
   searchTerm: string = '';
   assessmentSearchTerm: string = '';
   currentPage: number = 1;
@@ -159,6 +160,7 @@ export class StudentsComponent implements OnInit {
       if (user) {
         this.userId = user.id;
         this.username = user.name;
+        this.profile = user.profilePicture;
         this.getClasses();
       }
     });

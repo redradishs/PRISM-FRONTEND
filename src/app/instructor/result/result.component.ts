@@ -90,6 +90,7 @@ export class ResultComponent implements OnInit, OnDestroy {
   selectedQuestionType: string = 'all';
   allQuestions: any[] = [];
   userId: String = '';
+  profile: string = '';
   private scoreStream: EventSource | null = null;
   insights: any[] = [
     {
@@ -137,7 +138,8 @@ export class ResultComponent implements OnInit, OnDestroy {
 
     this.auth.getCurrentUser().subscribe((user) => {
       this.userId = user.id,
-      this.username = user.name;
+      this.username = user.name,
+      this.profile = user.profilePicture;
     });
   }
 

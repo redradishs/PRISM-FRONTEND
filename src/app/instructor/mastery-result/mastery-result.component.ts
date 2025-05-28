@@ -15,6 +15,7 @@ import { CommonModule } from '@angular/common';
 export class MasteryResultComponent {
   userId: string = '';
   username: string = '';
+  profile: string = '';
 
   isMobile = window.innerWidth < 768;
   @HostListener('window:resize')
@@ -30,6 +31,7 @@ export class MasteryResultComponent {
     this.auth.getCurrentUser().subscribe((user) => {
       this.userId = user.id;
       this.username = user.name || '';
+      this.profile = user.profilePicture || '';
     });
   }
 

@@ -20,6 +20,7 @@ export class CoordinatorComponent {
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
   userId: string = '';
   username: string = '';
+  profile: string = '';
   students: any[] = [];
   
   // Pagination variables
@@ -47,6 +48,7 @@ export class CoordinatorComponent {
     this.auth.getCurrentUser().subscribe((user) => {
       this.userId = user.id;
       this.username = user.name || '';
+      this.profile = user.profilePicture;
       this.getData(this.userId);
       this.getStats();
     })

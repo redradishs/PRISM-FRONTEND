@@ -86,6 +86,7 @@ interface AssignmentData {
 export class AssignAssessmentComponent implements OnInit {
   userId: string = '';
   username: string = '';
+  profile: string = '';
   
   isMobile: boolean = window.innerWidth <= 768;
   currentStep: number = 1;
@@ -190,6 +191,7 @@ export class AssignAssessmentComponent implements OnInit {
       next: (user) => {
         this.userId = user.id;
         this.username = user.name;
+        this.profile = user.profilePicture;
         this.loadAssessments(this.userId);
         this.loadClasses(this.userId);
         this.loadStudents();

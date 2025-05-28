@@ -81,6 +81,7 @@ export class StudeAssessmentresultComponent implements OnInit {
   isFinished = false;
   analysis: any[] = [];
   username: string = '';
+  profile: string = '';
   
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
   
@@ -104,6 +105,7 @@ export class StudeAssessmentresultComponent implements OnInit {
     this.auth.getCurrentUser().subscribe(user => {
       this.userId = user.id;
       this.username = user.name;
+      this.profile = user.profilePicture;
       console.log('Username:', this.username);
       this.getResult();
       this.getPerformancePerQuestion(); 

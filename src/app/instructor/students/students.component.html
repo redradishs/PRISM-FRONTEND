@@ -20,14 +20,13 @@
                             </div>
                             <div *ngIf="!isMobile" class="flex items-center">
                                 <div class="relative mr-3">
-                                    <div
-                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center">
-                                        <span
-                                            class="text-base md:text-lg font-medium text-gray-600">{{username.charAt(0)
-                                            || 'A'}}</span>
+                                    <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profile" [src]="profile" alt="Profile" class="w-full h-full object-cover">
+                                        <span *ngIf="!profile" class="text-base md:text-lg font-medium text-gray-600">
+                                            {{username.charAt(0) || 'A'}}
+                                        </span>
                                     </div>
-                                    <div
-                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    <div class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
                                     </div>
                                 </div>
                                 <div class="text-left">
@@ -188,7 +187,16 @@
                                             <td class="demo-table-cell">
                                                 <div class="demo-student-info">
                                                     <div class="demo-avatar">
-                                                        {{getInitials(student.name)}}
+                                                        <img
+                                                            *ngIf="student.profilePicture && !student.imageLoadFailed"
+                                                            [src]="student.profilePicture"
+                                                            alt="Profile"
+                                                            class="avatar-img"
+                                                            (error)="student.imageLoadFailed = true"
+                                                        >
+                                                        <span *ngIf="!student.profilePicture || student.imageLoadFailed">
+                                                            {{ getInitials(student.name) }}
+                                                        </span>
                                                     </div>
                                                     <span>{{student.name}}</span>
                                                 </div>
@@ -392,7 +400,16 @@
                             <td class="student-name-cell">
                                 <div class="student-info">
                                     <div class="demo-avatar">
-                                        {{getInitials(request.name)}}
+                                        <img
+                                            *ngIf="request.profilePicture && !request.imageLoadFailed"
+                                            [src]="request.profilePicture"
+                                            alt="Profile"
+                                            class="avatar-img"
+                                            (error)="request.imageLoadFailed = true"
+                                        >
+                                        <span *ngIf="!request.profilePicture || request.imageLoadFailed">
+                                            {{ getInitials(request.name) }}
+                                        </span>
                                     </div>
                                     <span>{{request.name}}</span>
                                 </div>
@@ -555,7 +572,16 @@
 
                         <div class="student-info">
                             <div class="demo-avatar">
-                                {{getInitials(student.name)}}
+                                <img
+                                    *ngIf="student.profilePicture && !student.imageLoadFailed"
+                                    [src]="student.profilePicture"
+                                    alt="Profile"
+                                    class="avatar-img"
+                                    (error)="student.imageLoadFailed = true"
+                                >
+                                <span *ngIf="!student.profilePicture || student.imageLoadFailed">
+                                    {{ getInitials(student.name) }}
+                                </span>
                             </div>
                             <div class="student-details">
                                 <div class="student-name">{{student.name}}</div>
@@ -611,7 +637,16 @@
                     <div *ngFor="let student of selectedStudents" class="selected-student-item">
                         <div class="student-info">
                             <div class="demo-avatar">
-                                {{getInitials(student.name)}}
+                                <img
+                                    *ngIf="student.profilePicture && !student.imageLoadFailed"
+                                    [src]="student.profilePicture"
+                                    alt="Profile"
+                                    class="avatar-img"
+                                    (error)="student.imageLoadFailed = true"
+                                >
+                                <span *ngIf="!student.profilePicture || student.imageLoadFailed">
+                                    {{ getInitials(student.name) }}
+                                </span>
                             </div>
                             <div class="student-name">{{student.name}}</div>
                         </div>

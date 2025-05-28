@@ -41,6 +41,7 @@ export class StudentAssessmentsComponent implements OnInit {
   assessments: Assessment[] = [];
   filteredAssessments: Assessment[] = [];
   username: string = '';
+  profile: string = '';
   userId: string = '';
   classCode: string = '';
   studentId: string = '';
@@ -49,6 +50,7 @@ export class StudentAssessmentsComponent implements OnInit {
   studentStats: any = {};
   filteredCompletedAssessments: any[] = [];
   filteredUpcomingAssessments: any[] = [];
+  imageLoadFailed = false;
 
 
   constructor(private router: Router, private auth: AuthService, private api: ApiService) {
@@ -71,6 +73,7 @@ export class StudentAssessmentsComponent implements OnInit {
     this.auth.getCurrentUser().subscribe(user => {
       this.userId = user.id;
       this.username = user.name;
+      this.profile = user.profilePicture;
       console.log('User ID:', this.userId);
       this.studentData();
       this.completedList();

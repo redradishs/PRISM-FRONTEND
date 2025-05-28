@@ -1,18 +1,49 @@
-<div class="min-h-screen bg-gray-50">
-    <div class="flex">
+<div class="bg-gray-50 min-h-screen w-full overflow-x-hidden">
+    <div class="flex w-full">
         <app-sidebar></app-sidebar>
-        <div class="flex-1 ml-0 md:ml-20">
-            <header class="bg-white shadow-sm">
-                <div class="max-w-7xl mx-auto py-2 md:py-4 px-3 md:px-4 sm:px-6 lg:px-8">
+        <div class="flex-1 ml-0 md:ml-20 w-full">
+            <header class="bg-white shadow-sm fixed top-0 right-0 w-full md:w-[calc(100%-80px)] z-40">
+                <div class="w-full px-4 md:px-6 py-3 md:py-4">
                     <div class="flex items-center justify-between">
-                        <h1 class="text-xl md:text-2xl font-semibold text-gray-900">Profile</h1>
-                        <button *ngIf="isMobile" (click)="toggleSidebar()"
-                            class="p-1.5 md:p-2 rounded-md hover:bg-gray-100 transition-colors">
-                            <i class="fas fa-bars w-5 md:w-6 h-5 md:h-6"></i>
-                        </button>
+                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">Profile</h1>
+                        <div class="flex items-center">
+                            <div class="hidden md:flex items-center mr-4">
+                                <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
+                                <button 
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2">
+                                    Change Password
+                                </button>
+                                <button 
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
+                                    Home
+                                </button>
+                            </div>
+                            <div *ngIf="!isMobile" class="flex items-center">
+                                <div class="relative mr-3">
+                                    <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profilePicture" [src]="profilePicture" alt="Profile" class="w-full h-full object-cover">
+                                        <span *ngIf="!profilePicture" class="text-base md:text-lg font-medium text-gray-600">
+                                            {{username.charAt(0) || 'A'}}
+                                        </span>
+                                    </div>
+                                    <div class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    </div>
+                                </div>
+                                <div class="text-left">
+                                    <div class="text-sm font-medium text-gray-900">{{username}}</div>
+                                    <div class="text-xs text-gray-500">Student</div>
+                                </div>
+                            </div>
+                            <button *ngIf="isMobile" (click)="toggleSidebar()"
+                                class="p-2 rounded-md hover:bg-gray-100 transition-colors">
+                                <i class="fas fa-bars w-5 h-5 text-gray-600"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </header>
+
+            <div class="h-[65px] md:h-[68px] w-full"></div>
 
             <div class="main-content">
                 <!-- Profile Header -->
@@ -22,15 +53,12 @@
                         <div class="profile-info">
                             <div class="avatar-container">
                                 <div class="avatar">
-                                    <ng-container *ngIf="profile?.avatarUrl; else initialsAvatar">
-                                        <img [src]="profile.avatarUrl" [alt]="profile.name">
-                                        <div class="avatar-overlay">
-                                            <i class="fas fa-camera"></i>
-                                        </div>
+                                    <ng-container *ngIf="profilePicture; else initialsAvatar">
+                                        <img [src]="profilePicture" [alt]="username">
                                     </ng-container>
                                     <ng-template #initialsAvatar>
                                         <div class="initials-avatar">
-                                            {{ getInitials(profile.name) }}
+                                            {{ getInitials(username) }}
                                         </div>
                                     </ng-template>
                                 </div>

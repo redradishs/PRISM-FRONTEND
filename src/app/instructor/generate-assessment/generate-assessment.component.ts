@@ -102,6 +102,7 @@ export class GenerateAssessmentComponent {isMobile = window.innerWidth < 768;
   }
   username: string = '';
   userId:  string = '';
+  profile: string = '';
   multipleChoiceOptions: string[] = Array(4).fill('');
   enumerationItems: string[] = Array(5).fill('');
   selectedTypes: string[] = [];
@@ -207,6 +208,7 @@ export class GenerateAssessmentComponent {isMobile = window.innerWidth < 768;
       (user: any) => {
         this.userId = user.id;
         this.username = user.name;
+        this.profile = user.profilePicture;
         console.log(this.userId);
       },
       (error: any) => {

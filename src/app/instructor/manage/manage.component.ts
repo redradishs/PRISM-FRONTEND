@@ -79,6 +79,7 @@ interface AssessmentCounts {
 export class ManageComponent {
   userId: string = '';
   username: string = '';
+  profile: string = '';
   isMobile = window.innerWidth < 768;
 
   // Search and Filter Properties
@@ -140,6 +141,7 @@ export class ManageComponent {
         console.log('User ID:', user.id);
         this.userId = user.id;
         this.username = user.name;
+        this.profile = user.profilePicture;
         
         // Check for tab parameter
         this.route.queryParams.subscribe(params => {

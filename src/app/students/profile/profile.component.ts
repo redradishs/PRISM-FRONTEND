@@ -95,6 +95,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   //userprofile
   userId: string = '';
+  profilePicture: string = '';
+  username: string = '';
   private originalProfile: StudentProfile | null = null;
 
   recentAssessments: Assessment[] = [
@@ -160,12 +162,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
       next: (user) => {
         if (user?.id) {
           this.userId = user.id;
+          this.username = user.name;
+          this.profilePicture = user.profilePicture;
           this.loadProfileData();
         } else {
-          // Only show error if we're not on the login page
-          if (!this.router.url.includes('/login')) {
-            this.handleError('No user ID found');
-          }
           this.isLoading = false;
         }
       },

@@ -21,6 +21,7 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
   Array = Array;
   userId: string = '';
   username: string = '';
+  profile: string = '';
   assignedAssessmentId: string = '';
   studentId: string = '';
   assessmentDetails: any = {};
@@ -52,6 +53,7 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
     this.auth.getCurrentUser().subscribe(user => {
       this.userId = user.id;
       this.username = user.name;
+      this.profile = user.profilePicture;
       console.log('User ID:', this.userId);
     });
   }

@@ -19,6 +19,7 @@ export class EvaluateComponent implements OnInit {
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
   userId: string = '';
   username: string = '';
+  profile: string = '';
   studentId: string = '';
   assessments: any[] = [];
   studentData: any = {};
@@ -40,6 +41,7 @@ export class EvaluateComponent implements OnInit {
     this.auth.getCurrentUser().subscribe((user) => {
       this.userId = user.id;
       this.username = user.name || '';
+      this.profile = user.profilePicture;
     });
   }
 

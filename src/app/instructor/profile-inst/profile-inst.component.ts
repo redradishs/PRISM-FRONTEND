@@ -91,6 +91,7 @@ export class ProfileInstComponent implements OnInit {
   username: string = '';
   activeTab = 'personal';
   isMobile = false;
+  profilePicture: string = '';
   
   // Password related properties with defaults
   showCurrentPassword = false;
@@ -159,6 +160,7 @@ export class ProfileInstComponent implements OnInit {
       if (user) {
         this.userId = user.id;
         this.username = user.name;
+        this.profilePicture = user.profilePicture;
         this.loadProfileData();
       }
     });

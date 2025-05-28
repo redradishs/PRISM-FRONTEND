@@ -112,6 +112,7 @@ export class AssessmentComponent {
   }
   username: string = '';
   userId: string = '';
+  profile: string = '';
   totalStudents: number = 0;
   totalClasses: number = 0;
   isLoading: boolean = false;
@@ -228,6 +229,7 @@ export class AssessmentComponent {
         this.userId = user.id;
         this.username = user.name;
         this.assignData.createdBy = user.id;
+        this.profile = user.profilePicture;
         this.getTotalStudents(this.userId);
         this.getTotalClasses(this.userId);
         this.loadAssessments(this.userId);
