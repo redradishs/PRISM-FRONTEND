@@ -7,12 +7,14 @@ import { ForgotComponent } from './adons/forgot/forgot.component';
 import { authGuard } from './auth.guard';
 import { routeNotFoundGuard } from './route-not-found.guard';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { CompleteProfileComponent } from './adons/complete-profile/complete-profile.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'verify-email', component: VerifyComponent},
   { path: 'forgot-password', component: ForgotComponent},
+  {path: 'complete-profile', component: CompleteProfileComponent},
 
   {
     path: 'instructor',

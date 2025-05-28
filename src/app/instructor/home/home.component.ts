@@ -58,6 +58,7 @@ interface AssessmentProgress {
 export class HomeComponent implements OnInit, AfterViewInit {
   userId: string = '';
   username: string = '';
+  profile: string = '';
   totalStudents: number = 0;
   totalActiveAssessments: number = 0;
   totalClasses: number = 0;
@@ -92,6 +93,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
         console.log('User ID:', user.id);
         this.userId = user.id;
         this.username = user.name;
+        this.profile = user.profilePicture;
+        console.log('Profile:', this.profile);
         this.getTotalStudents(this.userId);
         this.getActiveAssessments(this.userId);
         this.getTotalClases(this.userId);

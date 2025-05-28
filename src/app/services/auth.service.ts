@@ -53,6 +53,10 @@ export class AuthService {
       .post<any>(`${this.baseUrl}/signup`, data)
   } 
 
+  completeProfile(data: any) {
+    return this.http.post(`${this.baseUrl}/complete-profile`, data)
+  }
+
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'An unknown error occurred!';
     if (error.error instanceof ErrorEvent) {

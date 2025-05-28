@@ -1,0 +1,466 @@
+:host {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.page-background {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle at 20% 30%, #c7dfff 40%, #f5f7ff 70%, #e6e6fa 100%);
+    overflow: hidden;
+}
+
+.page-background::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, rgba(199,223,255,0.25) 0%, rgba(230,230,250,0.15) 100%);
+    z-index: 2;
+    pointer-events: none;
+}
+
+.blob-1 {
+    position: absolute;
+    top: -180px;
+    left: -180px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, #b3cfff 60%, #e0e7ff 100%);
+    opacity: 0.7;
+    filter: blur(60px);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.blob-2 {
+    position: absolute;
+    bottom: -120px;
+    right: -120px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, #e0cfff 60%, #f5e6ff 100%);
+    opacity: 0.5;
+    filter: blur(60px);
+    z-index: 1;
+    pointer-events: none;
+}
+
+@keyframes float {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(30px, 30px); }
+}
+
+.form-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    position: relative;
+    z-index: 2;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+}
+
+.card-content {
+    padding: 2rem;
+}
+
+.step {
+    display: none;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.step.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.step-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.icon-wrapper {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.header-icon {
+    background: linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%);
+    color: white;
+}
+
+.step-title {
+    color: #1F2937;
+    font-size: 1.875rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.step-subtitle {
+    color: #4B5563;
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.step-description {
+    color: #6B7280;
+    font-size: 1rem;
+}
+
+.role-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.role-card {
+    background: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.role-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    border-color: #8B5CF6;
+}
+
+.role-card-icon-bg {
+    width: 48px;
+    height: 48px;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.role-card-icon-bg .icon {
+    width: 28px;
+    height: 28px;
+    stroke-width: 2;
+}
+
+.student-bg {
+    background: #EDE9FE;
+    color: #8B5CF6;
+}
+
+.student-bg:hover {
+    background: #8B5CF6;
+    color: white;
+}
+
+.instructor-bg {
+    background: #DBEAFE;
+    color: #3B82F6;
+}
+
+.instructor-bg:hover {
+    background: #3B82F6;
+    color: white;
+}
+
+.role-card-arrow {
+    width: 20px;
+    height: 20px;
+    color: #6B7280;
+    transition: transform 0.2s ease;
+}
+
+.role-card:hover .role-card-arrow {
+    transform: translateX(4px);
+    color: #8B5CF6;
+}
+
+.role-card-info {
+    flex: 1;
+}
+
+.role-card-title {
+    color: #1F2937;
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.role-card-description {
+    color: #6B7280;
+    font-size: 0.875rem;
+}
+
+.form-fields {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    color: #4B5563;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.form-label-description {
+    color: #6B7280;
+    font-size: 0.875rem;
+    margin: 0.25rem 0 0.75rem;
+    line-height: 1.4;
+}
+
+.form-input,
+.form-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #D1D5DB;
+    border-radius: 0.5rem;
+    background: white;
+    color: #1F2937;
+    font-size: 0.875rem;
+    transition: border-color 0.2s ease;
+}
+
+.form-input:focus,
+.form-select:focus {
+    outline: none;
+    border-color: #8B5CF6;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.form-group-checkbox-card {
+    background: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.checkbox-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.form-checkbox {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.25rem;
+    border: 2px solid #D1D5DB;
+    border-radius: 0.25rem;
+    cursor: pointer;
+}
+
+.checkbox-label-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.checkbox-label-title {
+    color: #1F2937;
+    font-weight: 500;
+}
+
+.checkbox-label-description {
+    color: #6B7280;
+    font-size: 0.875rem;
+}
+
+.programs-card {
+    background: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 0.5rem 0 1.5rem;
+}
+
+.programs-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.programs-card-title {
+    color: #1F2937;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.programs-card .form-group {
+    margin-bottom: 0;
+}
+
+.programs-list {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.program-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%);
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-outline {
+    background: white;
+    color: #4B5563;
+    border: 1px solid #D1D5DB;
+}
+
+.btn-outline:hover {
+    background: #F9FAFB;
+    border-color: #9CA3AF;
+}
+
+.btn-full {
+    width: 100%;
+    justify-content: center;
+}
+
+.icon {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.small-icon {
+    width: 1rem;
+    height: 1rem;
+}
+
+.large-icon {
+    width: 2rem;
+    height: 2rem;
+}
+
+.btn-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.loader {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.hidden {
+    display: none;
+}
+
+.form-group-flex {
+    display: flex;
+    gap: 1rem;
+}
+
+@media (max-width: 640px) {
+    .form-container {
+        margin: 1rem auto;
+    }
+
+    .card-content {
+        padding: 1.5rem;
+    }
+
+    .step-title {
+        font-size: 1.5rem;
+    }
+
+    .step-subtitle {
+        font-size: 1.125rem;
+    }
+
+    .role-options {
+        grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .form-group-flex {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}

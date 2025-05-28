@@ -383,70 +383,77 @@ export class LoginComponent implements OnInit {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(this.auth, provider);
       
-      if (result.user) {
-        if (result.user.email && result.user.email.endsWith('@gordoncollege.edu.ph')) {
-          const idToken = await result.user.getIdToken();
-          
-          this.authService.googleSignIn({ idToken }).subscribe({
-            next: (response: any) => {
-              this.authService.setToken(response.data.jwt);
-              const userRole = this.authService.getUserRole();
-              
-              Swal.fire({
-                title: 'Login Successful',
-                text: 'You have successfully logged in with Google!',
-                icon: 'success',
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#1976D2',
-              });
+      if (!result.user.email?.endsWith('@gordoncollege.edu.ph')) {
+        throw new Error('INVALID_EMAIL');
+      }
 
-              const redirectUrl = sessionStorage.getItem('redirectUrl');
-              if (redirectUrl) {
-                sessionStorage.removeItem('redirectUrl');
-                this.router.navigateByUrl(redirectUrl);
-              } else {
-                if (userRole === 'admin') {
-                  this.router.navigate(['/admin/dashboard']);
-                } else if (userRole === 'instructor') {
-                  this.router.navigate(['instructor/dashboard']);
-                } else if (userRole === 'student') {
-                  this.router.navigate(['/student/dashboard']);
-                } else {
-                  this.router.navigate(['/home']);
-                }
-              }
-            },
-            error: (error) => {
-              console.error('Google sign-in error:', error);
-              Swal.fire({
-                title: 'Error',
-                text: 'Failed to sign in with Google. Please try again.',
-                icon: 'error',
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#1976D2',
-              });
-            },
-            complete: () => {
-              this.googleLoading = false;
-            }
-          });
-        } else {
-          this.googleLoading = false;
+      const idToken = await result.user.getIdToken();
+      
+      this.authService.googleSignIn({ idToken }).subscribe({
+        next: (response: any) => {
+          this.authService.setToken(response.data.jwt);
+          const userRole = this.authService.getUserRole();
+          
           Swal.fire({
-            title: 'Invalid Email',
-            text: 'Please use your Gordon College email address.',
+            title: 'Login Successful',
+            text: 'You have successfully logged in with Google!',
+            icon: 'success',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#1976D2',
+          });
+
+          if(response.data.newUser) {
+            console.log('New user detected');
+            this.router.navigate(['/complete-profile']);
+            return;
+          }
+
+          const redirectUrl = sessionStorage.getItem('redirectUrl');
+          if (redirectUrl) {
+            sessionStorage.removeItem('redirectUrl');
+            this.router.navigateByUrl(redirectUrl);
+          } else {
+            switch(userRole) {
+              case 'admin':
+                this.router.navigate(['/admin/dashboard']);
+                break;
+              case 'instructor':
+                this.router.navigate(['instructor/dashboard']);
+                break;
+              case 'student':
+                this.router.navigate(['/student/dashboard']);
+                break;
+              default:
+                this.router.navigate(['/home']);
+            }
+          }
+        },
+        error: (error) => {
+          console.error('Google sign-in error:', error);
+          Swal.fire({
+            title: 'Error',
+            text: error.error?.message || 'Failed to sign in with Google. Please try again.',
             icon: 'error',
             confirmButtonText: 'OK',
             confirmButtonColor: '#1976D2',
           });
+        },
+        complete: () => {
+          this.googleLoading = false;
         }
-      }
-    } catch (error) {
+      });
+    } catch (error: any) {
       console.error('Google sign-in error:', error);
       this.googleLoading = false;
+      
+      let errorMessage = 'Failed to sign in with Google. Please try again.';
+      if (error.message === 'INVALID_EMAIL') {
+        errorMessage = 'Please use your Gordon College email address.';
+      }
+      
       Swal.fire({
         title: 'Error',
-        text: 'Failed to sign in with Google. Please try again.',
+        text: errorMessage,
         icon: 'error',
         confirmButtonText: 'OK',
         confirmButtonColor: '#1976D2',
