@@ -7,6 +7,8 @@ import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import Swal from 'sweetalert2';
+import { saveAs } from 'file-saver';
+import * as ExcelJS from 'exceljs';
 
 interface Student {
   id: number;
@@ -107,6 +109,9 @@ export class ResultComponent implements OnInit, OnDestroy {
     }
   ];
   expandedIndex: number | null = null;
+  private lastNamePrefixes = [
+    'De', 'Del', 'Dela', 'De la', 'De los', 'San', 'Santa', 'Sta.'
+  ];
 
   constructor(
     private api: ApiService,
@@ -259,7 +264,7 @@ export class ResultComponent implements OnInit, OnDestroy {
     this.api.getClassOverview(this.assessmentId).subscribe({
       next: (resp: any) => {
         this.classOverview = resp.data;
-        this.assessmentTitle = resp.data.assessmentTitle;
+        this.assessmentTitle = resp.data.title;
         if (resp.data.classes && resp.data.classes.length > 0) {
           this.className = resp.data.classes[0].className;
           this.classCode = resp.data.classes[0].classCode;
@@ -662,5 +667,181 @@ export class ResultComponent implements OnInit, OnDestroy {
   toggleInsight(index: number) {
     this.expandedIndex = this.expandedIndex === index ? null : index;
   }
+  
+  private getLastName(name: string): string {
+    if (!name) return '';
+    
+    const nameParts = name.trim().split(' ');
+    if (nameParts.length <= 1) return name;
 
+    // Check for compound last names
+    let lastName = nameParts[nameParts.length - 1];
+    let secondLastName = nameParts[nameParts.length - 2];
+    
+    // Check if second to last word is a prefix
+    if (this.lastNamePrefixes.includes(secondLastName)) {
+      lastName = `${secondLastName} ${lastName}`;
+    }
+    
+    return lastName;
+  }
+
+  private sortStudents(students: any[], sortBy: 'score' | 'name'): any[] {
+    return [...students].sort((a, b) => {
+      if (sortBy === 'score') {
+        // Sort by score (descending)
+        return (b.score || 0) - (a.score || 0);
+      } else {
+        // Sort by last name
+        const lastNameA = this.getLastName(a.name || '');
+        const lastNameB = this.getLastName(b.name || '');
+        return lastNameA.localeCompare(lastNameB);
+      }
+    });
+  }
+
+  export() {
+    Swal.fire({
+      title: 'Export Results',
+      text: 'Choose how you want to sort the results',
+      icon: 'question',
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Ranking',
+      denyButtonText: 'Alphabetical',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.exportToCSV('score');
+      } else if (result.isDenied) {
+        this.exportToCSV('name');
+      }
+    });
+  }
+
+  async exportToCSV(sortBy: 'score' | 'name' = 'score') {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Assessment Results');
+
+    // Title Row
+    worksheet.mergeCells('A1', 'F1');
+    const titleCell = worksheet.getCell('A1');
+    titleCell.value = `${this.assessmentTitle.toUpperCase()} - ASSESSMENT RESULTS`;
+    titleCell.font = { size: 20, bold: true, color: { argb: '1F2937' } };
+    titleCell.alignment = { horizontal: 'center' };
+    titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F3F4F6' } };
+
+    // Summary Section
+    worksheet.addRow([]);
+    worksheet.addRow(['Report Generated:', new Date().toLocaleDateString()]);
+    worksheet.addRow(['Total Students:', this.allStudents.length]);
+    worksheet.addRow(['Completed Assessments:', this.allStudents.filter(s => s.status === 'completed').length]);
+    worksheet.addRow(['Completion Rate:', `${((this.allStudents.filter(s => s.status === 'completed').length / this.allStudents.length) * 100).toFixed(1)}%`]);
+    worksheet.addRow(['Average Score:', `${(this.allStudents.reduce((sum, s) => sum + (s.score || 0), 0) / this.allStudents.length).toFixed(1)}%`]);
+    worksheet.addRow(['Highest Score:', `${Math.max(...this.allStudents.map(s => s.score || 0))}%`]);
+    worksheet.addRow(['Sorted By:', sortBy === 'score' ? 'Score Ranking' : 'Last Name']);
+    worksheet.addRow([]);
+    worksheet.getRow(3).alignment = { horizontal: 'center' };
+    worksheet.getRow(4).alignment = { horizontal: 'center' };
+    worksheet.getRow(5).alignment = { horizontal: 'center' };
+    worksheet.getRow(6).alignment = { horizontal: 'center' };
+    worksheet.getRow(7).alignment = { horizontal: 'center' };
+    worksheet.getRow(8).alignment = { horizontal: 'center' };
+    worksheet.getRow(9).alignment = { horizontal: 'center' };
+
+
+    // Header
+    const header = ['#', 'Student Name', 'Score (%)', 'Status', 'Violation Count', 'Performance'];
+    const headerRow = worksheet.addRow(header);
+    headerRow.eachCell(cell => {
+      cell.font = { size: 12, bold: true, color: { argb: 'FFFFFF' } };
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '2563EB' } };
+      cell.alignment = { horizontal: 'center' };
+    });
+
+    // Sort students based on the selected criteria
+    const sortedStudents = this.sortStudents(this.allStudents, sortBy);
+
+    // Data Rows
+    sortedStudents.forEach((student, index) => {
+      const row = worksheet.addRow([
+        index + 1,
+        student.name || 'Unknown',
+        `${student.score || 0}/${this.classOverview.totalScore}`,
+        this.getStatusText(student.status),
+        student.violationCount || 0,
+        this.getPerformanceCategory(student.score || 0)
+      ]);
+
+      const score = student.score || 0;
+      const totalItems = this.classOverview.totalScore;
+      const scorePercentage = (score / totalItems) * 100;
+      
+      let style = { fontColor: '000000', bgColor: 'FFFFFF' };
+      if (scorePercentage >= 90) {
+        // Excellent - Soft Green
+        style = { fontColor: '166534', bgColor: 'DCFCE7' }; // Dark green text on soft green background
+      } else if (scorePercentage >= 75) {
+        // Average - Soft Yellow
+        style = { fontColor: '854D0E', bgColor: 'FEF9C3' }; // Dark yellow text on soft yellow background
+      } else {
+        // Poor - Soft Red
+        style = { fontColor: '991B1B', bgColor: 'FEE2E2' }; // Dark red text on soft red background
+      }
+
+      // Apply style to score column (3rd)
+      row.getCell(3).font = { 
+        bold: true, 
+        size: 11,
+        color: { argb: style.fontColor } 
+      };
+      row.getCell(3).fill = { 
+        type: 'pattern', 
+        pattern: 'solid', 
+        fgColor: { argb: style.bgColor } 
+      };
+
+      // Optional: Apply alignments to all cells
+      row.eachCell(cell => {
+        cell.alignment = { vertical: 'middle', horizontal: 'center' };
+      });
+
+      // Left align name
+      row.getCell(2).alignment = { horizontal: 'left' };
+    });
+
+    // Set fixed widths for specific columns
+    worksheet.getColumn(1).width = 22;  // #
+    worksheet.getColumn(2).width = 30; // Student Name
+    worksheet.getColumn(3).width = 12; // Score
+    worksheet.getColumn(4).width = 14; // Status
+    worksheet.getColumn(5).width = 15; // Violation Count
+    worksheet.getColumn(6).width = 22; // Performance
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+
+    const filename = `${this.assessmentTitle.replace(/[^a-zA-Z0-9]/g, '_')}_Results_${sortBy === 'score' ? 'Ranked' : 'Alphabetical'}.xlsx`;
+    saveAs(blob, filename);
+  }
+  
+  // Helper methods
+  private getStatusText(status: string): string {
+    const statusMap: { [key: string]: string } = {
+      'completed': 'Completed',
+      'in_progress': 'In Progress',
+      'not_started': 'Not Started',
+      'submitted': 'Submitted'
+    };
+    return statusMap[status] || status;
+  }
+  
+  private getPerformanceCategory(score: number): string {
+    if (score >= 90) return 'Excellent';
+    if (score >= 75) return 'Good';
+    if (score >= 60) return 'Satisfactory';
+    return 'Needs Improvement';
+  }
 }

@@ -7,6 +7,9 @@ import { AuthService } from '../../services/auth.service';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { saveAs } from 'file-saver';
+import * as ExcelJS from 'exceljs';
+
 
 interface Student {
   name: string;
@@ -42,6 +45,44 @@ export interface PendingRequest {
   studentName: string;
   email: string;
   requestDate?: Date;
+}
+
+interface AssessmentResult {
+  studentName: string;
+  studentId: string;
+  score: number;
+  completionTime: string;
+  completedAt: string;
+  totalQuestions: number;
+  correctAnswers: number;
+}
+
+interface ExportDataRow {
+  'Student Name': string;
+  'Student ID': string;
+  'Assessment': string;
+  'Score': number;
+  'Completion Time': string;
+  'Date Completed': string;
+  'Total Questions': number;
+  'Correct Answers': number;
+}
+
+interface ClassScoreResponse {
+  remarks: string;
+  message: string;
+  data: {
+    assessmentStatus: string;
+    mode: string;
+    results: Array<{
+      id: string;
+      name: string;
+      block: string | null;
+      score: number;
+      status: string;
+      violationCount: number;
+    }>;
+  };
 }
 
 @Component({
@@ -141,6 +182,13 @@ export class StudentsComponent implements OnInit {
 
   initialClassCodeToSelect: string | null = null;
 
+  selectedAssessmentsForExport: any[] = [];
+  showExportModal: boolean = false;
+
+  private lastNamePrefixes = [
+    'De', 'Del', 'Dela', 'De la', 'De los', 'San', 'Santa', 'Sta.'
+  ];
+
   constructor(private api: ApiService, private auth: AuthService, private titleService: Title, private router: Router) {
     this.titleService.setTitle('PRISM | Students');
     
@@ -205,7 +253,7 @@ export class StudentsComponent implements OnInit {
     this.isLoading = true;
     this.api.studentList(this.userId, this.selectedClass.classCode, this.currentPage, this.itemsPerPage).subscribe({
       next: (resp: any) => {
-        this.currentStudentsInfo = resp.data.students;
+        this.currentStudentsInfo = this.sortByLastName(resp.data.students);
         this.filteredStudents = this.currentStudentsInfo;
         this.totalStudents = resp.data.totalItems;
         this.totalPages = resp.data.totalPages;
@@ -273,7 +321,7 @@ export class StudentsComponent implements OnInit {
       this.itemsPerPage
     ).subscribe({
       next: (resp: any) => {
-        this.currentStudentsInfo = resp.data.students || [];
+        this.currentStudentsInfo = this.sortByLastName(resp.data.students || []);
         this.filteredStudents = this.currentStudentsInfo;
         this.totalStudents = resp.data.totalItems || 0;
         this.totalPages = resp.data.totalPages;
@@ -962,4 +1010,229 @@ export class StudentsComponent implements OnInit {
     }
   }
   
+  exportCompletedAssessments() {
+    if (!this.selectedClass) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Please select a class first'
+      });
+      return;
+    }
+
+    this.showExportModal = true;
+  }
+
+  private getLastName(name: string): string {
+    if (!name) return '';
+    
+    const nameParts = name.split(' ');
+    if (nameParts.length <= 1) return name;
+
+    // Check if the last part is a prefix
+    let lastIndex = nameParts.length - 1;
+    if (this.lastNamePrefixes.includes(nameParts[lastIndex])) {
+      lastIndex--;
+    }
+
+    // Get the last name(s)
+    const lastName = nameParts.slice(lastIndex).join(' ');
+    return lastName;
+  }
+
+  private sortByLastName(students: any[]): any[] {
+    return [...students].sort((a, b) => {
+      const lastNameA = this.getLastName(a.name || '');
+      const lastNameB = this.getLastName(b.name || '');
+      return lastNameA.localeCompare(lastNameB);
+    });
+  }
+
+  async exportSelectedAssessments() {
+    try {
+      if (this.selectedAssessmentsForExport.length === 0) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Please select at least one assessment to export'
+        });
+        return;
+      }
+
+      const workbook = new ExcelJS.Workbook();
+
+      // Process each assessment sequentially
+      for (let i = 0; i < this.selectedAssessmentsForExport.length; i++) {
+        const assessment = this.selectedAssessmentsForExport[i];
+        try {
+          const response = await this.api.getClassScore(assessment._id).toPromise() as ClassScoreResponse;
+          console.log("Response for assessment:", assessment.title, response);
+
+          if (response?.data?.results && Array.isArray(response.data.results)) {
+            const worksheet = workbook.addWorksheet(`A${i + 1} - ${assessment.title.substring(0, 20)}`);
+
+            // Title Row
+            worksheet.mergeCells('A1', 'F1');
+            const titleCell = worksheet.getCell('A1');
+            titleCell.value = `${assessment.title.toUpperCase()} - ASSESSMENT RESULTS`;
+            titleCell.font = { size: 20, bold: true, color: { argb: '1F2937' } };
+            titleCell.alignment = { horizontal: 'center' };
+            titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F3F4F6' } };
+
+            // Summary Section
+            worksheet.addRow([]);
+            worksheet.addRow(['Report Generated:', new Date().toLocaleDateString()]);
+            worksheet.addRow(['Total Students:', response.data.results.length]);
+            worksheet.addRow(['Completed Assessments:', response.data.results.filter(s => s.status === 'submitted').length]);
+            worksheet.addRow(['Average Score:', `${(response.data.results.reduce((sum, s) => sum + (s.score || 0), 0) / response.data.results.length).toFixed(1)}`]);
+            worksheet.addRow(['Highest Score:', `${Math.max(...response.data.results.map(s => s.score || 0))}`]);
+            worksheet.addRow(['Assessment Status:', response.data.assessmentStatus.toUpperCase()]);
+            const statusRow = worksheet.getRow(worksheet.rowCount);
+            statusRow.getCell(2).font = { bold: true, color: { argb: '166534' } }; // Dark green text
+            statusRow.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'DCFCE7' } }; // Light green background
+            statusRow.alignment = { horizontal: 'center' };
+            
+            // Mode row with styling
+            const modeRow = worksheet.addRow(['Mode:', response.data.mode.toUpperCase()]);
+            const modeCell = modeRow.getCell(2);
+            modeCell.font = { bold: true };
+            if (response.data.mode === 'mastery') {
+              modeCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'DCFCE7' } }; // Light green
+              modeCell.font.color = { argb: '166534' }; // Dark green
+            } else {
+              modeCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FEF9C3' } }; // Light yellow
+              modeCell.font.color = { argb: '854D0E' }; // Dark yellow
+            }
+            worksheet.addRow([]);
+
+            // Center align summary rows
+            for (let i = 3; i <= 10; i++) {
+              worksheet.getRow(i).alignment = { horizontal: 'center' };
+            }
+
+            // Header
+            const header = ['#', 'Student Name', 'Score', 'Status', 'Violation Count', 'Performance'];
+            const headerRow = worksheet.addRow(header);
+            headerRow.eachCell(cell => {
+              cell.font = { size: 12, bold: true, color: { argb: 'FFFFFF' } };
+              cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '2563EB' } };
+              cell.alignment = { horizontal: 'center' };
+            });
+
+            // Sort students by last name
+            const sortedStudents = this.sortByLastName(response.data.results);
+
+            // Data Rows
+            sortedStudents.forEach((student, index) => {
+              const row = worksheet.addRow([
+                index + 1,
+                student.name || 'Unknown',
+                student.score || 0,
+                this.getStatusText(student.status),
+                student.violationCount || 0,
+                this.getPerformanceCategory(student.score || 0)
+              ]);
+
+              const score = student.score || 0;
+              let style = { fontColor: '000000', bgColor: 'FFFFFF' };
+              if (score >= 90) {
+                // Excellent - Soft Green
+                style = { fontColor: '166534', bgColor: 'DCFCE7' };
+              } else if (score >= 75) {
+                // Average - Soft Yellow
+                style = { fontColor: '854D0E', bgColor: 'FEF9C3' };
+              } else {
+                // Poor - Soft Red
+                style = { fontColor: '991B1B', bgColor: 'FEE2E2' };
+              }
+
+              // Apply style to score column (3rd)
+              row.getCell(3).font = { 
+                bold: true, 
+                size: 11,
+                color: { argb: style.fontColor } 
+              };
+              row.getCell(3).fill = { 
+                type: 'pattern', 
+                pattern: 'solid', 
+                fgColor: { argb: style.bgColor } 
+              };
+
+              // Apply alignments to all cells
+              row.eachCell(cell => {
+                cell.alignment = { vertical: 'middle', horizontal: 'center' };
+              });
+
+              // Left align name
+              row.getCell(2).alignment = { horizontal: 'left' };
+            });
+
+            // Set fixed widths for specific columns
+            worksheet.getColumn(1).width = 22;  // #
+            worksheet.getColumn(2).width = 30; // Student Name
+            worksheet.getColumn(3).width = 12; // Score
+            worksheet.getColumn(4).width = 14; // Status
+            worksheet.getColumn(5).width = 15; // Violation Count
+            worksheet.getColumn(6).width = 22; // Performance
+          } else {
+            console.warn('Unexpected response format for assessment:', assessment.title, response);
+          }
+        } catch (error) {
+          console.error('Error processing assessment:', assessment.title, error);
+        }
+      }
+      //generate the file name
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const fileName = `${this.selectedClass.className}_Assessment_Results_${new Date().toISOString().split('T')[0]}.xlsx`;
+      
+      saveAs(blob, fileName);
+      
+      this.showExportModal = false;
+      this.selectedAssessmentsForExport = [];
+      
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Assessment results exported successfully!'
+      });
+    } catch (error) {
+      console.error('Export error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to export assessment results'
+      });
+    }
+  }
+
+  private getStatusText(status: string): string {
+    const statusMap: { [key: string]: string } = {
+      'completed': 'Completed',
+      'in_progress': 'In Progress',
+      'not_started': 'Not Started',
+      'submitted': 'Submitted'
+    };
+    return statusMap[status] || status;
+  }
+
+  private getPerformanceCategory(score: number): string {
+    if (score >= 90) return 'Excellent';
+    if (score >= 75) return 'Good';
+    if (score >= 60) return 'Satisfactory';
+    return 'Needs Improvement';
+  }
+
+  toggleAssessmentSelection(assessment: any) {
+    const index = this.selectedAssessmentsForExport.findIndex(a => a._id === assessment._id);
+    if (index === -1) {
+      this.selectedAssessmentsForExport.push(assessment);
+    } else {
+      this.selectedAssessmentsForExport.splice(index, 1);
+    }
+  }
+
+  isAssessmentSelected(assessment: any): boolean {
+    return this.selectedAssessmentsForExport.some(a => a._id === assessment._id);
+  }
 }

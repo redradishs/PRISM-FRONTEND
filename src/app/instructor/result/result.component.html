@@ -13,7 +13,7 @@
                                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2">
                                     Show Settings
                                 </button>
-                                <button
+                                <button (click)="export()"
                                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
                                     Export
                                 </button>
@@ -100,7 +100,7 @@
                             </svg>
                             Extend 1HR
                         </button>
-                        <button class="button primary">
+                        <button (click)="export()" class="button primary">
                             <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
                                 <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                     stroke-width="2"
