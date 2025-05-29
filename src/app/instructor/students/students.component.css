@@ -8,6 +8,9 @@
 }
 
 .demo-header-container {
+  padding: 2rem;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -20,14 +23,14 @@
 .demo-title {
   font-size: 24px;
   font-weight: 700;
-  color: #1e293b;
+  color: #ffffff;
   margin-bottom: 4px;
   line-height: 1.2;
 }
 
 .demo-subtitle {
   font-size: 14px;
-  color: #64748b;
+  color: #ffffff;
 }
 
 .demo-button-container {
@@ -50,6 +53,7 @@
   flex: 1;
   justify-content: center;
   max-width: 100%;
+  color: red;
 }
 
 .demo-button-primary {
@@ -60,7 +64,7 @@
 
 .demo-button-secondary {
   background-color: white;
-  color: #1e293b;
+  color: #4e51fd;
   border: 1px solid #e2e8f0;
 }
 
@@ -99,11 +103,17 @@
 /* Card Styles */
 .demo-card {
     overflow: hidden;
-    border: none;
+    border: 1px solid #e5e7eb;
     background-color: white;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    border-radius: 16px;
+    border-radius: 10px;
     margin-bottom: 24px;
+    transition: box-shadow 0.2s ease;
+    border-right: 4px solid #3678fc;
+    border-left: 4px solid #3678fc;
+}
+
+.demo-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 .demo-card-header {
@@ -392,6 +402,9 @@
 }
 
 .demo-selector-container {
+  border: 1px solid #e2e8f0;
+  padding: 1.5rem;
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -448,95 +461,113 @@
 
 /* Search Toolbar */
 .student-toolbar {
-    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #fff;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 .section-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1.25rem;
-    color: #333;
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #1f2937;
+    margin: 0;
 }
 
 .demo-search-filter-container {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 .demo-search-actions {
-  display: flex;
-  gap: 8px;
-  width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 .demo-search-wrapper {
-  position: relative;
-  flex: 1;
-  max-width: 400px;
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
 .demo-search-icon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #6b7280;
-  font-size: 14px;
+    position: absolute;
+    left: 0.75rem;
+    color: #6b7280;
 }
 
 .demo-search-input {
-  width: 100%;
-  height: 40px;
-  padding: 8px 8px 8px 36px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 14px;
+    padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    width: 240px;
+    font-size: 0.875rem;
+    color: #1f2937;
+    background-color: #f9fafb;
 }
 
 .demo-search-input:focus {
-  outline: none;
-  border-color: #9061F9;
-  box-shadow: 0 0 0 2px rgba(144, 97, 249, 0.1);
-}
-
-.demo-filter-button {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 12px;
-  height: 40px;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 14px;
-  color: #374151;
-  white-space: nowrap;
-}
-
-.demo-filter-button:hover {
-  background-color: #f9fafb;
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
 }
 
 .demo-action-button-primary {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  height: 40px;
-  padding: 0 16px;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 .demo-action-button-primary:hover {
-  background-color: #7e3aed;
+    background-color: #2563eb;
+}
+
+@media (max-width: 768px) {
+    .student-toolbar {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .section-title {
+        font-size: 1.125rem;
+    }
+
+    .demo-search-filter-container {
+        width: 100%;
+    }
+
+    .demo-search-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.75rem;
+    }
+
+    .demo-search-wrapper {
+        width: 100%;
+    }
+
+    .demo-search-input {
+        width: 100%;
+    }
+
+    .demo-action-button-primary {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 /* Modal Styles */
@@ -1812,6 +1843,7 @@ input:checked + .toggle-slider:before {
   .demo-button-container {
     flex: 0 0 auto;
   }
+
   
   .demo-selector-container {
     flex-direction: row;
@@ -3169,4 +3201,38 @@ input:checked + .toggle-slider:before {
   background-color: #fff1f2 !important;
   border: 1px solid #ffe4e6;
   border-left: 4px solid #ec4899;
+}
+
+@media (max-width: 640px) {
+  .demo-button-container {
+    gap: 4px;
+  }
+
+  .demo-selector-container {
+    padding: 1.2rem;
+  }
+
+  .demo-selector-section {
+    margin-bottom: 15px;
+  }
+
+  .demo-header-container {
+    padding:1.7rem;
+  }
+
+  .demo-header {
+    margin-bottom: 10px;
+  }
+  
+  .demo-button-primary,
+  .demo-button-secondary {
+    height: 36px;
+    padding: 0 12px;
+    font-size: 13px;
+  }
+
+  .demo-card {
+    border-right: 0px solid #3678fc;
+    border-left: 0px solid #3678fc;
+}
 }

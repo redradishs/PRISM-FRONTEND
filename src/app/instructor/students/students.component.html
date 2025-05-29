@@ -5,7 +5,7 @@
             <header class="bg-white shadow-sm fixed top-0 right-0 w-full md:w-[calc(100%-80px)] z-40">
                 <div class="w-full px-4 md:px-6 py-3 md:py-4">
                     <div class="flex items-center justify-between">
-                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">Students</h1>
+                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">Class Management</h1>
                         <div class="flex items-center">
                             <div class="hidden md:flex items-center mr-4">
                                 <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
@@ -54,7 +54,7 @@
                             <p class="demo-subtitle">Manage your classes and student enrollments</p>
                         </div>
                         <div class="demo-button-container">
-                            <button class="demo-button-primary" (click)="toggleCreateClassModal()">
+                            <button class="demo-button-secondary" (click)="toggleCreateClassModal()">
                                 <i class="fas fa-plus demo-icon"></i>
                                 Create Class
                             </button>
@@ -86,7 +86,7 @@
                         <div class="demo-button-group">
                             <button class="demo-button-secondary" (click)="exportCompletedAssessments()">
                                 <i class="fas fa-download demo-icon"></i>
-                                Export Assessment Results
+                                Export Results
                             </button>
                             <button class="demo-button-secondary" (click)="toggleClassSettingsModal()">
                                 <i class="fas fa-gear demo-icon"></i>
@@ -142,7 +142,7 @@
                 <div class="demo-card">
                     <div class="demo-card-content">
                         <div class="student-toolbar">
-                            <h2 class="section-title">Student {{selectedClass?.className || 'Select a class'}}
+                            <h2 class="section-title">CLASS {{selectedClass?.className || 'Select a class'}}
                                 {{selectedClass?.classCode ? '- ' + selectedClass.classCode : ''}}</h2>
                             <div class="demo-search-filter-container">
                                 <div class="demo-search-actions">
@@ -151,15 +151,11 @@
                                         <input type="text" placeholder="Search Student..." [(ngModel)]="searchTerm"
                                             (keyup)="onSearchInputChange('student')" class="demo-search-input">
                                     </div>
-                                    <button class="demo-filter-button" (click)="searchStudent()">
-                                        <i class="fas fa-search"></i>
-                                        Search
+                                    <button class="demo-action-button-primary" (click)="toggleAddStudentModal()">
+                                        <i class="fas fa-user-plus"></i>
+                                        Add Student
                                     </button>
                                 </div>
-                                <button class="demo-action-button-primary" (click)="toggleAddStudentModal()">
-                                    <i class="fas fa-user-plus"></i>
-                                    Add Student
-                                </button>
                             </div>
                         </div>
 
@@ -269,10 +265,6 @@
                                             [(ngModel)]="assessmentSearchTerm"
                                             (keyup)="onSearchInputChange('assessment')" class="demo-search-input">
                                     </div>
-                                    <button class="demo-filter-button">
-                                        <i class="fas fa-searh" (click)="searchAssessment()"></i>
-                                        Search
-                                    </button>
                                 </div>
                                 <button class="demo-action-button-primary" (click)="toggleAssignAssessmentModal()">
                                     <i class="fas fa-user-plus"></i>

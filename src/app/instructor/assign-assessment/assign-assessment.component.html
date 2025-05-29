@@ -37,10 +37,11 @@
             <div class="page-content">
                 <div class="page-header">
                     <div class="page-title-container">
-                        <h1 class="page-title">
-                            Assign Assessment
-                        </h1>
-                        <p class="page-subtitle">Assign assessments to students or classes</p>
+                        <i class="fas fa-check-square title-icon"></i>
+                        <div class="title-section">
+                            <h1 class="page-title">Assign Assessment</h1>
+                            <p class="page-subtitle">Assign assessments to students or classes</p>
+                        </div>
                     </div>
                     <div class="header-buttons">
                         <button class="create-assessment-btn" routerLink="/instructor/generate">
@@ -49,7 +50,6 @@
                         </button>
                     </div>
                 </div>
-
 
                 <!-- Error Message -->
                 <div *ngIf="error" class="error-message">
@@ -88,8 +88,11 @@
                     <!-- Step 1: Select Assessment -->
                     <div *ngIf="currentStep === 1">
                         <div class="review-header">
-                            <h2>Select Assessment</h2>
-                            <p>Choose the assessment you want to assign</p>
+                            <i class="fas fa-book-open review-header-icon"></i>
+                            <div>
+                                <h2>Select Assessment</h2>
+                                <p>Choose the assessment you want to assign</p>
+                            </div>
                         </div>
 
                         <div class="review-content">
@@ -210,9 +213,13 @@
 
                     <!-- Step 2: Choose Recipients -->
                     <div *ngIf="currentStep === 2">
+
                         <div class="review-header">
-                            <h2>Choose Recipients</h2>
-                            <p>Select who will receive this assessment</p>
+                            <i class="fas fa-users review-header-icon"></i>
+                            <div>
+                                <h2>Choose Recipients</h2>
+                                <p>Select who will receive this assessment</p>
+                            </div>
                         </div>
 
                         <div class="review-content">
@@ -427,8 +434,11 @@
                     <!-- Step 3: Configure Settings -->
                     <div *ngIf="currentStep === 3">
                         <div class="review-header">
-                            <h2>Configure Settings</h2>
-                            <p>Set up assessment parameters</p>
+                            <i class="fas fa-cog review-header-icon"></i>
+                            <div>
+                                <h2>Configure Settings</h2>
+                                <p>Set up assessment parameters</p>
+                            </div>
                         </div>
 
                         <div class="review-content">
@@ -683,8 +693,11 @@
                     <!-- Step 4: Review & Confirm -->
                     <div *ngIf="currentStep === 4">
                         <div class="review-header">
-                            <h2>Assignment Summary</h2>
-                            <p>Review all details before finalizing the assignment</p>
+                            <i class="fas fa-check-circle review-header-icon"></i>
+                            <div>
+                                <h2>Assignment Summary</h2>
+                                <p>Review all details before finalizing the assignment</p>
+                            </div>
                         </div>
 
                         <div class="review-content">
