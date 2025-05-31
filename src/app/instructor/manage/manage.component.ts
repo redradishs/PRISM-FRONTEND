@@ -1,4 +1,4 @@
-import { Component, ViewChild, HostListener } from '@angular/core';
+import { Component, ViewChild, HostListener, OnInit } from '@angular/core';
 import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -76,7 +76,7 @@ interface AssessmentCounts {
   templateUrl: './manage.component.html',
   styleUrl: './manage.component.css'
 })
-export class ManageComponent {
+export class ManageComponent implements OnInit {
   userId: string = '';
   username: string = '';
   profile: string = '';
@@ -112,6 +112,8 @@ export class ManageComponent {
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
 
   private searchSubject = new Subject<string>();
+
+  viewMode: 'grid' | 'list' = 'grid';
 
   constructor(
     private api: ApiService,
@@ -156,6 +158,19 @@ export class ManageComponent {
         console.log('No user found');
       }
     });
+    this.setInitialViewMode();
+  }
+
+  //we used this to set the initial view mode to list on mobile
+  setInitialViewMode() {
+    if (window.innerWidth <= 640) {
+      this.viewMode = 'list';
+    }
+  }
+
+  @HostListener('window:resize', [])
+  onResize() {
+    this.setInitialViewMode();
   }
 
   onSearch(event: any) {
@@ -213,7 +228,7 @@ export class ManageComponent {
     });
   }
 
-  loadAssessments(page: number = 1) {
+  loadAssessments(page: number = 1, append: boolean = false) {
     this.isLoading = true;
     const params = {
       page: page,
@@ -244,7 +259,12 @@ export class ManageComponent {
     request.subscribe({
       next: (response: any) => {
         if (response.remarks === 'Success') {
-          this.assessments = response.data.data;
+          const newAssessments = response.data.data;
+          if (append) {
+            this.assessments = [...this.assessments, ...newAssessments];
+          } else {
+            this.assessments = newAssessments;
+          }
           this.pagination = {
             currentPage: response.data.page,
             totalPages: response.data.totalPages,
@@ -289,7 +309,7 @@ export class ManageComponent {
 
   onPageChange(page: number) {
     this.pagination.currentPage = page;
-    this.loadAssessments(page);
+    this.loadAssessments(page, true);
   }
 
   filterAssessments() {
@@ -410,5 +430,22 @@ export class ManageComponent {
 
   addStudent() {
     this.router.navigate(['instructor/students']);
+  }
+
+  setViewMode(mode: 'grid' | 'list') {
+    this.viewMode = mode;
+  }
+
+
+  //this function checks if the user has scrolled at the bottom then adds the loaded content
+  @HostListener('window:scroll', [])
+  onScroll() {
+    const scrollPosition = window.scrollY + window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+    if (scrollPosition >= documentHeight - 100) { // 100px threshold
+      if (this.pagination.currentPage < this.pagination.totalPages) {
+        this.onPageChange(this.pagination.currentPage + 1);
+      }
+    }
   }
 }
