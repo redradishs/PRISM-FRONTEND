@@ -1,160 +1,410 @@
-<div class="min-h-screen bg-gray-50">
-    <div class="flex">
+<div class="bg-gray-50 min-h-screen w-full overflow-x-hidden">
+    <div class="flex w-full">
         <app-sidebar></app-sidebar>
-        <div class="flex-1 ml-0 md:ml-20">
-            <header class="bg-white shadow-sm">
-                <div class="max-w-7xl mx-auto py-2 md:py-4 px-3 md:px-4 sm:px-6 lg:px-8">
+        <div class="flex-1 ml-0 md:ml-20 w-full">
+            <header class="bg-white shadow-sm fixed top-0 right-0 w-full md:w-[calc(100%-80px)] z-40">
+                <div class="w-full px-4 md:px-6 py-3 md:py-4">
                     <div class="flex items-center justify-between">
-                        <h1 class="text-xl md:text-2xl font-semibold text-gray-900">History</h1>
-                        <button *ngIf="isMobile" (click)="toggleSidebar()"
-                            class="p-1.5 md:p-2 rounded-md hover:bg-gray-100 transition-colors">
-                            <i class="fas fa-bars w-5 md:w-6 h-5 md:h-6"></i>
-                        </button>
+                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">History</h1>
+                        <div class="flex items-center">
+                            <div class="hidden md:flex items-center mr-4">
+                                <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
+                                <button (click)="createNewAssessment()"
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2">
+                                    New Assessment
+                                </button>
+                                <button (click)="addStudent()"
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
+                                    Add Student
+                                </button>
+                            </div>
+                            <div *ngIf="!isMobile" class="flex items-center">
+                                <div class="relative mr-3">
+                                    <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profile" [src]="profile" alt="Profile" class="w-full h-full object-cover">
+                                        <span *ngIf="!profile" class="text-base md:text-lg font-medium text-gray-600">
+                                            {{username.charAt(0) || 'A'}}
+                                        </span>
+                                    </div>
+                                    <div class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    </div>
+                                </div>
+                                <div class="text-left">
+                                    <div class="text-sm font-medium text-gray-900">{{username}}</div>
+                                    <div class="text-xs text-gray-500">Student</div>
+                                </div>
+                            </div>
+                            <button *ngIf="isMobile" (click)="toggleSidebar()"
+                                class="p-2 rounded-md hover:bg-gray-100 transition-colors">
+                                <i class="fas fa-bars w-5 h-5 text-gray-600"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </header>
 
-            <div class="page-container">
+            <div class="h-[65px] md:h-[68px] w-full"></div>
 
-                <!-- Performance Overview Cards -->
-                <div class="performance-grid">
-                    <div class="stat-card">
-                        <div class="stat-title">Total Assessments</div>
-                        <div class="stat-value">{{performanceMetrics.totalAssessments}}</div>
+            <div class="main-container">
+                <!-- Header -->
+                <div class="page-header">
+                    <div class="page-title-container">
+                        <h1 class="page-title">
+                            <i class="fas fa-layer-group title-icon"></i>
+                            My Assessments
+                        </h1>
+                        <p class="page-subtitle">Manage and track all your assigned assessments</p>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-title">Average Score</div>
-                        <div class="stat-value">{{performanceMetrics.averageScore.toFixed(1)}}%</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-title">Highest Score</div>
-                        <div class="stat-value">{{performanceMetrics.highestScore}}%</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-title">Certificates Earned</div>
-                        <div class="stat-value">{{certificatesCount}}</div>
+                    <div class="header-buttons">
+                        <button class="create-assessment-btn" (click)="createNewAssessment()">
+                            <i class="fas fa-plus btn-icon"></i>
+                            Create Assessment
+                        </button>
                     </div>
                 </div>
 
                 <!-- Search and Filters -->
-                <div class="filters-container">
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="search" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange()"
-                            placeholder="Search assessments...">
+                <div class="filter-container">
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Search by title, description, or class..."
+                            [(ngModel)]="searchQuery" (input)="onSearch($event)" [ngModelOptions]="{standalone: true}">
                     </div>
-
-                    <div class="sort-dropdown">
-                        <button class="sort-button" (click)="toggleSortMenu()">
-                            <i class="fas fa-sliders-h"></i>
-                            Sort by: {{sortBy | titlecase}}
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="sort-menu" *ngIf="showSortMenu">
-                            <button (click)="setSortBy('date')">Date {{getSortIndicator('date')}}</button>
-                            <button (click)="setSortBy('score')">Score {{getSortIndicator('score')}}</button>
-                            <button (click)="setSortBy('title')">Title {{getSortIndicator('title')}}</button>
-                            <button (click)="setSortBy('course')">Course {{getSortIndicator('course')}}</button>
-                            <hr>
-                            <button (click)="toggleSortOrder()">
-                                {{sortOrder === 'asc' ? 'Descending Order' : 'Ascending Order'}}
+                    <div class="filter-options">
+                        <div class="filter-item">
+                            <i class="fas fa-filter filter-icon"></i>
+                            <select class="filter-trigger" [(ngModel)]="selectedMode">
+                                <option value="">All Modes</option>
+                                <option value="standard">Standard Assessment</option>
+                                <option value="public">Public Assessment</option>
+                                <option value="mastery">Mastery Assessment</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <i class="fas fa-sort filter-icon"></i>
+                            <select class="filter-trigger" [(ngModel)]="sortBy">
+                                <option value="newest">Newest First</option>
+                                <option value="oldest">Oldest First</option>
+                                <option value="alphabetical">Alphabetical</option>
+                                <option value="dueDate">Due Date</option>
+                            </select>
+                        </div>
+                        <div class="view-toggle">
+                            <button class="view-toggle-btn" [class.active]="viewMode === 'grid'" (click)="setViewMode('grid')" title="Grid View">
+                                <i class="fas fa-th-large"></i>
+                            </button>
+                            <button class="view-toggle-btn" [class.active]="viewMode === 'list'" (click)="setViewMode('list')" title="List View">
+                                <i class="fas fa-list"></i>
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Assessment Tabs -->
-                <div class="tabs">
-                    <button *ngFor="let tab of tabs; let i = index" [class.active]="selectedTabIndex === i"
-                        (click)="onTabChange(i)">
-                        {{tab}}
+                <!-- Status Tabs -->
+                <div class="status-tabs">
+                    <button [class.active]="selectedStatus === ''" (click)="onTabChange('')" class="tab-trigger">
+                        <i class="fas fa-layer-group tab-icon"></i>
+                        <span class="tab-text">All</span>
+                        <span class="count-badge" [class.active]="selectedStatus === ''">{{assessmentCounts.total}}</span>
+                    </button>
+                    <button [class.active]="selectedStatus === 'scheduled'" (click)="onTabChange('scheduled')"
+                        class="tab-trigger">
+                        <i class="fas fa-calendar tab-icon"></i>
+                        <span class="tab-text">Scheduled</span>
+                        <span class="count-badge" [class.active]="selectedStatus === 'scheduled'">{{assessmentCounts.scheduled}}</span>
+                    </button>
+                    <button [class.active]="selectedStatus === 'ongoing'" (click)="onTabChange('ongoing')"
+                        class="tab-trigger">
+                        <i class="fas fa-clock tab-icon"></i>
+                        <span class="tab-text">Ongoing</span>
+                        <span class="count-badge" [class.active]="selectedStatus === 'ongoing'">{{assessmentCounts.ongoing}}</span>
+                    </button>
+                    <button [class.active]="selectedStatus === 'completed'" (click)="onTabChange('completed')"
+                        class="tab-trigger">
+                        <i class="fas fa-check-circle tab-icon"></i>
+                        <span class="tab-text">Completed</span>
+                        <span class="count-badge" [class.active]="selectedStatus === 'completed'">{{assessmentCounts.completed}}</span>
                     </button>
                 </div>
 
-                <!-- Assessment Cards -->
-                <div class="assessment-grid" *ngIf="filteredAssessments.length > 0">
-                    <div class="assessment-card" *ngFor="let assessment of paginatedAssessments">
-                        <div class="card-header">
-                            <span class="assessment-type">{{assessment.type | titlecase}}</span>
-                            <button class="star-button" (click)="toggleStarred(assessment.id)">
-                                <i class="fas" [class.fa-star]="assessment.starred"
-                                    [class.fa-star-o]="!assessment.starred"></i>
-                            </button>
-                        </div>
-
-                        <h3 class="assessment-title">{{assessment.title}}</h3>
-                        <p class="course-info">{{assessment.courseCode}}: {{assessment.courseName}}</p>
-
-                        <div class="assessment-details">
-                            <div class="detail-item">
-                                <span class="label">Date</span>
-                                <span class="value">{{assessment.date}}</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="label">Score</span>
-                                <span class="value">{{assessment.score}}%</span>
-                            </div>
-                        </div>
-
-                        <div class="score-comparison">
-                            <div class="progress-label">
-                                <span>Class Average</span>
-                                <span>{{assessment.classAverage}}%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" [style.width.%]="assessment.classAverage"></div>
-                            </div>
-
-                            <div class="progress-label">
-                                <span>Your Score</span>
-                                <span>{{assessment.score}}%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" [style.width.%]="assessment.score"></div>
-                            </div>
-                        </div>
-
-                        <div class="card-actions">
-                            <button *ngIf="assessment.certificate" class="certificate-button">
-                                <i class="fas fa-download"></i>
-                                Certificate
-                            </button>
-                            <button class="details-button" (click)="openDetailsDialog(assessment)">
-                                <i class="fas fa-eye"></i>
-                                View Details
-                            </button>
-                        </div>
-                    </div>
+                <!-- Loading State -->
+                <div *ngIf="isLoading" class="loading-state">
+                    <i class="fas fa-circle-notch fa-spin"></i>
+                    <span>Loading assessments...</span>
                 </div>
 
                 <!-- Empty State -->
-                <div class="empty-state" *ngIf="filteredAssessments.length === 0">
-                    <i class="fas fa-file-alt"></i>
-                    <h3>No assessments found</h3>
-                    <p>Try adjusting your search or filter criteria.</p>
+                <div *ngIf="!isLoading && filteredAssessments.length === 0" class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h2 class="empty-state-title">No assessments found</h2>
+                    <p class="empty-state-text">
+                        {{searchQuery ? 'No assessments match your search criteria.' :
+                        selectedStatus ? 'No ' + selectedStatus + ' assessments available.' :
+                        'Create your first assessment to get started.'}}
+                    </p>
+                    <button class="create-assessment-btn" (click)="createNewAssessment()">
+                        <i class="fas fa-plus"></i>
+                        Create Assessment
+                    </button>
                 </div>
 
-                <!-- Pagination -->
-                <div class="pagination" *ngIf="totalPages > 1">
-                    <span class="pagination-info">
-                        Showing {{(currentPage - 1) * itemsPerPage + 1}} to
-                        {{Math.min(currentPage * itemsPerPage, filteredAssessments.length)}} of
-                        {{filteredAssessments.length}} assessments
-                    </span>
-                    <div class="pagination-controls">
-                        <button (click)="prevPage()" [disabled]="currentPage === 1">
-                            <i class="fas fa-chevron-left"></i>
-                            Previous
-                        </button>
-                        <button (click)="nextPage()" [disabled]="currentPage === totalPages">
-                            Next
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
+                <!-- Assessment Grid -->
+                <div class="assessment-grid" [class.list-view]="viewMode === 'list'" *ngIf="filteredAssessments.length > 0">
+                    <ng-container *ngIf="viewMode === 'list'; else gridView">
+                        <div (click)="gotoResult(assessment)" 
+                             *ngFor="let assessment of filteredAssessments" 
+                             class="assessment-list-card animate-card"
+                             [ngClass]="{
+                               'border-assessment': assessment.type === 'Assessment',
+                               'border-public': assessment.type === 'Public Assessment',
+                               'border-mastery': assessment.type === 'Mastery'
+                             }">
+                            <!-- Icon: only show on desktop -->
+                            <div class="list-icon-centered"
+                            [ngClass]="{
+                              'icon-assessment': assessment.type === 'Assessment',
+                              'icon-public': assessment.type === 'Public Assessment',
+                              'icon-mastery': assessment.type === 'Mastery'
+                            }">
+                         <i class="fas {{getModeIcon(assessment.type)}}"></i>
+                       </div>
+                            <div class="list-main">
+                                <!-- Desktop header (hidden on mobile) -->
+                                <div class="list-header-main">
+                                    <span class="list-title">{{ assessment.title }}</span>
+                                    <span class="badge badge-{{assessment.type | lowercase}}">{{assessment.type}}</span>
+                                    <span class="badge badge-{{assessment.status}}">
+                                        <i class="fas {{getStatusIcon(assessment.status)}} badge-icon"></i>
+                                        <span>{{assessment.status | titlecase}}</span>
+                                    </span>
+                                </div>
+                                <!-- Mobile header (hidden on desktop) -->
+                                <div class="list-header-mobile">
+                                    <span class="list-title">{{ assessment.title }}</span>
+                                    <span class="badge badge-{{assessment.status}}">
+                                        <i class="fas {{getStatusIcon(assessment.status)}} badge-icon"></i>
+                                        <span>{{assessment.status | titlecase}}</span>
+                                    </span>
+                                </div>
+                                <div class="card-description">{{ assessment.instructions }}</div>
+                                <div class="list-meta">
+                                    <div class="category-tag-row">
+                                        <span class="category-tag">
+                                            <i class="fas fa-tag"></i>
+                                            <span>{{assessment.category | titlecase}}</span>
+                                        </span>
+                                    </div>
+                                    <div class="meta-details-row">
+                                        <span>
+                                            <i class="fas fa-file-alt"></i>
+                                            {{assessment.questions}} Questions
+                                        </span>
+                                        <span *ngIf="assessment.status !== 'completed'">
+                                            <i class="far fa-clock"></i>
+                                            {{assessment.timeLimit}} minutes
+                                        </span>
+                                        <span *ngIf="assessment.class">
+                                            <i class="fas fa-users"></i>
+                                            {{assessment.class.classCode}} - {{assessment.class.className}}
+                                        </span>
+                                        <span *ngIf="assessment.studentStatus === 'submitted'">
+                                            <i class="fas fa-check-circle"></i>
+                                            Score: {{assessment.performance.score || 0}} / {{assessment.performance.totalScore}}
+                                        </span>
+                                        <span *ngIf="assessment.studentStatus === 'not_started' && assessment.status == 'completed'" class="no-attempt-badge">
+                                            <i class="fas fa-exclamation-circle"></i>
+                                            No Attempt was made
+                                        </span> 
+                                        <span *ngIf="assessment.studentStatus === 'submitted'">
+                                            <i class="fas fa-clock"></i>
+                                            Time Spent: {{assessment.performance.timeSpent.formatted}}
+                                        </span>
+                                        <span *ngIf="assessment.remainingAttempts && assessment.status !== 'completed'">
+                                            <i class="fas fa-redo"></i>
+                                            Remaining Attempts: {{assessment.remainingAttempts}}
+                                        </span>
+                                        <span *ngIf="assessment.type === 'Public Assessment' && assessment.modeSettings?.joiningCode">
+                                            <i class="fas fa-link"></i>
+                                            Code: {{assessment.modeSettings?.joiningCode}}
+                                        </span>
+                                    </div>
+                                </div>
+                                <!-- If you have score/percentage, show it here -->
+                            </div>
+                            <div class="list-side">
+                                <!-- Score display for submitted assessments -->
+                                <div *ngIf="assessment.studentStatus === 'submitted'" class="score-display">
+                                    <span class="score-value" [ngClass]="{
+                                        'score-red': (assessment.performance.score / assessment.questions) * 100 < 50,
+                                        'score-yellow': (assessment.performance.score / assessment.questions) * 100 >= 50 && (assessment.performance.score / assessment.questions) * 100 <= 75,
+                                        'score-green': (assessment.performance.score / assessment.questions) * 100 > 75
+                                    }">
+                                        {{assessment.performance.score || 0}}
+                                    </span>
+                                    <span class="score-separator">/</span>
+                                    <span class="total-score">{{assessment.questions}}</span>
+                                </div>
+
+                                <span *ngIf="assessment.status === 'completed' && assessment.studentStatus !== 'not_started'" class="completed-date-label">
+                                    <i class="fas fa-check-circle"></i>
+                                    Submitted: {{ assessment.submittedAt | date:'MMM d, y' }}
+                                </span>
+
+                                <span *ngIf="assessment.status === 'completed' && assessment.studentStatus === 'not_started'" class="ended-label">
+                                    <i class="fas fa-check-circle"></i>
+                                    Ended: {{ assessment.dueDate | date:'MMM d, y' }}
+                                </span>
+
+                                <span *ngIf="assessment.status === 'scheduled'" class="status-label">
+                                    <i class="far fa-calendar"></i>
+                                    Scheduled: {{assessment.startDate | date:'MMM d, y, h:mm a'}}
+                                </span>
+                                <span *ngIf="assessment.status === 'ongoing'" class="status-label">
+                                    <i class="fas fa-clock"></i>
+                                    Due {{assessment.dueDate | date:'MMM d, y, h:mm a'}}
+                                </span>
+                                <button *ngIf="(assessment.status === 'ongoing' || assessment.status === 'scheduled') || (assessment.status === 'completed' && assessment.studentStatus === 'submitted')" 
+                                        class="btn btn-primary" 
+                                        (click)="viewAssessmentDetails(assessment)">
+                                    {{ assessment.status === 'completed' ? 'View Result' : 'View Assessment' }}
+                                </button>
+                            </div>
+                        </div>
+                    </ng-container>
+                    
+
+
+
+                    <!-- GRID VIEW -->
+                    <ng-template #gridView>
+                        <div (click)="gotoResult(assessment)" 
+                             *ngFor="let assessment of filteredAssessments"
+                             class="assessment-card card-{{assessment.type | lowercase}} animate-card">
+                            <!-- Header Section -->
+                            <div class="card-header">
+                                <div class="card-header-top">
+                                    <div class="card-mode">
+                                        <i class="fas {{getModeIcon(assessment.type)}} mode-icon mode-icon-{{assessment.type | lowercase}}"></i>
+                                        <span class="badge badge-{{assessment.type | lowercase}}">{{assessment.type}}</span>
+                                    </div>
+                                    <span class="badge badge-{{assessment.status}}">
+                                        <i class="fas {{getStatusIcon(assessment.status)}} badge-icon"></i>
+                                        <span>{{assessment.status | titlecase}}</span>
+                                    </span>
+                                </div>
+                                <div class="card-title-section">
+                                    <h3 class="card-title">{{assessment.title}}</h3>
+                                    <!-- Score display for submitted assessments -->
+                                    <div *ngIf="assessment.studentStatus === 'submitted'" class="score-display">
+                                        <span class="score-value" [ngClass]="{
+                                            'score-red': (assessment.performance.score / assessment.questions) * 100 < 50,
+                                            'score-yellow': (assessment.performance.score / assessment.questions) * 100 >= 50 && (assessment.performance.score / assessment.questions) * 100 <= 75,
+                                            'score-green': (assessment.performance.score / assessment.questions) * 100 > 75
+                                        }">
+                                            {{assessment.performance.score || 0}}
+                                        </span>
+                                        <span class="score-separator">/</span>
+                                        <span class="total-score">{{assessment.questions}}</span>
+                                    </div>
+                                </div>
+                                <p class="card-description">{{assessment.instructions}}</p>
+                            </div>
+
+                            <!-- Main Content Section -->
+                            <div class="card-content">
+                                <!-- Top Section: Category and Status -->
+                                <div class="card-content-top">
+                                    <div class="category-tag">
+                                        <i class="fas fa-tag"></i>
+                                        <span>{{assessment.category | titlecase}}</span>
+                                    </div>
+                                
+                                </div>
+
+                                <!-- Middle Section: Status Info -->
+                                <div class="card-content-middle">
+                                    <ng-container [ngSwitch]="assessment.status">
+                                        <div *ngSwitchCase="'scheduled'" class="status-box">
+                                            <div class="status-box-content">
+                                                <i class="far fa-calendar"></i>
+                                                <span>Scheduled {{assessment.startDate | date:'MMM d, y, h:mm a'}}</span>
+                                            </div>
+                                        </div>
+                                        <div *ngSwitchCase="'ongoing'" class="status-box">
+                                            <div class="status-box-content">
+                                                <i class="fas fa-clock"></i>
+                                                <span>Due {{assessment.dueDate | date:'MMM d, y, h:mm a'}}</span>
+                                            </div>
+                                        </div>
+                                        <div *ngSwitchCase="'completed'" class="status-box">
+                                            <div class="status-box-content">
+                                                <i class="fas fa-check-circle"></i>
+                                                <span *ngIf="assessment.studentStatus === 'submitted'">
+                                                    Submitted: {{assessment.submittedAt | date:'MMM d, y'}}
+                                                </span>
+                                                <span *ngIf="assessment.studentStatus === 'not_started'">
+                                                    Ended: {{assessment.dueDate | date:'MMM d, y'}}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </div>
+
+                                <!-- Bottom Section: Details -->
+                                <div class="card-content-bottom">
+                                    <div class="assessment-details">
+                                        <div class="detail-item">
+                                            <i class="fas fa-file-alt detail-icon"></i>
+                                            <span>{{assessment.questions}} Questions</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <i class="far fa-clock detail-icon"></i>
+                                            <span>{{assessment.timeLimit}} minutes</span>
+                                        </div>
+                                        <div class="detail-item" *ngIf="assessment.studentStatus === 'submitted'">
+                                            <i class="fas fa-clock"></i>
+                                            <span>TS: {{assessment.performance.timeSpent.formatted}}</span>
+                                        </div>
+                                        <div class="detail-item" *ngIf="assessment.remainingAttempts && assessment.status !== 'completed'">
+                                            <i class="fas fa-redo"></i>
+                                            <span>Remaining Attempts: {{assessment.remainingAttempts}}</span>
+                                        </div>
+                                        <div class="detail-item" *ngIf="assessment.type !== 'Public Assessment'">
+                                            <i class="fas fa-users"></i>
+                                            <span>{{assessment.class?.classCode}} - {{assessment.class?.className}}</span>
+                                        </div>
+                                        <div class="detail-item" *ngIf="assessment.type === 'Public Assessment' && assessment.modeSettings?.joiningCode">
+                                            <i class="fas fa-link"></i>
+                                            <span>Code: {{assessment.modeSettings?.joiningCode}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Footer Section -->
+                            <div class="card-footer">
+                                <div class="actions-container">
+                                    <button *ngIf="(assessment.status === 'ongoing' || assessment.status === 'scheduled') || (assessment.status === 'completed' && assessment.studentStatus === 'submitted')" 
+                                            class="btn btn-primary" 
+                                            (click)="viewAssessmentDetails(assessment)">
+                                        {{ assessment.status === 'completed' ? 'View Result' : 'View Assessment' }}
+                                    </button>
+
+                                    <div *ngIf="assessment.studentStatus === 'not_started' && assessment.status === 'completed'" 
+                                    class="no-attempt-badge">
+                                   <i class="fas fa-exclamation-circle"></i>
+                                  NO SUBMISSION FOUND FOR THIS ASSESSMENT
+                               </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
                 </div>
             </div>
-
-
         </div>
     </div>
 </div>

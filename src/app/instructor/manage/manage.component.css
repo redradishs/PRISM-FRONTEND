@@ -411,6 +411,8 @@
     transition: all 0.2s;
     background-color: white;
     padding: 0.875rem;
+    animation: fadeInUp 0.5s ease-out forwards;
+    opacity: 0;
 }
 
 .assessment-card:hover {
@@ -936,6 +938,8 @@
   position: relative;
   transition: all 0.3s ease;
   border-left: 5px solid transparent;
+  animation: fadeInUp 0.5s ease-out forwards;
+  opacity: 0;
 }
 
 .assessment-list-card:hover {
@@ -1209,4 +1213,24 @@
     color: #a1a1aa;
     font-size: 1rem;
   }
+}
+
+
+
+/* Keep only this one animation definition at the end of the file */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Add this new class to handle the animation */
+.animate-card {
+  animation: fadeInUp 0.5s ease-out forwards;
+  opacity: 0;
 }

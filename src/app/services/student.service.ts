@@ -75,5 +75,33 @@ export class StudentService {
     return this.http.get(`${this.apiUrl}/assessment/review/${assessmentId}/${studentId}`);
   }
 
+  //Student History Page
+
+  totalAssessments(studentId: String) {
+    return this.http.get(`${this.apiUrl}/assessmentCounts/${studentId}/data`);
+  }
+
+  allAssessments(studentId: String, page: number, limit: number) {
+    return this.http.get(`${this.apiUrl}/assessments/${studentId}/all?page=${page}&limit=${limit}`);
+  }
+
+  scheduledAssessments(studentId: String, page: number, limit: number) {
+    return this.http.get(`${this.apiUrl}/assessments/${studentId}/scheduled?page=${page}&limit=${limit}`);
+  }
+
+  ongoingAssessments(studentId: String, page: number, limit: number) {
+    return this.http.get(`${this.apiUrl}/assessments/${studentId}/ongoing?page=${page}&limit=${limit}`);
+  }
+
+  completedAssessments(studentId: String, page: number, limit: number) {
+    return this.http.get(`${this.apiUrl}/assessments/${studentId}/completed?page=${page}&limit=${limit}`);
+  }
+
+  searchAssessments(studentId: String, query: string, page: number, limit: number) {
+    return this.http.get(`${this.apiUrl}/assessments/${studentId}/search?q=${query}&page=${page}&limit=${limit}`);
+  }
+  
+  
+
 
 }

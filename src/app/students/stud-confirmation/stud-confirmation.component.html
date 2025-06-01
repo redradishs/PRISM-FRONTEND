@@ -180,17 +180,29 @@
 
                     <div class="action-buttons">
                         <button class="btn-cancel" (click)="cancel()">Cancel</button>
-                        <button class="btn-enter" *ngIf="!hasStarted" [disabled]="!isAgreed" (click)="enter()">Enter
-                            Assessment</button>
+                        <button class="btn-enter" 
+                                *ngIf="!hasStarted" 
+                                [disabled]="!isAgreed || confirmationData.status === 'scheduled'" 
+                                (click)="enter()">
+                            Enter Assessment
+                        </button>
                         <button class="btn-enter btn-retake"
-                            *ngIf="hasCompleted && confirmationData.attempts.remaining > 0"
-                            [disabled]="!isAgreed"
-                            (click)="enter()">
+                                *ngIf="hasCompleted && confirmationData.attempts.remaining > 0"
+                                [disabled]="!isAgreed || confirmationData.status === 'scheduled'"
+                                (click)="enter()">
                             Retake Assessment
                         </button>
-                        <button class="btn-enter" *ngIf="hasStarted && !hasCompleted" (click)="continue()">Continue
-                            Assessment</button>
-                        <button class="btn-enter" *ngIf="hasCompleted" (click)="result()">View Result</button>
+                        <button class="btn-enter" 
+                                *ngIf="hasStarted && !hasCompleted" 
+                                [disabled]="confirmationData.status === 'scheduled'"
+                                (click)="continue()">
+                            Continue Assessment
+                        </button>
+                        <button class="btn-enter" 
+                                *ngIf="hasCompleted" 
+                                (click)="result()">
+                            View Result
+                        </button>
                     </div>
 
                 </div>

@@ -150,6 +150,12 @@ export class ManageComponent implements OnInit {
           const tab = params['tab'];
           if (tab) {
             this.selectedStatus = tab;
+            localStorage.setItem('selectedAssessmentTab', tab);
+          } else {
+            const savedTab = localStorage.getItem('selectedAssessmentTab');
+            if(savedTab) {
+              this.selectedStatus = savedTab;
+            }
           }
           this.loadAssessments();
           this.loadAssessmentCounts();
@@ -161,12 +167,16 @@ export class ManageComponent implements OnInit {
     this.setInitialViewMode();
   }
 
-  //we used this to set the initial view mode to list on mobile
+  //this function sets the view mode to what is LS, if not it falls to the default list mode
   setInitialViewMode() {
-    if (window.innerWidth <= 640) {
+    const savedViewMode = localStorage.getItem('assessmentViewMode');
+    if(savedViewMode === 'grid' || savedViewMode === 'list') {
+      this.viewMode = savedViewMode;
+    } else if (window.innerWidth <= 640) {
       this.viewMode = 'list';
     }
   }
+
 
   @HostListener('window:resize', [])
   onResize() {
@@ -303,7 +313,8 @@ export class ManageComponent implements OnInit {
 
   onTabChange(status: string) {
     this.selectedStatus = status;
-    this.pagination.currentPage = 1; // Reset to first page when changing tabs
+    localStorage.setItem('selectedAssessmentTab', status);
+    this.pagination.currentPage = 1; 
     this.loadAssessments();
   }
 
@@ -313,7 +324,6 @@ export class ManageComponent implements OnInit {
   }
 
   filterAssessments() {
-    // When in search mode, don't apply additional filtering
     if (this.searchQuery.length >= 3) {
       this.filteredAssessments = this.assessments;
       return;
@@ -391,6 +401,7 @@ export class ManageComponent implements OnInit {
   }
 
   gotoResult(assessment: any) {
+    window.scrollTo({top: 0, behavior: 'smooth'});
     console.log('Navigating to result for:', assessment.type);
     if(assessment.type === 'Assessment' || assessment.type === 'Public Assessment') {
       console.log('Navigating to result for:', assessment.id);
@@ -434,6 +445,7 @@ export class ManageComponent implements OnInit {
 
   setViewMode(mode: 'grid' | 'list') {
     this.viewMode = mode;
+    localStorage.setItem('assessmentViewMode', mode);
   }
 
 

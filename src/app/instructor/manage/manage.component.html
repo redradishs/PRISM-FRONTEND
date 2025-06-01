@@ -153,7 +153,9 @@
                 <!-- Assessment Grid -->
                 <div class="assessment-grid" [class.list-view]="viewMode === 'list'" *ngIf="filteredAssessments.length > 0">
                     <ng-container *ngIf="viewMode === 'list'; else gridView">
-                        <div (click)="gotoResult(assessment)" *ngFor="let assessment of filteredAssessments" class="assessment-list-card"
+                        <div (click)="gotoResult(assessment)" 
+                             *ngFor="let assessment of filteredAssessments" 
+                             class="assessment-list-card animate-card"
                              [ngClass]="{
                                'border-assessment': assessment.type === 'Assessment',
                                'border-public': assessment.type === 'Public Assessment',
@@ -205,11 +207,11 @@
                                         </span>
                                         <span *ngIf="assessment.type !== 'Public Assessment'">
                                             <i class="fas fa-users"></i>
-                                            {{assessment.assignedClasses[0]?.classCode}} - {{assessment.assignedClasses[0]?.className}}
+                                            {{assessment.assignedClasses[0].classCode}} - {{assessment.assignedClasses[0].className}}
                                         </span>
                                         <span *ngIf="assessment.type !== 'Public Assessment'">
                                             <i class="fas fa-upload"></i>
-                                            {{assessment.assignedClasses[0].stats.submitted || 0}}/{{assessment.assignedClasses[0]?.totalStudents || 0}} Submissions
+                                            {{assessment.assignedClasses[0].stats.submitted || 0}}/{{assessment.assignedClasses[0].totalStudents || 0}} Submissions
                                         </span>
                                         <span *ngIf="assessment.type === 'Public Assessment' && assessment.modeSettings?.joiningCode">
                                             <i class="fas fa-link"></i>
@@ -244,8 +246,9 @@
 
                     <!-- GRID VIEW  -->
                     <ng-template #gridView>
-                        <div (click)="gotoResult(assessment)" *ngFor="let assessment of filteredAssessments"
-                            class="assessment-card card-{{assessment.type | lowercase}}">
+                        <div (click)="gotoResult(assessment)" 
+                             *ngFor="let assessment of filteredAssessments"
+                             class="assessment-card card-{{assessment.type | lowercase}} animate-card">
                             <div class="card-header">
                                 <div class="card-header-top">
                                     <div class="card-mode">

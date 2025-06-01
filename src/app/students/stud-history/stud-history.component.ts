@@ -1,309 +1,515 @@
-import { CommonModule } from '@angular/common';
-import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, ViewChild, HostListener, OnInit } from '@angular/core';
 import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ApiService } from '../../services/api.service';
+import { AuthService } from '../../services/auth.service';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { StudentService } from '../../services/student.service';
+import Swal from 'sweetalert2';
+
+interface ClassStats {
+  inProgress: number;
+  submitted: number;
+  graded: number;
+}
+
+interface AssignedClass {
+  className: string;
+  classCode: string;
+  totalStudents: number;
+  stats: ClassStats;
+}
 
 interface Assessment {
-  id: number;
+  id: string;
+  assessmentId: string;
   title: string;
-  courseCode: string;
-  courseName: string;
-  instructor: string;
-  date: string;
-  score: number;
-  classAverage: number;
-  status: string;
-  type: 'exam' | 'quiz' | 'assignment' | 'project';
-  duration?: number;
-  questionsCount?: number;
-  correctAnswers?: number;
-  feedback: string;
-  certificate: boolean;
-  starred: boolean;
-  performance: { category: string; score: number; }[];
+  type: 'Assessment' | 'Public Assessment' | 'Mastery';
+  instructions: string;
+  category: string;
+  questions: number;
+  timeLimit: number;
+  startDate: string;
+  dueDate: string;
+  status: 'scheduled' | 'ongoing' | 'completed';
+  progress: number;
+  studentStatus: 'not_started' | 'in_progress' | 'submitted';
+  performance: {
+    score: number;
+    totalScore: number;
+    totalQuestions: number;
+    correctAnswers: number;
+    incorrectAnswers: number;
+    percentage: number;
+    timeSpent: {
+      raw: number;
+      formatted: string;
+    };
+    feedback: string | null;
+  };
+  submittedAt: string | null;
+  remainingAttempts: number;
+  class?: {
+    className: string;
+    classCode: string;
+    totalStudents: number;
+  };
+  modeSettings?: {
+    joiningCode: string;
+  };
+  isParticipant?: boolean;
 }
 
-interface PerformanceMetrics {
-  totalAssessments: number;
-  averageScore: number;
-  highestScore: number;
-  lowestScore: number;
-  coursePerformance: {
-    [key: string]: {
-      courseName: string;
-      assessments: number;
-      totalScore: number;
-      averageScore: number;
-    };
+interface ApiResponse {
+  remarks: string;
+  data: {
+    data: Assessment[];
+    total: number;
+    returned: number;
+    left: number;
+    page: number;
+    totalPages: number;
   };
+  message: string;
 }
+
+interface PaginationState {
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  itemsPerPage: number;
+}
+
+interface AssessmentCounts {
+  total: number;
+  scheduled: number;
+  ongoing: number;
+  completed: number;
+}
+
 
 @Component({
   selector: 'app-stud-history',
-  imports: [CommonModule, FormsModule, SidebarComponent],
+  imports: [CommonModule, SidebarComponent, FormsModule],
   templateUrl: './stud-history.component.html',
   styleUrl: './stud-history.component.css'
 })
-export class StudHistoryComponent implements OnInit {
+export class StudHistoryComponent{
+  userId: string = '';
+  username: string = '';
+  profile: string = '';
   isMobile = window.innerWidth < 768;
+
+  // Search and Filter Properties
+  searchQuery: string = '';
+  selectedMode: string = '';
+  sortBy: string = 'newest';
+  selectedStatus: string = '';
+
+  // Assessment Data
+  assessments: Assessment[] = [];
+  filteredAssessments: Assessment[] = [];
+  isLoading: boolean = false;
+
+  // Pagination
+  pagination: PaginationState = {
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    itemsPerPage: 10
+  };
+
+  assessmentCounts: AssessmentCounts = {
+    total: 0,
+    scheduled: 0,
+    ongoing: 0,
+    completed: 0
+  };
+
   @HostListener('window:resize')
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
+
+  private searchSubject = new Subject<string>();
+
+  viewMode: 'grid' | 'list' = 'grid';
+
+  constructor(
+    private api: StudentService,
+    private auth: AuthService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private titleService: Title
+  ) {
+    this.titleService.setTitle('PRISM | Manage');
+    
+    // Setup search debounce
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(query => {
+      if (query.length >= 3) {
+        this.performSearch(query);
+      } else if (query.length === 0) {
+        this.loadAssessments();
+      }
+    });
+  }
+
+  ngOnInit() {
+    this.auth.getCurrentUser().subscribe((user) => {
+      if(user) {
+        console.log('User ID:', user.id);
+        this.userId = user.id;
+        this.username = user.name;
+        this.profile = user.profilePicture;
+        
+        // Check for tab parameter
+        this.route.queryParams.subscribe(params => {
+          const tab = params['tab'];
+          if (tab) {
+            this.selectedStatus = tab;
+            localStorage.setItem('selectedAssessmentTab', tab);
+          } else {
+            const savedTab = localStorage.getItem('selectedAssessmentTab');
+            if(savedTab) {
+              this.selectedStatus = savedTab;
+            }
+          }
+          this.loadAssessments();
+          this.loadAssessmentCounts();
+        });
+      } else {
+        console.log('No user found');
+      }
+    });
+    this.setInitialViewMode();
+  }
+
+  //this function sets the view mode to what is LS, if not it falls to the default list mode
+  setInitialViewMode() {
+    const savedViewMode = localStorage.getItem('assessmentViewMode');
+    if(savedViewMode === 'grid' || savedViewMode === 'list') {
+      this.viewMode = savedViewMode;
+    } else if (window.innerWidth <= 640) {
+      this.viewMode = 'list';
+    }
+  }
+
+
+  @HostListener('window:resize', [])
+  onResize() {
+    this.setInitialViewMode();
+  }
+
+  onSearch(event: any) {
+    const query = event.target.value.trim();
+    this.searchQuery = query;
+    console.log('Search query:', query, 'Length:', query.length); // Debug log
+    this.searchSubject.next(query);
+  }
+
+  performSearch(query: string) {
+    console.log('Performing search for:', query);
+    this.isLoading = true;
+    const params = {
+      page: this.pagination.currentPage,
+      limit: this.pagination.itemsPerPage
+    };
+
+    if (query.length < 3) {
+      this.loadAssessments();
+      return;
+    }
+
+    this.api.searchAssessments(this.userId, query, this.pagination.currentPage, this.pagination.itemsPerPage).subscribe({
+      next: (response: any) => {
+        console.log('Search response:', response);
+        if (response.remarks === 'Success') {
+          // Handle the different response format for search
+          this.assessments = response.data.map((assessment: any) => ({
+            ...assessment,
+            assignedClasses: [], // Initialize as empty since search response doesn't include classes
+            modeSettings: {}, // Initialize empty mode settings
+            questions: assessment.questions || 0,
+            type: assessment.type || 'Assessment',
+            status: assessment.status || 'ongoing'
+          }));
+
+          // Since search doesn't return pagination info, adjust pagination
+          this.pagination = {
+            currentPage: 1,
+            totalPages: 1,
+            totalItems: this.assessments.length,
+            itemsPerPage: this.pagination.itemsPerPage
+          };
+
+          this.filteredAssessments = this.assessments;
+        }
+      },
+      error: (error) => {
+        console.error('Error searching assessments:', error);
+        this.isLoading = false;
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    });
+  }
+
+  loadAssessments(page: number = 1, append: boolean = false) {
+    this.isLoading = true;
+    const params = {
+      page: page,
+      limit: this.pagination.itemsPerPage
+    };
+
+    // If there's a search query of 3 or more characters, use search endpoint
+    if (this.searchQuery.length >= 3) {
+      this.performSearch(this.searchQuery);
+      return;
+    }
+
+    let request;
+    switch (this.selectedStatus) {
+      case 'ongoing':
+        request = this.api.ongoingAssessments(this.userId, page, this.pagination.itemsPerPage);
+        break;
+      case 'scheduled':
+        request = this.api.scheduledAssessments(this.userId, page, this.pagination.itemsPerPage);
+        break;
+      case 'completed':
+        request = this.api.completedAssessments(this.userId, page, this.pagination.itemsPerPage);
+        break;
+      default:
+        request = this.api.allAssessments(this.userId, page, this.pagination.itemsPerPage);
+    }
+
+    request.subscribe({
+      next: (response: any) => {
+        if (response.remarks === 'Success') {
+          const newAssessments = response.data.data;
+          if (append) {
+            this.assessments = [...this.assessments, ...newAssessments];
+          } else {
+            this.assessments = newAssessments;
+          }
+          this.pagination = {
+            currentPage: response.data.page,
+            totalPages: response.data.totalPages,
+            totalItems: response.data.total,
+            itemsPerPage: this.pagination.itemsPerPage
+          };
+          this.filterAssessments();
+        }
+      },
+      error: (error) => {
+        console.error('Error loading assessments:', error);
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    });
+  }
+
+  loadAssessmentCounts() {
+    this.api.totalAssessments(this.userId).subscribe({
+      next: (response: any) => {
+        if (response.remarks === 'Success') {
+          this.assessmentCounts = {
+            total: response.data.total || 0,
+            scheduled: response.data.scheduled || 0,
+            ongoing: response.data.ongoing || 0,
+            completed: response.data.completed || 0
+          };
+        }
+      },
+      error: (error) => {
+        console.error('Error loading assessment counts:', error);
+      }
+    });
+  }
+
+  onTabChange(status: string) {
+    this.selectedStatus = status;
+    localStorage.setItem('selectedAssessmentTab', status);
+    this.pagination.currentPage = 1; 
+    this.loadAssessments();
+  }
+
+  onPageChange(page: number) {
+    this.pagination.currentPage = page;
+    this.loadAssessments(page, true);
+  }
+
+  filterAssessments() {
+    if (this.searchQuery.length >= 3) {
+      this.filteredAssessments = this.assessments;
+      return;
+    }
+
+    // Normal filtering for non-search mode
+    this.filteredAssessments = this.assessments.filter(assessment => {
+      const matchesMode = !this.selectedMode || assessment.type === this.selectedMode;
+      return matchesMode;
+    });
+
+    // Apply sorting
+    this.filteredAssessments.sort((a, b) => {
+      switch (this.sortBy) {
+        case 'oldest':
+          return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+        case 'alphabetical':
+          return a.title.localeCompare(b.title);
+        case 'dueDate':
+          return new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime();
+        default: // newest
+          return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
+      }
+    });
+  }
+
+  getStatusCount(status: string): number {
+    return this.assessments.filter(a => a.status === status).length;
+  }
+
+  getModeIcon(type: string): string {
+    switch (type) {
+      case 'Assessment': return 'fa-file-alt';
+      case 'Public': return 'fa-globe';
+      case 'Mastery': return 'fa-star';
+      default: return 'fa-file';
+    }
+  }
+
+  getStatusIcon(status: string): string {
+    switch (status) {
+      case 'scheduled': return 'fa-calendar';
+      case 'ongoing': return 'fa-hourglass-half';
+      case 'completed': return 'fa-check-circle';
+      default: return 'fa-circle';
+    }
+  }
+
+  getProgressColor(progress: number): string {
+    if (progress >= 75) return '#10B981'; // green
+    if (progress >= 50) return '#FBBF24'; // yellow
+    return '#EF4444'; // red
+  }
+
+  getAssignedClassesText(classes: AssignedClass[]): string {
+    return classes.map(c => c.className).join(', ');
+  }
+
+  getTotalStudents(classes: AssignedClass[]): number {
+    return classes.reduce((total, c) => total + c.totalStudents, 0);
+  }
+
+  getAssessmentProgress(classes: AssignedClass[]): number {
+    const totalStudents = this.getTotalStudents(classes);
+    if (totalStudents === 0) return 0;
+    
+    const totalSubmitted = classes.reduce((total, c) => total + c.stats.submitted, 0);
+    return (totalSubmitted / totalStudents) * 100;
+  }
+
   toggleSidebar() {
     if (this.sidebar) {
       this.sidebar.toggleSidebar();
     }
   }
-  onResize() {
-    this.isMobile = window.innerWidth < 768;
-  }
 
-  Math = Math;
-  // Search and filter states
-  searchQuery: string = '';
-  selectedTabIndex: number = 0;
-  sortBy: string = 'date';
-  sortOrder: 'asc' | 'desc' = 'desc';
-
-  // Pagination
-  currentPage: number = 1;
-  itemsPerPage: number = 6;
-  
-  // Data
-  assessments: Assessment[] = [
-    {
-      id: 1,
-      title: "Midterm Exam: Advanced Programming",
-      courseCode: "CS401",
-      courseName: "Advanced Programming",
-      instructor: "Dr. Smith",
-      date: "2024-03-15",
-      score: 92,
-      classAverage: 78,
-      status: "completed",
-      type: "exam",
-      duration: 120,
-      questionsCount: 50,
-      correctAnswers: 46,
-      feedback: "Excellent work! Strong understanding of concepts.",
-      certificate: true,
-      starred: true,
-      performance: [
-        { category: "Algorithms", score: 95 },
-        { category: "Data Structures", score: 90 },
-      ]
-    },
-    {
-      id: 2,
-      title: "Database Design Quiz",
-      courseCode: "CS302",
-      courseName: "Database Systems",
-      instructor: "Prof. Johnson",
-      date: "2024-03-10",
-      score: 85,
-      classAverage: 72,
-      status: "completed",
-      type: "quiz",
-      duration: 30,
-      questionsCount: 20,
-      correctAnswers: 17,
-      feedback: "Good understanding of SQL concepts.",
-      certificate: false,
-      starred: false,
-      performance: [
-        { category: "SQL", score: 85 },
-        { category: "Normalization", score: 80 },
-      ]
-    },
-    {
-      id: 3,
-      title: "Web Development Project",
-      courseCode: "CS405",
-      courseName: "Web Technologies",
-      instructor: "Dr. Wilson",
-      date: "2024-03-01",
-      score: 88,
-      classAverage: 75,
-      status: "completed",
-      type: "project",
-      feedback: "Creative solution with good technical implementation.",
-      certificate: true,
-      starred: true,
-      performance: [
-        { category: "Frontend", score: 90 },
-        { category: "Backend", score: 85 },
-      ]
+  gotoResult(assessment: any) {
+    console.log('Navigating to result for:', assessment.type);
+    if(assessment.status === 'completed' && assessment.studentStatus === 'not_started') {
+      Swal.fire({
+        icon: 'info',
+        title: 'Assessment Not Attempted',
+        text: 'This assessment has ended without any submission.',
+        confirmButtonText: 'OK',
+        toast: true,
+        position: 'top-end',
+        timer: 3000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+        showCancelButton: false,
+        background: '#f8fafc',
+        color: '#334155',
+        iconColor: '#64748b',
+        padding: '1rem',
+        width: 'auto',
+        backdrop: false,
+        allowOutsideClick: true,
+        allowEscapeKey: true,
+        stopKeydownPropagation: false
+      })
     }
-  ];
-  filteredAssessments: Assessment[] = [];
-  performanceMetrics!: PerformanceMetrics;
-
-  showSortMenu = false;
-  tabs = ['All', 'Exams', 'Quizzes', 'Assignments', 'Projects', 'Starred', 'Certificates'];
-
-  constructor(private dialog: MatDialog, private titleService: Title) {
-    this.titleService.setTitle('PRISM | History');
-  }
-
-  ngOnInit() {
-    this.calculateMetrics();
-    this.filterAssessments();
-  }
-
-  get paginatedAssessments(): Assessment[] {
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    return this.filteredAssessments.slice(start, start + this.itemsPerPage);
-  }
-
-  get totalPages(): number {
-    return Math.ceil(this.filteredAssessments.length / this.itemsPerPage);
-  }
-
-  get certificatesCount(): number {
-    return this.assessments.filter(a => a.certificate).length;
-  }
-
-  calculateMetrics() {
-    this.performanceMetrics = {
-      totalAssessments: this.assessments.length,
-      averageScore: this.assessments.reduce((acc, curr) => acc + curr.score, 0) / this.assessments.length,
-      highestScore: Math.max(...this.assessments.map(a => a.score)),
-      lowestScore: Math.min(...this.assessments.map(a => a.score)),
-      coursePerformance: this.calculateCoursePerformance()
-    };
-  }
-
-  filterAssessments() {
-    let filtered = [...this.assessments];
-
-    // Apply search filter
-    if (this.searchQuery) {
-      const query = this.searchQuery.toLowerCase();
-      filtered = filtered.filter(a => 
-        a.title.toLowerCase().includes(query) ||
-        a.courseCode.toLowerCase().includes(query) ||
-        a.courseName.toLowerCase().includes(query)
-      );
+    else if (assessment.status === 'scheduled' || assessment.status === 'ongoing') {
+    window.scrollTo({top: 0, behavior: 'smooth'});
+      this.router.navigate(['/student/confirmation'], {
+        state: { assessmentId: assessment.id }
+      });
     }
-
-    // Apply tab filter
-    if (this.selectedTabIndex > 0) {
-      const tabFilter = this.tabs[this.selectedTabIndex].toLowerCase();
-      if (tabFilter === 'starred') {
-        filtered = filtered.filter(a => a.starred);
-      } else {
-        filtered = filtered.filter(a => a.type.toLowerCase() === tabFilter.slice(0, -1));
-      }
-    }
-
-    // Apply sort
-    filtered.sort((a, b) => {
-      let comparison = 0;
-      switch (this.sortBy) {
-        case 'date':
-          comparison = new Date(b.date).getTime() - new Date(a.date).getTime();
-          break;
-        case 'score':
-          comparison = b.score - a.score;
-          break;
-        case 'title':
-          comparison = a.title.localeCompare(b.title);
-          break;
-        case 'course':
-          comparison = a.courseCode.localeCompare(b.courseCode);
-          break;
-      }
-      return this.sortOrder === 'asc' ? -comparison : comparison;
-    });
-
-    this.filteredAssessments = filtered;
-    this.currentPage = 1; // Reset to first page when filters change
-  }
-
-  // Event Handlers
-  onSearchChange() {
-    this.currentPage = 1;
-    this.filterAssessments();
-  }
-
-  onTabChange(index: number) {
-    this.selectedTabIndex = index;
-    this.currentPage = 1;
-    this.filterAssessments();
-  }
-
-  setSortBy(value: string) {
-    if (this.sortBy === value) {
-      this.toggleSortOrder();
+    else if(assessment.type === 'Assessment' || assessment.type === 'Public Assessment') {
+      console.log('Navigating to result for:', assessment.id);
+       window.scrollTo({top: 0, behavior: 'smooth'});
+      this.router.navigate(['/student/assessment/result'], {
+        state: { assessmentId: assessment.id }
+      })
+    } else if (assessment.type === 'Mastery') {
+    window.scrollTo({top: 0, behavior: 'smooth'});
+      this.router.navigate(['/student/assessment/result/mastery'], {
+        state: { assessmentId: assessment.id }
+      })
     } else {
-      this.sortBy = value;
-    }
-    this.filterAssessments();
-  }
-
-  toggleSortOrder() {
-    this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
-    this.filterAssessments();
-  }
-
-  getSortIndicator(column: string): string {
-    if (this.sortBy === column) {
-      return this.sortOrder === 'desc' ? '↓' : '↑';
-    }
-    return '';
-  }
-
-  // Pagination Methods
-  nextPage() {
-    if (this.currentPage < this.totalPages) {
-      this.currentPage++;
+      this.router.navigate(['/student/dashboard'])
     }
   }
 
-  prevPage() {
-    if (this.currentPage > 1) {
-      this.currentPage--;
-    }
+  createNewAssessment() {
+    this.router.navigate(['/instructor/generate']);
   }
 
-  // Action Methods
-  toggleStarred(id: number) {
-    const assessment = this.assessments.find(a => a.id === id);
-    if (assessment) {
-      assessment.starred = !assessment.starred;
-      this.filterAssessments();
-    }
+  editAssessment(assessment: Assessment) {
+    this.router.navigate(['/instructor/edit', assessment.assessmentId]);
   }
 
-  openDetailsDialog(assessment: Assessment) {
-    console.log('Opening details for:', assessment);
-    // Implement dialog logic here
+  viewAssessmentDetails(assessment: Assessment) {
+    this.router.navigate(['/instructor/assessment', assessment.assessmentId]);
   }
 
-  private calculateCoursePerformance() {
-    const coursePerformance: PerformanceMetrics['coursePerformance'] = {};
-    
-    this.assessments.forEach(assessment => {
-      if (!coursePerformance[assessment.courseCode]) {
-        coursePerformance[assessment.courseCode] = {
-          courseName: assessment.courseName,
-          assessments: 0,
-          totalScore: 0,
-          averageScore: 0
-        };
+  duplicateAssessment(assessment: Assessment) {
+    // TODO: Implement duplication logic
+    console.log('Duplicating assessment:', assessment.assessmentId);
+  }
+
+  deleteAssessment(assessment: Assessment) {
+    // TODO: Implement deletion logic
+    console.log('Deleting assessment:', assessment.assessmentId);
+  }
+
+  addStudent() {
+    this.router.navigate(['instructor/students']);
+  }
+
+  setViewMode(mode: 'grid' | 'list') {
+    this.viewMode = mode;
+    localStorage.setItem('assessmentViewMode', mode);
+  }
+
+
+  //this function checks if the user has scrolled at the bottom then adds the loaded content
+  @HostListener('window:scroll', [])
+  onScroll() {
+    const scrollPosition = window.scrollY + window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+    if (scrollPosition >= documentHeight - 100) { // 100px threshold
+      if (this.pagination.currentPage < this.pagination.totalPages) {
+        this.onPageChange(this.pagination.currentPage + 1);
       }
-      
-      const course = coursePerformance[assessment.courseCode];
-      course.assessments++;
-      course.totalScore += assessment.score;
-      course.averageScore = course.totalScore / course.assessments;
-    });
-
-    return coursePerformance;
-  }
-
-  toggleSortMenu() {
-    this.showSortMenu = !this.showSortMenu;
+    }
   }
 }
