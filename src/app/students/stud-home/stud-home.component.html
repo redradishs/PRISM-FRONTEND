@@ -9,11 +9,11 @@
                         <div class="flex items-center">
                             <div class="hidden md:flex items-center mr-4">
                                 <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
-                                <button
+                                <button (click)="openJoinClassModal()"
                                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2">
-                                    Join Class
+                                    Join Class 
                                 </button>
-                                <button
+                                <button (click)="openJoinAssessmentModal()"
                                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
                                     Join Assessment
                                 </button>
@@ -205,7 +205,7 @@
                                     <div *ngSwitchCase="'upcoming'" class="space-y-4">
                                         <p *ngIf="upcomingAssessments.length === 0" class="text-center text-gray-500">No
                                             upcoming assessments</p>
-                                        <div *ngFor="let assessment of upcomingAssessments" class="ongoing-card">
+                                        <div (click)="goToConfirmation(assessment)" *ngFor="let assessment of upcomingAssessments" class="ongoing-card">
                                             <div class="upcoming-card">
                                                 <div class="ongoing-title-section">
                                                     <div class="ongoing-icon" [ngClass]="{

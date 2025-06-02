@@ -101,6 +101,33 @@ export class StudentService {
     return this.http.get(`${this.apiUrl}/assessments/${studentId}/search?q=${query}&page=${page}&limit=${limit}`);
   }
   
+
+  //CLASSES PAGE
+
+  classesStats(studentId: string) {
+    return this.http.get(`${this.apiUrl}/classes/${studentId}/stats`);
+  }
+
+  joinedClasses(studentId: string, page: number, limit: number) {
+    return this.http.get(`${this.apiUrl}/joinedClasses/${studentId}/?page=${page}&limit=${limit}`);
+  }
+
+  pendingApplications(studentId: string, page: number, limit: number) {
+    return this.http.get(`${this.apiUrl}/pendingApplications/${studentId}/?page=${page}&limit=${limit}`);
+  }
+
+  cancelApplication(data: any) {
+    return this.http.post(`${this.apiUrl}/cancelApplication`, data);
+  }
+
+  exitClass(data: any) {
+    return this.http.post(`${this.apiUrl}/exitClass`, data);
+  }
+
+  
+
+  
+
   
 
 

@@ -139,6 +139,13 @@ export class StudHomeComponent implements OnInit {
       });
     }
   }
+  
+  goToConfirmation(assessment: any) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.router.navigate(['/student/confirmation'], {
+      state: { assessmentId: assessment.assignedAssessmentId }
+    });
+  }
 
   getDueThisWeek(assessments: any[]): number {
     const now = new Date();
