@@ -70,7 +70,7 @@
                 <div class="demo-selector-section">
                     <div class="demo-selector-container">
                         <div class="demo-select-wrapper">
-                            <select [(ngModel)]="selectedClass" (ngModelChange)="onClassSelect()" class="demo-select">
+                            <select [(ngModel)]="selectedClass" (ngModelChange)="onClassSelect()" (change)="setSelectedClass(selectedClass)" class="demo-select">
                                 <option *ngFor="let class of classes" [ngValue]="class">
                                     {{class.className}} - {{class.classCode}}
                                 </option>
@@ -198,7 +198,7 @@
                                                 </div>
                                             </td>
                                             <td class="demo-table-cell">{{student.email.split('@')[0]}}</td>
-                                            <td class="demo-table-cell">{{student.block ? 'Block ' + student.block :
+                                            <td class="demo-table-cell">{{student.block ? 'Block ' + student.block.toUpperCase() :
                                                 'N/A'}}</td>
                                             <td class="demo-table-cell">
                                                 <span class="performance-badge" 

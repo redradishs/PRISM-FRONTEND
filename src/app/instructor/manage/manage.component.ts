@@ -124,7 +124,6 @@ export class ManageComponent implements OnInit {
   ) {
     this.titleService.setTitle('PRISM | Manage');
     
-    // Setup search debounce
     this.searchSubject.pipe(
       debounceTime(300),
       distinctUntilChanged()
@@ -140,7 +139,6 @@ export class ManageComponent implements OnInit {
   ngOnInit() {
     this.auth.getCurrentUser().subscribe((user) => {
       if(user) {
-        console.log('User ID:', user.id);
         this.userId = user.id;
         this.username = user.name;
         this.profile = user.profilePicture;
@@ -402,9 +400,7 @@ export class ManageComponent implements OnInit {
 
   gotoResult(assessment: any) {
     window.scrollTo({top: 0, behavior: 'smooth'});
-    console.log('Navigating to result for:', assessment.type);
     if(assessment.type === 'Assessment' || assessment.type === 'Public Assessment') {
-      console.log('Navigating to result for:', assessment.id);
       this.router.navigate(['/instructor/result'], {
         state: { assessmentId: assessment.id }
       })

@@ -34,6 +34,9 @@ export interface Assessment {
 export class StudentAssessmentsComponent implements OnInit {
   isMobile = window.innerWidth < 768;
   @HostListener('window:resize')
+  onResize() {
+    this.isMobile = window.innerWidth < 768;
+  }
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
 
   activeTab: 'all' | 'completed' | 'pending' = 'all';
@@ -96,6 +99,12 @@ export class StudentAssessmentsComponent implements OnInit {
     this.filterAssessments();
   }
 
+  goToAssessment(assessment: any) {
+    this.router.navigate(['/instructor/result'], {
+      state: { assessmentId: assessment._id }
+    });
+  }
+
   filterAssessments() {
     // Create a combined filtered list
     const filtered = this.assessments.filter(assessment => {
@@ -120,11 +129,6 @@ export class StudentAssessmentsComponent implements OnInit {
       this.sidebar.toggleSidebar();
     }
   }
-
-  onResize() {
-    this.isMobile = window.innerWidth < 768;
-  }
-
   studentData() {
     this.api.studentStatsData(this.userId, this.classCode, this.studentId).subscribe({
       next: (resp: any) => {

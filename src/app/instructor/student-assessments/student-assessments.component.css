@@ -559,14 +559,18 @@ button.active {
 }
 
 .assessment-item {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: start;
-    gap: 1.5rem;
-    padding: 1.25rem;
-    background-color: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.5rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  gap: 1.5rem;
+  padding: 1.25rem;
+  background-color: white;
+  border-left: 0.30rem solid #4f46e5 !important;
+  border-right: 0.30rem solid #4f46e5 !important;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  animation: slideInRightFade 1.4s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  will-change: opacity, transform;
 }
 
 /* Main Assessment Info */
@@ -576,21 +580,51 @@ button.active {
     align-items: flex-start;
 }
 
+
 /* Status */
 .assessment-status .status-dot {
-    width: 0.75rem;
-    height: 0.75rem;
-    border-radius: 50%;
-    margin-top: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 20%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  transition: width 0.2s, height 0.2s, font-size 0.2s;
 }
 
 .status-dot.passed {
-    background-color: #22c55e;
+  background-color: #dcfce7;   /* soft green */
+  color: #16a34a;              /* strong green for icon */
+}
+
+.status-dot.failed {
+  background-color: #fee2e2;   /* soft red */
+  color: #dc2626e2;              /* strong red for icon */
 }
 
 .status-dot.pending {
-    background-color: #f59e0b;
+  background-color: #fef9c3;   /* soft yellow */
+  color: #eab308;              /* strong yellow for icon */
 }
+
+@media (min-width: 640px) {
+  .assessment-status .status-dot {
+    width: 2.7rem;
+    height: 2.7rem;
+    font-size: 1.2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .assessment-status .status-dot {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.4rem;
+  }
+}
+
 
 /* Assessment Info */
 .assessment-info {
@@ -608,7 +642,7 @@ button.active {
 
 .assessment-title {
     font-size: 1rem;
-    font-weight: 500;
+    font-weight: 600;
     color: #111827;
     margin: 0;
 }
@@ -626,8 +660,8 @@ button.active {
 }
 
 .status-badge.failed {
-    background-color: #f5cbcb;
-    color: #c02d2d;
+  background-color: #fee2e2;   /* soft red */
+  color: #dc2626e2;   
 }
 
 .status-badge.pending {
@@ -650,38 +684,61 @@ button.active {
 }
 
 .detail-group {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .detail-group .value {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #111827;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #020202bf !important;
 }
 
 .detail-group .label {
-    font-size: 0.75rem;
-    color: #6b7280;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
 }
 
 /* View Button */
 .view-button {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 0;
-    background: none;
-    border: none;
-    color: #111827;
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.2rem;
+  background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08);
+  cursor: pointer;
+  transition: 
+    background 0.2s,
+    box-shadow 0.2s,
+    transform 0.1s,
+    color 0.2s;
+  outline: none;
 }
 
-.view-button:hover {
-    color: #2563eb;
+.view-button i {
+  font-size: 1.1rem;
+}
+
+.view-button:hover,
+.view-button:focus {
+  background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.18);
+  transform: translateY(-2px);
+}
+
+.view-button:active {
+  background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
+  box-shadow: 0 1px 4px rgba(99, 102, 241, 0.10);
+  transform: scale(0.98);
 }
 
 /* Desktop Layout */
@@ -704,6 +761,21 @@ button.active {
         font-weight: 600;
         color: #535a6b;
     }
+}
+
+@media (max-width: 640px) {
+  .detail-group .value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #535a6b;
+}
+
+.assessment-details {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 }
 
 .badge-container {
@@ -741,5 +813,28 @@ button.active {
     border-radius: 0.25rem;
     font-size: 0.875rem;
     font-weight: 500;
+}
+
+
+@keyframes slideUpFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRightFade {
+  from {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 

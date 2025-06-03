@@ -90,11 +90,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.auth.getCurrentUser().subscribe((user) => {
       if(user) {
-        console.log('User ID:', user.id);
         this.userId = user.id;
         this.username = user.name;
         this.profile = user.profilePicture;
-        console.log('Profile:', this.profile);
         this.getTotalStudents(this.userId);
         this.getActiveAssessments(this.userId);
         this.getTotalClases(this.userId);
@@ -124,10 +122,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   getTotalStudents(userId: string) {
     this.api.getInstructorTotalStudents(this.userId).subscribe((resp: any) => {
       try {
-        console.log('Total students:', resp.data);
         if (resp.data != null || 0) {
           this.totalStudents = resp.data;
-          console.log('Total students:', this.totalStudents);
         } else {
           this.totalStudents = 0;
         }
@@ -141,7 +137,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   getActiveAssessments(userId: string) {
     this.api.getActiveAssessments(this.userId).subscribe((resp: any) => {
       try {
-        console.log('Active assessments:', resp.data);
         this.totalActiveAssessments = resp.data;
       } catch (error) {
         console.error('Error getting active assessments:', error);
@@ -152,7 +147,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   getTotalClases(userId: string) {
     this.api.getTotalClassess(this.userId).subscribe((resp: any) => {
       try {
-        console.log('Total classes:', resp.data);
         this.totalClasses = resp.data;
         if(this.totalClasses > 0){
           this.getClassesCharts();
@@ -169,7 +163,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.api.getStudentPerformance(id).subscribe({
       next: (resp: any) => {
         this.topPerformingStudents = resp.data;
-        console.log('Top performing students:', this.topPerformingStudents);
       },
       error: (error) => {
         console.error('Error getting student performance:', error);
@@ -213,8 +206,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   navigateToStudentClass(event: Event, studentId: string, classCode: string) {
     event.stopPropagation();
-    
-    console.log('Navigating to student class:', studentId, classCode);
     this.router.navigate(['instructor/students/assessments'], {
       state: {studentId: studentId, classCode: classCode}
     });
@@ -224,9 +215,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.api.getClassesCharts(this.userId).subscribe({
       next: (resp: any) => {
         this.charts = resp.data;
-        console.log('Class charts:', this.charts);
-        
-        // Update charts with real data
+
         this.updateBarChartData();
         this.updatePieChartData();
       },
@@ -318,8 +307,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.totalOngoingAssessments = resp.data.total;
         this.remainingOngoingAssessments = resp.data.left;
         this.dueThisWeek = this.getDueThisWeek(this.onGoingAssessments);
-        console.log('On Going Assessments:', this.onGoingAssessments);
-        console.log('Due This Week:', this.dueThisWeek);
       } catch (error) {
         console.error('Error getting ongoing assessments:', error);
       }
@@ -372,9 +359,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
+  //if public assessment is fetched, return 0 as if it has no students yet
   getAssessmentTotalStudents(assessment: any): number {
     if (assessment.type === 'Public Assessment') {
-      return 0; // Public assessments don't have students yet
+      return 0;
     }
     return assessment.classes.reduce((total: number, classData: any) => total + classData.totalStudents, 0);
   }
@@ -396,7 +384,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   navigateToClass(classCode: string) {
-    console.log('Navigating to class:', classCode);
     this.router.navigate(['instructor/students'], {
       state: { selectedClassCode: classCode }
     });

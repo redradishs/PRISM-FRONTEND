@@ -20,13 +20,16 @@
                             </div>
                             <div *ngIf="!isMobile" class="flex items-center">
                                 <div class="relative mr-3">
-                                    <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                                        <img *ngIf="profile" [src]="profile" alt="Profile" class="w-full h-full object-cover">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profile" [src]="profile" alt="Profile"
+                                            class="w-full h-full object-cover">
                                         <span *ngIf="!profile" class="text-base md:text-lg font-medium text-gray-600">
                                             {{username.charAt(0) || 'A'}}
                                         </span>
                                     </div>
-                                    <div class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
                                     </div>
                                 </div>
                                 <div class="text-left">
@@ -52,13 +55,9 @@
                         <!-- Left section with avatar and info -->
                         <div *ngIf="studentStats" class="profile-section">
                             <div class="avatar">
-                                <img
-                                    *ngIf="studentStats.student?.profilePicture && !imageLoadFailed"
-                                    [src]="studentStats.student?.profilePicture"
-                                    alt="Profile"
-                                    class="avatar-img"
-                                    (error)="imageLoadFailed = true"
-                                >
+                                <img *ngIf="studentStats.student?.profilePicture && !imageLoadFailed"
+                                    [src]="studentStats.student?.profilePicture" alt="Profile" class="avatar-img"
+                                    (error)="imageLoadFailed = true">
                                 <span *ngIf="!studentStats.student?.profilePicture || imageLoadFailed">
                                     {{ getNameInitials(studentStats.student?.name) }}
                                 </span>
@@ -69,8 +68,8 @@
                                 <div class="student-badges">
                                     <span class="badge">ID: {{studentStats.student?.email.split('@')[0]}}</span>
                                     <span class="badge" *ngIf="studentStats.student?.block">Block
-                                        {{studentStats.student?.block}}</span>
-                                    <span class="badge" *ngIf="studentStats.student?.year ">Year
+                                        {{studentStats.student?.block.toUpperCase()}}</span>
+                                    <span class="badge" *ngIf="studentStats.student?.year ">Year Level:
                                         {{studentStats.student?.year }}</span>
                                 </div>
                             </div>
@@ -152,7 +151,17 @@
                             <div (click)="viewResponse(c.assignedAssessmentId)"
                                 *ngFor="let c of filteredCompletedAssessments" class="assessment-item">
                                 <div class="assessment-status">
-                                    <div class="status-dot passed"></div>
+                                    <ng-container *ngIf="c.passed === true || c.passed === 'true'; else failedStatus">
+                                        <div class="status-dot passed">
+                                            <i class="fas fa-check-circle status-icon passed"></i>
+                                        </div>
+                                    </ng-container>
+                                    <ng-template #failedStatus>
+                                        <div class="status-dot failed">
+                                            <i class="fas fa-times-circle status-icon failed"></i>
+                                        </div>
+
+                                    </ng-template>
                                 </div>
                                 <div class="assessment-info">
                                     <div class="assessment-header">
@@ -164,7 +173,8 @@
                                             <span class="status-badge" [ngClass]="{
                                                 'passed': c.passed === true || c.passed === 'true',
                                                 'failed': c.passed === false || c.passed === 'false'
-                                            }">{{c.passed === true || c.passed === 'true' ? 'Passed' : 'Failed'}}</span>
+                                            }">{{c.passed === true || c.passed === 'true' ? 'Passed' :
+                                                'Failed'}}</span>
                                         </div>
                                     </div>
                                     <p class="assessment-subject">{{c.category.charAt(0).toUpperCase() +
@@ -172,15 +182,15 @@
                                 </div>
                                 <div class="assessment-details">
                                     <div class="detail-group">
-                                        <span class="label">Score</span>
+                                        <span class="label">SCORE</span>
                                         <span class="value">{{c.score}}/{{c.totalPoints}}</span>
                                     </div>
                                     <div class="detail-group">
-                                        <span class="label">Rank</span>
+                                        <span class="label">RANK</span>
                                         <span class="value">{{c.ranking}}</span>
                                     </div>
                                     <div class="detail-group">
-                                        <span class="label">Time Spent</span>
+                                        <span class="label">TIME SPENT</span>
                                         <span class="value">{{formatTimeSpent(c.secondSpent)}}</span>
                                     </div>
                                     <button class="view-button">
@@ -205,9 +215,12 @@
                         </div>
                         <div class="assessment-items">
                             <!-- First Pending Assessment -->
-                            <div *ngFor="let u of filteredUpcomingAssessments" class="assessment-item">
+                            <div (click)="goToAssessment(u)" *ngFor="let u of filteredUpcomingAssessments"
+                                class="assessment-item">
                                 <div class="assessment-status">
-                                    <div class="status-dot pending"></div>
+                                    <div class="status-dot pending">
+                                        <i class="fas fa-clock status-icon pending"></i>
+                                    </div>
                                 </div>
                                 <div class="assessment-info">
                                     <div class="assessment-header">
@@ -231,7 +244,7 @@
                                 </div>
                                 <div class="assessment-details">
                                     <div class="detail-group">
-                                        <span class="value">{{u.dueDate | date: 'M/d/yyyy h:mm a'}}</span>
+                                        <span class="value">{{u.dueDate | date: 'MMMM d, yyyy h:mm a'}}</span>
                                         <span class="label">Due Date</span>
                                     </div>
                                     <div class="detail-group">

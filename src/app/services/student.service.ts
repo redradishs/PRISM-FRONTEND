@@ -124,6 +124,25 @@ export class StudentService {
     return this.http.post(`${this.apiUrl}/exitClass`, data);
   }
 
+  searchClasses(studentId: string, q: string, page: number, limit: number) {
+    return this.http.get(`${this.apiUrl}/search/classes/${studentId}/?q=${q}&page=${page}&limit=${limit}`);
+  }
+
+
+  //CLASS DETAILS PAGE
+
+  historyAll(instructorId: string, classCode: string, studentId: string) {
+    return this.http.get(`${this.apiUrl}/profile/${instructorId}/${classCode}/${studentId}/data`);
+  }
+
+  historyCompleted(instructorId: string, classCode: string, studentId: string) {
+    return this.http.get(`${this.apiUrl}/history/specific/completed/${instructorId}/${classCode}/${studentId}`);
+  }
+
+  historyUpcoming(instructorId: string, classCode: string, studentId: string) {
+    return this.http.get(`${this.apiUrl}/history/specific/upcoming/${instructorId}/${classCode}/${studentId}`);
+  }
+
   
 
   

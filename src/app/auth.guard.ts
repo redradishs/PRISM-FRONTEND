@@ -35,8 +35,12 @@ export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: R
   Swal.fire({
     title: 'Access Denied',
     text: `You don't have the required permissions to access this area`,
-    icon: 'error',
-    confirmButtonText: 'OK',
+    icon: 'warning',
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 1000,
+    timerProgressBar: true,
   }).then(() => {
     switch (userRole) {
       case 'student':

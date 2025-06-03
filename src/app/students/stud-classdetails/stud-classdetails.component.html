@@ -1,150 +1,288 @@
-<div class="min-h-screen bg-gray-50">
-    <div class="flex">
-        <app-sidebar [class.mobile-sidebar]="isMobile"></app-sidebar>
-        <div class="flex-1 ml-0 md:ml-20 max-w-full overflow-x-hidden">
-            <header class="bg-white shadow-sm">
-                <div class="max-w-7xl mx-auto py-2 md:py-4 px-3 md:px-4 sm:px-6 lg:px-8">
+<div class="bg-gray-50 min-h-screen w-full overflow-x-hidden">
+    <div class="flex w-full">
+        <app-sidebar></app-sidebar>
+        <div class="flex-1 ml-0 md:ml-20 w-full">
+            <header class="bg-white shadow-sm fixed top-0 right-0 w-full md:w-[calc(100%-80px)] z-40">
+                <div class="w-full px-4 md:px-6 py-3 md:py-4">
                     <div class="flex items-center justify-between">
-                        <h1 class="text-xl md:text-2xl font-semibold text-gray-900">Classes</h1>
-                        <button *ngIf="isMobile" (click)="toggleSidebar()"
-                            class="p-1.5 md:p-2 rounded-md hover:bg-gray-100 transition-colors">
-                            <i class="fas fa-bars w-5 md:w-6 h-5 md:h-6"></i>
-                        </button>
+                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">Class Overview</h1>
+                        <div class="flex items-center">
+                            <div class="hidden md:flex items-center mr-4">
+                                <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
+                                <button (click)="setActiveTab('completed')"
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2">
+                                    Completed
+                                </button>
+                                <button (click)="setActiveTab('pending')"
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
+                                    Pending
+                                </button>
+                            </div>
+                            <div *ngIf="!isMobile" class="flex items-center">
+                                <div class="relative mr-3">
+                                    <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profile" [src]="profile" alt="Profile" class="w-full h-full object-cover">
+                                        <span *ngIf="!profile" class="text-base md:text-lg font-medium text-gray-600">
+                                            {{username.charAt(0) || 'A'}}
+                                        </span>
+                                    </div>
+                                    <div class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    </div>
+                                </div>
+                                <div class="text-left">
+                                    <div class="text-sm font-medium text-gray-900">{{username}}</div>
+                                    <div class="text-xs text-gray-500">Instructor</div>
+                                </div>
+                            </div>
+                            <button *ngIf="isMobile" (click)="toggleSidebar()"
+                                class="p-2 rounded-md hover:bg-gray-100 transition-colors">
+                                <i class="fas fa-bars w-5 h-5 text-gray-600"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </header>
 
-            <main class="main-content">
-                <div class="content-wrapper">
+            <div class="h-[65px] md:h-[68px] w-full"></div>
 
-                    <div class="class-header">
-                        <div class="class-info">
-                            <h1>{{classData.name}}</h1>
-                            <p>{{classData.code}} • {{classData.schedule}}</p>
+            <div class="p-4 md:p-6 lg:p-8 w-full">
+                <!-- Student Info Card -->
+
+                <div class="aukona">
+                    <div class="hawtdog">
+                      <div class="bubble1"></div>
+                      <div class="bubble2"></div>
+                      <div class="content">
+                        <h3>Class Overview</h3>
+                        <p class="welcome-text">Welcome to <strong>{{studentStats.classDetails?.className}} - {{studentStats.classDetails?.classCode}}</strong>. Track your assessments and performance here.</p>
+                
+                        <div class="instructor">
+                          <img [src]="studentStats.instructor?.profilePicture" alt="Instructor" />
+                          <div>
+                            <p>Instructor</p>
+                            <p style="font-weight: 600; font-size: 1rem; margin: 0;">{{studentStats.instructor?.name}}</p>
+                          </div>
                         </div>
-                        <div class="action-buttons">
-                            <button class="btn-secondary">Contact Instructor</button>
-                            <button class="btn-primary">View Syllabus</button>
+                
+                        <div class="grid">
+                          <div class="statlab">
+                            <p class="label">Students Enrolled</p>
+                            <p class="value">{{studentStats.classDetails?.totalStudents}}</p>
+                          </div>
+                          <div class="statlab">
+                            <p class="label">Your Rank</p>
+                            <p class="value">#{{studentStats.classDetails?.ranking}} <span style="font-size: 0.875rem;">of {{studentStats.classDetails?.totalStudents}}</span></p>
+                          </div>
                         </div>
+                      </div>
                     </div>
-
-                    <div class="details-card">
-                        <div class="details-grid">
-                            <div class="detail-item">
-                                <span class="detail-label">Instructor</span>
-                                <span class="detail-value">{{classData.instructor}}</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Schedule</span>
-                                <span class="detail-value">{{classData.schedule}}</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Location</span>
-                                <span class="detail-value">{{classData.location}}</span>
-                            </div>
+                
+                    <div class="gengengeng">
+                
+                      <div class="section">
+                        <div class="holder">
+                          <h3 class="r-text">Assessments</h3>
+                          <svg class="icon" fill="none" stroke="#7c3aed" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <line x1="16" y1="13" x2="8" y2="13" />
+                            <line x1="16" y1="17" x2="8" y2="17" />
+                            <line x1="10" y1="9" x2="8" y2="9" />
+                          </svg>
                         </div>
+                        <div>
+                          <div style="display: flex; justify-content: space-between; font-size: 0.875rem; color: #4b5563;">
+                            <span>Completed</span>
+                            <span>{{studentStats.assessmentStats?.completed}}</span>
+                          </div>
+                          <div class="progress-bar">
+                            <div class="fill"></div>
+                          </div>
+                          <p class="text-xs">{{studentStats.assessmentStats?.remaining}} assessments remaining</p>
+                        </div>
+                      </div>
+                
+                      <div class="section">
+                        <div class="holder">
+                          <h3 class="r-text">Performance</h3>
+                          <svg class="icon" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                            <polyline points="17 6 23 6 23 12" />
+                          </svg>
+                        </div>
+                        <div class="text-3xl">{{studentStats.assessmentStats?.performancePercent}}%</div>
+                        <div class="score-grid">
+                          <div>
+                            <p class="label">Average Score</p>
+                            <p class="value">{{round(studentStats.assessmentStats?.averageScore)}}%</p>
+                          </div>
+                          <div>
+                            <p class="label">Highest Score</p>
+                            <p class="value">{{round(studentStats.assessmentStats?.highestScore)}}%</p>
+                          </div>
+                        </div>
+                      </div>
+                
                     </div>
+                
+                  </div>
 
-                    <div class="tabs-header">
-                        <button [class.active]="activeTab === 'assessments'" (click)="setActiveTab('assessments')"
+
+                <!-- Assessment Tabs and Search -->
+                <div class="assessment-controls">
+                    <div class="tab-container">
+                        <button (click)="setActiveTab('all')" [class.active-tab]="activeTab === 'all'"
                             class="tab-button">
-                            Assessments
+                            <i class="fas fa-file-alt"></i>
+                            <span>All</span>
                         </button>
-                        <button [class.active]="activeTab === 'announcements'" (click)="setActiveTab('announcements')"
+                        <button (click)="setActiveTab('completed')" [class.active-tab]="activeTab === 'completed'"
                             class="tab-button">
-                            Announcements
+                            <i class="fas fa-check"></i>
+                            <span>Completed</span>
                         </button>
-                        <button [class.active]="activeTab === 'resources'" (click)="setActiveTab('resources')"
+                        <button (click)="setActiveTab('pending')" [class.active-tab]="activeTab === 'pending'"
                             class="tab-button">
-                            Resources
+                            <i class="fas fa-clock"></i>
+                            <span>Pending</span>
                         </button>
                     </div>
-
-                    <div *ngIf="activeTab === 'announcements'" class="content-card">
-                        <div class="card-header">
-                            <h2>Announcements</h2>
-                            <p>Important updates from your instructor</p>
-                        </div>
-                        <div class="announcements-list">
-                            <div *ngFor="let announcement of classData.announcements" class="announcement-item">
-                                <div class="announcement-header">
-                                    <h3>{{announcement.title}}</h3>
-                                    <span>{{announcement.date}}</span>
-                                </div>
-                                <p>{{announcement.content}}</p>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div *ngIf="activeTab === 'assessments'" class="content-card">
-                        <div class="card-header">
-                            <h2>Assessments</h2>
-                            <p>Track your progress on quizzes, assignments, and exams</p>
-                        </div>
-                        <table class="assessment-table">
-                            <thead>
-                                <tr>
-                                    <th>Assessment</th>
-                                    <th>Due Date</th>
-                                    <th>Status</th>
-                                    <th class="text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let assessment of classData.assessments">
-                                    <td>{{assessment.title}}</td>
-                                    <td>{{assessment.dueDate}}</td>
-                                    <td>
-                                        <span class="status-badge" [class]="getStatusClass(assessment.status)">
-                                            {{assessment.status}}
-                                        </span>
-                                    </td>
-                                    <td class="text-right">
-                                        <button class="btn-secondary btn-sm">View</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div *ngIf="activeTab === 'resources'" class="content-card">
-                        <div class="card-header">
-                            <h2>Resources</h2>
-                            <p>Access lecture materials, assignments, and additional resources</p>
-                        </div>
-                        <table class="resource-table">
-                            <thead>
-                                <tr>
-                                    <th>Title</th>
-                                    <th>Type</th>
-                                    <th>Date Added</th>
-                                    <th class="text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let resource of classData.resources">
-                                    <td>{{resource.title}}</td>
-                                    <td>
-                                        <span class="resource-badge" [class]="getResourceTypeClass(resource.type)">
-                                            {{resource.type}}
-                                        </span>
-                                    </td>
-                                    <td>{{resource.date}}</td>
-                                    <td class="text-right">
-                                        <button class="btn-secondary btn-sm">
-                                            <i class="fas fa-download mr-2"></i>
-                                            Download
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="search-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" [(ngModel)]="searchQuery" (input)="filterAssessments()"
+                            placeholder="Search assessments..." class="search-input">
                     </div>
                 </div>
-            </main>
+                <div class="assessment-lists">
 
+                    <div *ngIf="activeTab === 'all' || activeTab === 'completed'" class="assessment-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-check-circle"></i>
+                            Completed Assessments
+                        </h2>
+                        <div  *ngIf="completedAssessments.length === 0 || filteredCompletedAssessments.length === 0">
+                            <p class="text-center italic text-gray-600">The student hasn't completed any assessments
+                                yet.
+                            </p>
+                        </div>
+                        <div class="assessment-items">
+                            <div (click)="viewResponse(c.assignedAssessmentId)"
+                                *ngFor="let c of filteredCompletedAssessments" class="assessment-item">
+                                <div class="assessment-status">
+                                    <ng-container *ngIf="c.passed === true || c.passed === 'true'; else failedStatus">
+                                        <div class="status-dot passed">
+                                            <i class="fas fa-check-circle status-icon passed"></i>
+                                        </div>
+                                    </ng-container>
+                                    <ng-template #failedStatus>
+                                        <div class="status-dot failed">
+                                            <i class="fas fa-times-circle status-icon failed"></i>
+                                        </div>
+                                       
+                                    </ng-template>
+                                </div>
+                                <div class="assessment-info">
+                                    <div class="assessment-header">
+                                        <h3 class="assessment-title">{{c.title}}</h3>
+                                        <div class="badge-container">
+                                            <span class="assessment-type" [class]="'type-' + getAssessmentTypeColor(c)">
+                                                {{c.type}}
+                                            </span>
+                                            <span class="status-badge" [ngClass]="{
+                                                'passed': c.passed === true || c.passed === 'true',
+                                                'failed': c.passed === false || c.passed === 'false'
+                                            }">{{c.passed === true || c.passed === 'true' ? 'Passed' : 'Failed'}}</span>
+                                        </div>
+                                    </div>
+                                    <p class="assessment-subject">{{c.category.charAt(0).toUpperCase() +
+                                        c.category.slice(1)}}</p>
+                                </div>
+                                <div class="assessment-details">
+                                    <div class="detail-group">
+                                        <span class="label">SCORE</span>
+                                        <span class="value">{{c.score}}/{{c.totalPoints}}</span>
+                                    </div>
+                                    <div class="detail-group">
+                                        <span class="label">RANK</span>
+                                        <span class="value">{{c.ranking}} <span style="font-size: 0.875rem;"></span></span>
+                                    </div>
+                                    <div class="detail-group">
+                                        <span class="label">TIME SPENT</span>
+                                        <span class="value">{{formatTimeSpent(c.secondSpent)}}</span>
+                                    </div>
+                                    <button class="view-button">
+                                        <i class="fas fa-eye"></i>
+                                        View Results
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
+                    <!-- Pending Assessments -->
+                    <div *ngIf="activeTab === 'all' || activeTab === 'pending'" class="assessment-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-clock"></i>
+                            Pending Assessments
+                        </h2>
+                        <div *ngIf="(upcomingAssessments.length === 0 || filteredUpcomingAssessments.length === 0) && loaded">
+                            <p class="text-center italic text-gray-600">The student don't have any assigned assessment
+                                assign now.
+                            </p>
+                        </div>
+                        <div class="assessment-items">
+                            <!-- First Pending Assessment -->
+                            <div (click)="goToAssessment(u)" *ngFor="let u of filteredUpcomingAssessments" class="assessment-item">
+                                <div class="assessment-status">
+                                    <div class="status-dot pending">
+                                        <i class="fas fa-clock status-icon pending"></i>
+                                    </div>
+                                </div>
+                                <div class="assessment-info">
+                                    <div class="assessment-header">
+                                        <h3 class="assessment-title">{{u.title}}</h3>
+                                        <div class="badge-container">
+                                            <span class="assessment-type" [class]="'type-' + getAssessmentTypeColor(u)">
+                                                {{u.type}}
+                                            </span>
+                                            <span class="status-badge" [ngClass]="{
+                                              'pending': u.status === 'pending',
+                                              'ongoing': u.status === 'ongoing',
+                                              'scheduled': u.status === 'scheduled',
+                                              'completed': u.status === 'completed'
+                                            }">
+                                                {{u.status.charAt(0).toUpperCase() + u.status.slice(1)}}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <p class="assessment-subject">{{u.category.charAt(0).toUpperCase() +
+                                        u.category.slice(1)}}</p>
+                                </div>
+                                <div class="assessment-details">
+                                    <div class="detail-group">
+                                        <span class="value">{{u.dueDate | date: 'MMMM d, yyyy h:mm a'}}</span>
+                                        <span class="label">Due Date</span>
+                                    </div>
+                                    <div class="detail-group">
+                                        <span class="value">{{u.timeLimit}} minutes</span>
+                                        <span class="label">Time Limit</span>
+                                    </div>
+                                    <div class="detail-group" *ngIf="u.type === 'Public Assessment'">
+                                        <span class="value joining-code">Code: {{u.modeSettings?.joiningCode}}</span>
+                                        <span class="label">Joining Code</span>
+                                    </div>
+                                    <div class="detail-group">
+                                        <button class="view-button">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            View Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

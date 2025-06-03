@@ -1,3 +1,4 @@
+import "./chunk-GMRBXDFH.js";
 import {
   A,
   ALT,
@@ -26,12 +27,7 @@ import {
   coerceElement,
   coerceNumberProperty,
   hasModifierKey
-} from "./chunk-RU7Q3WS6.js";
-import {
-  BidiModule,
-  Directionality
-} from "./chunk-X3IAFX7C.js";
-import "./chunk-GMRBXDFH.js";
+} from "./chunk-R5SFYXNE.js";
 import {
   BasePortalOutlet,
   CdkPortalOutlet,
@@ -39,6 +35,10 @@ import {
   PortalModule,
   TemplatePortal
 } from "./chunk-FLCGVKEZ.js";
+import {
+  BidiModule,
+  Directionality
+} from "./chunk-X3IAFX7C.js";
 import "./chunk-TN7E7ZMF.js";
 import {
   DOCUMENT
@@ -90,12 +90,12 @@ import {
   ɵɵtemplate,
   ɵɵviewQuery
 } from "./chunk-S2WS76OP.js";
+import "./chunk-64UGZ4AE.js";
 import {
   defer,
   isObservable,
   merge
 } from "./chunk-BXL443VD.js";
-import "./chunk-64UGZ4AE.js";
 import {
   BehaviorSubject,
   Observable,

@@ -196,10 +196,16 @@ export class StudentsComponent implements OnInit {
     if (navigation?.extras?.state) {
       const state = navigation.extras.state as { selectedClassCode?: string };
       if (state.selectedClassCode) {
-        // Store the class code to select after classes are loaded
         this.initialClassCodeToSelect = state.selectedClassCode;
       }
     }
+
+    if(localStorage.getItem('classCode')){
+      this.initialClassCodeToSelect = localStorage.getItem('classCode');
+    } else {
+      this.selectedClass = this.classes[0];
+    }
+    
   }
   
 
@@ -215,6 +221,11 @@ export class StudentsComponent implements OnInit {
     this.loadOwnAssessments();
   }
 
+  setSelectedClass(selectedClass: any) {
+    this.selectedClass = selectedClass;
+    localStorage.setItem('classCode', selectedClass.classCode);
+  }
+
   getClasses(){
     this.isLoading = true;
     this.api.ownedClasses(this.userId).subscribe({
@@ -224,7 +235,6 @@ export class StudentsComponent implements OnInit {
         
         if (this.classes && this.classes.length > 0) {
           if (this.initialClassCodeToSelect) {
-            // Find and select the class with the matching code
             const classToSelect = this.classes.find(c => c.classCode === this.initialClassCodeToSelect);
             if (classToSelect) {
               this.selectedClass = classToSelect;
@@ -527,7 +537,6 @@ export class StudentsComponent implements OnInit {
 
   toggleCreateClassModal() {
     this.showCreateClassModal = !this.showCreateClassModal;
-    // Reset form when closing
     if (!this.showCreateClassModal) {
       this.newClass = {
         className: '',
@@ -543,14 +552,12 @@ export class StudentsComponent implements OnInit {
 
   toggleAddStudentModal() {
     this.showAddStudentModal = !this.showAddStudentModal;
-    // Reset form when closing
     if (!this.showAddStudentModal) {
       this.newStudentEmails = '';
       this.newStudentBlock = '';
     }
   }
 
-  // Fixed createClass() to include all properties
   createClass() {
     if (!this.newClass.className || !this.newClass.classCode) {
       return;
@@ -578,7 +585,6 @@ export class StudentsComponent implements OnInit {
     });
   }
 
-  // Completed addStudents() implementation
   addStudents() {
     if (!this.newStudentEmails || !this.selectedClass) {
       return;
@@ -693,7 +699,6 @@ export class StudentsComponent implements OnInit {
   }
 
   selectAssessment(assessment: any) {
-    // If clicking the same assessment, deselect it
     if (this.selectedAssessment?._id === assessment._id) {
       this.clearSelectedAssessment();
       return;
@@ -701,13 +706,11 @@ export class StudentsComponent implements OnInit {
     
     this.selectedAssessment = assessment;
     
-    // Update selection state in search results
     this.searchedAssessments = this.searchedAssessments.map(a => ({
       ...a,
       selected: a._id === assessment._id
     }));
     
-    // Find the exact matching assessment by ID in dropdown list
     this.selectedDropdownAssessment = this.ownAssessments.find(
       a => a._id === assessment._id
     ) || null;
@@ -956,9 +959,7 @@ export class StudentsComponent implements OnInit {
       return this.getCurrentDateTimeString();
     }
     
-    // Use start date as minimum for due date
     const startDate = new Date(this.assignmentDetails.startDate);
-    // Add at least 5 minutes to start date
     startDate.setMinutes(startDate.getMinutes() + 5);
     return startDate.toISOString().slice(0, 16);
   }
@@ -968,32 +969,26 @@ export class StudentsComponent implements OnInit {
     if (!this.selectedAssessment) return false;
     if (!this.assignmentDetails.startDate || !this.assignmentDetails.dueDate || !this.assignmentDetails.timeLimit) return false;
     
-    // Validate time limit is positive
     if (this.assignmentDetails.timeLimit <= 0) return false;
     
-    // Convert dates to compare
     const startDate = new Date(this.assignmentDetails.startDate);
     const dueDate = new Date(this.assignmentDetails.dueDate);
     const now = new Date();
     
-    // Check if start date is not in the past
     if (startDate < now) {
       this.dateError = "Start date cannot be in the past";
       return false;
     }
     
-    // Check if due date is after start date
     if (dueDate <= startDate) {
       this.dateError = "Due date must be after start date";
       return false;
     }
     
-    // Clear error if validation passes
     this.dateError = "";
     return true;
   }
 
-  // Clear selected assessment
   clearSelectedAssessment() {
     this.selectedAssessment = null;
     this.selectedDropdownAssessment = null;
@@ -1001,9 +996,7 @@ export class StudentsComponent implements OnInit {
 
   onTabChange(tab: 'search' | 'dropdown') {
     this.activeTab = tab;
-    // Clear selections when switching tabs
     this.clearSelectedAssessment();
-    // Clear search results when switching to dropdown
     if (tab === 'dropdown') {
       this.assessmentSearchQuery = '';
       this.searchedAssessments = [];

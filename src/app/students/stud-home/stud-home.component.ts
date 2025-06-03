@@ -31,6 +31,9 @@ import { PortalModule } from '@angular/cdk/portal';
 export class StudHomeComponent implements OnInit {
   isMobile = window.innerWidth < 768;
   @HostListener('window:resize')
+  onResize() {
+    this.isMobile = window.innerWidth < 768;
+  }
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
   activeTab = 'upcoming';
   userId: string = '';
@@ -376,7 +379,4 @@ export class StudHomeComponent implements OnInit {
     }
   }
 
-  onResize() {
-    this.isMobile = window.innerWidth < 768;
-  }
 }

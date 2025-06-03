@@ -23,11 +23,9 @@ export class SidebarComponent {
 
   constructor(private auth: AuthService, private router: Router){
     this.auth.getCurrentUser().subscribe((user) => {
-      console.log('User object in sidebar:', user);
       this.role = user?.role || '';
       this.username = user?.name || '';
       this.isCoordinator = user?.isCoordinator === 'yes';
-      console.log('Is coordinator:', this.isCoordinator);
       this.navItemSet();
     })
 

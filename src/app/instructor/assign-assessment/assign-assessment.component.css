@@ -129,7 +129,7 @@ html {
 
 /* Page Content Container */
 .page-content {
-    max-width: 1600px;
+    max-width: 2200px;
     margin: 0 auto;
     padding: 1rem 1.5rem;
     scroll-margin-top: 4rem;
@@ -399,7 +399,7 @@ html {
 }
 
 .filter-select {
-    width: 12rem;
+    width: 100%;
     padding: 0.5rem 0.75rem;
     border: 1px solid #d1d5db;
     border-radius: 0.5rem;
@@ -469,7 +469,7 @@ html {
     }
 
     .search-container {
-        max-width: 1400px;
+        max-width: 1800px;
         margin: 0 auto 2rem auto;
         padding: 0 1rem;
     }
@@ -2129,6 +2129,7 @@ input[type="radio"]:hover:not(:checked) {
     color: white;
     border-top-left-radius: 0.75rem;
     border-top-right-radius: 0.75rem;
+    max-width: 1800px;
     margin-bottom: 0;
     display: flex;
     align-items: center;
@@ -2167,6 +2168,7 @@ input[type="radio"]:hover:not(:checked) {
     border-bottom-right-radius: 0.75rem;
     margin-bottom: 2rem;
     width: 100%;
+    max-width: 1800px;
     box-sizing: border-box;
     overflow: hidden;
 }

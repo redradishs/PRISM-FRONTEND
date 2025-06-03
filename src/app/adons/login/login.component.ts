@@ -152,7 +152,6 @@ export class LoginComponent implements OnInit {
     const { password } = this.loginForm.value;
     const loginData = { email: fullEmail, password };
     
-    console.log('About to call login API with:', loginData);
 
     this.authService.userLogin(loginData).subscribe({
       next: (response: any) => {
@@ -191,6 +190,11 @@ export class LoginComponent implements OnInit {
           icon: 'success',
           confirmButtonText: 'OK',
           confirmButtonColor: '#1976D2',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
         });
 
         const redirectUrl = sessionStorage.getItem('redirectUrl');
@@ -242,7 +246,7 @@ export class LoginComponent implements OnInit {
         this.clicked = false;
       },
       complete: () => {
-        console.log('Login request completed');
+        console.log('Login request completed! Welcome to PRISM!');
       }
     });
   }
@@ -395,11 +399,16 @@ export class LoginComponent implements OnInit {
           const userRole = this.authService.getUserRole();
           
           Swal.fire({
-            title: 'Login Successful',
-            text: 'You have successfully logged in with Google!',
-            icon: 'success',
-            confirmButtonText: 'OK',
-            confirmButtonColor: '#1976D2',
+              title: 'Login Successful',
+              text: 'You have successfully logged in with Google!',
+              icon: 'success',
+              confirmButtonText: 'OK',
+              confirmButtonColor: '#1976D2',
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 2000,
+              timerProgressBar: true,
           });
 
           if(response.data.newUser) {

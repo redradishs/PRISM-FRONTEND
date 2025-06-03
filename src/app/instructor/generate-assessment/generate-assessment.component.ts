@@ -71,15 +71,15 @@ interface NewQuestion {
 })
 export class GenerateAssessmentComponent {isMobile = window.innerWidth < 768;
   @HostListener('window:resize')
+  onResize() {
+    this.isMobile = window.innerWidth < 768;
+  }
   @ViewChild(SidebarComponent)
   sidebar!: SidebarComponent;
   toggleSidebar() {
     if (this.sidebar) {
       this.sidebar.toggleSidebar();
     }
-  }
-  onResize() {
-    this.isMobile = window.innerWidth < 768;
   }
 
   assessmentData = {

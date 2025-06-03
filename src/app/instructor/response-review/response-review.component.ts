@@ -31,6 +31,9 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
 
   
   @HostListener('window:resize')
+  onResize() {
+    this.isMobile = window.innerWidth < 768;
+  }
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
 
   constructor(private auth: AuthService, private api: ApiService, private router: Router) {
@@ -104,10 +107,6 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
     if (this.sidebar) {
       this.sidebar.toggleSidebar();
     }
-  }
-
-  onResize() {
-    this.isMobile = window.innerWidth < 768;
   }
 
   toggleFeedbackEdit(): void {
