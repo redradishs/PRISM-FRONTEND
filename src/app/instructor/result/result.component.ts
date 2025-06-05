@@ -13,6 +13,7 @@ import * as ExcelJS from 'exceljs';
 interface Student {
   id: number;
   name: string;
+  profile: string;
   block: string;
   score: number;
   performance: string;
@@ -348,13 +349,10 @@ export class ResultComponent implements OnInit, OnDestroy {
   } 
 
   filterStudents() {
-    // Step 1: Filter students based on search term and selected status
     let filtered = this.allStudents.filter(student => {
-      // Check if status matches the filter (or if "all" is selected)
       const statusMatch = this.selectedStatus === 'all' || 
                          student.status.toLowerCase() === this.selectedStatus;
 
-      // Check if name or block matches the search term
       const searchMatch = !this.searchTerm ||
                          student.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
                          (student.block && student.block.toLowerCase().includes(this.searchTerm.toLowerCase()));
@@ -362,7 +360,6 @@ export class ResultComponent implements OnInit, OnDestroy {
       return statusMatch && searchMatch;
     });
 
-    // Step 2: Sort the filtered students
     filtered.sort((a, b) => {
       // Convert status to lowercase to make comparisons easier
       const statusA = a.status.toLowerCase();

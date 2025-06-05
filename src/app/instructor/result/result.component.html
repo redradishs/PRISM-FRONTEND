@@ -20,13 +20,16 @@
                             </div>
                             <div *ngIf="!isMobile" class="flex items-center">
                                 <div class="relative mr-3">
-                                    <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                                        <img *ngIf="profile" [src]="profile" alt="Profile" class="w-full h-full object-cover">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profile" [src]="profile" alt="Profile"
+                                            class="w-full h-full object-cover">
                                         <span *ngIf="!profile" class="text-base md:text-lg font-medium text-gray-600">
                                             {{username.charAt(0) || 'A'}}
                                         </span>
                                     </div>
-                                    <div class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
                                     </div>
                                 </div>
                                 <div class="text-left">
@@ -121,14 +124,13 @@
                             <h2>PRISM - INSIGHTS</h2>
                         </div>
                         <ul class="insights-list">
-                            <li *ngFor="let insight of insights; let i = index" 
-                                [class.expanded]="expandedIndex === i"
+                            <li *ngFor="let insight of insights; let i = index" [class.expanded]="expandedIndex === i"
                                 (click)="toggleInsight(i)">
                                 <span class="bullet">{{i < 5 ? '•' : '◦' }}</span>
-                                <div class="content">
-                                    <span class="primary">{{insight.primary}}</span>
-                                    <span class="secondary">{{insight.secondary}}</span>
-                                </div>
+                                        <div class="content">
+                                            <span class="primary">{{insight.primary}}</span>
+                                            <span class="secondary">{{insight.secondary}}</span>
+                                        </div>
                             </li>
                         </ul>
                     </div>
@@ -220,23 +222,28 @@
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
-                                    <tr (click)="assessmentDetails(student)"
-                                        *ngFor="let student of filteredStudents"
+                                    <tr (click)="assessmentDetails(student)" *ngFor="let student of filteredStudents"
                                         [class.hover:bg-green-50]="student.status?.toLowerCase() === 'submitted'"
                                         [class.cursor-pointer]="student.status?.toLowerCase() === 'submitted'"
                                         [class.hover:bg-red-50]="student.status?.toLowerCase() !== 'submitted'">
-                                        <td class="sticky left-0 bg-white px-3 py-2 md:px-6 md:py-4 whitespace-nowrap z-20">
+                                        <td
+                                            class="sticky left-0 bg-white px-3 py-2 md:px-6 md:py-4 whitespace-nowrap z-20">
                                             <div class="flex items-center gap-2 md:gap-3">
                                                 <div
-                                                    class="w-7 h-7 md:w-9 md:h-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-xs md:text-sm font-medium">
-                                                    {{student.name.charAt(0)}}
+                                                    class="w-7 h-7 md:w-9 md:h-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-xs md:text-sm font-medium overflow-hidden">
+                                                    <img *ngIf="student.profile" [src]="student.profile"
+                                                        [alt]="student.name" class="w-full h-full object-cover">
+                                                    <span *ngIf="!student.profile">
+                                                        {{student.name.charAt(0).toUpperCase()}}
+                                                    </span>
                                                 </div>
                                                 <span
-                                                    class="font-medium text-sm md:text-base text-gray-900">{{student.name}}</span>
+                                                    class="font-semibold text-sm md:text-base text-gray-900">{{student.name}}</span>
                                             </div>
                                         </td>
                                         <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap bg-white">
-                                            <span class="text-sm md:text-base text-gray-900">{{student.block ||
+                                            <span class="text-sm md:text-base text-gray-900 uppercase">{{student.block
+                                                ||
                                                 'N/A'}}</span>
                                         </td>
                                         <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap bg-white">
@@ -261,8 +268,8 @@
                                                     'fa-circle-pause': student.status?.toLowerCase() === 'not_started'
                                                 }"></i>
                                                 <span class="text-xs md:text-sm font-medium">
-                                                    {{student.status === 'not_started' ? 'Not Started' : 
-                                                      (student.status === 'in-progress' ? 'In Progress' : 'Submitted')}}
+                                                    {{student.status === 'not_started' ? 'Not Started' :
+                                                    (student.status === 'in-progress' ? 'In Progress' : 'Submitted')}}
                                                 </span>
                                             </div>
                                         </td>
@@ -286,9 +293,9 @@
                                                     }"></i>
                                                 </div>
                                                 <span class="text-xs md:text-sm font-medium">
-                                                    {{student.violationCount === 0 ? 'Clean' : 
-                                                      (student.violationCount <= 5 ? 'Warning (' + student.violationCount + ')' : 'Cheated')}}
-                                                </span>
+                                                    {{student.violationCount === 0 ? 'Clean' :
+                                                    (student.violationCount <= 5 ? 'Warning (' + student.violationCount
+                                                        + ')' : 'Cheated' )}} </span>
                                             </div>
                                         </td>
                                     </tr>
@@ -374,32 +381,30 @@
                                         </td>
                                         <td class="px-3 py-2 md:px-6 md:py-4 text-center whitespace-nowrap">
                                             <span class="text-sm md:text-base text-gray-900">
-                                                {{(question?.submittedCount || 0) - (question?.correctAnswers || 0)}}
+                                                {{(question?.incorrectAnswers || 0)}}
                                             </span>
                                         </td>
                                         <td class="px-3 py-2 md:px-6 md:py-4 text-right whitespace-nowrap">
                                             <div class="flex items-center gap-2">
                                                 <div class="w-full bg-gray-200 rounded-full h-2.5">
                                                     <div class="h-2.5 rounded-full"
-                                                        [style.width]="((question?.submittedCount || 0) > 0 ? 
+                                                        [style.width]="((question?.accuracyRate || 0) > 0 ? 
                                                             ((question?.correctAnswers || 0) / question.submittedCount * 100) : 0) + '%'" [class]="{
-                                                            'bg-green-400': ((question?.correctAnswers || 0) / (question?.submittedCount || 1) * 100) >= 75,
-                                                            'bg-yellow-500': ((question?.correctAnswers || 0) / (question?.submittedCount || 1) * 100) >= 50 && 
-                                                                           ((question?.correctAnswers || 0) / (question?.submittedCount || 1) * 100) < 75,
-                                                            'bg-red-500': ((question?.correctAnswers || 0) / (question?.submittedCount || 1) * 100) < 50
+                                                            'bg-green-400': (question.accuracyRate) >= 75,
+                                                            'bg-yellow-500': (question.accuracyRate) >= 50 && 
+                                                                           (question.accuracyRate) < 75,
+                                                            'bg-red-500': (question.accuracyRate) < 50
                                                          }">
                                                     </div>
                                                 </div>
                                                 <div class="flex items-center gap-1 min-w-[60px]">
                                                     <span class="text-sm font-medium" [class]="{
-                                                            'text-green-400': ((question?.correctAnswers || 0) / (question?.submittedCount || 1) * 100) >= 75,
-                                                            'text-yellow-500': ((question?.correctAnswers || 0) / (question?.submittedCount || 1) * 100) >= 50 && 
-                                                                             ((question?.correctAnswers || 0) / (question?.submittedCount || 1) * 100) < 75,
-                                                            'text-red-500': ((question?.correctAnswers || 0) / (question?.submittedCount || 1) * 100) < 50
+                                                            'text-green-400': (question.accuracyRate) >= 75,
+                                                            'text-yellow-500': (question.accuracyRate) >= 50 && 
+                                                                             (question.accuracyRate) < 75,
+                                                            'text-red-500': (question.accuracyRate) < 50
                                                           }">
-                                                        {{ (question?.submittedCount || 0) > 0 ?
-                                                        ((question?.correctAnswers || 0) / question.submittedCount * 100
-                                                        | number:'1.0-0') : 0 }}%
+                                                        {{question.accuracyRate}}%
                                                     </span>
                                                     <span class="text-xs text-gray-500">
                                                         ({{question?.correctAnswers || 0}}/{{question?.submittedCount ||
@@ -623,10 +628,17 @@
                                 <div class="space-y-4">
                                     <div *ngFor="let top of topPerforming; let i = index" class="performer-card">
                                         <div class="rank-badge">{{i + 1}}</div>
-                                        <div class="avatar">{{top.name.charAt(0)}}</div>
+                                        <div class="avatar">
+                                            <img *ngIf="top.profile" [src]="top.profile" [alt]="top.name"
+                                                class="w-full h-full object-cover">
+                                            <span *ngIf="!top.profile">
+                                                {{top.name.charAt(0).toUpperCase()}}
+                                            </span>
+                                        </div>
                                         <div class="flex-1">
                                             <p class="font-medium">{{top.name}}</p>
-                                            <p class="text-sm text-gray-500">{{"Block " +top.block || 'N/A'}}</p>
+                                            <p class="text-sm text-gray-500 uppercase">{{"Block " +top.block || 'N/A'}}
+                                            </p>
                                         </div>
                                         <div class="text-right">
                                             <p class="font-bold" [class]="{
@@ -653,10 +665,17 @@
                             <div class="card-body p-6">
                                 <div class="space-y-4">
                                     <div *ngFor="let strug of topPerforming" class="performer-card">
-                                        <div class="avatar">{{strug.name.charAt(0)}}</div>
+                                        <div class="avatar">
+                                            <img *ngIf="strug.profile" [src]="strug.profile" [alt]="strug.name"
+                                                class="w-full h-full object-cover">
+                                            <span *ngIf="!strug.profile">
+                                                {{strug.name.charAt(0).toUpperCase()}}
+                                            </span>
+                                        </div>
                                         <div class="flex-1">
                                             <p class="font-medium">{{strug.name}}</p>
-                                            <p class="text-sm text-gray-500">{{"Block " +strug.block || 'N/A'}}</p>
+                                            <p class="text-sm text-gray-500 uppercase">{{"Block " +strug.block ||
+                                                'N/A'}}</p>
                                         </div>
                                         <div class="text-right">
                                             <p class="font-bold" [class]="{

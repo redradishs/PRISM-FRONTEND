@@ -20,13 +20,16 @@
                             </div>
                             <div *ngIf="!isMobile" class="flex items-center">
                                 <div class="relative mr-3">
-                                    <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                                        <img *ngIf="profile" [src]="profile" alt="Profile" class="w-full h-full object-cover">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profile" [src]="profile" alt="Profile"
+                                            class="w-full h-full object-cover">
                                         <span *ngIf="!profile" class="text-base md:text-lg font-medium text-gray-600">
                                             {{username.charAt(0) || 'A'}}
                                         </span>
                                     </div>
-                                    <div class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
                                     </div>
                                 </div>
                                 <div class="text-left">
@@ -211,7 +214,7 @@
                                 <tr *ngFor="let s of students" (click)="viewStudent(s)">
                                     <td class="font-medium">{{s.name}}</td>
                                     <td>{{s.email.split('@')[0]}}</td>
-                                    <td *ngIf="s.program !== null">{{s.program}}</td>
+                                    <td *ngIf="s.program !== null">{{s.program | uppercase}}</td>
                                     <td *ngIf="s.program == null">unassigned</td>
                                     <td *ngIf="s.yearLevel === '1'">{{s.yearLevel}}st Year</td>
                                     <td *ngIf="s.yearLevel === '2'">{{s.yearLevel}}nd Year</td>
@@ -220,8 +223,7 @@
                                     <td *ngIf="s.yearLevel === null">unassigned</td>
                                     <td class="text-center">{{s.assessmentsTaken}}</td>
                                     <td class="text-center">
-                                        <span class="score-badge" 
-                                              [ngClass]="{
+                                        <span class="score-badge" [ngClass]="{
                                                 'poor': s.averageScore < 50,
                                                 'needs-improvement': s.averageScore >= 50 && s.averageScore <= 74,
                                                 'average': s.averageScore >= 75 && s.averageScore <= 80,

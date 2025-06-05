@@ -38,6 +38,8 @@ export class CoordinatorComponent {
   // Search variables
   searchQuery: string = '';
   private searchSubject = new Subject<string>();
+
+  
   
   constructor(private router: Router, private api: ApiService, private auth: AuthService, private title: Title) {
     this.title.setTitle('PRISM | Coordinator');

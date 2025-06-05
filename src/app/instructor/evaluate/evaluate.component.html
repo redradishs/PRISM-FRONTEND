@@ -20,13 +20,16 @@
                             </div>
                             <div *ngIf="!isMobile" class="flex items-center">
                                 <div class="relative mr-3">
-                                    <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                                        <img *ngIf="profile" [src]="profile" alt="Profile" class="w-full h-full object-cover">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profile" [src]="profile" alt="Profile"
+                                            class="w-full h-full object-cover">
                                         <span *ngIf="!profile" class="text-base md:text-lg font-medium text-gray-600">
                                             {{username.charAt(0) || 'A'}}
                                         </span>
                                     </div>
-                                    <div class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
                                     </div>
                                 </div>
                                 <div class="text-left">
@@ -90,13 +93,21 @@
                             <div class="student-details">
                                 <div class="detail-group">
                                     <p class="detail-label">Program</p>
-                                    <p class="detail-value">{{studentData.student?.program}} - Information Technology
-                                    </p>
+                                    <p *ngIf="studentData.student?.program === 'bsit'" class="detail-value">Bachelor of
+                                        Science in Information Technology</p>
+                                    <p *ngIf="studentData.student?.program === 'bscs'" class="detail-value">Bachelor of
+                                        Science in Computer Science</p>
+                                    <p *ngIf="studentData.student?.program === 'bsemc'" class="detail-value">Bachelor of
+                                        Science in Entertainment and Multimedia Computing</p>
+
+
                                 </div>
                                 <div class="detail-group">
                                     <p class="detail-label">Year & Section</p>
                                     <p class="detail-value">{{studentData.student?.yearLevel}}rd Year,
-                                        {{studentData.student?.program}}-{{studentData.student?.yearLevel}}{{studentData.student?.block}}
+                                        {{studentData.student?.program |
+                                        uppercase}}-{{studentData.student?.yearLevel}}{{studentData.student?.block |
+                                        uppercase}}
                                     </p>
                                 </div>
                             </div>
@@ -167,7 +178,8 @@
                                 <h3 class="stat-title">Last Assessment</h3>
                             </div>
                             <p class="stat-value">{{studentData.stats?.lastAssessmentTitle}}</p>
-                            <p class="stat-subtitle">{{studentData.stats?.lastAssessmentDate | date:'MMM d, y, h:mm a'}}
+                            <p class="stat-subtitle">{{studentData.stats?.lastAssessmentDate | date:'MMM d, y, h:mm
+                                a':'UTC'}}
                             </p>
                         </div>
                     </div>
@@ -192,93 +204,118 @@
 
                     <!-- Skills Tab Content -->
                     <div class="tab-content" [class.active]="activeTab === 'skills'" id="skills">
-                        <div class="tab-header">
-                            <h2>IT Skills Performance</h2>
-                            <button class="filter-button">
-                                All Levels
-                                <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
-                                    <path d="M6 9l6 6 6-6" />
-                                </svg>
-                            </button>
+                        <div *ngIf="studentData" class="tab-header">
+                            <h2 *ngIf="studentData.student.program !== null">
+                                {{studentData.student?.program.replace('bs', '') | uppercase }}
+                                Skills Performance</h2>
+                            <h2 *ngIf="studentData.student.program === null">
+                                {{studentData.student?.program.replace('bs', '') | uppercase }}
+                                Student's Skills Performance</h2>
+                            <select
+                                class="filter-button px-4 py-2 border border-gray-300 rounded-md bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                [(ngModel)]="selectedSkillFilter" (change)="filterSkills()">
+                                <option value="all">All Performance Levels</option>
+                                <option value="excellent">Excellent (76-100%)</option>
+                                <option value="good">Good (51-75%)</option>
+                                <option value="needs-improvement">Needs Improvement (1-50%)</option>
+                                <option value="no-data">No Data (0%)</option>
+                            </select>
                         </div>
 
                         <div class="skills-grid">
-                            <div class="skill-card">
-                                <div class="skill-header">
-                                    <h3>Networking</h3>
-                                    <span class="badge purple">Advanced</span>
-                                </div>
-                                <div class="skill-stats">
-                                    <div class="skill-score">
-                                        <span class="percentage">95%</span>
-                                        <span class="assessments">(5 assessments)</span>
+                            <!-- Loading State -->
+                            <div *ngIf="isLoadingSkills" class="col-span-full flex items-center justify-center py-12">
+                                <div class="text-center">
+                                    <div
+                                        class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4">
                                     </div>
-                                    <div class="progress-bar">
-                                        <div class="progress green" style="width: 95%"></div>
-                                    </div>
-                                    <div class="skill-meta">
-                                        <span class="last-assessment">Last assessment: 2 weeks ago</span>
-                                        <span class="status improving">↑ Improving</span>
-                                    </div>
+                                    <p class="text-gray-500">Loading skills data...</p>
                                 </div>
                             </div>
 
-                            <div class="skill-card">
-                                <div class="skill-header">
-                                    <h3>SQL Commands</h3>
-                                    <span class="badge purple">Advanced</span>
-                                </div>
-                                <div class="skill-stats">
-                                    <div class="skill-score">
-                                        <span class="percentage">92%</span>
-                                        <span class="assessments">(6 assessments)</span>
+                            <!-- No Skills Available -->
+                            <div *ngIf="!isLoadingSkills && skillSet.length === 0"
+                                class="col-span-full flex items-center justify-center py-12">
+                                <div class="text-center">
+                                    <div
+                                        class="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                                        <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
+                                            </path>
+                                        </svg>
                                     </div>
-                                    <div class="progress-bar">
-                                        <div class="progress green" style="width: 92%"></div>
-                                    </div>
-                                    <div class="skill-meta">
-                                        <span class="last-assessment">Last assessment: 2 weeks ago</span>
-                                        <span class="status stable">→ Stable</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="skill-card">
-                                <div class="skill-header">
-                                    <h3>Database Management</h3>
-                                    <span class="badge purple">Intermediate</span>
-                                </div>
-                                <div class="skill-stats">
-                                    <div class="skill-score">
-                                        <span class="percentage">88%</span>
-                                        <span class="assessments">(4 assessments)</span>
-                                    </div>
-                                    <div class="progress-bar">
-                                        <div class="progress blue" style="width: 88%"></div>
-                                    </div>
-                                    <div class="skill-meta">
-                                        <span class="last-assessment">Last assessment: 2 weeks ago</span>
-                                        <span class="status improving">↑ Improving</span>
-                                    </div>
+                                    <h3 class="text-lg font-medium text-gray-900 mb-2">No Skills Data Available</h3>
+                                    <p class="text-gray-500 mb-4">This student hasn't taken any assessments yet to
+                                        evaluate their skills.</p>
+                                    <button (click)="createNewAssessment()"
+                                        class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">
+                                        Assign First Assessment
+                                    </button>
                                 </div>
                             </div>
 
-                            <div class="skill-card">
+                            <!-- No Results After Filtering -->
+                            <div *ngIf="!isLoadingSkills && skillSet.length > 0 && filteredSkillSet.length === 0"
+                                class="col-span-full flex items-center justify-center py-12">
+                                <div class="text-center">
+                                    <div
+                                        class="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                                        <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-lg font-medium text-gray-900 mb-2">No Skill matched your filter</h3>
+                                    <p class="text-gray-500 mb-4">The student might not have taken any assessments
+                                        tagged with that skill.</p>
+                                    <button (click)="selectedSkillFilter = 'all'; filterSkills()"
+                                        class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors">
+                                        Show All Skills
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Skills Cards -->
+                            <div *ngFor="let i of filteredSkillSet" class="skill-card">
                                 <div class="skill-header">
-                                    <h3>PC Troubleshooting</h3>
-                                    <span class="badge pink">Expert</span>
+                                    <h3>{{i.skillName }}</h3>
+                                    <span class="badge" [ngClass]="{
+                                        'bg-red-100 text-red-700': (i.percentage || 0) >= 1 && (i.percentage || 0) <= 50,
+                                        'bg-amber-100 text-amber-700': (i.percentage || 0) >= 51 && (i.percentage || 0) <= 75,
+                                        'bg-emerald-100 text-emerald-700': (i.percentage || 0) >= 76 && (i.percentage || 0) <= 100,
+                                        'bg-gray-100 text-gray-500': (i.percentage || 0) === 0
+                                    }">
+                                        {{(i.percentage || 0) >= 1 && (i.percentage || 0) <= 50 ? 'Needs Improvement' :
+                                            (i.percentage || 0)>= 51 && (i.percentage || 0) <= 75 ? 'Good' :
+                                                (i.percentage || 0)>= 76 && (i.percentage || 0) <= 100 ? 'Excellent'
+                                                    : 'No Data' }} </span>
                                 </div>
                                 <div class="skill-stats">
                                     <div class="skill-score">
-                                        <span class="percentage">97%</span>
-                                        <span class="assessments">(3 assessments)</span>
+                                        <span class="percentage">{{i.percentage || 0}}%</span>
+                                        <span class="assessments">({{i.assessmentsTaken || 0}} assessments)</span>
                                     </div>
                                     <div class="progress-bar">
-                                        <div class="progress green" style="width: 97%"></div>
+                                        <div class="progress" [ngClass]="{
+                                            'bg-red-400': (i.percentage || 0) >= 1 && (i.percentage || 0) <= 50,
+                                            'bg-amber-400': (i.percentage || 0) >= 51 && (i.percentage || 0) <= 75,
+                                            'bg-emerald-400': (i.percentage || 0) >= 76 && (i.percentage || 0) <= 100,
+                                            'bg-gray-300': (i.percentage || 0) === 0
+                                        }" [style.width.%]="i.percentage || 0"></div>
                                     </div>
                                     <div class="skill-meta">
-                                        <span class="last-assessment">Last assessment: 2 weeks ago</span>
-                                        <span class="status improving">↑ Improving</span>
+                                        <span class="last-assessment">Last assessment: {{i.lastAssessmentDate ||
+                                            'Never'}}</span>
+                                        <span class="status px-2 py-1 rounded-md text-xs font-medium" [ngClass]="{
+                                            'bg-red-100 text-red-700': (i.lastAssessmentPercentage || 0) >= 1 && (i.lastAssessmentPercentage || 0) <= 50,
+                                            'bg-amber-100 text-amber-700': (i.lastAssessmentPercentage || 0) >= 51 && (i.lastAssessmentPercentage || 0) <= 75,
+                                            'bg-emerald-100 text-emerald-700': (i.lastAssessmentPercentage || 0) >= 76 && (i.lastAssessmentPercentage || 0) <= 100,
+                                            'bg-gray-100 text-gray-500': (i.lastAssessmentPercentage || 0) === 0
+                                        }">{{i.lastAssessmentName || 'No Data'}} -
+                                            {{i.lastAssessmentPercentage || 0}}%</span>
                                     </div>
                                 </div>
                             </div>
@@ -321,7 +358,7 @@
                                             <line x1="8" y1="2" x2="8" y2="6" />
                                             <line x1="3" y1="10" x2="21" y2="10" />
                                         </svg>
-                                        {{i.submittedAt | date:'MMM d, y, h:mm a'}}
+                                        {{i.submittedAt | date:'MMM d, y, h:mm a':'UTC'}}
                                     </div>
                                     <div class="meta-info">
                                         <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
@@ -350,64 +387,56 @@
                             <h2>Improvement Areas</h2>
                             <p class="section-description">Based on assessment performance analysis</p>
 
-                            <div class="improvement-list">
-                                <div class="improvement-item">
-                                    <div class="improvement-header">
-                                        <svg class="icon warning" viewBox="0 0 24 24" width="20" height="20">
-                                            <path d="M12 9v4M12 17h.01M12 3l9 18H3L12 3z" />
-                                        </svg>
-                                        <h3>Cloud Computing Fundamentals</h3>
-                                        <span class="score">65%</span>
-                                    </div>
-                                    <div class="progress-bar">
-                                        <div class="progress orange" style="width: 65%"></div>
-                                    </div>
-                                    <div class="improvement-action">
-                                        <svg class="icon star" viewBox="0 0 24 24" width="16" height="16">
-                                            <polygon
-                                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                                        </svg>
-                                        <span>Review AWS/Azure basics</span>
-                                    </div>
+                            <!-- No Improvement Areas -->
+                            <div *ngIf="improvementSkills.length === 0" class="text-center py-12">
+                                <div
+                                    class="w-24 h-24 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-12 h-12 text-green-500" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
                                 </div>
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">Excellent Performance!</h3>
+                                <p class="text-gray-500">This student is performing excellently in all skill areas.</p>
+                            </div>
 
-                                <div class="improvement-item">
+                            <!-- Dynamic Improvement Items -->
+                            <div *ngIf="improvementSkills.length > 0" class="improvement-list">
+                                <div *ngFor="let skill of improvementSkills" class="improvement-item">
                                     <div class="improvement-header">
-                                        <svg class="icon warning" viewBox="0 0 24 24" width="20" height="20">
+                                        <svg *ngIf="(skill.percentage || 0) <= 50" class="icon warning"
+                                            viewBox="0 0 24 24" width="20" height="20">
                                             <path d="M12 9v4M12 17h.01M12 3l9 18H3L12 3z" />
                                         </svg>
-                                        <h3>Advanced SQL Joins</h3>
-                                        <span class="score">72%</span>
+                                        <svg *ngIf="(skill.percentage || 0) > 50 && (skill.percentage || 0) <= 75"
+                                            class="icon info" viewBox="0 0 24 24" width="20" height="20">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                        </svg>
+                                        <h3>{{skill.skillName}}</h3>
+                                        <span class="score" [ngClass]="{
+                                            'text-red-600': (skill.percentage || 0) <= 50,
+                                            'text-amber-600': (skill.percentage || 0) > 50 && (skill.percentage || 0) <= 75
+                                        }">{{skill.percentage || 0}}%</span>
                                     </div>
                                     <div class="progress-bar">
-                                        <div class="progress purple" style="width: 72%"></div>
+                                        <div class="progress" [ngClass]="{
+                                            'bg-red-400': (skill.percentage || 0) <= 50,
+                                            'bg-amber-400': (skill.percentage || 0) > 50 && (skill.percentage || 0) <= 75
+                                        }" [style.width.%]="skill.percentage || 0"></div>
                                     </div>
                                     <div class="improvement-action">
                                         <svg class="icon star" viewBox="0 0 24 24" width="16" height="16">
                                             <polygon
                                                 points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
                                         </svg>
-                                        <span>Practice complex join operations</span>
-                                    </div>
-                                </div>
-
-                                <div class="improvement-item">
-                                    <div class="improvement-header">
-                                        <svg class="icon warning" viewBox="0 0 24 24" width="20" height="20">
-                                            <path d="M12 9v4M12 17h.01M12 3l9 18H3L12 3z" />
-                                        </svg>
-                                        <h3>Network Security Protocols</h3>
-                                        <span class="score">68%</span>
-                                    </div>
-                                    <div class="progress-bar">
-                                        <div class="progress orange" style="width: 68%"></div>
-                                    </div>
-                                    <div class="improvement-action">
-                                        <svg class="icon star" viewBox="0 0 24 24" width="16" height="16">
-                                            <polygon
-                                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                                        </svg>
-                                        <span>Study encryption methods</span>
+                                        <span *ngIf="(skill.percentage || 0) <= 50">Requires immediate attention -
+                                            Practice fundamentals</span>
+                                        <span
+                                            *ngIf="(skill.percentage || 0) > 50 && (skill.percentage || 0) <= 75">Continue
+                                            practicing to reach excellence</span>
                                     </div>
                                 </div>
                             </div>
@@ -415,18 +444,16 @@
 
                         <div class="recommendations-section">
                             <h2>Recommended Resources</h2>
-                            <div class="resources-grid">
-                                <div class="resource-card">
-                                    <h3>Cloud Computing Fundamentals</h3>
-                                    <p>Comprehensive course covering AWS, Azure, and Google Cloud basics.</p>
+                            <div *ngIf="improvementSkills.length > 0" class="resources-grid">
+                                <div *ngFor="let skill of improvementSkills.slice(0, 2)" class="resource-card">
+                                    <h3>{{skill.skillName}} Improvement</h3>
+                                    <p>Targeted resources and exercises to improve your {{skill.skillName}} skills.</p>
                                     <a href="#" class="resource-link">Access Resource</a>
                                 </div>
-
-                                <div class="resource-card">
-                                    <h3>Advanced SQL Workshop</h3>
-                                    <p>Interactive exercises focusing on complex joins and query optimization.</p>
-                                    <a href="#" class="resource-link">Access Resource</a>
-                                </div>
+                            </div>
+                            <div *ngIf="improvementSkills.length === 0" class="text-center py-8">
+                                <p class="text-gray-500">No specific resources needed - student is performing
+                                    excellently!</p>
                             </div>
                         </div>
                     </div>

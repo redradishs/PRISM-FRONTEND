@@ -286,8 +286,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }, 100);
   }
 
-  viewAll() {
-    this.router.navigate(['/instructor/manage'], { queryParams: { tab: 'ongoing' } });
+  viewAll(tab: string) {
+    console.log('Viewing all', tab);
+    this.router.navigate(['/instructor/manage'], { queryParams: { tab: tab } });
   }
 
   calculateProgress(assessment: AssessmentProgress): number {

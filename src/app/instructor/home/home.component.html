@@ -20,13 +20,16 @@
                             </div>
                             <div *ngIf="!isMobile" class="flex items-center">
                                 <div class="relative mr-3">
-                                    <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                                        <img *ngIf="profile" [src]="profile" alt="Profile" class="w-full h-full object-cover">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profile" [src]="profile" alt="Profile"
+                                            class="w-full h-full object-cover">
                                         <span *ngIf="!profile" class="text-base md:text-lg font-medium text-gray-600">
                                             {{username.charAt(0) || 'A'}}
                                         </span>
                                     </div>
-                                    <div class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
                                     </div>
                                 </div>
                                 <div class="text-left">
@@ -109,7 +112,7 @@
                 <div class="assessments">
                     <div class="assessments-header">
                         <h1>Ongoing Assessments ({{totalOngoingAssessments}})</h1>
-                        <button (click)="viewAll()" class="view-all" *ngIf="totalOngoingAssessments > 0">View
+                        <button (click)="viewAll('ongoing')" class="view-all" *ngIf="totalOngoingAssessments > 0">View
                             {{remainingOngoingAssessments}} more <i class="fas fa-chevron-right"></i></button>
                     </div>
                     <div *ngIf="totalOngoingAssessments === 0" class="empty-state">
@@ -117,9 +120,9 @@
                             <i class="fas fa-clipboard-list"></i>
                         </div>
                         <h2>No Ongoing Assessments</h2>
-                        <p>There are currently no ongoing assessments. Create a new assessment to get started.</p>
-                        <button class="create-assessment-btn" [routerLink]="['/instructor/assessment']">
-                            <i class="fas fa-plus"></i> Create Assessment
+                        <p>There are currently no ongoing assessments. Assign an assessment to get started.</p>
+                        <button class="create-assessment-btn" [routerLink]="['/instructor/assign']">
+                            <i class="fas fa-plus"></i> Assign Assessment
                         </button>
                     </div>
                     <div class="assessments-list" *ngIf="totalOngoingAssessments > 0">
@@ -157,7 +160,8 @@
                 <div class="assessments">
                     <div class="assessments-header">
                         <h1>Scheduled Assessments ({{totalScheduledAssessments}})</h1>
-                        <button (click)="viewAll()" class="view-all" *ngIf="totalScheduledAssessments > 0">View
+                        <button (click)="viewAll('scheduled')" class="view-all"
+                            *ngIf="totalScheduledAssessments > 0">View
                             {{remainingScheduledAssessments}} more <i class="fas fa-chevron-right"></i></button>
                     </div>
                     <div *ngIf="totalScheduledAssessments === 0" class="empty-state">
@@ -166,7 +170,7 @@
                         </div>
                         <h2>No Scheduled Assessments</h2>
                         <p>There are currently no scheduled assessments. Schedule an assessment to get started.</p>
-                        <button class="create-assessment-btn" [routerLink]="['/instructor/assessment']">
+                        <button class="create-assessment-btn" [routerLink]="['/instructor/assign']">
                             <i class="fas fa-plus"></i> Schedule Assessment
                         </button>
                     </div>
@@ -223,7 +227,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr (click)="studentDetails(s)" *ngFor="let s of topPerformingStudents" class="hatdog-row">
+                                <tr (click)="studentDetails(s)" *ngFor="let s of topPerformingStudents"
+                                    class="hatdog-row">
                                     <td class="student-col">
                                         <div class="student-info">
                                             <div class="avatar">{{getInitials(s.name)}}</div>
@@ -251,9 +256,8 @@
                                     </td>
                                     <td class="classes-col">
                                         <div class="classes-list">
-                                            <div *ngFor="let classItem of s.classes" 
-                                                 class="class-badge clickable" 
-                                                 (click)="navigateToStudentClass($event, s._id, classItem.classCode)">
+                                            <div *ngFor="let classItem of s.classes" class="class-badge clickable"
+                                                (click)="navigateToStudentClass($event, s._id, classItem.classCode)">
                                                 <span>{{classItem.className}} - {{classItem.classCode}}</span>
                                             </div>
                                         </div>
@@ -276,14 +280,11 @@
                                     <h2 class="chart-title">Class Performance Metrics</h2>
                                     <p class="chart-subtitle">Performance comparison across all classes</p>
                                 </div>
-                                
+
                                 <div class="chart-container">
                                     <ng-container *ngIf="barChartData && (charts ?? []).length > 0">
-                                        <canvas #barChart [data]="barChartData" 
-                                                [options]="barChartOptions" 
-                                                [type]="'bar'" 
-                                                baseChart
-                                                (chartClick)="onChartClick($event)">
+                                        <canvas #barChart [data]="barChartData" [options]="barChartOptions"
+                                            [type]="'bar'" baseChart (chartClick)="onChartClick($event)">
                                         </canvas>
                                     </ng-container>
                                     <div *ngIf="!charts || charts.length === 0" class="no-data-message">
@@ -300,12 +301,9 @@
                                     <p class="chart-subtitle">Total students enrolled in each class</p>
                                 </div>
                                 <div class="chart-container">
-                                    <canvas #pieChart *ngIf="pieChartData && (charts ?? []).length > 0" 
-                                            baseChart 
-                                            [data]="pieChartData" 
-                                            [options]="pieChartOptions" 
-                                            [type]="'pie'"
-                                            (chartClick)="onChartClick($event)">
+                                    <canvas #pieChart *ngIf="pieChartData && (charts ?? []).length > 0" baseChart
+                                        [data]="pieChartData" [options]="pieChartOptions" [type]="'pie'"
+                                        (chartClick)="onChartClick($event)">
                                     </canvas>
                                     <div *ngIf="!charts || charts.length === 0" class="no-data-message">
                                         <i class="fas fa-chart-pie"></i>

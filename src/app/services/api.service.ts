@@ -219,6 +219,10 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/students/evaluate/profile/${id}/studentData`);
   }
 
+  studentSkillSet(id: string) {
+    return this.http.get(`${this.apiUrl}/students/skills/${id}/getData`);
+  }
+
 
   // Student assessment page
 
