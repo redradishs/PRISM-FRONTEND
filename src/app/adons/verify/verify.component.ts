@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
+import { SeoService } from '../../services/seo.service';
 
 @Component({
   selector: 'app-verify',
@@ -11,19 +12,34 @@ import Swal from 'sweetalert2';
   templateUrl: './verify.component.html',
   styleUrl: './verify.component.css'
 })
-export class VerifyComponent {
+export class VerifyComponent implements OnInit {
   verificationForm: FormGroup;
   userId: string | null = null;
   isLoading: boolean = false;
   errorMessage: string = '';
 
-  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private auth: AuthService,
+    private router: Router,
+    private seoService: SeoService,
+    private route: ActivatedRoute
+  ) {
     this.verificationForm = this.fb.group({
       code: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(6)]]
     });
   }
 
   ngOnInit(): void {
+    const seoData = this.route.snapshot.data['seo'];
+    if (seoData) {
+      this.seoService.updateSEO({
+        ...seoData,
+        url: 'https://prismgcccs.live/verify-email',
+        image: 'https://prismgcccs.live/prism_logo.png'
+      });
+    }
+
     this.userId = sessionStorage.getItem('pendingVerificationUserId');
     if(!this.userId){
       this.router.navigate(['/login']);

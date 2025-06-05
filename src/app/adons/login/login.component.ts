@@ -9,12 +9,13 @@ import {
   Validators,
   FormsModule,
 } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
 import { Title } from '@angular/platform-browser';
 import { AuthService } from '../../services/auth.service';
 import { GoogleAuthProvider, signInWithPopup } from '@angular/fire/auth';
 import { Auth } from '@angular/fire/auth';
+import { SeoService } from '../../services/seo.service';
 
 @Component({
   selector: 'app-login',
@@ -49,7 +50,9 @@ export class LoginComponent implements OnInit {
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private title: Title,
-    private auth: Auth
+    private auth: Auth,
+    private seoService: SeoService,
+    private route: ActivatedRoute
   ) {
     this.loginForm = this.formBuilder.group({
       email: [
@@ -85,6 +88,16 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Apply SEO from route data
+    const seoData = this.route.snapshot.data['seo'];
+    if (seoData) {
+      this.seoService.updateSEO({
+        ...seoData,
+        url: 'https://prismgcccs.live/login',
+        image: 'https://prismgcccs.live/prism_logo.png'
+      });
+    }
+
     this.title.setTitle('PRISM | Login');
 
     const storedEmail = localStorage.getItem('rememberedEmail');

@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { SeoService } from '../../services/seo.service';
 import Swal from 'sweetalert2';
 
 interface Program {
@@ -52,7 +53,9 @@ export class CompleteProfileComponent implements OnInit {
   }));
 
   constructor(
-    private fb: FormBuilder, private router: Router, private auth: AuthService
+    private fb: FormBuilder, private router: Router, private auth: AuthService,
+    private seoService: SeoService,
+    private route: ActivatedRoute
   ) {
     this.profileForm = this.fb.group({
       fullName: [this.userName, Validators.required],
@@ -66,6 +69,16 @@ export class CompleteProfileComponent implements OnInit {
   }
 
   ngOnInit() {
+    // Apply SEO from route data
+    const seoData = this.route.snapshot.data['seo'];
+    if (seoData) {
+      this.seoService.updateSEO({
+        ...seoData,
+        url: 'https://prismgcccs.live/complete-profile',
+        image: 'https://prismgcccs.live/prism_logo.png'
+      });
+    }
+
     this.auth.getCurrentUser().subscribe((user: any) => {
       console.log(user);
       this.userName = user.name;

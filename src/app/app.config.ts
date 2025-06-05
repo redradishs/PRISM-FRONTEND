@@ -4,7 +4,7 @@ import {
   provideZoneChangeDetection,
   isDevMode
 } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withPreloading, PreloadAllModules, withEnabledBlockingInitialNavigation } from '@angular/router';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -21,8 +21,15 @@ import { DecryptionInterceptor } from './interceptors/decryption.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes),
+    provideZoneChangeDetection({ 
+      eventCoalescing: true,
+      runCoalescing: true 
+    }),
+    provideRouter(
+      routes,
+      withPreloading(PreloadAllModules),
+      withEnabledBlockingInitialNavigation()
+    ),
     importProvidersFrom(HttpClientModule),
     provideCharts(withDefaultRegisterables()),
     provideServiceWorker('ngsw-worker.js', {

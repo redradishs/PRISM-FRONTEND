@@ -1,122 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Home Page -->
+  <!-- Main Landing Page (redirects to login) -->
   <url>
     <loc>https://prismgcccs.live/</loc>
-    <lastmod>2024-03-19</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2025-05-06</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
 
-  <!-- Login Page (Default Route) -->
+  <!-- Login Page (Primary Entry Point) -->
   <url>
     <loc>https://prismgcccs.live/login</loc>
-    <lastmod>2024-03-19</lastmod>
+    <lastmod>2025-05-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
+    <priority>0.9</priority>
   </url>
 
   <!-- Email Verification -->
   <url>
     <loc>https://prismgcccs.live/verify-email</loc>
-    <lastmod>2024-03-19</lastmod>
+    <lastmod>2025-05-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
-  <!-- Forgot Password -->
+  <!-- Password Reset -->
   <url>
     <loc>https://prismgcccs.live/forgot-password</loc>
-    <lastmod>2024-03-19</lastmod>
+    <lastmod>2025-05-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
-  <!-- Instructor Routes -->
+  <!-- Complete Profile -->
   <url>
-    <loc>https://prismgcccs.live/instructor</loc>
-    <lastmod>2024-03-19</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <!-- Student Routes -->
-  <url>
-    <loc>https://prismgcccs.live/student</loc>
-    <lastmod>2024-03-19</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <!-- Admin Routes -->
-  <url>
-    <loc>https://prismgcccs.live/admin</loc>
-    <lastmod>2024-03-19</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <!-- Test Route -->
-  <url>
-    <loc>https://prismgcccs.live/test</loc>
-    <lastmod>2024-03-19</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-
-  <!-- Component Testing Route -->
-  <url>
-    <loc>https://prismgcccs.live/component-testing</loc>
-    <lastmod>2024-03-19</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-
-  <!-- Dashboard -->
-  <url>
-    <loc>https://prismgcccs.live/dashboard</loc>
-    <lastmod>2024-03-19</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-
-  <!-- Assessment Creation -->
-  <url>
-    <loc>https://prismgcccs.live/assessment/create</loc>
-    <lastmod>2024-03-19</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <!-- Assessment List -->
-  <url>
-    <loc>https://prismgcccs.live/assessments</loc>
-    <lastmod>2024-03-19</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <!-- Analytics -->
-  <url>
-    <loc>https://prismgcccs.live/analytics</loc>
-    <lastmod>2024-03-19</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- Help/Support -->
-  <url>
-    <loc>https://prismgcccs.live/help</loc>
-    <lastmod>2024-03-19</lastmod>
+    <loc>https://prismgcccs.live/complete-profile</loc>
+    <lastmod>2025-05-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
-
-  <!-- About -->
-  <url>
-    <loc>https://prismgcccs.live/about</loc>
-    <lastmod>2024-03-19</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-</urlset> 
+</urlset>

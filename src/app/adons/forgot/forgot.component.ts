@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { SeoService } from '../../services/seo.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -28,10 +29,21 @@ export class ForgotComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private seoService: SeoService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    const seoData = this.route.snapshot.data['seo'];
+    if (seoData) {
+      this.seoService.updateSEO({
+        ...seoData,
+        url: 'https://prismgcccs.live/forgot-password',
+        image: 'https://prismgcccs.live/prism_logo.png'
+      });
+    }
+    
     this.initForms();
   }
 

@@ -1,31 +1,33 @@
 # PRISM - Platform for Real-time Intelligent Measurement System
 User-agent: *
 Allow: /
-Allow: /assets/
-Allow: /images/
-Allow: /styles/
-Allow: /scripts/
 
-# Public routes
+# Static assets
+Allow: /assets/
+Allow: /favicon.ico
+Allow: /prism_logo.png
+Allow: /manifest.webmanifest
+
+# Public routes that search engines should index
 Allow: /login
 Allow: /verify-email
 Allow: /forgot-password
+Allow: /complete-profile
 
-# Protected routes (these will be blocked by auth anyway)
+# Protected routes (blocked by authentication anyway)
 Disallow: /instructor/
 Disallow: /student/
 Disallow: /admin/
 
-# Testing routes
+# Testing and development routes
 Disallow: /test
 Disallow: /component-testing
 
-# API and auth routes
+# API endpoints
 Disallow: /api/
-Disallow: /auth/
 
 # Sitemap location
 Sitemap: https://prismgcccs.live/sitemap.xml
 
-# Crawl-delay
-Crawl-delay: 10 
+# Crawl-delay for respectful crawling
+Crawl-delay: 5
