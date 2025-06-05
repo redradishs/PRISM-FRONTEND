@@ -87,7 +87,6 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.title.setTitle('PRISM | Login');
 
-    // Check remembered email - now just store the ID part
     const storedEmail = localStorage.getItem('rememberedEmail');
     if (storedEmail) {
       this.loginForm.patchValue({ email: this.stripDomainFromEmail(storedEmail) });
@@ -99,7 +98,7 @@ export class LoginComponent implements OnInit {
       password: ['', Validators.required],
       confirmPassword: ['', Validators.required],
       role: ['', Validators.required],
-      isCoordinator: ['no'] // default value is 'no'
+      isCoordinator: ['no']
     });
   }
 
@@ -163,7 +162,6 @@ export class LoginComponent implements OnInit {
           this.pendingVerificationUserId = response.data.userId;
           sessionStorage.setItem('pendingVerificationUserId', response.data.userId);
         
-          console.log('Stored User ID:', sessionStorage.getItem('pendingVerificationUserId'));
       
           Swal.fire({
             title: 'Verification Required',
@@ -224,7 +222,6 @@ export class LoginComponent implements OnInit {
           this.pendingVerificationUserId = err.error.data.userId;
           sessionStorage.setItem('pendingVerificationUserId', err.error.data.userId);
           
-          console.log('Stored User ID from error:', sessionStorage.getItem('pendingVerificationUserId'));
           Swal.fire({
             title: 'Verification Required',
             text: err.error.message || 'Please verify your email before logging in.',
@@ -305,7 +302,6 @@ export class LoginComponent implements OnInit {
           if(resp.remarks === 'Success') {
             if (resp.data && resp.data.userId) {
               sessionStorage.setItem('pendingVerificationUserId', resp.data.userId);
-              console.log('Stored User ID from signup:', sessionStorage.getItem('pendingVerificationUserId'));
             }
 
             Swal.fire({

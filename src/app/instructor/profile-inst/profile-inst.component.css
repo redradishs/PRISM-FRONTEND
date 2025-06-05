@@ -675,6 +675,12 @@ input:checked + .slider:before {
         margin-bottom: 15px;
     }
 
+    
+    .header-background {
+    height: 130px;
+    }
+
+
     .profile-details {
         text-align: center;
         align-items: center; /* Center items only on mobile */

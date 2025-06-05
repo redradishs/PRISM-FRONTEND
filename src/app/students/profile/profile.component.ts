@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Route, Router } from '@angular/router';
 import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
@@ -92,6 +92,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   showConfirmPassword = false;
   activeTab = 'personal';
   isMobile = false;
+  @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
 
   //userprofile
   userId: string = '';
@@ -151,6 +152,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     confirmPassword: ''
   };
 
+
   constructor(private api: ApiService, private auth: AuthService, private router: Router) {
   }
 
@@ -189,9 +191,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
           this.profile = {
             ...this.profile,
             ...resp.data,
-            program: resp.data.program || this.profile.program,
+            program: resp.data.program?.toUpperCase() || this.profile.program,
             year: resp.data.yearLevel || this.profile.year,
-            block: resp.data.block || this.profile.block
+            block: resp.data.block?.toUpperCase() || this.profile.block?.toUpperCase()
           };
           this.originalProfile = { ...this.profile };
           
@@ -357,7 +359,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     this.auth.changePassword(this.userId, this.passwordData).subscribe({
       next: () => {
-        // Reset form
         this.passwordData = {
           currentPassword: '',
           newPassword: '',
@@ -387,7 +388,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   toggleSidebar(): void {
-    console.log('Toggling sidebar');
+    if(this.sidebar){
+      this.sidebar.toggleSidebar();
+    }
+  }
+
+  goHome(): void {
+    this.router.navigate(['/student/dashboard']);
   }
 
   ngOnDestroy(): void {

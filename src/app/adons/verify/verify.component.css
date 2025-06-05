@@ -515,11 +515,10 @@ h1 {
     }
 
     .login-container {
-        padding: 1.5rem;
+        padding: 1rem;
         margin: 1rem;
         background: white;
         border-radius: 20px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
     .branding-section {

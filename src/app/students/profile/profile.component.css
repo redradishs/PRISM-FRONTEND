@@ -672,6 +672,11 @@ input:checked + .slider:before {
         gap: 20px;
     }
 
+    .header-background {
+    height: 130px;
+    }
+
+
     .avatar-container {
         margin-bottom: 15px;
     }
@@ -790,8 +795,7 @@ input:checked + .slider {
 
 input:checked + .slider:before {
     transform: translateX(26px);
-}
-
+} 
 .toggle-label {
     font-size: 14px;
     color: #4b5563;

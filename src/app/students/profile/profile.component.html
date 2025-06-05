@@ -9,24 +9,30 @@
                         <div class="flex items-center">
                             <div class="hidden md:flex items-center mr-4">
                                 <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
-                                <button 
-                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2">
+                                <button
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2"
+                                    (click)="setActiveTab('security')">
                                     Change Password
                                 </button>
-                                <button 
-                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
+                                <button
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors"
+                                    (click)="goHome()">
                                     Home
                                 </button>
                             </div>
                             <div *ngIf="!isMobile" class="flex items-center">
                                 <div class="relative mr-3">
-                                    <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                                        <img *ngIf="profilePicture" [src]="profilePicture" alt="Profile" class="w-full h-full object-cover">
-                                        <span *ngIf="!profilePicture" class="text-base md:text-lg font-medium text-gray-600">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profilePicture" [src]="profilePicture" alt="Profile"
+                                            class="w-full h-full object-cover">
+                                        <span *ngIf="!profilePicture"
+                                            class="text-base md:text-lg font-medium text-gray-600">
                                             {{username.charAt(0) || 'A'}}
                                         </span>
                                     </div>
-                                    <div class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
                                     </div>
                                 </div>
                                 <div class="text-left">
@@ -142,7 +148,8 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="email">Email Address</label>
-                                            <input type="email" id="email" [(ngModel)]="profile.email" name="email">
+                                            <input type="email" id="email" [(ngModel)]="profile.email" name="email"
+                                                readonly>
                                         </div>
 
                                         <div class="form-group full-width">

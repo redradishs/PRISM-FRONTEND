@@ -10,11 +10,17 @@ import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 
 interface ProfileChanges {
+  name?: string;
+  email?: string;
   department?: string;
   position?: string;
   phone?: string;
   alternateEmail?: string;
   bio?: string;
+  program?: string;
+  yearLevel?: string;
+  block?: string;
+  isCoordinator?: 'yes' | 'no';
 }
 
 @Injectable({
