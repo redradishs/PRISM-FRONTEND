@@ -146,7 +146,6 @@ export class StudHistoryComponent{
   ) {
     this.titleService.setTitle('PRISM | Manage');
     
-    // Setup search debounce
     this.searchSubject.pipe(
       debounceTime(300),
       distinctUntilChanged()
@@ -461,7 +460,7 @@ export class StudHistoryComponent{
       })
     } else if (assessment.type === 'Mastery') {
     window.scrollTo({top: 0, behavior: 'smooth'});
-      this.router.navigate(['/student/assessment/result/mastery'], {
+      this.router.navigate(['/student/assessment/result'], {
         state: { assessmentId: assessment.id }
       })
     } else {

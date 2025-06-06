@@ -79,7 +79,7 @@
                         </div>
                     </div>
 
-                    <div [routerLink]="['/instructor/assessment']" class="card2">
+                    <div (click)="viewAll('ongoing')" class="card2">
                         <div class="card-content">
                             <p class="card-title">Active Assessments</p>
                             <div class="card-numbers">
@@ -130,7 +130,7 @@
                             <div class="assessment-icon" [class]="getAssessmentTypeColor(ass)">
                                 <i class="fas" [class]="getAssessmentTypeIcon(ass)"></i>
                             </div>
-                            <div (click)="gotoAssessment(ass.id)" class="assessment-content">
+                            <div (click)="gotoAssessment(ass)" class="assessment-content">
                                 <div class="assessment-header">
                                     <h2>{{ass.title}}</h2>
                                     <span class="assessment-type" [class]="'type-' + getAssessmentTypeColor(ass)">
@@ -146,7 +146,7 @@
                                     <div class="progress" [style.width.%]="calculateProgress(ass)"></div>
                                 </div>
                                 <div class="assessment-info">
-                                    <p class="due-date">Due: {{ass.dueDate | date: 'MMM d, y h:mm a'}}</p>
+                                    <p class="due-date">Due: {{ass.dueDate | date: 'MMM d, y h:mm a':'UTC'}}</p>
                                     <p class="progress-text" *ngIf="ass.type !== 'Public Assessment'">Progress:
                                         {{calculateProgress(ass) | number:'1.0-0'}}%</p>
                                     <p class="progress-text" *ngIf="ass.type === 'Public Assessment'">Public Assessment
@@ -195,7 +195,7 @@
                                     <div class="progress" [style.width.%]="calculateProgress(ass)"></div>
                                 </div>
                                 <div class="assessment-info">
-                                    <p class="due-date">Due: {{ass.dueDate | date: 'MMM d, y h:mm a'}}</p>
+                                    <p class="due-date">Due: {{ass.dueDate | date: 'MMM d, y h:mm a':'UTC'}}</p>
                                     <p class="progress-text" *ngIf="ass.type !== 'Public Assessment'">Progress:
                                         {{calculateProgress(ass) | number:'1.0-0'}}%</p>
                                     <p class="progress-text" *ngIf="ass.type === 'Public Assessment'">Public Assessment

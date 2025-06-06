@@ -217,6 +217,25 @@ export class GenerateAssessmentComponent {isMobile = window.innerWidth < 768;
     );
   }
 
+  clearQuestions() {
+    Swal.fire({
+      title: 'Are you sure you want to clear all questions?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, clear all questions',
+      cancelButtonText: 'No, keep questions'
+    }).then((result) => {
+      if (result.isConfirmed) {
+    this.questions = [];
+    this.nextId = 1;
+    this.errorMessage = null;
+    this.showAddDialog = false;
+    this.editingQuestionId = null;
+      }
+    });
+
+  }
+
   generateQuestions(): void {
     if(!this.aiGeneration.topic) {
       this.errorMessage = 'Please enter a topic';
@@ -228,6 +247,10 @@ export class GenerateAssessmentComponent {isMobile = window.innerWidth < 768;
     }
     if (Number(this.aiGeneration.questionCount) > 50) {
       this.errorMessage = 'You have unlimited generation of questions. PRISM recommends to generate maximum of 50 questions per request.';
+      return;
+    }
+    if(this.selectedTypes.length === 0) {
+      this.errorMessage = 'Please select at least one question type';
       return;
     }
 
@@ -279,9 +302,15 @@ export class GenerateAssessmentComponent {isMobile = window.innerWidth < 768;
   private handleGeneratedQuestions(response: any): void {
     try {
       const questions = response.questions;
+      if(!Array.isArray(questions)) {
+        throw new Error('Invalid questions array format');
+      }
+      const expectedCount = Number(this.aiGeneration.questionCount);
+      console.log(`Expected ${expectedCount} questions, got ${questions.length}`);
+      const questionToAddOnly = questions.slice(0, expectedCount);
       
-      if (Array.isArray(questions)) {
-        questions.forEach((question: any) => {
+      if (Array.isArray(questionToAddOnly)) {
+        questionToAddOnly.forEach((question: any) => {
           const formattedQuestion = {
             type: this.mapQuestionType(question.type),
             id: this.nextId++,
@@ -335,7 +364,11 @@ export class GenerateAssessmentComponent {isMobile = window.innerWidth < 768;
 
     const selectedTypesText = this.selectedTypes
       .map(type => typeMapping[type as keyof typeof typeMapping])
+      .filter(type => type)
       .join(', ');
+
+      console.log('Selected types:', this.selectedTypes);
+      console.log('Selected types text:', selectedTypesText);
 
     let contextPrompt = '';
     if (this.extractedText && this.extractedText.trim() !== '') {
@@ -343,17 +376,23 @@ export class GenerateAssessmentComponent {isMobile = window.innerWidth < 768;
       console.log('I received this content:', this.extractedText);
     }
 
-    return `You are PRISM, an AI-powered assessment generation assistant. Your sole purpose is to generate assessments strictly based on instructor requests. You must follow these rules:
+    return `You are PRISM, an AI-powered assessment generation assistant. You must follow these rules STRICTLY:
 
-All responses must be in JSON format as shown below.
-Do not include comments, explanations, or reasoning.
-Only generate verified, factual, and non-hallucinatory content.
-Stick to academic integrity and curriculum-aligned content.
-Maintain consistent structure and difficulty labeling.
+    CRITICAL REQUIREMENTS:
+    -Generate exactly ${this.aiGeneration.questionCount} questions no more no less.
+    - Use only these question types: ${selectedTypesText}.
+    - Do not generate any other question types.
+    - Response must be a valid JSON Format - no explanations, or reasoning.
+    - All contents must be factual, academically alligned and no-hallucinatory.
+    - Avoid redundancy, repetition of questions or answers.
+    - In multiple choice, do not use all of the above as answer.
+    - All response must be a valid JSON format only.
 
-Generate ${this.aiGeneration.questionCount} ${this.aiGeneration.difficulty} questions about ${this.aiGeneration.topic}.
-Question types: ${selectedTypesText}
+
+Generate exactly ${this.aiGeneration.questionCount} ${this.aiGeneration.difficulty} difficulty questions about ${this.aiGeneration.topic}.
+ONLY use question types: ${selectedTypesText}
 ${contextPrompt}Additional instructions: ${this.aiGeneration.instructions || 'None'}
+
 
 Follow strictly this format:
 {
@@ -399,7 +438,13 @@ Follow strictly this format:
       "answer": "Product Backlog"
     }
   ]
-}`;
+}
+
+VERIFICATION CHECKLIST before responding:
+- Question count = ${this.aiGeneration.questionCount}? 
+- Only using types: ${selectedTypesText}?
+- Valid JSON format?
+- No hallucinated facts?`;
   }
 
   private mapQuestionType(aiType: string): string {

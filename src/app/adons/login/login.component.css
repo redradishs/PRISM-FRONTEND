@@ -341,10 +341,10 @@ select.form-input {
     .login-container {
         border: none;
         border-radius: 20px;
-        margin: 0 1rem;
+        margin: 0 0.10rem;
         background: white;
         width: 100%;
-        padding: 1.5rem;
+        padding: 1rem;
         max-height: none;
     }
 

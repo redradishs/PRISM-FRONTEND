@@ -11,7 +11,7 @@
                                 <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
                                 <button (click)="openJoinClassModal()"
                                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2">
-                                    Join Class 
+                                    Join Class
                                 </button>
                                 <button (click)="openJoinAssessmentModal()"
                                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
@@ -20,18 +20,21 @@
                             </div>
                             <div *ngIf="!isMobile" class="flex items-center">
                                 <div class="relative mr-3">
-                                    <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                                        <img *ngIf="profile" [src]="profile" alt="Profile" class="w-full h-full object-cover">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profile" [src]="profile" alt="Profile"
+                                            class="w-full h-full object-cover">
                                         <span *ngIf="!profile" class="text-base md:text-lg font-medium text-gray-600">
                                             {{username.charAt(0) || 'A'}}
                                         </span>
                                     </div>
-                                    <div class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
                                     </div>
                                 </div>
                                 <div class="text-left">
                                     <div class="text-sm font-medium text-gray-900">{{username}}</div>
-                                    <div class="text-xs text-gray-500">Student</div>    
+                                    <div class="text-xs text-gray-500">Student</div>
                                 </div>
                             </div>
                             <button *ngIf="isMobile" (click)="toggleSidebar()"
@@ -55,7 +58,8 @@
                                 <p>Here's what's happening with your assessments today.</p>
                                 <div class="welcome-buttons">
                                     <button class="btn-create" (click)="openJoinClassModal()">Join Class</button>
-                                    <button class="btn-view" (click)="openJoinAssessmentModal()">Join Public Assessment</button>
+                                    <button class="btn-view" (click)="openJoinAssessmentModal()">Join Public
+                                        Assessment</button>
                                 </div>
                             </div>
                         </div>
@@ -134,7 +138,9 @@
                                             </div>
                                             <div>
                                                 <h4 class="ongoing-title">{{assessment.title}}</h4>
-                                                <p class="ongoing-code">{{assessment.className && assessment.classCode ? assessment.className + ' - ' + assessment.classCode : 'No Code'}}</p>
+                                                <p class="ongoing-code">{{assessment.className && assessment.classCode ?
+                                                    assessment.className + ' - ' + assessment.classCode : 'No Code'}}
+                                                </p>
                                             </div>
                                         </div>
                                         <div class="flex flex-col items-end">
@@ -157,7 +163,7 @@
                                     </div>
 
                                     <div class="ongoing-footer">
-                                        <span>Due: {{assessment.endDate | date:'MMM d, y h:mm a'}}</span>
+                                        <span>Due: {{assessment.endDate | date:'MMM d, y h:mm a':'UTC'}}</span>
 
                                         <span class="mode-badge" [ngClass]="{
                                             'mode-assessment': assessment.mode === 'assessment',
@@ -170,9 +176,9 @@
                                                 'fa-globe': assessment.mode === 'public'
                                             }"></i>
                                             {{assessment.mode | titlecase}} Mode
-                                        </span> 
+                                        </span>
                                     </div>
-                                </div>  
+                                </div>
 
                                 <a routerLink="/student/history" class="view-all">
                                     View All Assessments
@@ -202,98 +208,105 @@
                             </div>
 
                             <div [ngSwitch]="activeTab">
-                                    <div *ngSwitchCase="'upcoming'" class="space-y-4">
-                                        <p *ngIf="upcomingAssessments.length === 0" class="text-center text-gray-500">No
-                                            upcoming assessments</p>
-                                        <div (click)="goToConfirmation(assessment)" *ngFor="let assessment of upcomingAssessments" class="ongoing-card">
-                                            <div class="upcoming-card">
-                                                <div class="ongoing-title-section">
-                                                    <div class="ongoing-icon" [ngClass]="{
+                                <div *ngSwitchCase="'upcoming'" class="space-y-4">
+                                    <p *ngIf="upcomingAssessments.length === 0" class="text-center text-gray-500">No
+                                        upcoming assessments</p>
+                                    <div (click)="goToConfirmation(assessment)"
+                                        *ngFor="let assessment of upcomingAssessments" class="ongoing-card">
+                                        <div class="upcoming-card">
+                                            <div class="ongoing-title-section">
+                                                <div class="ongoing-icon" [ngClass]="{
                                                         'bg-[#e8eaf6] text-[#3f51b5]': assessment.mode === 'assessment',
                                                         'bg-[#fffbeb] text-[#d97706]': assessment.mode === 'mastery',
                                                         'bg-[#eff6ff] text-[#2563eb]': assessment.mode === 'public'
                                                     }">
-                                                        <i class="fas" [ngClass]="{
+                                                    <i class="fas" [ngClass]="{
                                                             'fa-clipboard-check': assessment.mode === 'assessment',
                                                             'fa-trophy': assessment.mode === 'mastery',
                                                             'fa-globe': assessment.mode === 'public'
                                                         }"></i>
-                                                    </div>
-                                                    <div>
-                                                        <p class="ongoing-title">{{assessment.title}}</p>
-                                                        <p class="ongoing-code">{{assessment.className && assessment.classCode ? assessment.className + ' - ' + assessment.classCode : 'No Code'}}</p>
-                                                    </div>
                                                 </div>
-                                                <div class="flex flex-col items-end">
-                                                    <span class="mode-badge" [ngClass]="{
+                                                <div>
+                                                    <p class="ongoing-title">{{assessment.title}}</p>
+                                                    <p class="ongoing-code">{{assessment.className &&
+                                                        assessment.classCode ? assessment.className + ' - ' +
+                                                        assessment.classCode : 'No Code'}}</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex flex-col items-end">
+                                                <span class="mode-badge" [ngClass]="{
                                                         'mode-assessment': assessment.mode === 'assessment',
                                                         'mode-mastery': assessment.mode === 'mastery',
                                                         'mode-public': assessment.mode === 'public'
                                                     }">
-                                                        <i class="fas" [ngClass]="{
+                                                    <i class="fas" [ngClass]="{
                                                             'fa-clipboard-check': assessment.mode === 'assessment',
                                                             'fa-trophy': assessment.mode === 'mastery',
                                                             'fa-globe': assessment.mode === 'public'
                                                         }"></i>
-                                                        {{assessment.mode | titlecase}} Mode
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <div class="ongoing-footer flex-between">
-                                                <span>Start: {{assessment.startDate | date:'MMM d, y h:mm a'}}</span>
-                                                <span>Due: {{assessment.endDate | date:'MMM d, y h:mm a'}}</span>
+                                                    {{assessment.mode | titlecase}} Mode
+                                                </span>
                                             </div>
                                         </div>
+                                        <div class="ongoing-footer flex-between">
+                                            <span>Start: {{assessment.startDate | date:'MMM d, y h:mm a'}}</span>
+                                            <span>Due: {{assessment.endDate | date:'MMM d, y h:mm a'}}</span>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div *ngSwitchCase="'completed'" class="space-y-4">
                                     <p *ngIf="completedAssessments.length === 0" class="text-center text-gray-500">No
                                         completed assessments</p>
-                                        <div (click)="gotoResult(assessment.assignedAssessmentId)" *ngFor="let assessment of completedAssessments" class="ongoing-card">
-                                            <div class="upcoming-card">
-                                                <div class="ongoing-title-section">
-                                                    <div class="ongoing-icon" [ngClass]="{
+                                    <div (click)="gotoResult(assessment.assignedAssessmentId)"
+                                        *ngFor="let assessment of completedAssessments" class="ongoing-card">
+                                        <div class="upcoming-card">
+                                            <div class="ongoing-title-section">
+                                                <div class="ongoing-icon" [ngClass]="{
                                                         'bg-[#e8eaf6] text-[#3f51b5]': assessment.mode === 'assessment',
                                                         'bg-[#fffbeb] text-[#d97706]': assessment.mode === 'mastery',
                                                         'bg-[#eff6ff] text-[#2563eb]': assessment.mode === 'public'
                                                     }">
-                                                        <i class="fas" [ngClass]="{
+                                                    <i class="fas" [ngClass]="{
                                                             'fa-clipboard-check': assessment.mode === 'assessment',
                                                             'fa-trophy': assessment.mode === 'mastery',
                                                             'fa-globe': assessment.mode === 'public'
                                                         }"></i>
-                                                    </div>
-                                                    <div>
-                                                        <p class="ongoing-title">{{assessment.title}}</p>
-                                                        <p class="ongoing-code">
-                                                            {{assessment.className && assessment.classCode ? assessment.className + ' - ' + assessment.classCode : 'No Code'}}
-                                                        </p>
-                                                    </div>
                                                 </div>
-                                                <div class="flex flex-col items-end">
-                                                    <span class="mode-badge" [ngClass]="{
+                                                <div>
+                                                    <p class="ongoing-title">{{assessment.title}}</p>
+                                                    <p class="ongoing-code">
+                                                        {{assessment.className && assessment.classCode ?
+                                                        assessment.className + ' - ' + assessment.classCode : 'No
+                                                        Code'}}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="flex flex-col items-end">
+                                                <span class="mode-badge" [ngClass]="{
                                                         'mode-assessment': assessment.mode === 'assessment',
                                                         'mode-mastery': assessment.mode === 'mastery',
                                                         'mode-public': assessment.mode === 'public'
                                                     }">
-                                                        <i class="fas" [ngClass]="{
+                                                    <i class="fas" [ngClass]="{
                                                             'fa-clipboard-check': assessment.mode === 'assessment',
                                                             'fa-trophy': assessment.mode === 'mastery',
                                                             'fa-globe': assessment.mode === 'public'
                                                         }"></i>
-                                                        {{assessment.mode | titlecase}} Mode
-                                                    </span>
-                                                    <p [ngClass]="{
+                                                    {{assessment.mode | titlecase}} Mode
+                                                </span>
+                                                <p [ngClass]="{
                                                         'status-result': assessment.hasSubmitted && assessment.attemptStatus === 'submitted',
                                                         'status-not-submitted': !assessment.hasSubmitted || assessment.attemptStatus !== 'submitted'
                                                     }" class="status-badge mt-2">
-                                                        {{assessment.hasSubmitted && assessment.attemptStatus === 'submitted' ? 'View Result' : 'Not Submitted'}}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="ongoing-footer flex-between">
-                                                <span>Ended: {{assessment.endDate | date:'MMM d, y h:mm a'}}</span>
+                                                    {{assessment.hasSubmitted && assessment.attemptStatus ===
+                                                    'submitted' ? 'View Result' : 'Not Submitted'}}
+                                                </p>
                                             </div>
                                         </div>
+                                        <div class="ongoing-footer flex-between">
+                                            <span>Ended: {{assessment.endDate | date:'MMM d, y h:mm a':'UTC'}}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -306,15 +319,18 @@
 </div>
 
 <!-- Join Class Modal -->
-<div *ngIf="showJoinClassModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+<div *ngIf="showJoinClassModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog"
+    aria-modal="true">
     <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="fixed inset-0 backdrop-blur-[5px] bg-black/10 transition-opacity" aria-hidden="true" (click)="closeJoinClassModal()"></div>
-            
-        
+        <div class="fixed inset-0 backdrop-blur-[5px] bg-black/10 transition-opacity" aria-hidden="true"
+            (click)="closeJoinClassModal()"></div>
+
+
         <!-- Modal Container -->
         <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md transform transition-all">
             <!-- Decorative Header -->
-            <div class="rounded-t-2xl p-6 text-center relative" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
+            <div class="rounded-t-2xl p-6 text-center relative"
+                style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
                 <h2 class="text-3xl font-bold text-white mb-1">JOIN CLASS</h2>
                 <p class="text-blue-100 text-sm">Enter your class code below</p>
             </div>
@@ -327,47 +343,38 @@
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                             <i class="fas fa-key text-blue-500"></i>
                         </div>
-                        <input type="text" 
-                               id="classCode"
-                               formControlName="classCode"
-                               class="block w-full pl-11 pr-10 py-3.5 text-lg rounded-xl border-2 border-gray-200
+                        <input type="text" id="classCode" formControlName="classCode" class="block w-full pl-11 pr-10 py-3.5 text-lg rounded-xl border-2 border-gray-200
                                       placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 
                                       focus:ring-blue-200 transition-all duration-200
-                                      tracking-wider font-medium text-center"
-                               placeholder="• • • • • •"
-                               maxlength="10"
-                               autocomplete="off">
+                                      tracking-wider font-medium text-center" placeholder="• • • • • •" maxlength="10"
+                            autocomplete="off">
                         <div class="absolute inset-y-0 right-4 flex items-center">
-                            <i *ngIf="joinClassForm.get('classCode')?.valid" 
-                               class="fas fa-check-circle text-green-500 text-xl animate-scale"></i>
-                            <i *ngIf="joinClassForm.get('classCode')?.invalid && joinClassForm.get('classCode')?.touched" 
-                               class="fas fa-exclamation-circle text-red-500 text-xl animate-scale"></i>
+                            <i *ngIf="joinClassForm.get('classCode')?.valid"
+                                class="fas fa-check-circle text-green-500 text-xl animate-scale"></i>
+                            <i *ngIf="joinClassForm.get('classCode')?.invalid && joinClassForm.get('classCode')?.touched"
+                                class="fas fa-exclamation-circle text-red-500 text-xl animate-scale"></i>
                         </div>
                     </div>
 
                     <!-- Error Message -->
-                    <div *ngIf="joinClassForm.get('classCode')?.invalid && joinClassForm.get('classCode')?.touched" 
-                         class="text-center text-red-500 text-sm flex items-center justify-center space-x-1 animate-fade-in">
+                    <div *ngIf="joinClassForm.get('classCode')?.invalid && joinClassForm.get('classCode')?.touched"
+                        class="text-center text-red-500 text-sm flex items-center justify-center space-x-1 animate-fade-in">
                         <i class="fas fa-exclamation-circle"></i>
                         <span>Please enter a valid class code</span>
                     </div>
 
                     <!-- Action Buttons -->
                     <div class="flex flex-col gap-3 mt-6">
-                        <button type="submit"
-                                [disabled]="joinClassForm.invalid"
-                                class="w-full inline-flex justify-center items-center px-6 py-3.5 rounded-xl
+                        <button type="submit" [disabled]="joinClassForm.invalid" class="w-full inline-flex justify-center items-center px-6 py-3.5 rounded-xl
                                        text-white font-semibold hover:opacity-90 focus:outline-none focus:ring-2 
                                        focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 
                                        disabled:cursor-not-allowed transform hover:scale-[1.02] 
                                        active:scale-[0.98] transition-all duration-200"
-                                style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
+                            style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
                             <i class="fas fa-sign-in-alt mr-2"></i>
                             Join Class
                         </button>
-                        <button type="button"
-                                (click)="closeJoinClassModal()"
-                                class="w-full inline-flex justify-center items-center px-6 py-3.5 rounded-xl
+                        <button type="button" (click)="closeJoinClassModal()" class="w-full inline-flex justify-center items-center px-6 py-3.5 rounded-xl
                                        border-2 border-gray-200 text-gray-600 font-semibold bg-white
                                        hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-2
                                        focus:ring-gray-200 focus:ring-offset-2 transform hover:scale-[1.02]
@@ -383,14 +390,17 @@
 </div>
 
 <!-- Join Assessment Modal -->
-<div *ngIf="showJoinAssessmentModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+<div *ngIf="showJoinAssessmentModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title"
+    role="dialog" aria-modal="true">
     <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="fixed inset-0 backdrop-blur-[5px] bg-black/10 transition-opacity" aria-hidden="true" (click)="closeJoinAssessmentModal()"></div>
-        
+        <div class="fixed inset-0 backdrop-blur-[5px] bg-black/10 transition-opacity" aria-hidden="true"
+            (click)="closeJoinAssessmentModal()"></div>
+
         <!-- Modal Container -->
         <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md transform transition-all">
             <!-- Decorative Header -->
-            <div class="rounded-t-2xl p-6 text-center relative" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
+            <div class="rounded-t-2xl p-6 text-center relative"
+                style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
                 <h2 class="text-3xl font-bold text-white mb-1">JOIN ASSESSMENT</h2>
                 <p class="text-blue-100 text-sm">Enter your assessment code below</p>
             </div>
@@ -403,47 +413,38 @@
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                             <i class="fas fa-clipboard-check text-blue-500"></i>
                         </div>
-                        <input type="text" 
-                               id="assessmentCode" 
-                               formControlName="assessmentCode"
-                               class="block w-full pl-11 pr-10 py-3.5 text-lg rounded-xl border-2 border-gray-200
+                        <input type="text" id="assessmentCode" formControlName="assessmentCode" class="block w-full pl-11 pr-10 py-3.5 text-lg rounded-xl border-2 border-gray-200
                                       placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 
                                       focus:ring-blue-200 transition-all duration-200
-                                      tracking-wider font-medium text-center"
-                               placeholder="• • • • • •"
-                               maxlength="10"
-                               autocomplete="off">
+                                      tracking-wider font-medium text-center" placeholder="• • • • • •" maxlength="10"
+                            autocomplete="off">
                         <div class="absolute inset-y-0 right-4 flex items-center">
-                            <i *ngIf="joinAssessmentForm.get('assessmentCode')?.valid" 
-                               class="fas fa-check-circle text-green-500 text-xl animate-scale"></i>
-                            <i *ngIf="joinAssessmentForm.get('assessmentCode')?.invalid && joinAssessmentForm.get('assessmentCode')?.touched" 
-                               class="fas fa-exclamation-circle text-red-500 text-xl animate-scale"></i>
+                            <i *ngIf="joinAssessmentForm.get('assessmentCode')?.valid"
+                                class="fas fa-check-circle text-green-500 text-xl animate-scale"></i>
+                            <i *ngIf="joinAssessmentForm.get('assessmentCode')?.invalid && joinAssessmentForm.get('assessmentCode')?.touched"
+                                class="fas fa-exclamation-circle text-red-500 text-xl animate-scale"></i>
                         </div>
                     </div>
 
                     <!-- Error Message -->
-                    <div *ngIf="joinAssessmentForm.get('assessmentCode')?.invalid && joinAssessmentForm.get('assessmentCode')?.touched" 
-                         class="text-center text-red-500 text-sm flex items-center justify-center space-x-1 animate-fade-in">
+                    <div *ngIf="joinAssessmentForm.get('assessmentCode')?.invalid && joinAssessmentForm.get('assessmentCode')?.touched"
+                        class="text-center text-red-500 text-sm flex items-center justify-center space-x-1 animate-fade-in">
                         <i class="fas fa-exclamation-circle"></i>
                         <span>Please enter a valid assessment code</span>
                     </div>
 
                     <!-- Action Buttons -->
                     <div class="flex flex-col gap-3 mt-6">
-                        <button type="submit"
-                                [disabled]="joinAssessmentForm.invalid"
-                                class="w-full inline-flex justify-center items-center px-6 py-3.5 rounded-xl
+                        <button type="submit" [disabled]="joinAssessmentForm.invalid" class="w-full inline-flex justify-center items-center px-6 py-3.5 rounded-xl
                                        text-white font-semibold hover:opacity-90 focus:outline-none focus:ring-2 
                                        focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 
                                        disabled:cursor-not-allowed transform hover:scale-[1.02] 
                                        active:scale-[0.98] transition-all duration-200"
-                                style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
+                            style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
                             <i class="fas fa-sign-in-alt mr-2"></i>
                             Join Assessment
                         </button>
-                        <button type="button"
-                                (click)="closeJoinAssessmentModal()"
-                                class="w-full inline-flex justify-center items-center px-6 py-3.5 rounded-xl
+                        <button type="button" (click)="closeJoinAssessmentModal()" class="w-full inline-flex justify-center items-center px-6 py-3.5 rounded-xl
                                        border-2 border-gray-200 text-gray-600 font-semibold bg-white
                                        hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-2
                                        focus:ring-gray-200 focus:ring-offset-2 transform hover:scale-[1.02]

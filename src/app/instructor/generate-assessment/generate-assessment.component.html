@@ -20,13 +20,16 @@
                             </div>
                             <div *ngIf="!isMobile" class="flex items-center">
                                 <div class="relative mr-3">
-                                    <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                                        <img *ngIf="profile" [src]="profile" alt="Profile" class="w-full h-full object-cover">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profile" [src]="profile" alt="Profile"
+                                            class="w-full h-full object-cover">
                                         <span *ngIf="!profile" class="text-base md:text-lg font-medium text-gray-600">
                                             {{username.charAt(0) || 'A'}}
                                         </span>
                                     </div>
-                                    <div class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
                                     </div>
                                 </div>
                                 <div class="text-left">
@@ -306,7 +309,8 @@
                         <span class="error-message">{{ errorMessage }}</span>
 
                         <div class="genform-actions">
-                            <button class="genform-generate-btn" (click)="generateQuestions()" [disabled]="isGenerating">
+                            <button class="genform-generate-btn" (click)="generateQuestions()"
+                                [disabled]="isGenerating">
                                 <i class="fas fa-sparkles"></i>
                                 <span *ngIf="!isGenerating">Generate Questions</span>
                                 <span *ngIf="isGenerating">Generating...</span>
@@ -333,10 +337,18 @@
                         <h2>Assessment Questions ({{ getTotalQuestions() }})</h2>
                         <p>Review and edit your generated questions</p>
                     </div>
-                    <button class="inix-add-button" (click)="showAddDialog = true">
-                        <i class="fas fa-plus"></i>
-                        Add Question
-                    </button>
+                    <div class="buts-dov">
+                        <button *ngIf="getTotalQuestions() !== 0" class="inix-add-button inix-clear-button"
+                            (click)="clearQuestions()">
+                            <i class="fas fa-trash"></i>
+                            Clear Questions
+                        </button>
+
+                        <button class="inix-add-button" (click)="showAddDialog = true">
+                            <i class="fas fa-plus"></i>
+                            Add Question
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Question Type Cards -->

@@ -51,7 +51,7 @@ interface AssessmentProgress {
     SidebarComponent,
     SidebarComponent,
     RouterLink
-],
+  ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
@@ -89,7 +89,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.auth.getCurrentUser().subscribe((user) => {
-      if(user) {
+      if (user) {
         this.userId = user.id;
         this.username = user.name;
         this.profile = user.profilePicture;
@@ -148,7 +148,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.api.getTotalClassess(this.userId).subscribe((resp: any) => {
       try {
         this.totalClasses = resp.data;
-        if(this.totalClasses > 0){
+        if (this.totalClasses > 0) {
           this.getClassesCharts();
           this.getStudentPerformance(this.userId);
         }
@@ -170,48 +170,48 @@ export class HomeComponent implements OnInit, AfterViewInit {
     })
   }
 
-  getInitials(name: string){
+  getInitials(name: string) {
     const names = name.split(' ');
     return names[0][0] + names[names.length - 1][0];
   }
 
   getDueThisWeek(assessments: any[]): number {
     const now = new Date();
-  
-    const day = now.getDay(); 
+
+    const day = now.getDay();
     const diffToMonday = day === 0 ? -6 : 1 - day;
     const startOfWeek = new Date(now);
     startOfWeek.setDate(now.getDate() + diffToMonday);
     startOfWeek.setHours(0, 0, 0, 0);
-  
+
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
     endOfWeek.setHours(23, 59, 59, 999);
-  
+
     const dueThisWeek = assessments.filter(assessment => {
       const dueDate = new Date(assessment.dueDate);
       return dueDate >= startOfWeek && dueDate <= endOfWeek;
     });
-  
+
     return dueThisWeek.length;
   }
-  
-  
+
+
 
   studentDetails(student: any) {
     this.router.navigate(['instructor/students/assessments'], {
-      state: {studentId: student._id, classCode: student.classes[0].classCode}
+      state: { studentId: student._id, classCode: student.classes[0].classCode }
     })
   }
 
   navigateToStudentClass(event: Event, studentId: string, classCode: string) {
     event.stopPropagation();
     this.router.navigate(['instructor/students/assessments'], {
-      state: {studentId: studentId, classCode: classCode}
+      state: { studentId: studentId, classCode: classCode }
     });
   }
 
-  getClassesCharts(){
+  getClassesCharts() {
     this.api.getClassesCharts(this.userId).subscribe({
       next: (resp: any) => {
         this.charts = resp.data;
@@ -227,13 +227,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   updateBarChartData() {
     if (!this.charts || this.charts.length === 0) return;
-    
+
     // Extract class names and performance data
     const labels = this.charts.map(c => c.className);
     const performanceData = this.charts.map(c => c.overallPerformance || 0);
     const averageScores = this.charts.map(c => c.averageScore || 0);
     const completionRates = this.charts.map(c => c.completionRate || 0);
-    
+
     this.barChartData = {
       labels: labels,
       datasets: [
@@ -265,11 +265,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   updatePieChartData() {
     if (!this.charts || this.charts.length === 0) return;
-    
+
     // Extract class names and student counts for pie chart
     const labels = this.charts.map(c => c.className);
     const studentCounts = this.charts.map(c => c.studentCount || 0);
-    
+
     this.pieChartData = {
       labels: labels,
       datasets: [{
@@ -318,14 +318,21 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return this.showAllOngoing ? this.onGoingAssessments : this.onGoingAssessments.slice(0, 6);
   }
 
-  gotoAssessment(_id: string){
-    this.router.navigate(['/instructor/result'], {
-      state: {assessmentId: _id}
-    })
-
+  gotoAssessment(ass: any) {
+    console.log('Going to assessment', ass);
+    if (ass.type === 'Assessment' || ass.type === 'Public Assessment') {
+      this.router.navigate(['/instructor/result'], {
+        state: { assessmentId: ass.id }
+      });
+      console.log('Going to result', ass.id);
+    } else {
+      this.router.navigate(['instructor/result/mastery'], {
+        state: { assessmentId: ass.id }
+      });
+    }
   }
 
-  
+
   createNewAssessment() {
     this.router.navigate(['/instructor/generate']);
   }
@@ -390,7 +397,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     });
   }
 
-  
+
   toggleSidebar() {
     if (this.sidebar) {
       this.sidebar.toggleSidebar();
@@ -470,7 +477,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
           },
           maxTicksLimit: 5,
           padding: 5,
-          callback: function(value) {
+          callback: function (value) {
             return value + '%';
           }
         },
@@ -564,7 +571,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
           size: 11
         },
         callbacks: {
-          label: function(context) {
+          label: function (context) {
             const label = context.label || '';
             const value = context.raw || 0;
             const total = context.chart.data.datasets[0].data.reduce((a, b) => (a as number) + (b as number), 0) as number;

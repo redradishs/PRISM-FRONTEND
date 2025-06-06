@@ -11,7 +11,7 @@ export class StudentService {
   // Assessment = 'http://localhost:8000/submission';
 
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   //dashboad page
   getDashboardData(id: string) {
@@ -100,7 +100,7 @@ export class StudentService {
   searchAssessments(studentId: String, query: string, page: number, limit: number) {
     return this.http.get(`${this.apiUrl}/assessments/${studentId}/search?q=${query}&page=${page}&limit=${limit}`);
   }
-  
+
 
   //CLASSES PAGE
 
@@ -143,11 +143,11 @@ export class StudentService {
     return this.http.get(`${this.apiUrl}/history/specific/upcoming/${instructorId}/${classCode}/${studentId}`);
   }
 
-  
 
-  
 
-  
+
+
+
 
 
 }

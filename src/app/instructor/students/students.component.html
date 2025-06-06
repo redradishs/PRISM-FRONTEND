@@ -20,13 +20,16 @@
                             </div>
                             <div *ngIf="!isMobile" class="flex items-center">
                                 <div class="relative mr-3">
-                                    <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                                        <img *ngIf="profile" [src]="profile" alt="Profile" class="w-full h-full object-cover">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profile" [src]="profile" alt="Profile"
+                                            class="w-full h-full object-cover">
                                         <span *ngIf="!profile" class="text-base md:text-lg font-medium text-gray-600">
                                             {{username.charAt(0) || 'A'}}
                                         </span>
                                     </div>
-                                    <div class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
                                     </div>
                                 </div>
                                 <div class="text-left">
@@ -70,7 +73,8 @@
                 <div class="demo-selector-section">
                     <div class="demo-selector-container">
                         <div class="demo-select-wrapper">
-                            <select [(ngModel)]="selectedClass" (ngModelChange)="onClassSelect()" (change)="setSelectedClass(selectedClass)" class="demo-select">
+                            <select [(ngModel)]="selectedClass" (ngModelChange)="onClassSelect()"
+                                (change)="setSelectedClass(selectedClass)" class="demo-select">
                                 <option *ngFor="let class of classes" [ngValue]="class">
                                     {{class.className}} - {{class.classCode}}
                                 </option>
@@ -183,14 +187,11 @@
                                             <td class="demo-table-cell">
                                                 <div class="demo-student-info">
                                                     <div class="demo-avatar">
-                                                        <img
-                                                            *ngIf="student.profilePicture && !student.imageLoadFailed"
-                                                            [src]="student.profilePicture"
-                                                            alt="Profile"
-                                                            class="avatar-img"
-                                                            (error)="student.imageLoadFailed = true"
-                                                        >
-                                                        <span *ngIf="!student.profilePicture || student.imageLoadFailed">
+                                                        <img *ngIf="student.profilePicture && !student.imageLoadFailed"
+                                                            [src]="student.profilePicture" alt="Profile"
+                                                            class="avatar-img" (error)="student.imageLoadFailed = true">
+                                                        <span
+                                                            *ngIf="!student.profilePicture || student.imageLoadFailed">
                                                             {{ getInitials(student.name) }}
                                                         </span>
                                                     </div>
@@ -198,17 +199,17 @@
                                                 </div>
                                             </td>
                                             <td class="demo-table-cell">{{student.email.split('@')[0]}}</td>
-                                            <td class="demo-table-cell">{{student.block ? 'Block ' + student.block.toUpperCase() :
+                                            <td class="demo-table-cell">{{student.block ? 'Block ' +
+                                                student.block.toUpperCase() :
                                                 'N/A'}}</td>
                                             <td class="demo-table-cell">
-                                                <span class="performance-badge" 
-                                                [ngClass]="{
+                                                <span class="performance-badge" [ngClass]="{
                                                     'performance-poor': student.performancePercent < 50,
                                                     'performance-average': student.performancePercent >= 50 && student.performancePercent <= 80,
                                                     'performance-good': student.performancePercent > 80
                                                 }">
-                                              {{student.performancePercent}}%
-                                          </span>
+                                                    {{student.performancePercent}}%
+                                                </span>
                                             </td>
                                             <td class="demo-table-cell">
                                                 <div class="demo-completion-info">
@@ -306,7 +307,7 @@
                                                 <span class="assessment-mode-badge">Assessment</span>
                                             </td>
                                             <td class="demo-table-cell">{{student.dueDate | date:'MMM d, yyyy, h:mm
-                                                a'}}
+                                                a':'UTC'}}
                                             </td>
                                             <td class="demo-table-cell">
                                                 <div class="demo-completion-info">
@@ -392,13 +393,9 @@
                             <td class="student-name-cell">
                                 <div class="student-info">
                                     <div class="demo-avatar">
-                                        <img
-                                            *ngIf="request.profilePicture && !request.imageLoadFailed"
-                                            [src]="request.profilePicture"
-                                            alt="Profile"
-                                            class="avatar-img"
-                                            (error)="request.imageLoadFailed = true"
-                                        >
+                                        <img *ngIf="request.profilePicture && !request.imageLoadFailed"
+                                            [src]="request.profilePicture" alt="Profile" class="avatar-img"
+                                            (error)="request.imageLoadFailed = true">
                                         <span *ngIf="!request.profilePicture || request.imageLoadFailed">
                                             {{ getInitials(request.name) }}
                                         </span>
@@ -564,13 +561,9 @@
 
                         <div class="student-info">
                             <div class="demo-avatar">
-                                <img
-                                    *ngIf="student.profilePicture && !student.imageLoadFailed"
-                                    [src]="student.profilePicture"
-                                    alt="Profile"
-                                    class="avatar-img"
-                                    (error)="student.imageLoadFailed = true"
-                                >
+                                <img *ngIf="student.profilePicture && !student.imageLoadFailed"
+                                    [src]="student.profilePicture" alt="Profile" class="avatar-img"
+                                    (error)="student.imageLoadFailed = true">
                                 <span *ngIf="!student.profilePicture || student.imageLoadFailed">
                                     {{ getInitials(student.name) }}
                                 </span>
@@ -629,13 +622,9 @@
                     <div *ngFor="let student of selectedStudents" class="selected-student-item">
                         <div class="student-info">
                             <div class="demo-avatar">
-                                <img
-                                    *ngIf="student.profilePicture && !student.imageLoadFailed"
-                                    [src]="student.profilePicture"
-                                    alt="Profile"
-                                    class="avatar-img"
-                                    (error)="student.imageLoadFailed = true"
-                                >
+                                <img *ngIf="student.profilePicture && !student.imageLoadFailed"
+                                    [src]="student.profilePicture" alt="Profile" class="avatar-img"
+                                    (error)="student.imageLoadFailed = true">
                                 <span *ngIf="!student.profilePicture || student.imageLoadFailed">
                                     {{ getInitials(student.name) }}
                                 </span>
@@ -951,13 +940,16 @@
 </div>
 
 <!-- Export Modal -->
-<div *ngIf="showExportModal" class="fixed inset-0 backdrop-blur-[1px] bg-black/40 flex items-center justify-center z-50">
-    <div class="bg-white rounded-xl w-full max-w-2xl shadow-xl transform transition-all border-l-4 border-r-4 border-indigo-500">
+<div *ngIf="showExportModal"
+    class="fixed inset-0 backdrop-blur-[1px] bg-black/40 flex items-center justify-center z-50">
+    <div
+        class="bg-white rounded-xl w-full max-w-2xl shadow-xl transform transition-all border-l-4 border-r-4 border-indigo-500">
         <!-- Enhanced Header Section -->
         <div class="bg-gradient-to-r from-indigo-500 to-purple-500 rounded-t-xl p-5 border-b border-indigo-400/20">
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center shadow-sm border border-white/20">
+                    <div
+                        class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center shadow-sm border border-white/20">
                         <i class="fas fa-file-export text-lg text-white"></i>
                     </div>
                     <div>
@@ -965,8 +957,8 @@
                         <p class="text-sm text-indigo-100">Select assessments to generate a report</p>
                     </div>
                 </div>
-                <button (click)="showExportModal = false" 
-                        class="text-white/80 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-lg">
+                <button (click)="showExportModal = false"
+                    class="text-white/80 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-lg">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -977,34 +969,37 @@
             <div class="mb-5">
                 <div class="max-h-[60vh] overflow-y-auto pr-2">
                     <!-- Empty State -->
-                    <div *ngIf="!assignedAssessments || assignedAssessments.length === 0" 
-                         class="flex flex-col items-center justify-center py-10 px-4 text-center">
-                        <div class="w-14 h-14 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-full flex items-center justify-center mb-3 shadow-sm border border-indigo-100">
+                    <div *ngIf="!assignedAssessments || assignedAssessments.length === 0"
+                        class="flex flex-col items-center justify-center py-10 px-4 text-center">
+                        <div
+                            class="w-14 h-14 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-full flex items-center justify-center mb-3 shadow-sm border border-indigo-100">
                             <i class="fas fa-file-export text-xl text-indigo-600"></i>
                         </div>
                         <h4 class="text-base font-medium text-gray-900 mb-1">No Assessments Available</h4>
-                        <p class="text-sm text-gray-500 max-w-sm">There are no Completed Assessment Results to export. Assign assessments to your class first.</p>
+                        <p class="text-sm text-gray-500 max-w-sm">There are no Completed Assessment Results to export.
+                            Assign assessments to your class first.</p>
                     </div>
 
                     <!-- Assessment List -->
                     <div *ngIf="assignedAssessments && assignedAssessments.length > 0">
-                        <div *ngFor="let assessment of assignedAssessments" 
-                             class="flex items-center p-3 mb-2 rounded-lg hover:bg-indigo-50/50 cursor-pointer transition-all duration-200 border border-gray-100 hover:border-indigo-200 hover:shadow-sm"
-                             (click)="toggleAssessmentSelection(assessment)">
+                        <div *ngFor="let assessment of assignedAssessments"
+                            class="flex items-center p-3 mb-2 rounded-lg hover:bg-indigo-50/50 cursor-pointer transition-all duration-200 border border-gray-100 hover:border-indigo-200 hover:shadow-sm"
+                            (click)="toggleAssessmentSelection(assessment)">
                             <div class="w-5 h-5 mr-3">
                                 <div class="w-5 h-5 border-2 rounded flex items-center justify-center transition-all duration-200"
-                                     [class.bg-indigo-500]="isAssessmentSelected(assessment)"
-                                     [class.border-indigo-500]="isAssessmentSelected(assessment)"
-                                     [class.border-gray-300]="!isAssessmentSelected(assessment)">
-                                    <i *ngIf="isAssessmentSelected(assessment)" 
-                                       class="fas fa-check text-white text-xs transform scale-100 transition-transform duration-200"></i>
+                                    [class.bg-indigo-500]="isAssessmentSelected(assessment)"
+                                    [class.border-indigo-500]="isAssessmentSelected(assessment)"
+                                    [class.border-gray-300]="!isAssessmentSelected(assessment)">
+                                    <i *ngIf="isAssessmentSelected(assessment)"
+                                        class="fas fa-check text-white text-xs transform scale-100 transition-transform duration-200"></i>
                                 </div>
                             </div>
                             <div class="flex-1">
                                 <h4 class="font-medium text-gray-900">{{assessment.title}}</h4>
                                 <div class="flex items-center mt-0.5">
                                     <i class="far fa-calendar-alt text-gray-400 mr-1.5 text-sm"></i>
-                                    <p class="text-sm text-gray-500">Ended: {{assessment.dueDate | date:'MMM d, yyyy hh:mm a'}}</p>
+                                    <p class="text-sm text-gray-500">Ended: {{assessment.dueDate | date:'MMM d, yyyy
+                                        hh:mm a':'UTC'}}</p>
                                 </div>
                             </div>
                         </div>
@@ -1013,14 +1008,14 @@
             </div>
 
             <div class="flex justify-end space-x-3 pt-4 border-t border-gray-100">
-                <button (click)="showExportModal = false" 
-                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-lg transition-all duration-200 flex items-center border border-gray-200 hover:border-gray-300">
+                <button (click)="showExportModal = false"
+                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-lg transition-all duration-200 flex items-center border border-gray-200 hover:border-gray-300">
                     <i class="fas fa-times mr-1.5"></i>
                     Cancel
                 </button>
                 <button (click)="exportSelectedAssessments()"
-                        [disabled]="!assignedAssessments || assignedAssessments.length === 0"
-                        class="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 rounded-lg transition-all duration-200 flex items-center shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed">
+                    [disabled]="!assignedAssessments || assignedAssessments.length === 0"
+                    class="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 rounded-lg transition-all duration-200 flex items-center shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed">
                     <i class="fas fa-file-export mr-1.5"></i>
                     Export Selected
                 </button>
@@ -1030,21 +1025,21 @@
 </div>
 
 <style>
-.custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-}
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
 
-.custom-scrollbar::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
-}
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
 
-.custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #3b82f6;
-    border-radius: 10px;
-}
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #3b82f6;
+        border-radius: 10px;
+    }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #2563eb;
-}
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #2563eb;
+    }
 </style>

@@ -27,7 +27,7 @@ export class ApiService {
   // aiUrl = 'http://localhost:3000';
 
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
   // The AI CONTENT GENERATION STARTS HERE
 
   // Basic assessment generation
@@ -124,7 +124,7 @@ export class ApiService {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('limit', pageSize.toString());
-      
+
     return this.http.get(`${this.apiUrl}/classes/student/list/${id}/${classCode}`, { params });
   }
 
@@ -132,7 +132,7 @@ export class ApiService {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('limit', pageSize.toString());
-      
+
     return this.http.get(`${this.apiUrl}/classes/stats/assigned/assessments/${id}/${classCode}`, { params });
   }
 
@@ -153,13 +153,13 @@ export class ApiService {
 
   searchStudents(id: string, classCode: string, text: string, page: number = 1, pageSize: number = 10) {
     let params = new HttpParams()
-    .set('page', page.toString())
-    .set('limit', pageSize.toString());
+      .set('page', page.toString())
+      .set('limit', pageSize.toString());
     return this.http.get(`${this.apiUrl}/classes/students/search/${id}/${classCode}?query=${text}`);
   }
 
 
-  getOwnAssessment(id: string){
+  getOwnAssessment(id: string) {
     return this.http.get(`${this.apiUrl}/classes/assessment/latest/${id}`);
   }
 
@@ -182,7 +182,7 @@ export class ApiService {
     return this.http.post(`${this.apiUrl}/class/addstudent/${id}/${classCode}`, data);
   }
 
-  removeStudent(id: string, classCode: string, data: any){
+  removeStudent(id: string, classCode: string, data: any) {
     return this.http.put(`${this.apiUrl}/class/removeStudent/${id}/${classCode}`, data);
   }
 
@@ -309,6 +309,11 @@ export class ApiService {
     return this.http.post(`${this.apiUrl}/assessment/insights`, data);
   }
 
+  //result Mastery
+  masteryResultData(id: string) {
+    return this.http.get(`${this.apiUrl}/assessment/result/${id}`)
+  }
+
   //profile page instructor
   getTeachingSummary(id: string) {
     return this.http.get(`${this.apiUrl}/instructorstats/${id}`);
@@ -320,10 +325,10 @@ export class ApiService {
   }
   studentCompletedlist(id: string, classCode: string, studentId: string) {
     return this.http.get(`${this.apiUrl}/student/assessment/history/completed/${id}/${classCode}/${studentId}`);
-  } 
+  }
   studentUpcomingList(id: string, classCode: string, studentId: string) {
     return this.http.get(`${this.apiUrl}/student/assessment/history/upcoming/${id}/${classCode}/${studentId}`);
-  } 
+  }
 
   //student response page
   getAssessmentDataP(assignedAssessmentId: string, studentId: string) {
@@ -333,18 +338,18 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/assessment/response/answers/${assignedAssessmentId}/${studentId}`);
   }
   rectifyResult(assignedAssessmentId: string, studentId: string, data: {
-  instructorId: string;
-  adjustments: {
-    questionsId: string;
-    isCorrect: boolean;
-    pointsEarned: number;
-  }[]
-}) {
-  return this.http.put(
-    `${this.apiUrl}/assessment/rectify/${assignedAssessmentId}/${studentId}`, 
-    data
-  );
-}
+    instructorId: string;
+    adjustments: {
+      questionsId: string;
+      isCorrect: boolean;
+      pointsEarned: number;
+    }[]
+  }) {
+    return this.http.put(
+      `${this.apiUrl}/assessment/rectify/${assignedAssessmentId}/${studentId}`,
+      data
+    );
+  }
 
 
   // Assessment Management Routes
@@ -352,7 +357,7 @@ export class ApiService {
     let httpParams = new HttpParams();
     if (params.page) httpParams = httpParams.set('page', params.page.toString());
     if (params.limit) httpParams = httpParams.set('limit', params.limit.toString());
-    
+
     return this.http.get(`${this.apiUrl}/assessments/all/${instructorId}`, { params: httpParams });
   }
 
@@ -361,7 +366,7 @@ export class ApiService {
     if (params.page) httpParams = httpParams.set('page', params.page.toString());
     if (params.limit) httpParams = httpParams.set('limit', params.limit.toString());
     httpParams = httpParams.set('q', query);
-    
+
     return this.http.get(`${this.apiUrl}/assessments/search/${instructorId}`, { params: httpParams });
   }
 
@@ -369,7 +374,7 @@ export class ApiService {
     let httpParams = new HttpParams();
     if (params.page) httpParams = httpParams.set('page', params.page.toString());
     if (params.limit) httpParams = httpParams.set('limit', params.limit.toString());
-    
+
     return this.http.get(`${this.apiUrl}/assessments/ongoing/${instructorId}`, { params: httpParams });
   }
 
@@ -377,7 +382,7 @@ export class ApiService {
     let httpParams = new HttpParams();
     if (params.page) httpParams = httpParams.set('page', params.page.toString());
     if (params.limit) httpParams = httpParams.set('limit', params.limit.toString());
-    
+
     return this.http.get(`${this.apiUrl}/assessments/scheduled/${instructorId}`, { params: httpParams });
   }
 
@@ -385,7 +390,7 @@ export class ApiService {
     let httpParams = new HttpParams();
     if (params.page) httpParams = httpParams.set('page', params.page.toString());
     if (params.limit) httpParams = httpParams.set('limit', params.limit.toString());
-    
+
     return this.http.get(`${this.apiUrl}/assessments/completed/${instructorId}`, { params: httpParams });
   }
 
@@ -394,6 +399,6 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/assessments/counts/${instructorId}`);
   }
 
-  
+
 
 }
