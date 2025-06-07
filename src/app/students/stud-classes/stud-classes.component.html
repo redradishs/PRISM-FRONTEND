@@ -146,8 +146,14 @@
 
     <section class="tabs">
         <div class="tab-switches">
-            <button class="tab-switch" [class.active]="activeTab === 'enrolled'" (click)="setActiveTab('enrolled')">Enrolled Classes</button>
-            <button class="tab-switch" [class.active]="activeTab === 'pending'" (click)="setActiveTab('pending')">Pending Applications</button>
+            <button class="tab-switch" [class.active]="activeTab === 'enrolled'" (click)="setActiveTab('enrolled')">
+                <span class="tab-text-full">Enrolled Classes</span>
+                <span class="tab-text-mobile">Enrolled</span>
+            </button>
+            <button class="tab-switch" [class.active]="activeTab === 'pending'" (click)="setActiveTab('pending')">
+                <span class="tab-text-full">Pending Applications</span>
+                <span class="tab-text-mobile">Pending</span>
+            </button>
         </div>
 
         <div class="views">

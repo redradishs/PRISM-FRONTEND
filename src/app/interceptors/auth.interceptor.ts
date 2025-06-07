@@ -8,6 +8,11 @@ export class AuthInterceptor implements HttpInterceptor {
     constructor(private authService: AuthService) { }
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        // sklip nebius ai
+        if (req.url.includes('api.studio.nebius.com')) {
+            return next.handle(req);
+        }
+
         const token = this.authService.getToken();
 
         if (token && this.authService.isAuthenticated()) {
