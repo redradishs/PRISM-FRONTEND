@@ -1,7 +1,6 @@
 import {
   HttpClient,
   HttpErrorResponse,
-  HttpHeaders,
 } from '@angular/common/http';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { BehaviorSubject, catchError, Observable, throwError } from 'rxjs';
@@ -24,7 +23,7 @@ interface ProfileChanges {
 }
 
 @Injectable({
-  providedIn: 'root', 
+  providedIn: 'root',
 })
 export class AuthService {
   // private baseUrl = 'http://localhost:8000/user';
@@ -57,7 +56,7 @@ export class AuthService {
   userSignUp(data: any): Observable<any> {
     return this.http
       .post<any>(`${this.baseUrl}/signup`, data)
-  } 
+  }
 
   completeProfile(data: any) {
     return this.http.post(`${this.baseUrl}/complete-profile`, data)
@@ -103,14 +102,6 @@ export class AuthService {
     return token ? !this.isTokenExpired(token) : false;
   }
 
-  getAuthHeaders(): HttpHeaders {
-    const token = this.getToken();
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    });
-  }
-
   logout(): void {
     if (isPlatformBrowser(this.platformId) && isLocalStorageAvailable()) {
       localStorage.removeItem(this.tokenKey);
@@ -123,7 +114,7 @@ export class AuthService {
     try {
       const base64Url = token.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
       }).join(''));
 
@@ -193,8 +184,8 @@ export class AuthService {
 
   //profile page instructor
   getCurrentProfile(id: string) {
-      return this.http.get(`${this.baseUrl}/profile/${id}`)
-    }
+    return this.http.get(`${this.baseUrl}/profile/${id}`)
+  }
 
   changePassword(id: string, data: any) {
     return this.http.put(`${this.baseUrl}/profile/change-password/${id}`, data)

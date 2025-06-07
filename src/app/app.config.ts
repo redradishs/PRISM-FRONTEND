@@ -16,14 +16,15 @@ import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideAuth, getAuth, connectAuthEmulator } from '@angular/fire/auth';
 import { environment } from '../environments/environment';
 
-// Interceptor import
+// Interceptor import for decrypt and authorization
 import { DecryptionInterceptor } from './interceptors/decryption.interceptor';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ 
+    provideZoneChangeDetection({
       eventCoalescing: true,
-      runCoalescing: true 
+      runCoalescing: true
     }),
     provideRouter(
       routes,
@@ -41,6 +42,11 @@ export const appConfig: ApplicationConfig = {
     {
       provide: HTTP_INTERCEPTORS,
       useClass: DecryptionInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
       multi: true
     },
 
