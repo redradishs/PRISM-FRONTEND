@@ -21,10 +21,13 @@ interface PaginationParams {
 })
 export class ApiService {
   // apiUrl = 'http://localhost:8000/instructor';
-  // apiUrl = 'https://prismcdn.onrender.com/api';
+  // rtUrl = 'http://localhost:8000/rt';
+  // aiUrl = 'http://localhost:3000';
+
+  rtUrl = 'https://prismapi2.onrender.com/rt';
   apiUrl = 'https://prismapi2.onrender.com/instructor';
   aiUrl = 'https://redprismai.vercel.app';
-  // aiUrl = 'http://localhost:3000';
+
 
 
   constructor(private http: HttpClient) { }
@@ -291,7 +294,7 @@ export class ApiService {
   }
 
   getScoreStream(id: string): EventSource {
-    return new EventSource(`${this.apiUrl}/assessment/result/score/stream/${id}/rt`);
+    return new EventSource(`${this.rtUrl}/assessment/result/score/stream/${id}/rt`);
   }
 
   startNow(data: any) {
