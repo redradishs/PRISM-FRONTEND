@@ -665,6 +665,9 @@ input:checked + .slider:before {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .main-content {
+        padding: 0.80rem 0.40rem;
+    }
     .profile-info {
         flex-direction: column;
         align-items: center;

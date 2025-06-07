@@ -464,6 +464,12 @@ form {
     animation: letterSpacing 1s ease-out;
 }
 
+/* Add this CSS to your login.component.css */
+.email-input-container.email-error {
+  border: 2px solid #f76371 !important;
+  background-color: #fff5f5 !important;
+}
+
 @keyframes letterSpacing {
     from {
         letter-spacing: 0;

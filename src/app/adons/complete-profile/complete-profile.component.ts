@@ -25,16 +25,14 @@ interface Block {
   styleUrl: './complete-profile.component.css'
 })
 export class CompleteProfileComponent implements OnInit {
-  // Form and UI state
   currentStep = 1;
   selectedRole: 'student' | 'instructor' | null = null;
   isCoordinator = "no";
   isSubmitting = false;
   profileForm: FormGroup;
 
-  // User data
-  userName = "John Doe"; // Default or fetched
-  userEmail = "john.doe@gordoncollege.edu.ph"; // Default or fetched
+  userName = "Juan Dela Cruz";
+  userEmail = "juan.delacruz@gordoncollege.edu.ph";
   userId: string = '';
   newUser = false;
   signupCode: string = '';
@@ -69,7 +67,6 @@ export class CompleteProfileComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Apply SEO from route data
     const seoData = this.route.snapshot.data['seo'];
     if (seoData) {
       this.seoService.updateSEO({
@@ -84,22 +81,20 @@ export class CompleteProfileComponent implements OnInit {
       this.userName = user.name;
       this.userId = user.id;
       this.newUser = user.newUser;
-      if(!this.newUser) { 
+      if (!this.newUser) {
         this.router.navigate(['/dashboard']);
       }
     })
 
-    // Initialize form with user data
     this.profileForm.patchValue({
       fullName: this.userName,
       isCoordinator: false
     });
 
-    // Subscribe to coordinator checkbox changes
     this.profileForm.get('isCoordinator')?.valueChanges.subscribe(isCoordinator => {
       this.isCoordinator = isCoordinator ? 'yes' : 'no';
       const coordinatedProgramControl = this.profileForm.get('coordinatedProgram');
-      
+
       if (isCoordinator) {
         coordinatedProgramControl?.setValidators([Validators.required]);
       } else {
@@ -112,10 +107,33 @@ export class CompleteProfileComponent implements OnInit {
 
   selectRole(role: 'student' | 'instructor') {
     this.selectedRole = role;
+    this.resetFormRole();
     setTimeout(() => {
       this.currentStep = 2;
       this.updateUIForStep();
     }, 200);
+  }
+
+  resetFormRole() {
+    this.profileForm.patchValue({
+      course: '',
+      block: '',
+      yearLevel: '',
+      isCoordinator: false,
+      coordinatedProgram: '',
+      signupCode: ''
+    });
+
+    this.clearAllValidators();
+  }
+
+  clearAllValidators() {
+    const controls = ['course', 'block', 'yearLevel', 'coordinatedProgram', 'signupCode']
+    controls.forEach(controlName => {
+      const control = this.profileForm.get(controlName);
+      control?.clearValidators();
+      control?.updateValueAndValidity();
+    });
   }
 
   updateUIForStep() {
@@ -124,40 +142,61 @@ export class CompleteProfileComponent implements OnInit {
         this.profileForm.get('course')?.setValidators([Validators.required]);
         this.profileForm.get('block')?.setValidators([Validators.required]);
         this.profileForm.get('yearLevel')?.setValidators([Validators.required]);
-      } else {
+
+        this.profileForm.get('signupCode')?.clearValidators();
+        this.profileForm.get('coordinatedProgram')?.clearValidators();
+      } else if (this.selectedRole === 'instructor') {
+        this.profileForm.get('signupCode')?.setValidators([Validators.required]);
+
         this.profileForm.get('course')?.clearValidators();
         this.profileForm.get('block')?.clearValidators();
         this.profileForm.get('yearLevel')?.clearValidators();
+
+        const isCoordinatorChecked = this.profileForm.get('isCoordinator')?.value;
+        if (isCoordinatorChecked) {
+          this.profileForm.get('coordinatedProgram')?.setValidators([Validators.required]);
+        } else {
+          this.profileForm.get('coordinatedProgram')?.clearValidators();
+        }
       }
-      this.profileForm.get('course')?.updateValueAndValidity();
-      this.profileForm.get('block')?.updateValueAndValidity();
-      this.profileForm.get('yearLevel')?.updateValueAndValidity();
+      Object.keys(this.profileForm.controls).forEach(key => {
+        this.profileForm.get(key)?.updateValueAndValidity();
+      });
     }
   }
 
   goBack() {
     this.currentStep = 1;
-    this.updateUIForStep();
+    this.selectedRole = null;
+
+    this.resetFormRole();
   }
 
   onCoordinatorChange(event: Event) {
     const checkbox = event.target as HTMLInputElement;
     this.isCoordinator = checkbox.checked ? 'yes' : 'no';
-    if (!checkbox.checked) {
-      this.profileForm.get('coordinatedProgram')?.setValue('');
+
+    const coordinatedProgramControl = this.profileForm.get('coordinatedProgram');
+
+    if (checkbox.checked) {
+      coordinatedProgramControl?.setValidators([Validators.required]);
+    } else {
+      coordinatedProgramControl?.clearValidators();
+      coordinatedProgramControl?.setValue('');
     }
+    coordinatedProgramControl?.updateValueAndValidity();
   }
 
   onSubmit() {
     if (this.isSubmitting) return;
+    this.markRelevantFieldsAsTouched();
 
     if (this.profileForm.invalid) {
-      // Handle validation errors
-      Object.keys(this.profileForm.controls).forEach(key => {
-        const control = this.profileForm.get(key);
-        if (control?.invalid) {
-          control.markAsTouched();
-        }
+      Swal.fire({
+        icon: 'error',
+        title: 'Validation Error',
+        text: 'Please fill out all required fields.',
+        confirmButtonText: 'OK'
       });
       return;
     }
@@ -181,7 +220,7 @@ export class CompleteProfileComponent implements OnInit {
         console.log(resp);
         this.auth.setToken(resp.data.jwt);
         this.auth.getCurrentUser().subscribe((user: any) => {
-          if(user.role === "student") {
+          if (user.role === "student") {
             this.router.navigate(['/student/dashboard']);
           } else {
             this.router.navigate(['/instructor/dashboard']);
@@ -200,6 +239,21 @@ export class CompleteProfileComponent implements OnInit {
         })
       }
     });
+  }
+
+  markRelevantFieldsAsTouched() {
+    this.profileForm.get('fullName')?.markAsTouched();
+
+    if (this.selectedRole === 'student') {
+      ['course', 'block', 'yearLevel'].forEach(field => {
+        this.profileForm.get(field)?.markAsTouched();
+      });
+    } else if (this.selectedRole === 'instructor') {
+      this.profileForm.get('signupCode')?.markAsTouched();
+      if (this.profileForm.get('isCoordinator')?.value) {
+        this.profileForm.get('coordinatedProgram')?.markAsTouched();
+      }
+    }
   }
 
   enterPlatform() {

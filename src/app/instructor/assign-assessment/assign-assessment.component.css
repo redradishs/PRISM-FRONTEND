@@ -327,7 +327,7 @@ html {
 /* Responsive adjustments */
 @media (max-width: 640px) {
     .page-content {
-        padding: 1rem 1rem;
+        padding: 0.40rem 0.40rem;
     }
     .steps-container {
         margin-bottom: 1.5rem;

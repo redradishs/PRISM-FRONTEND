@@ -1781,6 +1781,11 @@ input:checked + .toggle-slider:before {
     align-items: flex-start;
     gap: 0.75rem;
   }
+
+  .main-content {
+    padding: 0.80rem 0.40rem;
+}
+
 }
 
 @media (max-width: 768px) {
@@ -3217,7 +3222,7 @@ input:checked + .toggle-slider:before {
   }
 
   .demo-header-container {
-    padding:1.7rem;
+    padding:1.30rem;
   }
 
   .demo-header {
@@ -3236,3 +3241,4 @@ input:checked + .toggle-slider:before {
     border-left: 0px solid #3678fc;
 }
 }
+

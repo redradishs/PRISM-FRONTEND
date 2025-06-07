@@ -191,7 +191,7 @@ export class StudentsComponent implements OnInit {
 
   constructor(private api: ApiService, private auth: AuthService, private titleService: Title, private router: Router) {
     this.titleService.setTitle('PRISM | Students');
-    
+
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras?.state) {
       const state = navigation.extras.state as { selectedClassCode?: string };
@@ -200,14 +200,14 @@ export class StudentsComponent implements OnInit {
       }
     }
 
-    if(localStorage.getItem('classCode')){
+    if (localStorage.getItem('classCode')) {
       this.initialClassCodeToSelect = localStorage.getItem('classCode');
     } else {
       this.selectedClass = this.classes[0];
     }
-    
+
   }
-  
+
 
   ngOnInit(): void {
     this.auth.getCurrentUser().subscribe((user) => {
@@ -226,13 +226,13 @@ export class StudentsComponent implements OnInit {
     localStorage.setItem('classCode', selectedClass.classCode);
   }
 
-  getClasses(){
+  getClasses() {
     this.isLoading = true;
     this.api.ownedClasses(this.userId).subscribe({
       next: (resp: any) => {
         this.classes = resp.data;
         this.isLoading = false;
-        
+
         if (this.classes && this.classes.length > 0) {
           if (this.initialClassCodeToSelect) {
             const classToSelect = this.classes.find(c => c.classCode === this.initialClassCodeToSelect);
@@ -255,7 +255,7 @@ export class StudentsComponent implements OnInit {
   }
 
   getStudentList(page: number = 1) {
-    if(!this.selectedClass){
+    if (!this.selectedClass) {
       return;
     }
 
@@ -279,7 +279,7 @@ export class StudentsComponent implements OnInit {
   }
 
   getAssignedAssessments(page: number = 1) {
-    if(!this.selectedClass){
+    if (!this.selectedClass) {
       return;
     }
     this.currentPage2 = page;
@@ -297,7 +297,7 @@ export class StudentsComponent implements OnInit {
     })
   }
 
-  statsClass(){
+  statsClass() {
     this.api.statsClass(this.userId, this.selectedClass.classCode).subscribe({
       next: (resp: any) => {
         this.admittedCount = resp.data.stats.admitted;
@@ -316,16 +316,16 @@ export class StudentsComponent implements OnInit {
     if (!this.selectedClass) {
       return;
     }
-    if(!this.searchTerm){
+    if (!this.searchTerm) {
       return this.getStudentList();
     }
-    
+
     this.currentPage = 1;
     this.isLoading = true;
-    
+
     this.api.searchStudents(
-      this.userId, 
-      this.selectedClass.classCode, 
+      this.userId,
+      this.selectedClass.classCode,
       this.searchTerm,
       this.currentPage,
       this.itemsPerPage
@@ -348,16 +348,16 @@ export class StudentsComponent implements OnInit {
     if (!this.selectedClass) {
       return;
     }
-    if(!this.assessmentSearchTerm){
+    if (!this.assessmentSearchTerm) {
       return this.getAssignedAssessments();
     }
-    
+
     this.currentPage2 = 1;
     this.isLoading = true;
-    
+
     this.api.searchAssessment(
-      this.userId, 
-      this.selectedClass.classCode, 
+      this.userId,
+      this.selectedClass.classCode,
       this.assessmentSearchTerm,
       this.currentPage2,
       this.itemsPerPage2
@@ -382,7 +382,7 @@ export class StudentsComponent implements OnInit {
     }
   }
 
-  onClassSelect(){
+  onClassSelect() {
     this.currentPage = 1;
     this.currentPage2 = 1;
 
@@ -436,9 +436,9 @@ export class StudentsComponent implements OnInit {
     })
   }
 
-  goToResult(id: number){
-    this.router.navigate(['instructor/result'],{
-      state: {assessmentId: id}
+  goToResult(id: number) {
+    this.router.navigate(['instructor/result'], {
+      state: { assessmentId: id }
     })
   }
 
@@ -456,9 +456,9 @@ export class StudentsComponent implements OnInit {
   }
 
   studentInfo(student: any) {
-    if(student.completion.charAt(0) > 0){
+    if (student.completion.charAt(0) > 0) {
       this.router.navigate(['instructor/students/assessments'], {
-        state: {studentId: student._id, classCode: this.selectedClass.classCode}
+        state: { studentId: student._id, classCode: this.selectedClass.classCode }
       });
     } else {
       Swal.fire({
@@ -479,7 +479,7 @@ export class StudentsComponent implements OnInit {
 
   updateDisplayedData(selectedClass: any) {
     if (!selectedClass) return;
-    
+
     this.selectedClass = selectedClass;
     this.getStudentList();
     this.getAssignedAssessments();
@@ -492,7 +492,7 @@ export class StudentsComponent implements OnInit {
 
   getCompletionPercentage(completion: string): number {
     if (!completion) return 0;
-    
+
     try {
       const [completed, total] = completion.split('/').map(Number);
       if (isNaN(completed) || isNaN(total) || total === 0) return 0;
@@ -505,7 +505,7 @@ export class StudentsComponent implements OnInit {
 
   isFullyCompleted(completion: string): boolean {
     if (!completion) return false;
-    
+
     try {
       const [completed, total] = completion.split('/').map(Number);
       return completed === total;
@@ -514,16 +514,16 @@ export class StudentsComponent implements OnInit {
     }
   }
 
-  getInitials(name: string){
+  getInitials(name: string) {
     const names = name.split(' ');
     return names[0][0] + names[names.length - 1][0];
   }
 
   getStatusClass(status: string): string {
     if (!status) return 'status-unknown';
-    
+
     const normalizedStatus = status.toLowerCase();
-    
+
     if (normalizedStatus === 'completed') {
       return 'status-completed';
     } else if (normalizedStatus === 'ongoing') {
@@ -531,7 +531,7 @@ export class StudentsComponent implements OnInit {
     } else if (normalizedStatus === 'scheduled') {
       return 'status-scheduled';
     }
-    
+
     return 'status-unknown';
   }
 
@@ -562,7 +562,7 @@ export class StudentsComponent implements OnInit {
     if (!this.newClass.className || !this.newClass.classCode) {
       return;
     }
-    
+
     const data = {
       instructor: this.userId,
       className: this.newClass.className,
@@ -574,7 +574,7 @@ export class StudentsComponent implements OnInit {
     this.isLoading = true;
     this.api.createClass(data).subscribe({
       next: (resp: any) => {
-        this.getClasses(); 
+        this.getClasses();
         this.toggleCreateClassModal();
         this.isLoading = false;
       },
@@ -600,14 +600,14 @@ export class StudentsComponent implements OnInit {
     }
 
     this.isSearchLoading = true;
-    
+
     const data = {
       instructorId: this.userId,
       classCode: this.selectedClass.classCode,
       emails: emails,
       block: this.newStudentBlock || null
     };
-    
+
     this.api.addStudent(this.userId, this.selectedClass.classCode, data).subscribe({
       next: (resp: any) => {
         this.getStudentList();
@@ -625,11 +625,11 @@ export class StudentsComponent implements OnInit {
     this.studentSearchQuery = '';
     this.searchedStudents = [];
   }
-  
+
   clearAllSelections() {
     this.selectedStudents = [];
   }
-  
+
 
   toggleAssignAssessmentModal() {
     this.showAssignAssessmentModal = !this.showAssignAssessmentModal;
@@ -658,7 +658,7 @@ export class StudentsComponent implements OnInit {
 
   loadOwnAssessments() {
     if (!this.userId) return;
-    
+
     this.api.getOwnAssessment(this.userId).subscribe({
       next: (data: any) => {
         this.ownAssessments = data.data;
@@ -681,9 +681,9 @@ export class StudentsComponent implements OnInit {
       this.searchedAssessments = [];
       return;
     }
-    
+
     this.api.searchAssessmentUser(
-      this.userId, 
+      this.userId,
       this.assessmentSearchQuery
     ).subscribe({
       next: (resp: any) => {
@@ -703,18 +703,18 @@ export class StudentsComponent implements OnInit {
       this.clearSelectedAssessment();
       return;
     }
-    
+
     this.selectedAssessment = assessment;
-    
+
     this.searchedAssessments = this.searchedAssessments.map(a => ({
       ...a,
       selected: a._id === assessment._id
     }));
-    
+
     this.selectedDropdownAssessment = this.ownAssessments.find(
       a => a._id === assessment._id
     ) || null;
-    
+
     this.setupDefaultScheduleSettings();
   }
 
@@ -727,7 +727,7 @@ export class StudentsComponent implements OnInit {
     const now = new Date();
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 7);
-    
+
     this.assignmentDetails.startDate = this.formatDateForInput(now);
     this.assignmentDetails.dueDate = this.formatDateForInput(dueDate);
   }
@@ -737,7 +737,7 @@ export class StudentsComponent implements OnInit {
   }
 
   searchStudentsForAdding() {
-    if(!this.selectedClass){
+    if (!this.selectedClass) {
       this.searchedStudents = [];
       return;
     }
@@ -745,7 +745,7 @@ export class StudentsComponent implements OnInit {
       this.searchedStudents = [];
       return;
     }
-    
+
     this.isLoading = true;
     this.api.searchStudentsAdd(this.userId, this.selectedClass.classCode, this.studentSearchQuery).subscribe({
       next: (resp: any) => {
@@ -778,7 +778,7 @@ export class StudentsComponent implements OnInit {
 
   async addSelectedStudents() {
     if (this.selectedStudents.length === 0) return;
-    
+
     this.isAddingStudents = true;
     let successCount = 0;
     let failCount = 0;
@@ -787,11 +787,11 @@ export class StudentsComponent implements OnInit {
     for (const student of studentsToAdd) {
       try {
         this.addingProgressText = `Adding ${successCount + 1} of ${studentsToAdd.length}...`;
-        
+
         await this.api.addStudent(
-          this.userId, 
+          this.userId,
           this.selectedClass.classCode,
-          {studentId: student._id}
+          { studentId: student._id }
         ).toPromise();
         successCount++;
       } catch (error) {
@@ -820,22 +820,22 @@ export class StudentsComponent implements OnInit {
 
   formatQuestionTypes(types: any): string {
     if (!types) return 'Unknown';
-    
+
     const typeKeys = Object.keys(types);
-    
+
     if (typeKeys.length === 0) return 'Unknown';
     if (typeKeys.length === 1) {
       const typeName = this.formatTypeName(typeKeys[0]);
       return `${typeName} (${types[typeKeys[0]]})`;
     }
-    
+
     const totalQuestions = this.getTotalQuestions(types);
     return `Mixed (${totalQuestions})`;
   }
 
   formatTypeName(type: string): string {
     if (!type) return 'Unknown';
-    
+
     return type
       .replace(/-|_/g, ' ')
       .replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
@@ -915,12 +915,12 @@ export class StudentsComponent implements OnInit {
           // randomizeQuestions: this.assignmentDetails.randomizeQuestions,
           // showResults: this.assignmentDetails.showResults
         };
-        
+
         // Call API to assign assessment
         this.api.assignAssessment(assignmentData).subscribe({
           next: (response) => {
             console.log('Assessment assigned successfully');
-            
+
             // Show success message
             Swal.fire({
               title: 'Success!',
@@ -928,7 +928,7 @@ export class StudentsComponent implements OnInit {
               icon: 'success',
               confirmButtonColor: '#3b82f6'
             });
-            
+
             // Close modal and refresh assessment list
             this.toggleAssignAssessmentModal();
             this.getAssignedAssessments();
@@ -947,44 +947,89 @@ export class StudentsComponent implements OnInit {
     });
   }
 
+  removeStudent(student: any) {
+    // console.log("This is the student", student);
+    const data = {
+      studentId: student._id,
+      classCode: this.selectedClass.classCode
+    }
+    Swal.fire({
+      title: 'Remove Student?',
+      text: `Are you sure you want to remove "${student.name}" from this class?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3b82f6',
+      cancelButtonColor: '#d1d5db',
+      confirmButtonText: 'Yes, remove',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.api.removeStudent(data).subscribe({
+          next: (resp: any) => {
+            this.getStudentList();
+            this.statsClass();
+            console.log('Student removed successfully');
+            Swal.fire({
+              title: `{student.name} Removed!`,
+              text: 'Student has been removed from the class.',
+              icon: 'success',
+              confirmButtonColor: '#3b82f6',
+              position: 'top-end',
+              timer: 3000,
+              toast: true
+            })
+          }, error: (error) => {
+            console.error('Failed to remove student:', error);
+            Swal.fire({
+              title: 'Error!',
+              text: 'Failed to remove student. Please try again.',
+              icon: 'error',
+              confirmButtonColor: '#3b82f6'
+            });
+          }
+        })
+      }
+    })
+  }
+
   getCurrentDateTimeString(): string {
     const now = new Date();
-    now.setSeconds(0); 
-    now.setMilliseconds(0); 
-    return now.toISOString().slice(0, 16); 
+    now.setSeconds(0);
+    now.setMilliseconds(0);
+    return now.toISOString().slice(0, 16);
   }
 
   getMinDueDateString(): string {
     if (!this.assignmentDetails.startDate) {
       return this.getCurrentDateTimeString();
     }
-    
+
     const startDate = new Date(this.assignmentDetails.startDate);
     startDate.setMinutes(startDate.getMinutes() + 5);
     return startDate.toISOString().slice(0, 16);
   }
 
-  
+
   isFormValid(): boolean {
     if (!this.selectedAssessment) return false;
     if (!this.assignmentDetails.startDate || !this.assignmentDetails.dueDate || !this.assignmentDetails.timeLimit) return false;
-    
+
     if (this.assignmentDetails.timeLimit <= 0) return false;
-    
+
     const startDate = new Date(this.assignmentDetails.startDate);
     const dueDate = new Date(this.assignmentDetails.dueDate);
     const now = new Date();
-    
+
     if (startDate < now) {
       this.dateError = "Start date cannot be in the past";
       return false;
     }
-    
+
     if (dueDate <= startDate) {
       this.dateError = "Due date must be after start date";
       return false;
     }
-    
+
     this.dateError = "";
     return true;
   }
@@ -1002,7 +1047,7 @@ export class StudentsComponent implements OnInit {
       this.searchedAssessments = [];
     }
   }
-  
+
   exportCompletedAssessments() {
     if (!this.selectedClass) {
       Swal.fire({
@@ -1018,7 +1063,7 @@ export class StudentsComponent implements OnInit {
 
   private getLastName(name: string): string {
     if (!name) return '';
-    
+
     const nameParts = name.split(' ');
     if (nameParts.length <= 1) return name;
 
@@ -1084,7 +1129,7 @@ export class StudentsComponent implements OnInit {
             statusRow.getCell(2).font = { bold: true, color: { argb: '166534' } }; // Dark green text
             statusRow.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'DCFCE7' } }; // Light green background
             statusRow.alignment = { horizontal: 'center' };
-            
+
             // Mode row with styling
             const modeRow = worksheet.addRow(['Mode:', response.data.mode.toUpperCase()]);
             const modeCell = modeRow.getCell(2);
@@ -1140,15 +1185,15 @@ export class StudentsComponent implements OnInit {
               }
 
               // Apply style to score column (3rd)
-              row.getCell(3).font = { 
-                bold: true, 
+              row.getCell(3).font = {
+                bold: true,
                 size: 11,
-                color: { argb: style.fontColor } 
+                color: { argb: style.fontColor }
               };
-              row.getCell(3).fill = { 
-                type: 'pattern', 
-                pattern: 'solid', 
-                fgColor: { argb: style.bgColor } 
+              row.getCell(3).fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: style.bgColor }
               };
 
               // Apply alignments to all cells
@@ -1178,12 +1223,12 @@ export class StudentsComponent implements OnInit {
       const buffer = await workbook.xlsx.writeBuffer();
       const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       const fileName = `${this.selectedClass.className}_Assessment_Results_${new Date().toISOString().split('T')[0]}.xlsx`;
-      
+
       saveAs(blob, fileName);
-      
+
       this.showExportModal = false;
       this.selectedAssessmentsForExport = [];
-      
+
       Swal.fire({
         icon: 'success',
         title: 'Success',

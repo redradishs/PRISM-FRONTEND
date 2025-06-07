@@ -608,6 +608,9 @@
 
 /* Clean up mobile overrides, use only @media (max-width: 640px) */
 @media (max-width: 640px) {
+  .main-content {
+    padding: 0.80rem 0.40rem;
+  }
   .classes-container {
     grid-template-columns: 1fr;
     padding: 0;

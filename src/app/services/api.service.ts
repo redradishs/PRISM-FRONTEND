@@ -123,6 +123,10 @@ export class ApiService {
     return this.http.post(`${this.apiUrl}/approve`, data);
   }
 
+  removeStudent(data: any) {
+    return this.http.post(`${this.apiUrl}/class/removeStudent`, data);
+  }
+
   studentList(id: string, classCode: string, page: number = 1, pageSize: number = 20) {
     let params = new HttpParams()
       .set('page', page.toString())
@@ -183,10 +187,6 @@ export class ApiService {
 
   addStudent(id: string, classCode: string, data: any) {
     return this.http.post(`${this.apiUrl}/class/addstudent/${id}/${classCode}`, data);
-  }
-
-  removeStudent(id: string, classCode: string, data: any) {
-    return this.http.put(`${this.apiUrl}/class/removeStudent/${id}/${classCode}`, data);
   }
 
   //coordinator page

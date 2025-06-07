@@ -1,4 +1,7 @@
-/* Base Layout */
+.cont {
+  flex: 1;
+  padding: 1.20rem;
+}
 .assessment-container {
   min-height: 100vh;
   background-color: #f9fafb;
@@ -67,6 +70,9 @@
 
 /* Mobile Styles */
 @media (max-width: 768px) {
+  .cont {
+    padding: 0.80rem 0.50rem;
+  }
     .header-icon {
         height: 2.5rem;
         width: 2.5rem;

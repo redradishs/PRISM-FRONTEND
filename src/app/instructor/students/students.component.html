@@ -182,9 +182,8 @@
                                                 No students found matching your search.
                                             </td>
                                         </tr>
-                                        <tr (click)="studentInfo(student)"
-                                            *ngFor="let student of currentStudentsInfo || []" class="demo-table-row">
-                                            <td class="demo-table-cell">
+                                        <tr *ngFor="let student of currentStudentsInfo || []" class="demo-table-row">
+                                            <td class="demo-table-cell" (click)="studentInfo(student)">
                                                 <div class="demo-student-info">
                                                     <div class="demo-avatar">
                                                         <img *ngIf="student.profilePicture && !student.imageLoadFailed"
@@ -198,11 +197,11 @@
                                                     <span>{{student.name}}</span>
                                                 </div>
                                             </td>
-                                            <td class="demo-table-cell">{{student.email.split('@')[0]}}</td>
-                                            <td class="demo-table-cell">{{student.block ? 'Block ' +
+                                            <td class="demo-table-cell" (click)="studentInfo(student)">{{student.email.split('@')[0]}}</td>
+                                            <td class="demo-table-cell" (click)="studentInfo(student)">{{student.block ? 'Block ' +
                                                 student.block.toUpperCase() :
                                                 'N/A'}}</td>
-                                            <td class="demo-table-cell">
+                                            <td class="demo-table-cell" (click)="studentInfo(student)">
                                                 <span class="performance-badge" [ngClass]="{
                                                     'performance-poor': student.performancePercent < 50,
                                                     'performance-average': student.performancePercent >= 50 && student.performancePercent <= 80,
@@ -211,7 +210,7 @@
                                                     {{student.performancePercent}}%
                                                 </span>
                                             </td>
-                                            <td class="demo-table-cell">
+                                            <td class="demo-table-cell" (click)="studentInfo(student)">
                                                 <div class="demo-completion-info">
                                                     <div class="demo-completion-text">
                                                         <span>{{student.completion}} completed</span>
@@ -226,8 +225,8 @@
                                                 </div>
                                             </td>
                                             <td class="demo-table-cell">
-                                                <button class="demo-action-button">
-                                                    <i class="fas fa-ellipsis-h"></i>
+                                                <button (click)="removeStudent(student)" class="demo-action-button">
+                                                    <i class="fas fa-trash"></i>
                                                 </button>
                                             </td>
                                         </tr>

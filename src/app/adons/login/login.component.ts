@@ -119,7 +119,7 @@ export class LoginComponent implements OnInit {
   private getFullEmail(idOnly: string): string {
     return `${idOnly}@gordoncollege.edu.ph`;
   }
-  
+
   // Helper to strip domain from full email
   private stripDomainFromEmail(email: string): string {
     if (email.includes('@gordoncollege.edu.ph')) {
@@ -163,7 +163,7 @@ export class LoginComponent implements OnInit {
     const fullEmail = this.getFullEmail(idOnly);
     const { password } = this.loginForm.value;
     const loginData = { email: fullEmail, password };
-    
+
 
     this.authService.userLogin(loginData).subscribe({
       next: (response: any) => {
@@ -174,8 +174,8 @@ export class LoginComponent implements OnInit {
 
           this.pendingVerificationUserId = response.data.userId;
           sessionStorage.setItem('pendingVerificationUserId', response.data.userId);
-        
-      
+
+
           Swal.fire({
             title: 'Verification Required',
             text: response.message || 'Please verify your email before logging in.',
@@ -188,10 +188,10 @@ export class LoginComponent implements OnInit {
               this.router.navigate(['/verify-email']);
             }
           });
-        
+
           return;
         }
-        
+
         this.authService.setToken(response.data.jwt);
         const userRole = this.authService.getUserRole();
 
@@ -209,7 +209,7 @@ export class LoginComponent implements OnInit {
         });
 
         const redirectUrl = sessionStorage.getItem('redirectUrl');
-        
+
         if (redirectUrl) {
           sessionStorage.removeItem('redirectUrl');
           this.router.navigateByUrl(redirectUrl);
@@ -227,14 +227,14 @@ export class LoginComponent implements OnInit {
       },
       error: (err) => {
         console.error('Login error:', err);
-        
+
         if (err.status === 403 && err.error && err.error.data && err.error.data.needsVerification) {
           this.loading = false;
           this.clicked = false;
-          
+
           this.pendingVerificationUserId = err.error.data.userId;
           sessionStorage.setItem('pendingVerificationUserId', err.error.data.userId);
-          
+
           Swal.fire({
             title: 'Verification Required',
             text: err.error.message || 'Please verify your email before logging in.',
@@ -247,10 +247,10 @@ export class LoginComponent implements OnInit {
               this.router.navigate(['/verify-email']);
             }
           });
-          
+
           return;
         }
-        
+
         this.formError = 'Invalid Email or Password';
         this.loading = false;
         this.clicked = false;
@@ -275,8 +275,17 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  hasAtSymbol(formType: string) {
+    if (formType === 'email') {
+      const emailValue = this.loginForm.get('email')?.value;
+      return emailValue.includes('@')
+    } else if (formType === 'signup-email') {
+      const emailValue = this.signupForm.get('email')?.value;
+      return emailValue.includes('@')
+    }
+  }
+
   validateGordonEmail(email: string): boolean {
-    // Now we check if it's just digits since we handle the domain separately
     const gordonIDPattern = /^\d+$/;
     return gordonIDPattern.test(email);
   }
@@ -285,26 +294,40 @@ export class LoginComponent implements OnInit {
     event.preventDefault();
     console.log(this.signupForm.value);
 
+    if (this.signupForm.invalid) {
+      Swal.fire({
+        title: 'Error',
+        text: 'Please fill out all required fields correctly.',
+        icon: 'error',
+        toast: true,
+        timer: 3000,
+        position: 'top-end',
+        showConfirmButton: false,
+        timerProgressBar: true
+      });
+      return;
+    }
+
+
     const formValues = this.signupForm.value;
     this.email = formValues.email;
     this.password = formValues.password;
     this.confirmPassword = formValues.confirmPassword;
     this.name = formValues.name;
     this.role = formValues.role;
-    this.isCoordinator = formValues.isCoordinator; 
+    this.isCoordinator = formValues.isCoordinator;
 
     if (this.password === this.confirmPassword) {
 
       const data = {
-        // Add the domain to the email for the API call
         email: this.getFullEmail(this.email),
         password: this.password,
         name: this.name,
         role: this.role,
-        isCoordinator: formValues.isCoordinator 
+        isCoordinator: formValues.isCoordinator
       };
 
-      console.log('Signup payload:', data); 
+      console.log('Signup payload:', data);
 
       this.loading = true;
       this.authService.userSignUp(data).subscribe({
@@ -312,7 +335,7 @@ export class LoginComponent implements OnInit {
           this.loading = false;
           console.log('Signup response:', resp);
 
-          if(resp.remarks === 'Success') {
+          if (resp.remarks === 'Success') {
             if (resp.data && resp.data.userId) {
               sessionStorage.setItem('pendingVerificationUserId', resp.data.userId);
             }
@@ -339,7 +362,7 @@ export class LoginComponent implements OnInit {
             });
             this.activeTab = 'login';
           }
-        
+
           this.email = '';
           this.password = '';
           this.confirmPassword = '';
@@ -395,32 +418,32 @@ export class LoginComponent implements OnInit {
       this.googleLoading = true;
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(this.auth, provider);
-      
+
       if (!result.user.email?.endsWith('@gordoncollege.edu.ph')) {
         throw new Error('INVALID_EMAIL');
       }
 
       const idToken = await result.user.getIdToken();
-      
+
       this.authService.googleSignIn({ idToken }).subscribe({
         next: (response: any) => {
           this.authService.setToken(response.data.jwt);
           const userRole = this.authService.getUserRole();
-          
+
           Swal.fire({
-              title: 'Login Successful',
-              text: 'You have successfully logged in with Google!',
-              icon: 'success',
-              confirmButtonText: 'OK',
-              confirmButtonColor: '#1976D2',
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 2000,
-              timerProgressBar: true,
+            title: 'Login Successful',
+            text: 'You have successfully logged in with Google!',
+            icon: 'success',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#1976D2',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
           });
 
-          if(response.data.newUser) {
+          if (response.data.newUser) {
             console.log('New user detected');
             this.router.navigate(['/complete-profile']);
             return;
@@ -431,7 +454,7 @@ export class LoginComponent implements OnInit {
             sessionStorage.removeItem('redirectUrl');
             this.router.navigateByUrl(redirectUrl);
           } else {
-            switch(userRole) {
+            switch (userRole) {
               case 'admin':
                 this.router.navigate(['/admin/dashboard']);
                 break;
@@ -463,12 +486,12 @@ export class LoginComponent implements OnInit {
     } catch (error: any) {
       console.error('Google sign-in error:', error);
       this.googleLoading = false;
-      
+
       let errorMessage = 'Failed to sign in with Google. Please try again.';
       if (error.message === 'INVALID_EMAIL') {
         errorMessage = 'Please use your Gordon College email address.';
       }
-      
+
       Swal.fire({
         title: 'Error',
         text: errorMessage,

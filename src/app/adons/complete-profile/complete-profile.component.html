@@ -9,7 +9,10 @@
             <div id="step1" class="step" [class.active]="currentStep === 1">
                 <div class="step-header">
                     <div class="icon-wrapper header-icon">
-                        <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 L14.5 9 L21 9 L16 14 L18 21 L12 17 L6 21 L8 14 L3 9 L9.5 9 Z"/></svg>
+                        <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2 L14.5 9 L21 9 L16 14 L18 21 L12 17 L6 21 L8 14 L3 9 L9.5 9 Z" />
+                        </svg>
 
                     </div>
                     <h1 class="step-title">Complete Your Profile</h1>
@@ -20,16 +23,18 @@
                 <div class="role-options">
                     <div class="role-card" id="roleStudent" (click)="selectRole('student')">
                         <div class="role-card-icon-bg student-bg">
-                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                                <path d="M6 12v5c0 1.66 4 3 6 3s6-1.34 6-3v-5"/>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                                <path d="M6 12v5c0 1.66 4 3 6 3s6-1.34 6-3v-5" />
                             </svg>
                         </div>
                         <div class="role-card-info">
                             <h3 class="role-card-title">Student</h3>
                             <p class="role-card-description">Take assessments and track progress</p>
                         </div>
-                        <svg class="icon role-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg class="icon role-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="5" y1="12" x2="19" y2="12"></line>
                             <polyline points="12 5 19 12 12 19"></polyline>
                         </svg>
@@ -37,7 +42,8 @@
 
                     <div class="role-card" id="roleInstructor" (click)="selectRole('instructor')">
                         <div class="role-card-icon-bg instructor-bg">
-                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
                                 <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
                             </svg>
@@ -46,7 +52,8 @@
                             <h3 class="role-card-title">Instructor</h3>
                             <p class="role-card-description">Create and manage assessments</p>
                         </div>
-                        <svg class="icon role-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg class="icon role-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="5" y1="12" x2="19" y2="12"></line>
                             <polyline points="12 5 19 12 12 19"></polyline>
                         </svg>
@@ -57,17 +64,23 @@
             <div id="step2" class="step" [class.active]="currentStep === 2">
                 <div class="step-header">
                     <div class="icon-wrapper header-icon" id="step2IconContainer">
-                        <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 L14.5 9 L21 9 L16 14 L18 21 L12 17 L6 21 L8 14 L3 9 L9.5 9 Z"/></svg>
+                        <svg class="icon" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2 L14.5 9 L21 9 L16 14 L18 21 L12 17 L6 21 L8 14 L3 9 L9.5 9 Z" />
+                        </svg>
 
                     </div>
-                    <h2 class="step-title">{{selectedRole === 'student' ? 'Student Details' : 'Instructor Details'}}</h2>
-                    <p class="step-description">{{selectedRole === 'student' ? 'Set up your academic profile' : 'Configure your teaching profile'}}</p>
+                    <h2 class="step-title">{{selectedRole === 'student' ? 'Student Details' : 'Instructor Details'}}
+                    </h2>
+                    <p class="step-description">{{selectedRole === 'student' ? 'Set up your academic profile' :
+                        'Configure your teaching profile'}}</p>
                 </div>
 
                 <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="form-fields">
                     <div class="form-group">
                         <label for="nameInput" class="form-label">Full Name</label>
-                        <input type="text" id="nameInput" formControlName="fullName" class="form-input" placeholder="Confirm your full name" required>
+                        <input type="text" id="nameInput" formControlName="fullName" class="form-input"
+                            placeholder="Confirm your full name" required>
                     </div>
 
                     <div id="studentSpecificFields" *ngIf="selectedRole === 'student'">
@@ -86,7 +99,7 @@
                                     <option *ngFor="let block of blocks" [value]="block.id">{{block.name}}</option>
                                 </select>
                             </div>
-                            <div class="form-group" style="flex:1; min-width: 0; margin-left: 1rem;">
+                            <div class="form-group" style="flex:1; min-width: 0; margin-left: 0.20rem;">
                                 <label for="yearLevelSelect" class="form-label">Year Level</label>
                                 <select id="yearLevelSelect" formControlName="yearLevel" class="form-select">
                                     <option value="">Select year</option>
@@ -102,7 +115,8 @@
                     <div id="instructorSpecificFields" *ngIf="selectedRole === 'instructor'">
                         <div class="form-group-checkbox-card">
                             <div class="checkbox-wrapper">
-                                <input type="checkbox" id="coordinatorCheckbox" formControlName="isCoordinator" class="form-checkbox" (change)="onCoordinatorChange($event)">
+                                <input type="checkbox" id="coordinatorCheckbox" formControlName="isCoordinator"
+                                    class="form-checkbox" (change)="onCoordinatorChange($event)">
                                 <label for="coordinatorCheckbox" class="checkbox-label-group">
                                     <span class="checkbox-label-title">Program Coordinator</span>
                                     <span class="checkbox-label-description">Additional administrative privileges</span>
@@ -111,36 +125,63 @@
                         </div>
                         <div id="programsCoordinatorCard" class="programs-card" *ngIf="isCoordinator === 'yes'">
                             <div class="programs-card-header">
-                                <svg class="icon small-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                                <svg class="icon small-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
                                 <h4 class="programs-card-title">Program you coordinate:</h4>
                             </div>
                             <div class="form-group">
                                 <label for="coordinatedProgramSelect" class="form-label">Select Program</label>
-                                <select id="coordinatedProgramSelect" formControlName="coordinatedProgram" class="form-select" required>
+                                <select id="coordinatedProgramSelect" formControlName="coordinatedProgram"
+                                    class="form-select" required>
                                     <option value="">Select a program</option>
-                                    <option *ngFor="let program of programs" [value]="program.id">{{ getProgramDisplayName(program) }}</option>
+                                    <option *ngFor="let program of programs" [value]="program.id">{{
+                                        getProgramDisplayName(program) }}</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="signupCodeInput" class="form-label">Signup Code</label>
-                            <p class="form-label-description">To prevent unverified instructors from accessing the platform, please enter the signup code provided by the Platform Administrator.</p>
-                            <input type="text" id="signupCodeInput" formControlName="signupCode" class="form-input" placeholder="Enter your signup code" required>
+                            <p class="form-label-description">To prevent unverified instructors from accessing the
+                                platform, please enter the signup code provided by the Platform Administrator.</p>
+                            <input type="text" id="signupCodeInput" formControlName="signupCode" class="form-input"
+                                placeholder="Enter your signup code" required>
                         </div>
 
-                       
+
                     </div>
 
                     <div class="form-actions">
                         <button type="button" class="btn btn-outline" (click)="goBack()">
-                            <svg class="icon btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                            <svg class="icon btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="15 18 9 12 15 6"></polyline>
+                            </svg>
                             Back
                         </button>
                         <button type="submit" class="btn btn-primary" [disabled]="profileForm.invalid || isSubmitting">
                             <span class="btn-text">{{isSubmitting ? 'Setting up...' : 'Complete'}}</span>
-                            <svg class="icon btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                            <svg class="icon btn-icon loader" [class.hidden]="!isSubmitting" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>
+                            <svg class="icon btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                            <svg class="icon btn-icon loader" [class.hidden]="!isSubmitting" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <line x1="12" y1="2" x2="12" y2="6"></line>
+                                <line x1="12" y1="18" x2="12" y2="22"></line>
+                                <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line>
+                                <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line>
+                                <line x1="2" y1="12" x2="6" y2="12"></line>
+                                <line x1="18" y1="12" x2="22" y2="12"></line>
+                                <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line>
+                                <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
+                            </svg>
                         </button>
                     </div>
                 </form>

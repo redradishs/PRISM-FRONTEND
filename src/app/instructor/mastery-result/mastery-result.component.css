@@ -216,6 +216,12 @@
     }
 }
 
+@media (max-width: 640px) {
+    .mastery-container {
+        padding: 0.80rem 0.20rem;
+    }
+}
+
 /* Student List Section */
 .student-list {
     display: flex;

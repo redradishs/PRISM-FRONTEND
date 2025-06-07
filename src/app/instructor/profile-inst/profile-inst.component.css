@@ -726,6 +726,10 @@ input:checked + .slider:before {
         height: 80px;
     }
 
+    .main-content {
+    padding: 0.80rem 0.40rem;
+    }
+
     .profile-details .name-role h2 {
         font-size: 1.25rem;
     }

@@ -226,6 +226,11 @@
     .search-input {
         padding: 8px 12px 8px 36px;
     }
+
+    .main-container {
+    margin: 0 auto;
+    padding: 0.80rem 0.40rem;
+    }
 }
 
 /* Tabs */

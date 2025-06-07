@@ -69,6 +69,13 @@
     }
 }
 
+@media (max-width: 640px) {
+    .container {
+        padding: 0.80rem 0.40rem;
+    }
+
+}
+
 .create-assessment-btn {
     display: inline-flex;
     align-items: center;
@@ -277,6 +284,8 @@
         flex-direction: row;
         align-items: flex-start;
     }
+
+
 
     .student-info {
         text-align: left;

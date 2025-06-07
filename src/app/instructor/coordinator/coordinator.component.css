@@ -749,6 +749,11 @@
         text-align: center;
     }
 
+    .container {
+    padding: 0.80rem 0.40rem;
+    margin: 0 auto;
+    }
+
     .pagination-controls {
         justify-content: center;
         flex-wrap: wrap;
