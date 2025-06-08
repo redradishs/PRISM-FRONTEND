@@ -27,6 +27,23 @@
       }
     }
   ],
+  "dataGroups": [
+    {
+      "name": "api-no-cache",
+      "urls": [
+        "https://prismapi2.onrender.com/**",
+        "https://redprismai.vercel.app/**",
+        "https://api.studio.nebius.com/**",
+        "http://localhost:8000/**",
+        "http://localhost:3000/**"
+      ],
+      "cacheConfig": {
+        "strategy": "performance",
+        "maxSize": 0,
+        "maxAge": "0u"
+      }
+    }
+  ],
   "navigationUrls": [
     "/**",
     "!/**/*__*",
