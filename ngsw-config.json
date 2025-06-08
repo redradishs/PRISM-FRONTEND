@@ -29,7 +29,7 @@
   ],
   "dataGroups": [
     {
-      "name": "api-no-cache",
+      "name": "api-freshness",
       "urls": [
         "https://prismapi2.onrender.com/**",
         "https://redprismai.vercel.app/**",
@@ -38,9 +38,10 @@
         "http://localhost:3000/**"
       ],
       "cacheConfig": {
-        "strategy": "performance",
+        "strategy": "freshness",
         "maxSize": 0,
-        "maxAge": "0u"
+        "maxAge": "0u",
+        "timeout": "5s"
       }
     }
   ],

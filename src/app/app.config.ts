@@ -20,6 +20,22 @@ import { environment } from '../environments/environment';
 import { DecryptionInterceptor } from './interceptors/decryption.interceptor';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 
+// Function to check if app is running in standalone mode (installed as PWA)
+function isStandaloneMode(): boolean {
+  return (window.matchMedia('(display-mode: standalone)').matches) || 
+         (window.navigator as any)?.standalone || 
+         document.referrer.includes('android-app://');
+}
+
+// Function to check if service worker should be enabled
+function shouldEnableServiceWorker(): boolean {
+  if (isDevMode()) {
+    return false; // Always disabled in development
+  }
+  
+  return isStandaloneMode(); // Only enabled when installed as PWA
+}
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({
@@ -34,7 +50,7 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(HttpClientModule),
     provideCharts(withDefaultRegisterables()),
     provideServiceWorker('ngsw-worker.js', {
-      enabled: !isDevMode(),
+      enabled: shouldEnableServiceWorker(),
       registrationStrategy: 'registerWithDelay:2000'
     }),
 
