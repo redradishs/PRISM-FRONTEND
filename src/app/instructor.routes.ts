@@ -14,6 +14,7 @@ import { CoordinatorComponent } from './instructor/coordinator/coordinator.compo
 import { EvaluateComponent } from './instructor/evaluate/evaluate.component';
 import { MasteryResultComponent } from './instructor/mastery-result/mastery-result.component';
 import { AssignAssessmentComponent } from './instructor/assign-assessment/assign-assessment.component';
+import { FinalGenerateAssessmentComponent } from './instructor/final-generate-assessment/final-generate-assessment.component';
 
 export const INSTRUCTOR_ROUTES: Routes = [
     { path: 'dashboard', component: HomeComponent },
@@ -21,6 +22,7 @@ export const INSTRUCTOR_ROUTES: Routes = [
     { path: 'assessment', component: AssessmentComponent },
     { path: 'profile', component: ProfileInstComponent },
     { path: 'create', component: GenerateAssessmentComponent },
+    { path: 'final-generate', component: FinalGenerateAssessmentComponent },
     { path: 'assign', component: AssignAssessmentComponent },
     { path: 'takeassessment', component: TakeAssessmentComponent },
     { path: 'result', component: ResultComponent },

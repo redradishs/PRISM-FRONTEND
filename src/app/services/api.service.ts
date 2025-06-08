@@ -24,6 +24,8 @@ export class ApiService {
   // rtUrl = 'http://localhost:8000/rt';
   // aiUrl = 'http://localhost:3000';
 
+  aiFinal = 'https://prism-ai-worker.asherjamesmayson.workers.dev/api'
+
   rtUrl = 'https://prismapi2.onrender.com/rt';
   apiUrl = 'https://prismapi2.onrender.com/instructor';
   aiUrl = 'https://redprismai.vercel.app';
@@ -31,7 +33,10 @@ export class ApiService {
 
 
   constructor(private http: HttpClient) { }
-  // The AI CONTENT GENERATION STARTS HERE
+  // FINAL AI GENERATION
+  finalGenerateAssessment(data: any) {
+    return this.http.post(`${this.aiFinal}/assessment/generate`, data);
+  }
 
   // Basic assessment generation
   generateAssessment(content: string) {
