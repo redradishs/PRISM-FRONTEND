@@ -100,6 +100,15 @@
       padding: 1.25rem;
   }
 
+  .welcome-content {
+    display: block;
+    width: 100%;
+}
+
+.welcome-text {
+    width: 100%;
+}
+
   .welcome-text h1 {
       font-size: 1.75rem;
   }
@@ -107,6 +116,15 @@
   .welcome-text p {
       font-size: 0.875rem;
   }
+
+  .welcome-buttons {
+    width: 100%;
+    justify-content: stretch;
+}
+
+.btn-create, .btn-view {
+    flex: 1;
+}
 
   .welcome-badges {
       flex-direction: column;
@@ -122,19 +140,31 @@
       padding: 1rem;
   }
 
+  .welcome-content {
+    display: block;
+    width: 100%;
+}
+
+.welcome-text {
+    width: 100%;
+}
+
   .welcome-text h1 {
       font-size: 1.4rem;
   }
 
   .welcome-buttons {
-      flex-wrap: wrap;
-      flex-direction: column;
-  }
+    flex-wrap: wrap;
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+}
 
-  .btn-create, .btn-view {
-      padding: 0.4rem 0.75rem;
-      font-size: 0.8rem;
-  }
+.btn-create, .btn-view {
+    padding: 0.6rem 0.75rem;
+    font-size: 0.8rem;
+    width: 100%;
+}
 }
 
 

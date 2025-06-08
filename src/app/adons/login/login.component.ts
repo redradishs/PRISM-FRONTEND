@@ -42,6 +42,7 @@ export class LoginComponent implements OnInit {
   pendingVerificationUserId: string = '';
   showConfirmPassword = false;
   isCoordinator: string = '';
+  coordinatedProgram: string = '';
 
   activeTab: string = 'login';
 
@@ -59,7 +60,6 @@ export class LoginComponent implements OnInit {
         '',
         [
           Validators.required,
-          Validators.pattern('^\\d+$'),
         ],
       ],
       password: [
@@ -77,7 +77,6 @@ export class LoginComponent implements OnInit {
         '',
         [
           Validators.required,
-          Validators.pattern('^\\d+$'),
         ],
       ],
       password: ['', [Validators.required, Validators.minLength(5)]],
@@ -107,11 +106,12 @@ export class LoginComponent implements OnInit {
 
     this.signupForm = this.formBuilder.group({
       name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.pattern('^\\d+$')]],
+      email: ['', [Validators.required]],
       password: ['', Validators.required],
       confirmPassword: ['', Validators.required],
       role: ['', Validators.required],
-      isCoordinator: ['no']
+      isCoordinator: ['no'],
+      coordinatedProgram: ['bsit']
     });
   }
 
@@ -140,8 +140,6 @@ export class LoginComponent implements OnInit {
       if (emailControl?.errors) {
         if (emailControl.errors['required']) {
           this.formError = 'Email is required';
-        } else if (emailControl.errors['pattern']) {
-          this.formError = 'Please enter a valid Gordon College ID (numbers only)';
         }
         return;
       }
@@ -207,6 +205,12 @@ export class LoginComponent implements OnInit {
           timer: 2000,
           timerProgressBar: true,
         });
+
+        if (response.data.newUser) {
+          console.log('New user detected');
+          this.router.navigate(['/complete-profile']);
+          return;
+        }
 
         const redirectUrl = sessionStorage.getItem('redirectUrl');
 
@@ -286,8 +290,8 @@ export class LoginComponent implements OnInit {
   }
 
   validateGordonEmail(email: string): boolean {
-    const gordonIDPattern = /^\d+$/;
-    return gordonIDPattern.test(email);
+    // Allow any characters before @gordoncollege.edu.ph
+    return email.trim().length > 0;
   }
 
   handleSignupSubmit(event: Event): void {
@@ -316,16 +320,22 @@ export class LoginComponent implements OnInit {
     this.name = formValues.name;
     this.role = formValues.role;
     this.isCoordinator = formValues.isCoordinator;
+    this.coordinatedProgram = formValues.coordinatedProgram;
 
     if (this.password === this.confirmPassword) {
 
-      const data = {
+      const data: any = {
         email: this.getFullEmail(this.email),
         password: this.password,
         name: this.name,
         role: this.role,
         isCoordinator: formValues.isCoordinator
       };
+
+      // Only include coordinatedProgram if user is a coordinator
+      if (formValues.isCoordinator === 'yes') {
+        data.coordinatedProgram = formValues.coordinatedProgram;
+      }
 
       console.log('Signup payload:', data);
 
@@ -397,9 +407,12 @@ export class LoginComponent implements OnInit {
     const role = event.target.value;
     if (role === 'instructor') {
       this.signupForm.get('isCoordinator')?.enable();
+      this.signupForm.get('coordinatedProgram')?.enable();
     } else {
       this.signupForm.get('isCoordinator')?.disable();
       this.signupForm.get('isCoordinator')?.setValue('no');
+      this.signupForm.get('coordinatedProgram')?.disable();
+      this.signupForm.get('coordinatedProgram')?.setValue('');
     }
   }
 
