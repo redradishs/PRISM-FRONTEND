@@ -305,7 +305,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
                     icon: 'success',
                     title: 'Success!',
                     text: 'Profile updated successfully',
-                    timer: 1500
+                    timer: 1500,
+                    toast: true,
+                    position: 'top-end',
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    background: '#fff',
+                    iconColor: '#10b981',
+                    color: '#1f2937'
                 });
             },
             error: (error) => {
@@ -369,7 +376,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
           icon: 'success',
           title: 'Success!',
           text: 'Password updated successfully',
-          timer: 1500
+          timer: 1500,
+          toast: true,
+          position: 'top-end',
+          timerProgressBar: true,
+          showConfirmButton: false,
+          background: '#fff',
+          iconColor: '#10b981',
+          color: '#1f2937'
         });
       },
       error: (error) => {

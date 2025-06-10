@@ -22,7 +22,7 @@ export const INSTRUCTOR_ROUTES: Routes = [
     { path: 'assessment', component: AssessmentComponent },
     { path: 'profile', component: ProfileInstComponent },
     { path: 'create', component: GenerateAssessmentComponent },
-    { path: 'final-generate', component: FinalGenerateAssessmentComponent },
+    { path: 'createAssessment', component: FinalGenerateAssessmentComponent },
     { path: 'assign', component: AssignAssessmentComponent },
     { path: 'takeassessment', component: TakeAssessmentComponent },
     { path: 'result', component: ResultComponent },

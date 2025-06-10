@@ -108,6 +108,7 @@ export class StudHomeComponent implements OnInit {
   }
 
   gotoAssessments(id: string) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     const assessment = this.onGoingAssessments.find(a => a.assignedAssessmentId === id);
     if (assessment.hasSubmitted && !assessment.canRetake) {
       this.router.navigate(['/student/assessment/result'], {
@@ -122,6 +123,7 @@ export class StudHomeComponent implements OnInit {
   }
 
   gotoResult(id: string) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     const assessment = this.completedAssessments.find(a => a.assignedAssessmentId === id);
     if (assessment && assessment.hasSubmitted) {
       this.router.navigate(['/student/assessment/result'], {
@@ -147,6 +149,15 @@ export class StudHomeComponent implements OnInit {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     this.router.navigate(['/student/confirmation'], {
       state: { assessmentId: assessment.assignedAssessmentId }
+    });
+  }
+
+  goToHistory(tab: string) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.router.navigate(['/student/history'], {
+      queryParams: {
+        tab: tab
+      }
     });
   }
 

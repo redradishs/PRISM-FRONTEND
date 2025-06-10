@@ -19,7 +19,7 @@
                 <div class="form-group">
                     <label for="email">Email Address</label>
                     <div class="email-input-container" [ngClass]="{'email-error': hasAtSymbol('email')}">
-                        <input type="text" id="email" placeholder="Enter your email ID" formControlName="email"
+                        <input type="text" id="email" placeholder="ID Number" formControlName="email"
                             [ngClass]="{'invalid': loginForm.get('email')?.touched && loginForm.get('email')?.invalid}" />
                         <div class="email-domain">&#64;gordoncollege.edu.ph</div>
                     </div>

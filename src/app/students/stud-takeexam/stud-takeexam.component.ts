@@ -47,7 +47,7 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
   sidebar!: SidebarComponent;
   showInstructions = true;
   currentQuestionIndex = 0;
-  answers: { [key: string]: string[] } = {};
+  answers: { [key: string]: string | string[] } = {};
   timeRemaining: number;
   showSubmitDialog = false;
   timerInterval: any;
@@ -55,6 +55,8 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
   currentWordCount: number = 0;
   userId: string = '';
   assignedAssessmentId: string = '';
+  showViolation = false;
+  showSidebar = true;
 
   //academic-integration import
   cheatingCount = 0;
@@ -230,6 +232,14 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
     this.startTimer();
   }
 
+  showViolationMessage() {
+    this.showViolation = !this.showViolation;
+  }
+
+  hideSidebar() {
+    this.showSidebar = !this.showSidebar;
+  }
+
   // Timer functions
   private startTimer() {
     this.timerInterval = setInterval(() => {
@@ -401,9 +411,10 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
 
             case 'enumeration':
               // Convert array of answers to lowercase
-              formattedAnswer = this.answers[questionId].map((ans: string) =>
-                ans.trim().toLowerCase()
-              );
+              const enumAnswer = this.answers[questionId];
+              formattedAnswer = Array.isArray(enumAnswer) 
+                ? enumAnswer.map((ans: string) => ans.trim().toLowerCase())
+                : [];
               break;
 
             case 'short-answer':

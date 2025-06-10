@@ -2,13 +2,10 @@
     <header class="header">
         <div class="header-title">{{assessmentData.title}}</div>
         <div class="header-actions">
-            <button class="action-button save">
-                <i class="fas fa-save"></i>
-                Save
-            </button>
-            <button class="action-button exit">
-                <i class="fas fa-times"></i>
-                Exit
+            <button (click)="hideSidebar()" class="action-button toggle-sidebar-button">
+                <i class="fas" [ngClass]="showSidebar ? 'fa-eye-slash' : 'fa-eye'"></i>
+                <span class="toggle-text">{{showSidebar ? 'Hide' : 'Show'}}</span>
+                <span class="toggle-status">Sidebar</span>
             </button>
         </div>
     </header>
@@ -28,194 +25,269 @@
     </div>
 
     <!-- Main Content -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 p-4">
+    <div class="main-content-grid" [class.sidebar-hidden]="!showSidebar">
         <!-- Questions Panel with progress bar -->
-        <div class="md:col-span-1">
-            <div class="bg-white rounded-lg shadow-sm p-4">
+        <div *ngIf="showSidebar === true" class="questions-sidebar">
+            <div class="questions-panel">
                 <!-- Progress Bar -->
-                <div class="w-full bg-gray-100 rounded-full h-1 mb-4">
-                    <div class="progress h-1 rounded-full"
-                        [style.width]="(getAnsweredCount() / assessmentData.totalQuestions * 100) + '%'"></div>
+                <div class="progress-section">
+                    <div class="progress-header">
+                        <h3 class="progress-title">Progress</h3>
+                        <span class="progress-percentage">{{(getAnsweredCount() / assessmentData.totalQuestions * 100).toFixed(0)}}%</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar"
+                            [style.width]="(getAnsweredCount() / assessmentData.totalQuestions * 100) + '%'"></div>
+                    </div>
+                    <p class="progress-text">{{getAnsweredCount()}} of {{assessmentData.totalQuestions}} answered</p>
                 </div>
 
-                <h2 class="text-lg font-semibold">Questions</h2>
-                <p class="text-sm text-gray-600">{{getAnsweredCount()}} of {{assessmentData.totalQuestions}} answered
-                </p>
-
-                <!-- Question Navigation with Pagination -->
-                <div class="mt-4">
+                <!-- Question Navigation -->
+                <div class="navigation-section">
+                    <h3 class="nav-title">Questions</h3>
+                    
                     <!-- Pagination Controls (if needed) -->
-                    <div *ngIf="assessmentData.totalQuestions > 15" class="flex justify-between mb-2">
+                    <div *ngIf="assessmentData.totalQuestions > 15" class="pagination-controls">
                         <button [disabled]="currentPage === 0" (click)="changePage(currentPage - 1)"
-                            class="text-sm px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50">
-                            <i class="fas fa-chevron-left"></i> Prev
+                            class="pagination-btn">
+                            <i class="fas fa-chevron-left"></i>
                         </button>
-                        <span class="text-sm">Page {{currentPage + 1}} of {{totalPages}}</span>
+                        <span class="page-info">{{currentPage + 1}} / {{totalPages}}</span>
                         <button [disabled]="currentPage >= totalPages - 1" (click)="changePage(currentPage + 1)"
-                            class="text-sm px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50">
-                            Next <i class="fas fa-chevron-right"></i>
+                            class="pagination-btn">
+                            <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
 
                     <!-- Question Buttons -->
-                    <div class="grid grid-cols-5 gap-2">
-                        <button *ngFor="let question of getVisibleQuestions(); let i = index" [class]="'w-10 h-10 rounded-md flex items-center justify-center shadow-sm ' + 
-                                (getQuestionIndex(i) === currentQuestionIndex ? 'current' : 
-                                (answers[question.id] ? 'bg-green-50 text-green-600' : 'bg-white'))"
+                    <div class="question-grid">
+                        <button *ngFor="let question of getVisibleQuestions(); let i = index" 
+                            [class]="'question-nav-btn ' + 
+                                (getQuestionIndex(i) === currentQuestionIndex ? 'current' : '') + ' ' +
+                                (answers[question.id] ? 'answered' : 'unanswered')"
                             (click)="goToQuestion(getQuestionIndex(i))">
                             {{getQuestionIndex(i) + 1}}
                         </button>
                     </div>
                 </div>
 
-                <div class="hidden md:block mt-4 space-y-2 text-sm">
-                    <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                <!-- Status Legend -->
+                <div class="status-legend">
+                    <div class="legend-item">
+                        <div class="legend-dot answered-dot"></div>
                         <span>Answered</span>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full current"></div>
+                    <div class="legend-item">
+                        <div class="legend-dot current-dot"></div>
                         <span>Current</span>
                     </div>
-
-                    <div *ngIf="cheatingCount === 0" class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full bg-green-600"></div>
-                        <span>Violation: 0</span>
-                    </div>
-
-                    <div *ngIf="cheatingCount > 0" class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                        <span>Violation: {{this.cheatingCount}}</span>
-                    </div>
-
-                    <div *ngIf="cheatMessage" class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                        <span>{{this.cheatMessage}}</span>
+                    <div class="legend-item">
+                        <div class="legend-dot unanswered-dot"></div>
+                        <span>Unanswered</span>
                     </div>
                 </div>
 
-                <button (click)="openSubmitDialog()" class="submit-but w-full mt-4 py-2 px-4 rounded-lg shadow-sm">
+                <!-- Security Monitor -->
+                <div class="security-status">
+                    <div class="security-header">
+                        <span>Security Monitor</span>
+                        <button (click)="showViolationMessage()" class="security-toggle">
+                            <i class="fas" [ngClass]="showViolation ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="violation-count" [class.has-violations]="cheatingCount > 0">
+                        <span class="violation-number">{{cheatingCount}}</span>
+                        <span class="violation-text">Violations</span>
+                    </div>
+
+                    <div *ngIf="showViolation && cheatMessage" class="violation-details">
+                        <div class="violation-message">
+                            {{cheatMessage}}
+                        </div>
+                    </div>
+                </div>  
+
+
+
+                <!-- Submit Button -->
+                <button (click)="openSubmitDialog()" class="submit-assessment-btn">
+                    <i class="fas fa-paper-plane"></i>
                     Submit Assessment
                 </button>
             </div>
         </div>
 
         <!-- Question Content -->
-        <div class="md:col-span-3">
-            <div class="bg-white rounded-lg shadow-sm">
-                <div class="p-4 border-b flex justify-between items-center">
-                    <div>
-                        <h2 class="question-header">Question {{currentQuestionIndex + 1}}</h2>
-                        <p class="question-type">{{getQuestionType(currentQuestion.type)}}</p>
+        <div class="question-content-area">
+            <div class="question-card">
+                <!-- Question Header -->
+                <div class="question-header-section">
+                    <div class="question-info">
+                        <h2 class="question-number">Question {{currentQuestionIndex + 1}}</h2>
+                        <span class="question-type-badge">{{getQuestionType(currentQuestion.type)}}</span>
+                    </div>
+                    <div class="question-points">
+                        <i class="fas fa-star"></i>
+                        <span>1 point</span>
                     </div>
                 </div>
 
-                <div class="p-6">
-                    <div class="question-container">
+                <!-- Question Body -->
+                <div class="question-body">
+                    <div class="question-content">
                         <!-- Multiple Choice Question -->
-                        <div *ngIf="currentQuestion.type === 'multiple-choice'" class="question-section">
-                            <h3 class="question-title">{{currentQuestion.text}}</h3>
-                            <div class="options-container">
-                                <div *ngFor="let option of currentQuestion.options; let i = index" class="option-item">
-                                    <input type="radio" [id]="'option-' + i" [name]="'question-' + currentQuestion.id"
-                                        [value]="i" [(ngModel)]="answers[currentQuestion.id]" class="radio-input">
-                                    <label [for]="'option-' + i" class="option-label">
-                                        {{option}}
-                                    </label>
-                                </div>
+                        <div *ngIf="currentQuestion.type === 'multiple-choice'" class="question-type-container">
+                            <h3 class="question-text">{{currentQuestion.text}}</h3>
+                            <div class="options-list">
+                                <label *ngFor="let option of currentQuestion.options; let i = index" 
+                                    class="option-item" [class.selected]="answers[currentQuestion.id] == i.toString()">
+                                    <input type="radio" 
+                                        [id]="'option-' + i" 
+                                        [name]="'question-' + currentQuestion.id"
+                                        [value]="i.toString()" 
+                                        [(ngModel)]="answers[currentQuestion.id]" 
+                                        class="option-input">
+                                    <div class="option-indicator"></div>
+                                    <span class="option-text">{{option}}</span>
+                                </label>
                             </div>
                         </div>
 
                         <!-- True/False Question -->
-                        <div *ngIf="currentQuestion.type === 'true-false'" class="question-section">
-                            <h3 class="question-title">{{currentQuestion.text}}</h3>
-                            <div class="true-false-container">
-                                <div class="true-false-option">
-                                    <label class="option-item">
-                                        <input type="radio" [name]="'question-' + currentQuestion.id" [value]="true"
-                                            [(ngModel)]="answers[currentQuestion.id]" class="radio-input">
-                                        <span>True</span>
-                                    </label>
-                                </div>
-                                <div class="true-false-option">
-                                    <label class="option-item">
-                                        <input type="radio" [name]="'question-' + currentQuestion.id" [value]="false"
-                                            [(ngModel)]="answers[currentQuestion.id]" class="radio-input">
-                                        <span>False</span>
-                                    </label>
-                                </div>
+                        <div *ngIf="currentQuestion.type === 'true-false'" class="question-type-container">
+                            <h3 class="question-text">{{currentQuestion.text}}</h3>
+                            <div class="true-false-options">
+                                <label class="tf-option" [class.selected]="answers[currentQuestion.id] == 'true'">
+                                    <input type="radio" 
+                                        [name]="'question-' + currentQuestion.id" 
+                                        value="true"
+                                        [(ngModel)]="answers[currentQuestion.id]" 
+                                        class="tf-input">
+                                    <div class="tf-indicator"></div>
+                                    <span class="tf-text">True</span>
+                                </label>
+                                <label class="tf-option" [class.selected]="answers[currentQuestion.id] == 'false'">
+                                    <input type="radio" 
+                                        [name]="'question-' + currentQuestion.id" 
+                                        value="false"
+                                        [(ngModel)]="answers[currentQuestion.id]" 
+                                        class="tf-input">
+                                    <div class="tf-indicator"></div>
+                                    <span class="tf-text">False</span>
+                                </label>
                             </div>
                         </div>
 
                         <!-- Short Answer Question -->
-                        <div *ngIf="currentQuestion.type === 'short-answer'" class="question-section">
-                            <h3 class="question-title">{{currentQuestion.text}}</h3>
-                            <div class="answer-container">
-                                <textarea [(ngModel)]="answers[currentQuestion.id]" rows="6" class="answer-textarea"
-                                    placeholder="Type your answer here..." (input)="countWords($event)">
+                        <div *ngIf="currentQuestion.type === 'short-answer'" class="question-type-container">
+                            <h3 class="question-text">{{currentQuestion.text}}</h3>
+                            <div class="short-answer-container">
+                                <textarea 
+                                    [(ngModel)]="answers[currentQuestion.id]" 
+                                    rows="6" 
+                                    class="answer-textarea"
+                                    placeholder="Type your answer here..."
+                                    (input)="countWords($event)">
                                 </textarea>
-                                <div class="word-counter">
-                                    {{currentWordCount}} / {{currentQuestion.wordLimit}} words
+                                <div class="answer-footer">
+                                    <div class="word-counter">
+                                        <span class="word-count">{{currentWordCount}}</span>
+                                        <span class="word-limit">/ {{currentQuestion.wordLimit}} words</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Enumeration Question -->
-                        <div *ngIf="currentQuestion.type === 'enumeration'" class="question-section">
-                            <h3 class="question-title">{{currentQuestion.text}}</h3>
-                            <div class="enumeration-container">
+                        <div *ngIf="currentQuestion.type === 'enumeration'" class="question-type-container">
+                            <h3 class="question-text">{{currentQuestion.text}}</h3>
+                            <div class="enumeration-list">
                                 <div *ngFor="let i of [].constructor(currentQuestion.answerCount || 3); let idx = index"
-                                    class="enumeration-item">
-                                    <span class="item-number">{{idx + 1}}.</span>
-                                    <input type="text" [(ngModel)]="answers[currentQuestion.id][idx]"
-                                        class="enumeration-input" placeholder="Enter answer...">
+                                    class="enum-item">
+                                    <span class="enum-number">{{idx + 1}}.</span>
+                                    <input type="text" 
+                                        [(ngModel)]="answers[currentQuestion.id][idx]"
+                                        class="enum-input" 
+                                        placeholder="Enter answer...">
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="navigation-footer">
-                    <button (click)="previousQuestion()" [disabled]="currentQuestionIndex === 0"
-                        class="nav-button prev-button">
-                        <i class="fas fa-arrow-left"></i>
+                <!-- Navigation Footer -->
+                <div class="question-navigation">
+                    <button (click)="previousQuestion()" 
+                        [disabled]="currentQuestionIndex === 0"
+                        class="nav-btn prev-btn">
+                        <i class="fas fa-chevron-left"></i>
                         Previous
                     </button>
-                    <button (click)="nextQuestion()"
+                    
+                    <div class="question-indicator">
+                        {{currentQuestionIndex + 1}} / {{assessmentData.totalQuestions}}
+                    </div>
+                    
+                    <button *ngIf="currentQuestionIndex < assessmentData.totalQuestions - 1" (click)="nextQuestion()"
                         [disabled]="currentQuestionIndex === assessmentData.totalQuestions - 1"
-                        class="nav-button next-button">
+                        class="nav-btn next-btn">
                         Next
-                        <i class="fas fa-arrow-right"></i>
+                        <i class="fas fa-chevron-right"></i>
                     </button>
+
+                    <button *ngIf="currentQuestionIndex === assessmentData.totalQuestions - 1" (click)="openSubmitDialog()" 
+                    class="nav-btn next-btn">
+                    Submit
+                    <i class="fas fa-chevron-right"></i>
+                </button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Add this at the end of your component template -->
-<div *ngIf="showSubmitDialog" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full mx-4">
-        <h2 class="text-xl font-bold mb-4">Submit Assessment</h2>
+<!-- Submit Assessment Modal -->
+<div *ngIf="showSubmitDialog" class="submit-modal-overlay">
+    <div class="submit-modal-container">
+        <div class="submit-modal-content">
+            <!-- Header -->
+            <div class="submit-modal-header">
+                <h2 class="submit-modal-title">Submit Assessment</h2>
+                <p class="submit-modal-subtitle">Please review before submitting</p>
+            </div>
 
-        <p class="mb-6">
-            You have answered {{getAnsweredCount()}} out of {{assessmentData.totalQuestions}} questions.
-            <span *ngIf="getAnsweredCount() < assessmentData.totalQuestions"
-                class="text-orange-600 font-medium block mt-2">
-                Warning: You have {{assessmentData.totalQuestions - getAnsweredCount()}} unanswered questions.
-            </span>
-        </p>
+            <!-- Progress Summary -->
+            <div class="submit-progress-summary">
+                <div class="progress-info">
+                    <span class="progress-count">{{getAnsweredCount()}} of {{assessmentData.totalQuestions}} questions answered</span>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" 
+                             [style.width]="(getAnsweredCount() / assessmentData.totalQuestions * 100) + '%'"></div>
+                    </div>
+                </div>
+            </div>
 
-        <p class="mb-6">Are you sure you want to submit your assessment?</p>
+            <!-- Warning Message -->
+            <div *ngIf="getAnsweredCount() < assessmentData.totalQuestions" class="submit-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>{{assessmentData.totalQuestions - getAnsweredCount()}} unanswered questions will be marked as incorrect.</span>
+            </div>
 
-        <div class="flex justify-end space-x-3">
-            <button (click)="showSubmitDialog = false"
-                class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
-                Keep Answering
-            </button>
-            <button (click)="confirmSubmit()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                Yes, Submit
-            </button>
+            <!-- Confirmation Message -->
+            <div class="submit-confirmation">
+                <p>Are you sure you want to submit your assessment? You cannot make changes after submission.</p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="submit-modal-actions">
+                <button (click)="showSubmitDialog = false" class="submit-btn-cancel">
+                    Keep Answering
+                </button>
+                <button (click)="confirmSubmit()" class="submit-btn-confirm">
+                    Submit Assessment
+                </button>
+            </div>
         </div>
     </div>
 </div>

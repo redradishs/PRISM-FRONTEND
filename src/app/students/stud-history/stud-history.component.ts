@@ -207,7 +207,7 @@ export class StudHistoryComponent{
   onSearch(event: any) {
     const query = event.target.value.trim();
     this.searchQuery = query;
-    console.log('Search query:', query, 'Length:', query.length); // Debug log
+    console.log('Search query:', query, 'Length:', query.length); 
     this.searchSubject.next(query);
   }
 

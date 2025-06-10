@@ -52,8 +52,17 @@ export class IntegrityMonitoringService {
   public violations$: Observable<Violation[]> = this._violations.asObservable();
 
   constructor(private ngZone: NgZone) {
-    this.loadCheatingCount();
+    // Initialize monitoring immediately
     this.setupMonitoring();
+    
+    // Load any existing violations
+    this.loadCheatingCount();
+    
+    // Set up storage monitoring
+    this.monitorStorageDeletion();
+    
+    // Set up accidental action resets
+    this.setupAccidentalActionResets();
   }
 
   // Initialize all monitoring
@@ -67,95 +76,27 @@ export class IntegrityMonitoringService {
   // Set up all event listeners
   private setupEventListeners() {
     // Activity tracking
-    document.addEventListener('mousemove', () => {
-      this.lastActivity = Date.now();
-      this.isUserActive = true;
-    });
-    
-    document.addEventListener('keydown', (e) => {
-      this.lastActivity = Date.now();
-      this.isUserActive = true;
-      
-      // Screenshot detection
-      if (e.key === 'PrintScreen' || (e.key === 'S' && (e.ctrlKey || e.metaKey) && e.shiftKey)) {
-        this.registerViolation('Screenshot attempt detected', 'high');
-      }
-    });
+    document.addEventListener('mousemove', this.handleMouseMove);
+    document.addEventListener('keydown', this.handleKeyDown);
 
     // Tab visibility - core functionality for detecting tab switching
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        const now = Date.now();
-        
-        // Check for rapid switching
-        if (now - this.lastActionTime < this.RAPID_ACTION_THRESHOLD) {
-          this.rapidActionCount++;
-          if (this.rapidActionCount >= 3) {
-            this.registerViolation('Rapid tab switching detected', 'high');
-          }
-        } else {
-          this.rapidActionCount = 1;
-          this.registerViolation('Tab switch detected', 'medium');
-        }
-        
-        this.lastActionTime = now;
-      }
-    });
+    document.addEventListener('visibilitychange', this.handleVisibilityChange);
 
     // Window focus handling with improved accuracy
-    window.addEventListener('blur', () => {
-      const now = Date.now();
-      
-      // Only count blur if user was active and it's been more than the cooldown period
-      if (this.isUserActive && (now - this.lastBlurTime > this.BLUR_COOLDOWN)) {
-        this.blurCount++;
-        
-        if (this.blurCount === 1) {
-          this.showWarning('Please stay focused on the exam');
-        }
-        
-        if (this.blurCount >= this.MAX_BLUR_COUNT) {
-          this.registerViolation('Multiple window focus losses detected', 'medium');
-          this.blurCount = 0;
-        }
-        
-        this.lastBlurTime = now;
-      }
-    });
+    window.addEventListener('blur', this.handleWindowBlur);
 
     // Window resize monitoring
-    window.addEventListener('resize', () => {
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      
-      if (!isMobile) {
-        const widthThreshold = window.outerWidth - window.innerWidth > 160;
-        const heightThreshold = window.outerHeight - window.innerHeight > 160;
-        
-        if (widthThreshold || heightThreshold) {
-          this.registerViolation('Developer tools or window resize detected', 'medium');
-        }
-      }
-    });
+    window.addEventListener('resize', this.handleWindowResize);
 
     // Copy/Paste Prevention
-    document.addEventListener('copy', (e) => {
-      e.preventDefault();
-      this.registerViolation('Copy attempt detected', 'medium');
-    });
-
-    document.addEventListener('paste', (e) => {
-      e.preventDefault();
-      this.registerViolation('Paste attempt detected', 'medium');
-    });
+    document.addEventListener('copy', this.handleCopy);
+    document.addEventListener('paste', this.handlePaste);
 
     // Context menu prevention
-    document.addEventListener('contextmenu', (e) => {
-      e.preventDefault();
-      this.registerViolation('Right-click attempt detected', 'low');
-    });
+    document.addEventListener('contextmenu', this.handleContextMenu);
 
     // Storage events
-    window.addEventListener('storage', (e) => this.handleStorageChange(e));
+    window.addEventListener('storage', this.handleStorageChange);
 
     // Add DevTools detection
     this.detectDevTools();
@@ -172,7 +113,6 @@ export class IntegrityMonitoringService {
     return this._cheatMessage.value;
   }
 
-
   // Get violation history as formatted string
   public getViolationHistory(): string {
     return this._violations.value
@@ -185,22 +125,67 @@ export class IntegrityMonitoringService {
       .join('\n');
   }
 
-  // Clear warning message
-  public clearMessage(): void {
+  // Public method to register violations from components
+  public registerViolation(reason: string, severity: string): void {
+    const violations = [...this._violations.value];
+
+    violations.push({
+      type: reason,
+      timestamp: Date.now(),
+      severity: severity,
+    });
+
+    // Update violations
+    this._violations.next(violations);
+
+    // Update count
+    this.updateCheatingCount();
+
+    // Show message
+    this._cheatMessage.next(
+      `Integrity Alert: ${reason}. This activity has been logged.`
+    );
+
+    // Store data
+    this.secureStoreViolations();
+
+    console.warn(`Integrity Alert: ${reason}`);
+  }
+
+  // Public method to clear just the alert message
+  public clearAlerts(): void {
     this._cheatMessage.next(null);
   }
 
   // Cleanup method to call when component is destroyed
   public cleanup(): void {
+    // Clear all intervals
     if (this.storageCheckInterval) {
       clearInterval(this.storageCheckInterval);
+      this.storageCheckInterval = null;
     }
     if (this.tabSwitchResetTimer) {
       clearTimeout(this.tabSwitchResetTimer);
+      this.tabSwitchResetTimer = null;
     }
     if (this.altTabResetTimer) {
       clearTimeout(this.altTabResetTimer);
+      this.altTabResetTimer = null;
     }
+    
+    // Remove all event listeners that were added
+    document.removeEventListener('mousemove', this.handleMouseMove);
+    document.removeEventListener('keydown', this.handleKeyDown);
+    document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+    document.removeEventListener('copy', this.handleCopy);
+    document.removeEventListener('paste', this.handlePaste);
+    document.removeEventListener('contextmenu', this.handleContextMenu);
+    window.removeEventListener('blur', this.handleWindowBlur);
+    window.removeEventListener('resize', this.handleWindowResize);
+    window.removeEventListener('storage', this.handleStorageChange);
+    window.removeEventListener('beforeunload', this.beforeUnloadHandler);
+    
+    console.log('Integrity monitoring cleanup completed');
   }
 
   // Private implementation methods
@@ -251,35 +236,6 @@ export class IntegrityMonitoringService {
 
   // Event handlers
 
-  private handleVisibilityChange() {
-    if (document.hidden) {
-      this.tabSwitchCount++;
-
-      if (this.tabSwitchCount > this.TAB_SWITCH_ALLOWANCE) {
-        // Check if it's a pattern of rapid switching
-        const now = Date.now();
-        if (now - this.lastActionTime < this.RAPID_ACTION_THRESHOLD) {
-          this.rapidActionCount++;
-          if (this.rapidActionCount >= 3) {
-            this.registerViolation('Rapid tab switching detected', 'high');
-          } else {
-            this.registerViolation(
-              'Excessive tab switching detected',
-              'medium'
-            );
-          }
-        } else {
-          this.rapidActionCount = 1;
-        }
-        this.lastActionTime = now;
-      } else {
-        this.showWarning(
-          `Tab switch detected (${this.tabSwitchCount}/${this.TAB_SWITCH_ALLOWANCE} allowed)`
-        );
-      }
-    }
-  }
-
   private onWindowBlur() {
     const now = Date.now();
     if (now - this.lastBlurTime > this.BLUR_COOLDOWN) {
@@ -298,7 +254,7 @@ export class IntegrityMonitoringService {
       const heightThreshold = window.outerHeight - window.innerHeight > 160;
       
       if (widthThreshold || heightThreshold) {
-        this.registerViolation('Window significantly resized', 'medium');
+        this.registerViolation('Developer tools or window resize detected', 'medium');
       }
     } else {
       // For mobile: only trigger if window becomes extremely small
@@ -309,47 +265,10 @@ export class IntegrityMonitoringService {
     }
   }
 
-  private handleKeyDown(event: KeyboardEvent) {
-    if (event.altKey && event.key === 'Tab') {
-      this.altTabCount++;
-
-      if (this.altTabCount > this.ALT_TAB_ALLOWANCE) {
-        const now = Date.now();
-        if (now - this.lastActionTime < this.RAPID_ACTION_THRESHOLD) {
-          this.rapidActionCount++;
-          if (this.rapidActionCount >= 3) {
-            this.registerViolation('Rapid Alt+Tab switching detected', 'high');
-          } else {
-            this.registerViolation('Excessive Alt+Tab detected', 'medium');
-          }
-        } else {
-          this.rapidActionCount = 1;
-        }
-        this.lastActionTime = now;
-      } else {
-        this.showWarning(
-          `Alt+Tab detected (${this.altTabCount}/${this.ALT_TAB_ALLOWANCE} allowed)`
-        );
-      }
-    }
-
-    if (event.key === 'PrintScreen') {
-      this.registerViolation('Screenshot attempt detected', 'high');
-    }
-  }
-
   private beforeUnloadHandler(event: BeforeUnloadEvent) {
     event.returnValue =
       'Are you sure you want to leave? Your progress may be lost.';
     return event.returnValue;
-  }
-
-  private handleStorageChange(e: StorageEvent) {
-    if (e.key && e.key.startsWith('assessment_')) {
-      if (!e.newValue) {
-        this.checkStorageIntegrity();
-      }
-    }
   }
 
   private checkStorageIntegrity() {
@@ -429,32 +348,6 @@ export class IntegrityMonitoringService {
         this._cheatMessage.next(null);
       }
     }, 5000);
-  }
-
-  private registerViolation(reason: string, severity: string) {
-    const violations = [...this._violations.value];
-
-    violations.push({
-      type: reason,
-      timestamp: Date.now(),
-      severity: severity,
-    });
-
-    // Update violations
-    this._violations.next(violations);
-
-    // Update count
-    this.updateCheatingCount();
-
-    // Show message
-    this._cheatMessage.next(
-      `Integrity Alert: ${reason}. This activity has been logged.`
-    );
-
-    // Store data
-    this.secureStoreViolations();
-
-    console.warn(`Integrity Alert: ${reason}`);
   }
 
   private updateCheatingCount() {
@@ -559,11 +452,6 @@ export class IntegrityMonitoringService {
     }));
   }
 
-  // New method to only clear UI alerts but keep violation tracking
-  clearAlerts(): void {
-    this._cheatMessage.next(null);
-  }
-
   // Original resetViolations renamed to track it's only called on assessment end
   resetAllViolations() {
     this._violations.next([]);
@@ -655,4 +543,119 @@ export class IntegrityMonitoringService {
       }
     }, 5000);
   }
+
+  // Add event handler methods as class properties to properly remove them
+  private handleMouseMove = () => {
+    this.lastActivity = Date.now();
+    this.isUserActive = true;
+  };
+
+  private handleKeyDown = (e: KeyboardEvent) => {
+    this.lastActivity = Date.now();
+    this.isUserActive = true;
+    
+    // Screenshot detection
+    if (e.key === 'PrintScreen' || (e.key === 'S' && (e.ctrlKey || e.metaKey) && e.shiftKey)) {
+      this.registerViolation('Screenshot attempt detected', 'high');
+    }
+
+    // Alt+Tab detection
+    if (e.altKey && e.key === 'Tab') {
+      this.altTabCount++;
+
+      if (this.altTabCount > this.ALT_TAB_ALLOWANCE) {
+        const now = Date.now();
+        if (now - this.lastActionTime < this.RAPID_ACTION_THRESHOLD) {
+          this.rapidActionCount++;
+          if (this.rapidActionCount >= 3) {
+            this.registerViolation('Rapid Alt+Tab switching detected', 'high');
+          } else {
+            this.registerViolation('Excessive Alt+Tab detected', 'medium');
+          }
+        } else {
+          this.rapidActionCount = 1;
+        }
+        this.lastActionTime = now;
+      } else {
+        this.showWarning(
+          `Alt+Tab detected (${this.altTabCount}/${this.ALT_TAB_ALLOWANCE} allowed)`
+        );
+      }
+    }
+  };
+
+  private handleVisibilityChange = () => {
+    if (document.hidden) {
+      const now = Date.now();
+      
+      // Check for rapid switching
+      if (now - this.lastActionTime < this.RAPID_ACTION_THRESHOLD) {
+        this.rapidActionCount++;
+        if (this.rapidActionCount >= 3) {
+          this.registerViolation('Rapid tab switching detected', 'high');
+        }
+      } else {
+        this.rapidActionCount = 1;
+        this.registerViolation('Tab switch detected', 'medium');
+      }
+      
+      this.lastActionTime = now;
+    }
+  };
+
+  private handleWindowBlur = () => {
+    const now = Date.now();
+    
+    // Only count blur if user was active and it's been more than the cooldown period
+    if (this.isUserActive && (now - this.lastBlurTime > this.BLUR_COOLDOWN)) {
+      this.blurCount++;
+      
+      if (this.blurCount === 1) {
+        this.showWarning('Please stay focused on the exam');
+      }
+      
+      if (this.blurCount >= this.MAX_BLUR_COUNT) {
+        this.registerViolation('Multiple window focus losses detected', 'medium');
+        this.blurCount = 0;
+      }
+      
+      this.lastBlurTime = now;
+    }
+  };
+
+  private handleWindowResize = () => {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (!isMobile) {
+      const widthThreshold = window.outerWidth - window.innerWidth > 160;
+      const heightThreshold = window.outerHeight - window.innerHeight > 160;
+      
+      if (widthThreshold || heightThreshold) {
+        this.registerViolation('Developer tools or window resize detected', 'medium');
+      }
+    }
+  };
+
+  private handleCopy = (e: Event) => {
+    e.preventDefault();
+    this.registerViolation('Copy attempt detected', 'medium');
+  };
+
+  private handlePaste = (e: Event) => {
+    e.preventDefault();
+    this.registerViolation('Paste attempt detected', 'medium');
+  };
+
+  private handleContextMenu = (e: Event) => {
+    e.preventDefault();
+    this.registerViolation('Right-click attempt detected', 'low');
+  };
+
+  private handleStorageChange = (e: StorageEvent) => {
+    if (e.key && e.key.startsWith('assessment_')) {
+      if (!e.newValue) {
+        this.checkStorageIntegrity();
+      }
+    }
+  };
 }
