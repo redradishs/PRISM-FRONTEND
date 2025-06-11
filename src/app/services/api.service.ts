@@ -231,6 +231,10 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/students/skills/${id}/getData`);
   }
 
+  assignSpecific(data: any) {
+    return this.http.post(`${this.apiUrl}/assign/specifics`, data);
+  }
+
 
   // Student assessment page
 

@@ -273,6 +273,11 @@ export class AssignAssessmentComponent implements OnInit {
     this.assignmentType = type;
     this.selectedClasses.clear();
     this.selectedStudents.clear();
+    if(type === 'individual') {
+      this.selectedMode = 'public';
+      this.attemptsAllowed = 1;
+      this.showResults = 'completed';
+    }
   }
 
   toggleClassSelection(classId: string) {
@@ -379,7 +384,11 @@ export class AssignAssessmentComponent implements OnInit {
     } else if (this.currentStep === 3) {
       this.setStep(4);
     } else if (this.currentStep === 4) {
-      await this.saveAssignment();
+      if(this.assignmentType === 'individual') {
+        await this.assignSpecific();
+      } else {
+        await this.saveAssignment();
+      }
     }
   }
 
@@ -768,9 +777,14 @@ export class AssignAssessmentComponent implements OnInit {
       title: 'Assessment Assigned',
       text: this.selectedMode === 'public'
         ? 'The public assessment has been successfully created.'
-        : `The assessment has been successfully assigned to ${this.assignmentType === 'classes' ? 'all selected classes' : 'all selected students'}.`
+        : `The assessment has been successfully assigned to ${this.assignmentType === 'classes' ? 'all selected classes' : 'all selected students'},`,
+        timer: 2000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+        toast: true,
+        position: 'top-end'
     }).then(() => {
-      this.router.navigate(['/instructor/assessment']);
+      this.router.navigate(['/instructor/dashboard']);
       this.runUpdates();
     });
   }
@@ -848,11 +862,94 @@ export class AssignAssessmentComponent implements OnInit {
         return (this.assignmentType === 'classes' && this.selectedClasses.size > 0) ||
                (this.assignmentType === 'individual' && this.selectedStudents.size > 0);
       case 3:
-        return true; // All settings have default values
+        const validDates = !!(this.startDate && this.dueDate);
+        const validTimeLimit = this.timeLimit >= 1;
+        const validAttempts = this.attemptsAllowed >= 1;
+
+        if(this.assignmentType === 'individual') {
+          return validDates && validTimeLimit && validAttempts
+        }
+
+        let modeValidation = false;
+        if (this.selectedMode === 'mastery') {
+          modeValidation = this.masteryScore >= 1 && this.masteryScore <= this.selectedAssessmentPoints;
+        } else if (this.selectedMode === 'assessment') {
+          modeValidation = this.timeLimit >= 5;
+        } else if (this.selectedMode === 'public') {
+          modeValidation = this.joiningCode.length > 0;
+        }
+        
+        return validDates && validTimeLimit && validAttempts && modeValidation;
       case 4:
-        return true; // Review step can always proceed
+        return true; 
       default:
         return false;
+    }
+  }
+
+  async assignSpecific() {
+    if (!this.canProceed()) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Validation Error',
+        text: 'Please fill in all required fields correctly.'
+      });
+      return;
+    }
+
+    const validationError = this.validateIndividualAssignmentData();
+    if (validationError) {
+      await Swal.fire({
+        icon: 'error',
+        title: 'Validation Error',
+        text: validationError
+      });
+      return;
+    }
+
+    const assignmentData = {
+      assessmentId: Array.from(this.selectedAssessments)[0],
+      studentIds: Array.from(this.selectedStudents),
+      startDate: this.startDate,
+      dueDate: this.dueDate,
+      timeLimit: this.timeLimit,
+      timeLimitPerQuestion: this.timeLimitPerQuestion,
+      instructions: this.specialInstructions,
+      createdBy: this.userId,
+      assignmentMode: "assessment",
+      modeSettings: {
+        randomizeQuestions: this.randomizeQuestions,
+        showResults: this.showResults,
+        passingScore: this.passingScore
+      },
+      maxAttempts: this.attemptsAllowed,
+    }
+
+
+    try {
+      const response = await this.api.assignSpecific(assignmentData).toPromise();
+      
+      Swal.fire({
+        icon: 'success',
+        title: 'Assessment Assigned',
+        text: `Assessment has been successfully to specific students.`,
+        timer: 2000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+        toast: true,
+        position: 'top-end'
+      });
+
+      this.router.navigate(['/instructor/dashboard']);
+
+      
+    } catch (error: any) {
+      console.error('Error assigning assessment:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Assignment Failed',
+        text: error.error?.message || 'There was an error assigning the assessment. Please try again.'
+      });
     }
   }
 
@@ -862,6 +959,34 @@ export class AssignAssessmentComponent implements OnInit {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
+
+  private validateIndividualAssignmentData(): string | null {
+    if (!this.startDate || !this.dueDate) {
+      return 'Please set both start and due dates.';
+    }
+  
+    const startDateTime = new Date(this.startDate).getTime();
+    const dueDateTime = new Date(this.dueDate).getTime();
+    
+    if (startDateTime >= dueDateTime) {
+      return 'Start date must be before due date.';
+    }
+  
+    if (this.timeLimit < 1) {
+      return 'Time limit must be at least 1 minute.';
+    }
+  
+    if (this.selectedStudents.size === 0) {
+      return 'Please select at least one student.';
+    }
+  
+    if (this.selectedAssessments.size === 0) {
+      return 'Please select an assessment.';
+    }
+  
+    return null;
+  }
+  
 
   showNoStudentsAlert(): void {
     Swal.fire({

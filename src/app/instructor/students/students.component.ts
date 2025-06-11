@@ -568,6 +568,8 @@ export class StudentsComponent implements OnInit {
       className: this.newClass.className,
       classCode: this.newClass.classCode,
       autoAdmission: this.newClass.autoAdmission,
+      block: this.newClass.block,
+      year: this.newClass.year,
       description: this.newClass.description
     };
 

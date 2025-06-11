@@ -382,7 +382,7 @@
                                                     </div>
                                                     <div class="student-name">{{student.name}}</div>
                                                     <div class="student-program">
-                                                        <span *ngIf="student.program">BS{{student.program}}</span>
+                                                        <span *ngIf="student.program">{{student.program.toUpperCase()}}</span>
                                                         <span *ngIf="!student.program" class="text-gray-400 italic">Not
                                                             specified</span>
                                                     </div>
@@ -443,7 +443,7 @@
 
                         <div class="review-content">
                             <!-- Assessment Mode Selection -->
-                            <div class="bg-white rounded-lg p-2 md:p-6 shadow-sm mb-6">
+                            <div *ngIf="assignmentType === 'classes'" class="bg-white rounded-lg p-2 md:p-6 shadow-sm mb-6">
                                 <h3 class="text-lg font-semibold text-gray-900 mb-2">Assessment Mode</h3>
                                 <p class="text-sm text-gray-600 mb-4">Choose how students will interact with this
                                     assessment</p>
@@ -488,7 +488,16 @@
                                     </div>
                                 </div>
                             </div>
-
+                            <div *ngIf="assignmentType === 'individual'" class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                                <div class="flex items-center">
+                                    <i class="fas fa-info-circle text-blue-500 mr-3"></i>
+                                    <div>
+                                        <h4 class="text-sm font-medium text-blue-900">Individual Assignment Mode</h4>
+                                        <p class="text-sm text-blue-700 mt-1">This assessment will be assigned directly to selected students in standard assessment mode.</p>
+                                    </div>
+                                </div>
+                            </div>
+                    
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <!-- Due Date & Time -->
                                 <div class="bg-white rounded-lg p-6 shadow-sm">
@@ -850,7 +859,9 @@
                         </button>
                         <div></div> <!-- Spacer when back button is hidden -->
                         <button class="nav-btn btn-next" [disabled]="!canProceed()" (click)="onNext(); scrollToTop()">
-                            {{currentStep === 4 ? 'Assign Assessment' : 'Next'}}
+                            <span *ngIf="currentStep === 4 && assignmentType === 'individual'">Assign to Students</span>
+                            <span *ngIf="currentStep === 4 && assignmentType === 'classes'">Classes</span>
+                            <span *ngIf="currentStep < 4">Next</span>
                             <i class="fas fa-arrow-right ml-2"></i>
                         </button>
                     </div>
