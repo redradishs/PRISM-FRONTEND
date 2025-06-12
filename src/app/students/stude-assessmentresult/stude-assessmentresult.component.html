@@ -323,6 +323,66 @@
                         </div>
                     </section>
 
+        <section *ngIf="insights" class="insights-section">
+        <div class="insight-header">
+            <div class="insight-icon">
+                <i class="fas fa-lightbulb"></i>
+            </div>
+            <div class="insight-title">
+                <h1>Performance Insights</h1>
+                <span>Personalized Learning Analytics</span>
+            </div>
+        </div>
+
+        <div class="insights-row">
+            <!-- Performance Analysis Card -->
+            <div class="insight-card">
+                <div class="performance-analysis">
+                    <i class="fas fa-chart-line"></i>
+                    <h2>Performance Analysis</h2>
+                </div>
+                <div class="card-content">
+                    <p>{{insights}}</p>
+                </div>
+            </div>
+
+            <!-- Recommended Resources Card -->
+            <div *ngIf="searchResults" class="insight-card">
+                <div class="performance-analysis">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h2>Recommended Learning Resources</h2>
+                </div>
+                <div class="card-content">
+                    <div class="resources-grid">
+
+                        <div *ngFor="let r of searchResults" class="resource-card">
+                            <div class="resource-icon">
+                                <i class="fas" [class]="{
+                                'fa-file-alt': r.contentType === 'Tutorial',
+                                'fa-video': r.contentType === 'Video',
+                                'fa-laptop-code': r.contentType === 'Practice',
+                                'fa-book': r.contentType === 'Article'
+                                }"></i>
+                            </div>
+                            <div class="resource-content">
+                                <h3>{{r.title}}</h3>
+                                <p>{{r.snippet}}</p>
+                                <div class="resource-meta">
+                                    <span class="resource-type">{{r.contentType}}</span>
+                                </div>
+                            </div>
+                            <div class="resource-action">
+                                <button class="resource-btn" (click)="openResource(r.link)">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
                     <div *ngIf="!isFinished" class="notify">
                         <h1>The Assessment data will be available once the assessment is completed</h1>
                     </div>

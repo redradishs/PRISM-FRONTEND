@@ -82,13 +82,16 @@ export class StudeAssessmentresultComponent implements OnInit {
   analysis: any[] = [];
   username: string = '';
   profile: string = '';
+  insights: any;
+  search: any;
+  searchResults: any;
   
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
   
   showMasteryCelebration = false;
   outroActive = false;
   
-  constructor(private auth: AuthService, private api: StudentService, private router: Router, private cdr: ChangeDetectorRef) {
+  constructor(private auth: AuthService, private api: StudentService, private router: Router, private cdr: ChangeDetectorRef, private ai: ApiService) {
     const navigation = this.router.getCurrentNavigation();
     if(navigation?.extras.state) {
       this.assignedAssessmentId = navigation.extras.state['assessmentId'];
@@ -170,6 +173,7 @@ export class StudeAssessmentresultComponent implements OnInit {
           
           if (resp.data && resp.data.questions) {
             this.analysis = resp.data.questions;
+            this.getAssessmentInsights();
           }
           
           console.log('Analysis:', this.analysis);  
@@ -349,5 +353,44 @@ export class StudeAssessmentresultComponent implements OnInit {
       return this.result.statistics.publicAverage || 0;
     }
     return this.result.statistics.classAverage || 0;
+  }
+
+  getAssessmentInsights() {
+    const data = {
+      questions: this.analysis
+    }
+    console.log('This is the result of this assessment', this.analysis)
+    this.ai.analyzeStudent(data).subscribe({
+      next: (resp: any) => {
+        console.log('Successfully analyzed the assessment', resp);
+        this.insights = resp.feedback;
+        if(resp.search_queries) {
+          this.search = resp.search_queries[0];
+          this.searchMaterials();
+        }
+      },
+      error: (error) => {
+        console.error('Error analyzing the assessment:', error);
+      }
+    })
+  }
+
+  searchMaterials() {
+    const data = {
+      query: this.search
+    }
+    this.ai.recommendedMaterials(data).subscribe({
+      next: (resp: any) => {
+        console.log('Successfully searched for materials', resp);
+        this.searchResults = resp.results.slice(0, 4);
+      },
+      error: (error) => {
+        console.error('Error searching for materials:', error);
+      }
+    })
+  }
+
+  openResource(url: string) {
+    window.open(url, '_blank');
   }
 }

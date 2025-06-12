@@ -38,27 +38,10 @@ export class ApiService {
     return this.http.post(`${this.aiFinal}/assessment/generate`, data);
   }
 
-  // Basic assessment generation
-  generateAssessment(content: string) {
-    const data: AIPromptRequest = {
-      role: 'system',
-      content: content,
-    };
-    return this.http.post(`${this.aiUrl}/instructor`, data);
-  }
-
   verifyQuestions(questions: any) {
     return this.http.post(`${this.aiUrl}/verify`, questions);
   }
 
-  // Enhanced assessment with additional parameters
-  generateAssessmentPlus(content: string) {
-    const data: AIPromptRequest = {
-      role: 'system',
-      content: content,
-    };
-    return this.http.post(`${this.aiUrl}/instructorplus`, data);
-  }
 
   // Generate quiz assessment
   generateQuizAssessment(
@@ -81,7 +64,16 @@ export class ApiService {
     return this.http.post(`${this.aiUrl}/analytics`, data);
   }
 
-  // The AI CONTENT GENERATION ENDS HERE
+  //Analze Result Student Call
+
+  analyzeStudent(data: any) {
+    return this.http.post(`${this.aiUrl}/insights`, data);
+  }
+
+  recommendedMaterials(data: any) {
+    return this.http.post(`${this.aiUrl}/search`, data);
+  }
+
 
   //normal api calls here, starts with dashboard
 
