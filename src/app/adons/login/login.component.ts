@@ -71,7 +71,6 @@ export class LoginComponent implements OnInit {
         ],
       ],
     });
-
     this.signupForm = this.formBuilder.group({
       email: [
         '',
@@ -84,10 +83,13 @@ export class LoginComponent implements OnInit {
       name: ['', Validators.required],
       role: ['', Validators.required],
     });
+    const jwt = localStorage.getItem('jwt');
+    if (jwt) {
+      this.router.navigate(['/home']);
+    }
   }
 
   ngOnInit(): void {
-    // Apply SEO from route data
     const seoData = this.route.snapshot.data['seo'];
     if (seoData) {
       this.seoService.updateSEO({
@@ -96,14 +98,11 @@ export class LoginComponent implements OnInit {
         image: 'https://prismgcccs.live/prism_logo.png'
       });
     }
-
     this.title.setTitle('PRISM | Login');
-
     const storedEmail = localStorage.getItem('rememberedEmail');
     if (storedEmail) {
       this.loginForm.patchValue({ email: this.stripDomainFromEmail(storedEmail) });
     }
-
     this.signupForm = this.formBuilder.group({
       name: ['', Validators.required],
       email: ['', [Validators.required]],

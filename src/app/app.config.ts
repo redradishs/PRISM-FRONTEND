@@ -4,7 +4,7 @@ import {
   provideZoneChangeDetection,
   isDevMode
 } from '@angular/core';
-import { provideRouter, withPreloading, PreloadAllModules, withEnabledBlockingInitialNavigation } from '@angular/router';
+import { provideRouter, withPreloading, PreloadAllModules, withEnabledBlockingInitialNavigation, withInMemoryScrolling } from '@angular/router';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -40,18 +40,23 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({
       eventCoalescing: true,
-      runCoalescing: true
+      runCoalescing: true,
+      ignoreChangesOutsideZone: true
     }),
     provideRouter(
       routes,
       withPreloading(PreloadAllModules),
-      withEnabledBlockingInitialNavigation()
+      withEnabledBlockingInitialNavigation(),
+      withInMemoryScrolling({
+        scrollPositionRestoration: 'top',
+        anchorScrolling: 'enabled'
+      })
     ),
     importProvidersFrom(HttpClientModule),
     provideCharts(withDefaultRegisterables()),
     provideServiceWorker('ngsw-worker.js', {
-      enabled: shouldEnableServiceWorker(),
-      registrationStrategy: 'registerWithDelay:2000'
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000'
     }),
 
     // HTTP Interceptor for automatic decryption

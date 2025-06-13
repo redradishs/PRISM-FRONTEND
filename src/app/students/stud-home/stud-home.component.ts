@@ -68,6 +68,12 @@ export class StudHomeComponent implements OnInit {
     this.joinAssessmentForm = this.fb.group({
       assessmentCode: ['', [Validators.required]]
     });
+    const settings = localStorage.getItem('setTab');
+    if (settings) {
+      this.activeTab = settings;
+    } else {
+      localStorage.setItem('setTab', this.activeTab);
+    }
   }
 
   ngOnInit(): void {
@@ -105,6 +111,7 @@ export class StudHomeComponent implements OnInit {
 
   setActiveTab(tab: string) {
     this.activeTab = tab;
+    localStorage.setItem('setTab', this.activeTab);
   }
 
   gotoAssessments(id: string) {
