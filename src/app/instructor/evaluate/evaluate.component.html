@@ -48,21 +48,46 @@
 
             <div class="h-[65px] md:h-[68px] w-full"></div>
 
+            <!-- Loading State -->
+            <div *ngIf="isLoading" class="flex items-center justify-center min-h-[calc(100vh-68px)]">
+                <div class="text-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+                    <p class="mt-4 text-gray-600">Loading student data...</p>
+                </div>
+            </div>
+
+            <!-- Error State -->
+            <div *ngIf="!isLoading && loadingError" class="flex items-center justify-center min-h-[calc(100vh-68px)]">
+                <div class="text-center">
+                    <div class="text-red-500 text-5xl mb-4">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <p class="text-gray-600">{{loadingError}}</p>
+                    <button (click)="loadAllData()" class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                        Try Again
+                    </button>
+                </div>
+            </div>
+
             <div class="container">
 
-                <div class="page-header">
-                    <div class="page-title-container">
-                        <h1 class="page-title">
-
-                            Evaluate Student
-                        </h1>
-                        <p class="page-subtitle">Evaluate the student's performance and provide feedback</p>
+                        <!-- Header -->
+            <div class="genggengg">
+                <div class="oknato-header">
+                    <div class="oknato-icon-wrapper">
+                        <i class="fas fa-user-graduate oknato-icon"></i>
                     </div>
-                    <div class="header-buttons">
-                        <button class="create-assessment-btn" (click)="createNewAssessment()">
-                            <i class="fas fa-plus btn-icon"></i>
+                    <div class="oknato-header-content">
+                        <h1>Evaluate Student</h1>
+                        <p>Evaluate the student's performance and provide feedback</p>
+                    </div>
+                </div>
+        
+                <div class="publish-container">
+                    <button class="publish-button" (click)="assignAssessment()">
+                        <i class="fas fa-plus"></i>
                             Assign Assessment
-                        </button>
+                    </button>
                     </div>
                 </div>
 
@@ -90,7 +115,7 @@
                                 </div>
                                 <span class="status-badge">Active</span>
                             </div>
-                            <div class="student-details">
+                            <div *ngIf="studentData.student?.program !== null" class="student-details">
                                 <div class="detail-group">
                                     <p class="detail-label">Program</p>
                                     <p *ngIf="studentData.student?.program === 'bsit'" class="detail-value">Bachelor of
@@ -203,7 +228,7 @@
                     </div>
 
                     <!-- Skills Tab Content -->
-                    <div class="tab-content" [class.active]="activeTab === 'skills'" id="skills">
+                    <div *ngIf="studentData?.student?.program !== null" class="tab-content" [class.active]="activeTab === 'skills'" id="skills">
                         <div *ngIf="studentData" class="tab-header">
                             <h2 *ngIf="studentData.student.program !== null">
                                 {{studentData.student?.program.replace('bs', '') | uppercase }}

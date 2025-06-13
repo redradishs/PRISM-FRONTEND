@@ -35,17 +35,20 @@
             <div class="h-[65px] md:h-[68px] w-full"></div>
 
             <div class="page-content">
-                <div class="page-header">
-                    <div class="page-title-container">
-                        <i class="fas fa-check-square title-icon"></i>
-                        <div class="title-section">
-                            <h1 class="page-title">Assign Assessment</h1>
-                            <p class="page-subtitle">Assign assessments to students or classes</p>
+                <div class="genggengg">
+                    <div class="oknato-header">
+                        <div class="oknato-icon-wrapper">
+                            <i class="fas fa-check-square oknato-icon"></i>
+                        </div>
+                        <div class="oknato-header-content">
+                            <h1>Assign Assessment</h1>
+                            <p>Assign assessments to students or classes</p>
                         </div>
                     </div>
-                    <div class="header-buttons">
-                        <button class="create-assessment-btn" routerLink="/instructor/generate">
-                            <i class="fas fa-plus btn-icon"></i>
+
+                    <div class="publish-container">
+                        <button class="publish-button" [routerLink]="['/instructor/createAssessment']" >
+                            <i class="fas fa-plus"></i>
                             Create Assessment
                         </button>
                     </div>

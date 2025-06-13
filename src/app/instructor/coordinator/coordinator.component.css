@@ -13,102 +13,126 @@
     margin: 0 auto;
 }
 
-/* Header Styles */
-.header {
+
+  /* Header Styles */
+  .genggengg {
     display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 2rem;
-}
+  }
 
-@media (min-width: 768px) {
-    .header {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-    }
-}
-
-.header-content h1 {
-    font-size: 1.7rem;
-    font-weight: 700;
-    margin: 0;
-}
-
-.header-content p {
-    color: #6b7280;
-    margin: 0.25rem 0 0 0;
-}
-
-.header-actions {
-    display: flex;
-    gap: 0.5rem;
-}
-
-/* Button Styles */
-.button {
-    height: 40px;
-    padding: 0 16px;
+  .oknato-header {
     display: flex;
     align-items: center;
-    gap: 8px;
-    border-radius: 8px;
-    font-weight: 500;
-    font-size: 14px;
-    white-space: nowrap;
-    flex: 1;
+    gap: 1rem;
+  }
+  
+  .oknato-icon-wrapper {
+    height: 3rem;
+    width: 3rem;
+    background-color: #4f46e5;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    max-width: 100%;
-    background-color: white;
-    color: #1e293b;
-    border: 1.5px solid #e2e8f0;
-}
-
-.button.primary {
-    background-color: #4338ca;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  .oknato-icon {
     color: white;
-    border: none;
-}
-
-.button.primary:hover {
-    background-color: #3730a3;
-}
-
-.button.outline {
-    background-color: white;
-    border: 1px solid #e5e7eb;
-    color: #374151;
-}
-
-.button.outline:hover {
-    background-color: #f9fafb;
-    border-color: #d1d5db;
-}
-
-.button.outline.active {
-    background-color: #4338ca;
-    border-color: #4338ca;
-    color: white;
-}
-
-.button.ghost {
-    background: none;
-    border: none;
+    font-size: 1.25rem;
+  }
+  
+  .oknato-header-content h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+  
+  .oknato-header-content p {
     color: #6b7280;
-    padding: 0.25rem;
-}
+    font-size: 0.875rem;
+  }
 
-.button.ghost:hover {
-    background-color: #f3f4f6;
-    color: #374151;
-}
+  /* Mobile Optimizations  */
+  @media screen and (max-width: 768px) {
+      .katamat-container {
+          padding: 0.5rem;
+      }
+  
+      .oknato-header {
+          gap: 0.75rem;
+      }
+  
+      .oknato-icon-wrapper {
+          width: 2.5rem;
+          height: 2.5rem;
+      }
+  
+      .oknato-header-content h1 {
+          font-size: 1.25rem;
+          margin-bottom: 0.25rem;
+      }
+  
+      .oknato-header-content p {
+          font-size: 0.875rem;
+      }
+  }
+  
+  /* Publish Button Styles */
+  .publish-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .publish-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #4c44ed;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .publish-button:hover {
+    background-color: #4338ca;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .publish-button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .genggengg {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+  
+    .publish-container {
+      width: 100%;
+    }
+  
+    .publish-button {
+      width: 100%;
+      justify-content: center;
+      padding: 0.875rem;
+    }
+  }
 
-.button.icon-only {
-    padding: 0.5rem;
-    width: 2.25rem;
-    height: 2.25rem;
-    justify-content: center;
-}
+
 
 /* Stats Grid */
 .stats-grid {

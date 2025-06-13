@@ -7,6 +7,7 @@ import { Title } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { forkJoin, Observable } from 'rxjs';
 
 interface AssignmentData {
   assessmentId: string;
@@ -34,6 +35,35 @@ interface DatePreset {
   dueDate: Date;
 }
 
+interface ApiResponse<T> {
+  data: T;
+}
+
+interface AssessmentHistory {
+  _id: string;
+  title: string;
+}
+
+interface StudentData {
+  student: {
+    name: string;
+    email: string;
+    program: string;
+    yearLevel: string;
+    block: string;
+  };
+  stats: {
+    averagePerformance: number;
+  };
+}
+
+interface SkillSet {
+  skillsPerformance: Array<{
+    name: string;
+    percentage: number;
+  }>;
+}
+
 @Component({
   selector: 'app-evaluate',
   imports: [SidebarComponent, CommonModule, FormsModule],
@@ -41,10 +71,10 @@ interface DatePreset {
   styleUrl: './evaluate.component.css'
 })
 export class EvaluateComponent implements OnInit {
-  activeTab: string = 'skills';
   isMobile = window.innerWidth < 768;
   @HostListener('window:resize')
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
+  activeTab: string = 'skills';
   userId: string = '';
   username: string = '';
   profile: string = '';
@@ -55,13 +85,13 @@ export class EvaluateComponent implements OnInit {
   filteredSkillSet: any[] = [];
   selectedSkillFilter: string = 'all';
   isLoadingSkills: boolean = false;
+  isLoading: boolean = true;
+  loadingError: string | null = null;
   
-  // Modal properties
   showAssignModal: boolean = false;
   isSubmitting: boolean = false;
   availableAssessments: any[] = [];
   
-  // Date presets
   startDatePresets: DatePreset[] = [
     {
       label: 'Now',
@@ -109,17 +139,15 @@ export class EvaluateComponent implements OnInit {
     this.title.setTitle('PRISM | Evaluate');
     const navigation = this.router.getCurrentNavigation();
     if(navigation?.extras?.state) {
-      this.studentId = navigation.extras.state['studentId']
-      this.getPastAssessments();
-      this.getStudentData(this.studentId);
-      this.getStudentSkills(this.studentId);
-      console.log('User ID:', this.userId);
+      this.studentId = navigation.extras.state['studentId'];
+      this.loadAllData();
+    } else {
+      this.loadingError = 'No student ID provided';
+      this.isLoading = false;
     }
   }
 
   ngOnInit(): void {
-    this.checkMobile();
-    window.addEventListener('resize', this.checkMobile.bind(this));
     this.auth.getCurrentUser().subscribe((user) => {
       this.userId = user.id;
       this.username = user.name || '';
@@ -129,46 +157,34 @@ export class EvaluateComponent implements OnInit {
     });
   }
 
-  getPastAssessments() {
-    this.api.evaluateAssessmentHistory(this.studentId).subscribe({
-      next: (resp: any) => {
-        console.log('Past Assessments:', resp);
-        this.assessments =  resp.data;
-      },
-      error: (error) => {
-        console.error('Error fetching past assessments:', error);
-      }
-    })
-  }
+  loadAllData() {
+    this.isLoading = true;
+    this.loadingError = null;
 
-  getStudentData(id: string) {
-    this.api.evaluateStudentData(this.studentId).subscribe({
-      next: (resp: any) => {
-        this.studentData = resp.data;
-        console.log('Student Data:', this.studentData);
-      },
-      error: (error) => {
-        console.error('Error fetching student data:', error);
-      }
-    })
-  }
-
-  getStudentSkills(id: string) {
-    this.isLoadingSkills = true;
-    this.api.studentSkillSet(this.studentId).subscribe({
-      next: (resp: any) => {
-        this.skillSet = resp.data?.skillsPerformance || [];
+    forkJoin({
+      assessments: this.api.evaluateAssessmentHistory(this.studentId),
+      studentData: this.api.evaluateStudentData(this.studentId),
+      skills: this.api.studentSkillSet(this.studentId)
+    }).subscribe({
+      next: (response: any) => {
+        const typedResponse = response as {
+          assessments: ApiResponse<AssessmentHistory[]>;
+          studentData: ApiResponse<StudentData>;
+          skills: ApiResponse<SkillSet>;
+        };
+        
+        this.assessments = typedResponse.assessments.data || [];
+        this.studentData = typedResponse.studentData.data || {};
+        this.skillSet = typedResponse.skills.data?.skillsPerformance || [];
         this.filteredSkillSet = [...this.skillSet];
-        this.isLoadingSkills = false;
-        console.log('Student Skills:', this.skillSet);
+        this.isLoading = false;
       },
       error: (error) => {
-        console.error('Error fetching student skills:', error);
-        this.skillSet = [];
-        this.filteredSkillSet = [];
-        this.isLoadingSkills = false;
+        console.error('Error loading data:', error);
+        this.loadingError = 'Failed to load student data. Please try again.';
+        this.isLoading = false;
       }
-    })
+    });
   }
 
   filterSkills(): void {

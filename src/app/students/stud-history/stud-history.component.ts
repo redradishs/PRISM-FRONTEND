@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -94,7 +94,7 @@ interface AssessmentCounts {
 
 @Component({
   selector: 'app-stud-history',
-  imports: [CommonModule, SidebarComponent, FormsModule],
+  imports: [CommonModule, SidebarComponent, FormsModule, RouterLink],
   templateUrl: './stud-history.component.html',
   styleUrl: './stud-history.component.css'
 })
@@ -135,7 +135,7 @@ export class StudHistoryComponent{
 
   private searchSubject = new Subject<string>();
 
-  viewMode: 'grid' | 'list' = 'grid';
+  viewMode: 'grid' | 'list' = 'list';
 
   constructor(
     private api: StudentService,
@@ -166,7 +166,6 @@ export class StudHistoryComponent{
         this.username = user.name;
         this.profile = user.profilePicture;
         
-        // Check for tab parameter
         this.route.queryParams.subscribe(params => {
           const tab = params['tab'];
           if (tab) {
@@ -468,9 +467,7 @@ export class StudHistoryComponent{
     }
   }
 
-  createNewAssessment() {
-    this.router.navigate(['/instructor/generate']);
-  }
+
 
   editAssessment(assessment: Assessment) {
     this.router.navigate(['/instructor/edit', assessment.assessmentId]);

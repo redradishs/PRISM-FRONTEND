@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './adons/login/login.component';
 import { TestComponent } from './adons/test/test.component';
-import { ComponentTestingComponent } from './component-testing/component-testing.component';
 import { VerifyComponent } from './adons/verify/verify.component';
 import { ForgotComponent } from './adons/forgot/forgot.component';
 import { authGuard } from './auth.guard';
@@ -86,7 +85,6 @@ export const routes: Routes = [
     path: 'test',
     component: TestComponent,
   },
-  { path: 'component-testing', component: ComponentTestingComponent },
   { 
     path: '**', 
     component: NotFoundComponent,

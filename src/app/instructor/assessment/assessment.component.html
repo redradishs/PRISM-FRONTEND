@@ -46,16 +46,26 @@
             <div class="h-[65px] md:h-[68px] w-full"></div>
 
             <div class="main-content">
+                <div class="genggengg">
+                    <div class="oknato-header">
+                        <div class="oknato-icon-wrapper">
+                            <i class="fas fa-chart-bar oknato-icon"></i>
+                        </div>
+                        <div class="oknato-header-content">
+                            <h1>Performance Metrics</h1>
+                            <p>View and manage your assessment performance metrics</p>
+                        </div>
+                    </div>
+
+                    <div class="publish-container">
+                        <button class="publish-button" [routerLink]="['/instructor/assign']" >
+                            <i class="fas fa-check-square"></i>
+                            Assign Assessment
+                        </button>
+                    </div>
+                </div>
                 <!-- Performance Details Section, responsiveness needs to be fixed and also add few more details about the students -->
                 <section class="metrics-section">
-                    <div class="titlemet">
-                        <div class="titlemet-ic">
-                            <i class="fa-solid fa-chart-bar"></i>
-                            <h2>Performance Metrics</h2>
-                        </div>
-                        <button [routerLink]="['/instructor/generate']"> <i class="fa-solid fa-plus"></i> Generate
-                            Assessment</button>
-                    </div>
                     <div class="metrics-grid">
                         <div class="metric-card">
                             <div class="metric-header">
