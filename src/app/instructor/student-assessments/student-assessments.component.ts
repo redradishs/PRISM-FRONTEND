@@ -54,16 +54,17 @@ export class StudentAssessmentsComponent implements OnInit {
   filteredCompletedAssessments: any[] = [];
   filteredUpcomingAssessments: any[] = [];
   imageLoadFailed = false;
+  isLoading: boolean = true;
 
 
   constructor(private router: Router, private auth: AuthService, private api: ApiService) {
     const navigation = this.router.getCurrentNavigation();
-    if(navigation?.extras?.state) {
+    if (navigation?.extras?.state) {
       this.studentId = navigation.extras.state['studentId']
       this.classCode = navigation.extras.state['classCode']
       console.log('Student ID:', this.studentId);
       console.log('Class Code:', this.classCode);
-      
+
       if (!this.studentId || !this.classCode) {
         this.router.navigate(['/instructor/students']);
       }
@@ -80,7 +81,7 @@ export class StudentAssessmentsComponent implements OnInit {
       console.log('User ID:', this.userId);
       this.studentData();
       this.completedList();
-      this.upcomingList();  
+      this.upcomingList();
     })
   }
 
@@ -108,17 +109,17 @@ export class StudentAssessmentsComponent implements OnInit {
   filterAssessments() {
     // Create a combined filtered list
     const filtered = this.assessments.filter(assessment => {
-      const matchesSearch = !this.searchQuery || 
+      const matchesSearch = !this.searchQuery ||
         assessment.title?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
         assessment.category?.toLowerCase().includes(this.searchQuery.toLowerCase());
-  
-      const matchesTab = this.activeTab === 'all' || 
+
+      const matchesTab = this.activeTab === 'all' ||
         (this.activeTab === 'completed' && assessment.status === 'completed') ||
         (this.activeTab === 'pending' && assessment.status !== 'completed');
-  
+
       return matchesSearch && matchesTab;
     });
-    
+
     // Update the separate lists for display
     this.filteredCompletedAssessments = filtered.filter(a => a.status === 'completed');
     this.filteredUpcomingAssessments = filtered.filter(a => a.status !== 'completed');
@@ -134,6 +135,7 @@ export class StudentAssessmentsComponent implements OnInit {
       next: (resp: any) => {
         this.studentStats = resp.data;
         console.log('Student Stats:', this.studentStats);
+        this.isLoading = false;
       }, error: (error: any) => {
         console.error('Error retrieving student data:', error);
       }
@@ -156,7 +158,7 @@ export class StudentAssessmentsComponent implements OnInit {
     this.api.studentUpcomingList(this.userId, this.classCode, this.studentId).subscribe({
       next: (resp: any) => {
         this.upcomingAssessments = resp.data;
-        this.loadAssessments();  
+        this.loadAssessments();
         console.log('Upcoming assessments:', this.upcomingAssessments);
       }, error: (error: any) => {
         console.error('Error retrieving completed assessments:', error);
@@ -168,17 +170,17 @@ export class StudentAssessmentsComponent implements OnInit {
     if (!fullName) return '';
     const nameParts = fullName.split(' ');
     const firstInitial = nameParts[0].charAt(0);
-    const lastInitial = nameParts.length > 1 ? 
+    const lastInitial = nameParts.length > 1 ?
       nameParts[nameParts.length - 1].charAt(0) : '';
     return (firstInitial + lastInitial).toUpperCase();
   }
 
   formatTimeSpent(seconds: number): string {
     if (!seconds) return '0 minutes';
-    
+
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
-    
+
     if (minutes === 0) {
       return `${remainingSeconds} seconds`;
     } else if (remainingSeconds === 0) {

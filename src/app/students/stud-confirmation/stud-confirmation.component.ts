@@ -53,6 +53,7 @@ export class StudConfirmationComponent {
   isAgreed: boolean = false;
   username: string = '';
   profile: string = '';
+  isLoading: boolean = true;
 
   constructor(
     private api: StudentService,
@@ -106,8 +107,10 @@ export class StudConfirmationComponent {
           this.confirmationData = resp.data;
           this.hasStarted = this.confirmationData.hasStarted;
           this.hasCompleted = this.confirmationData.hasSubmitted;
+          this.isLoading = false;
         } else {
           console.error('Invalid response format');
+          this.isLoading = false;
         }
       },
       error: (err) => {

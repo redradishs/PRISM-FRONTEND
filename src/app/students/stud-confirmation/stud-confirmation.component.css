@@ -509,10 +509,9 @@
     .action-buttons .btn-enter,
     .action-buttons .btn-cancel,
     .action-buttons .btn-retake {
-        flex: none;
         min-width: 160px;
         font-size: 1rem;
-        padding: 0.75rem 2rem;
+        padding: 0.20rem 2rem;
     }
 }
 
@@ -993,13 +992,4 @@ header {
         opacity: 1;
     }
 }
-
-/* Respect user's motion preferences */
-@media (prefers-reduced-motion: reduce) {
-    * {
-        animation-duration: 0.01ms !important;
-        transition-duration: 0.01ms !important;
-    }
-}
-
 

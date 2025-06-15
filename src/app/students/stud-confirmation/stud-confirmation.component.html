@@ -5,7 +5,8 @@
             <header class="bg-white shadow-sm fixed top-0 left-0 right-0 w-full z-40">
                 <div class="w-full px-4 md:px-6 py-3 md:py-4 ml-0 md:ml-20">
                     <div class="flex items-center justify-between">
-                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">Assessment Confirmation</h1>
+                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">Assessment Confirmation
+                        </h1>
                         <div class="flex items-center">
                             <div class="hidden md:flex items-center mr-4">
                                 <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
@@ -20,13 +21,16 @@
                             </div>
                             <div *ngIf="!isMobile" class="flex items-center">
                                 <div class="relative mr-3">
-                                    <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                                        <img *ngIf="profile" [src]="profile" alt="Profile" class="w-full h-full object-cover">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profile" [src]="profile" alt="Profile"
+                                            class="w-full h-full object-cover">
                                         <span *ngIf="!profile" class="text-base md:text-lg font-medium text-gray-600">
                                             {{username.charAt(0) || 'A'}}
                                         </span>
                                     </div>
-                                    <div class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
                                     </div>
                                 </div>
                                 <div class="text-left">
@@ -44,6 +48,24 @@
             </header>
 
             <div class="h-[30px] md:h-[33px] w-full"></div>
+
+            <div *ngIf="isLoading"
+                class="flex items-center justify-center min-h-[calc(100vh-68px)] bg-white transition-colors duration-900">
+                <div class="text-center animate-fade-in">
+                    <div class="relative w-16 h-16 mx-auto">
+                        <div
+                            class="absolute inset-0 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin">
+                        </div>
+                        <div class="absolute inset-2 rounded-full border-4 border-indigo-300 border-b-transparent animate-spin"
+                            style="animation-direction: reverse;">
+                        </div>
+                    </div>
+                    <p class="mt-5 text-gray-600 text-lg font-medium animate-pulse">
+                        Loading student data...
+                    </p>
+                </div>
+            </div>
+
 
             <div class="content w-full">
                 <div class="lagayan">
@@ -77,14 +99,12 @@
                                 <div class="flex-row">
                                     <div class="divider">
                                         <p>Type</p>
-                                        <div class="assessment-type"
-                                            [ngClass]="{
+                                        <div class="assessment-type" [ngClass]="{
                                                 'type-assessment': confirmationData.typeAss === 'assessment',
                                                 'type-mastery': confirmationData.typeAss === 'mastery',
                                                 'type-public': confirmationData.typeAss === 'public'
                                             }">
-                                            <i class="fa-solid"
-                                                [ngClass]="{
+                                            <i class="fa-solid" [ngClass]="{
                                                     'fa-clipboard-check': confirmationData.typeAss === 'assessment',
                                                     'fa-trophy': confirmationData.typeAss === 'mastery',
                                                     'fa-globe': confirmationData.typeAss === 'public'
@@ -94,13 +114,14 @@
                                     </div>
                                     <div class="divider">
                                         <p>Attempts</p>
-                                        <h3>{{confirmationData.attempts.current || 0}} of {{confirmationData.attempts.max || 1}} remaining attempts</h3>
+                                        <h3>{{confirmationData.attempts.current || 0}} of
+                                            {{confirmationData.attempts.max || 1}} remaining attempts</h3>
                                     </div>
                                 </div>
 
                                 <div class="divider full-width">
                                     <p>Due Date</p>
-                                    <h3>{{confirmationData.dueDate |  date:'MMM d, y h:mm a'}}</h3>
+                                    <h3>{{confirmationData.dueDate | date:'MMM d, y h:mm a'}}</h3>
                                 </div>
 
                                 <div *ngIf="confirmationData.instructor.name" class="divider full-width">
@@ -155,9 +176,11 @@
                                     <li><i class="fa-solid fa-xmark"></i> Copying or sharing assessment content is
                                         strictly
                                         prohibited</li>
-                                    <li *ngIf="confirmationData.typeAss !== 'mastery'"><i class="fa-solid fa-check"></i> Your answers are automatically saved as you
+                                    <li *ngIf="confirmationData.typeAss !== 'mastery'"><i class="fa-solid fa-check"></i>
+                                        Your answers are automatically saved as you
                                         click the next button.</li>
-                                    <li *ngIf="confirmationData.typeAss === 'mastery'"><i class="fa-solid fa-check"></i> You can review and change your answers before
+                                    <li *ngIf="confirmationData.typeAss === 'mastery'"><i class="fa-solid fa-check"></i>
+                                        You can review and change your answers before
                                         final
                                         submission</li>
                                     <li><i class="fa-solid fa-check"></i> The assessment page will be monitored any tab
@@ -180,27 +203,20 @@
 
                     <div class="action-buttons">
                         <button class="btn-cancel" (click)="cancel()">Cancel</button>
-                        <button class="btn-enter" 
-                                *ngIf="!hasStarted" 
-                                [disabled]="!isAgreed || confirmationData.status === 'scheduled'" 
-                                (click)="enter()">
+                        <button class="btn-enter" *ngIf="!hasStarted"
+                            [disabled]="!isAgreed || confirmationData.status === 'scheduled'" (click)="enter()">
                             Enter Assessment
                         </button>
                         <button class="btn-enter btn-retake"
-                                *ngIf="hasCompleted && confirmationData.attempts.remaining > 0"
-                                [disabled]="!isAgreed || confirmationData.status === 'scheduled'"
-                                (click)="enter()">
+                            *ngIf="hasCompleted && confirmationData.attempts.remaining > 0"
+                            [disabled]="!isAgreed || confirmationData.status === 'scheduled'" (click)="enter()">
                             Retake Assessment
                         </button>
-                        <button class="btn-enter" 
-                                *ngIf="hasStarted && !hasCompleted" 
-                                [disabled]="confirmationData.status === 'scheduled'"
-                                (click)="continue()">
+                        <button class="btn-enter" *ngIf="hasStarted && !hasCompleted"
+                            [disabled]="confirmationData.status === 'scheduled'" (click)="continue()">
                             Continue Assessment
                         </button>
-                        <button class="btn-enter" 
-                                *ngIf="hasCompleted" 
-                                (click)="result()">
+                        <button class="btn-enter" *ngIf="hasCompleted" (click)="result()">
                             View Result
                         </button>
                     </div>

@@ -20,13 +20,16 @@
                             </div>
                             <div *ngIf="!isMobile" class="flex items-center">
                                 <div class="relative mr-3">
-                                    <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                                        <img *ngIf="profile" [src]="profile" alt="Profile" class="w-full h-full object-cover">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profile" [src]="profile" alt="Profile"
+                                            class="w-full h-full object-cover">
                                         <span *ngIf="!profile" class="text-base md:text-lg font-medium text-gray-600">
                                             {{username.charAt(0) || 'A'}}
                                         </span>
                                     </div>
-                                    <div class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
                                     </div>
                                 </div>
                                 <div class="text-left">
@@ -44,6 +47,23 @@
             </header>
 
             <div class="h-[65px] md:h-[68px] w-full"></div>
+
+            <div *ngIf="isLoading"
+                class="flex items-center justify-center min-h-[calc(100vh-68px)] bg-white transition-colors duration-900">
+                <div class="text-center animate-fade-in">
+                    <div class="relative w-16 h-16 mx-auto">
+                        <div
+                            class="absolute inset-0 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin">
+                        </div>
+                        <div class="absolute inset-2 rounded-full border-4 border-indigo-300 border-b-transparent animate-spin"
+                            style="animation-direction: reverse;">
+                        </div>
+                    </div>
+                    <p class="mt-5 text-gray-600 text-lg font-medium animate-pulse">
+                        Loading instructor data...
+                    </p>
+                </div>
+            </div>
 
             <div class="p-2 md:p-4 lg:p-4 w-full">
                 <div *ngIf="assessmentDetails" class="header-section">
@@ -120,7 +140,8 @@
                         <div class="infolist">
                             <div class="infoitem">
                                 <span>Submitted:</span>
-                                <span>{{assessmentDetails.assessment?.performance?.submittedAt | date: 'MMM d, y h:mm a':'UTC'}}</span>
+                                <span>{{assessmentDetails.assessment?.performance?.submittedAt | date: 'MMM d, y h:mm
+                                    a':'UTC'}}</span>
                             </div>
                             <div class="infoitem">
                                 <span>Time Spent:</span>
@@ -139,16 +160,18 @@
                                 <span>Class Highest:</span>
                                 <span>{{assessmentDetails.assessment?.classPerformance?.highest}}%</span>
                             </div>
-                            <div class="infoitem violations-toggle" (click)="toggleViolationsView()" *ngIf="assessmentDetails.violations && assessmentDetails.violations.count > 0">
+                            <div class="infoitem violations-toggle" (click)="toggleViolationsView()"
+                                *ngIf="assessmentDetails.violations && assessmentDetails.violations.count > 0">
                                 <span>Violation Count: </span>
                                 <div class="violation-count-badge">
                                     <span>{{assessmentDetails.violations?.count}}x</span>
-                                    <i class="fas" [ngClass]="{'fa-chevron-down': !showViolations, 'fa-chevron-up': showViolations}"></i>
+                                    <i class="fas"
+                                        [ngClass]="{'fa-chevron-down': !showViolations, 'fa-chevron-up': showViolations}"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
 
                     <!-- Score Overview Card -->
                     <div class="contauko">
@@ -262,7 +285,8 @@
                     </div>
                 </div>
 
-                <div *ngIf="assessmentDetails.violations && assessmentDetails.violations.count > 0 && showViolations" class="simple-violations-box">
+                <div *ngIf="assessmentDetails.violations && assessmentDetails.violations.count > 0 && showViolations"
+                    class="simple-violations-box">
                     <div class="simple-violations-header">
                         <div class="simple-violations-title">
                             <i class="fas fa-exclamation-triangle"></i>
@@ -271,7 +295,8 @@
                         <div class="simple-violations-counter">{{assessmentDetails.violations.count}} detected</div>
                     </div>
                     <div class="simple-violations-list">
-                        <div *ngFor="let violation of assessmentDetails.violations.details" class="simple-violation-item">
+                        <div *ngFor="let violation of assessmentDetails.violations.details"
+                            class="simple-violation-item">
                             <div class="simple-violation-left-border" [ngClass]="{
                                 'window-border': violation.type.includes('Window') || violation.type.includes('resize'),
                                 'tab-border': violation.type.includes('tab') || violation.type.includes('Tab'),
@@ -291,10 +316,12 @@
                                 }"></i>
                             </div>
                             <div class="simple-violation-content">
-                                <div class="simple-violation-type">{{violation.type === 'integrity_violation' ? 'Integrity Violation' : violation.type}}</div>
+                                <div class="simple-violation-type">{{violation.type === 'integrity_violation' ?
+                                    'Integrity Violation' : violation.type}}</div>
                                 <div class="simple-violation-question" *ngIf="violation.question">
                                     <span class="question-label">Question {{violation.question?.number || '–'}}:</span>
-                                    <span class="question-content">{{violation.question?.text || 'Unknown question'}}</span>
+                                    <span class="question-content">{{violation.question?.text || 'Unknown
+                                        question'}}</span>
                                 </div>
                             </div>
                             <div class="simple-violation-time">{{violation.timestamp | date:'M/dd/yy, h:mm a'}}</div>
@@ -406,7 +433,8 @@
                                         <div class="grading-header">
                                             <span class="grading-title">Grading</span>
                                             <ng-container *ngIf="!q.isGrading">
-                                                <button class="review-button" (click)="startGrading(q)" [disabled]="!show">
+                                                <button class="review-button" (click)="startGrading(q)"
+                                                    [disabled]="!show">
                                                     Rectify Grading
                                                 </button>
                                             </ng-container>
@@ -416,13 +444,15 @@
                                             <div class="grading-form">
                                                 <div class="grading-status">
                                                     <div class="status-options">
-                                                        <label class="status-label" [class.active]="q.grading.isCorrect" [attr.value]="true">
+                                                        <label class="status-label" [class.active]="q.grading.isCorrect"
+                                                            [attr.value]="true">
                                                             <input type="radio" [(ngModel)]="q.grading.isCorrect"
                                                                 [value]="true" (change)="onCorrectnessChange(q)">
                                                             <i class="fas fa-check status-icon correct"></i>
                                                             <span class="status-text">Correct</span>
                                                         </label>
-                                                        <label class="status-label" [class.active]="!q.grading.isCorrect" [attr.value]="false">
+                                                        <label class="status-label"
+                                                            [class.active]="!q.grading.isCorrect" [attr.value]="false">
                                                             <input type="radio" [(ngModel)]="q.grading.isCorrect"
                                                                 [value]="false" (change)="onCorrectnessChange(q)">
                                                             <i class="fas fa-times status-icon incorrect"></i>

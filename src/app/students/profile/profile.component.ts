@@ -94,7 +94,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   isMobile = false;
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
 
-  //userprofile
   userId: string = '';
   profilePicture: string = '';
   username: string = '';
@@ -183,7 +182,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   private loadProfileData(): void {
     this.isLoading = true;
-    
+
     this.auth.getCurrentProfile(this.userId).subscribe({
       next: (resp: any) => {
         if (resp?.data) {
@@ -196,7 +195,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
             block: resp.data.block?.toUpperCase() || this.profile.block?.toUpperCase()
           };
           this.originalProfile = { ...this.profile };
-          
+
           // Load additional data if needed
           this.loadPerformanceData();
         }
@@ -264,78 +263,78 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   savePersonalInfo(): void {
     if (!this.originalProfile || !this.profile) {
-        this.handleError('Profile data is not available');
-        return;
+      this.handleError('Profile data is not available');
+      return;
     }
 
     const changes: ProfileChanges = {};
 
     if (this.profile.program !== this.originalProfile.program) {
-        changes.program = this.profile.program;
+      changes.program = this.profile.program;
     }
 
     if (this.profile.year !== this.originalProfile.year) {
-        changes.yearLevel = this.profile.year;
+      changes.yearLevel = this.profile.year;
     }
 
     if (this.profile.block !== this.originalProfile.block) {
-        changes.block = this.profile.block;
+      changes.block = this.profile.block;
     }
 
     if (this.profile.bio !== this.originalProfile.bio) {
-        changes.bio = this.profile.bio;
+      changes.bio = this.profile.bio;
     }
 
     // Only make API call if there are changes
     if (Object.keys(changes).length > 0) {
-        Swal.fire({
-            title: 'Saving changes...',
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
+      Swal.fire({
+        title: 'Saving changes...',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
 
-        this.auth.updateProfile(this.userId, changes).subscribe({
-            next: (response) => {
-                this.originalProfile = { ...this.profile };
-                this.isEditing = false;
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: 'Profile updated successfully',
-                    timer: 1500,
-                    toast: true,
-                    position: 'top-end',
-                    timerProgressBar: true,
-                    showConfirmButton: false,
-                    background: '#fff',
-                    iconColor: '#10b981',
-                    color: '#1f2937'
-                });
-            },
-            error: (error) => {
-                console.error('Error updating profile:', error);
-                if (this.originalProfile) {
-                    this.profile = { ...this.originalProfile };
-                }
-                
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Failed to update profile. Please try again.'
-                });
-            }
-        });
+      this.auth.updateProfile(this.userId, changes).subscribe({
+        next: (response) => {
+          this.originalProfile = { ...this.profile };
+          this.isEditing = false;
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: 'Profile updated successfully',
+            timer: 1500,
+            toast: true,
+            position: 'top-end',
+            timerProgressBar: true,
+            showConfirmButton: false,
+            background: '#fff',
+            iconColor: '#10b981',
+            color: '#1f2937'
+          });
+        },
+        error: (error) => {
+          console.error('Error updating profile:', error);
+          if (this.originalProfile) {
+            this.profile = { ...this.originalProfile };
+          }
+
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to update profile. Please try again.'
+          });
+        }
+      });
     } else {
-        Swal.fire({
-            icon: 'info',
-            title: 'No Changes',
-            text: 'No changes were made to save',
-            timer: 1500
-        });
-        this.isEditing = false;
+      Swal.fire({
+        icon: 'info',
+        title: 'No Changes',
+        text: 'No changes were made to save',
+        timer: 1500
+      });
+      this.isEditing = false;
     }
   }
 
@@ -402,7 +401,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   toggleSidebar(): void {
-    if(this.sidebar){
+    if (this.sidebar) {
       this.sidebar.toggleSidebar();
     }
   }

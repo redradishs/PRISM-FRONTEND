@@ -20,13 +20,16 @@
                             </div>
                             <div *ngIf="!isMobile" class="flex items-center">
                                 <div class="relative mr-3">
-                                    <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                                        <img *ngIf="profile" [src]="profile" alt="Profile" class="w-full h-full object-cover">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profile" [src]="profile" alt="Profile"
+                                            class="w-full h-full object-cover">
                                         <span *ngIf="!profile" class="text-base md:text-lg font-medium text-gray-600">
                                             {{username.charAt(0) || 'A'}}
                                         </span>
                                     </div>
-                                    <div class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
                                     </div>
                                 </div>
                                 <div class="text-left">
@@ -45,6 +48,23 @@
 
             <div class="h-[65px] md:h-[68px] w-full"></div>
 
+            <div *ngIf="isLoading"
+                class="flex items-center justify-center min-h-[calc(100vh-68px)] bg-white transition-colors duration-900">
+                <div class="text-center animate-fade-in">
+                    <div class="relative w-16 h-16 mx-auto">
+                        <div
+                            class="absolute inset-0 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin">
+                        </div>
+                        <div class="absolute inset-2 rounded-full border-4 border-indigo-300 border-b-transparent animate-spin"
+                            style="animation-direction: reverse;">
+                        </div>
+                    </div>
+                    <p class="mt-5 text-gray-600 text-lg font-medium animate-pulse">
+                        Loading instructor data...
+                    </p>
+                </div>
+            </div>
+
             <div class="main-content">
                 <div class="genggengg">
                     <div class="oknato-header">
@@ -58,7 +78,7 @@
                     </div>
 
                     <div class="publish-container">
-                        <button class="publish-button" [routerLink]="['/instructor/assign']" >
+                        <button class="publish-button" [routerLink]="['/instructor/assign']">
                             <i class="fas fa-check-square"></i>
                             Assign Assessment
                         </button>

@@ -48,11 +48,26 @@
 
             <div class="h-[65px] md:h-[68px] w-full"></div>
 
+            <div *ngIf="isLoading"
+                class="flex items-center justify-center min-h-[calc(100vh-68px)] bg-white transition-colors duration-900">
+                <div class="text-center animate-fade-in">
+                    <div class="relative w-16 h-16 mx-auto">
+                        <div
+                            class="absolute inset-0 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin">
+                        </div>
+                        <div class="absolute inset-2 rounded-full border-4 border-indigo-300 border-b-transparent animate-spin"
+                            style="animation-direction: reverse;">
+                        </div>
+                    </div>
+                    <p class="mt-5 text-gray-600 text-lg font-medium animate-pulse">
+                        Loading instructor data...
+                    </p>
+                </div>
+            </div>
+
             <div class="p-4 md:p-6 lg:p-8 w-full">
-                <!-- Student Info Card -->
                 <div class="student-card">
                     <div class="student-profile">
-                        <!-- Left section with avatar and info -->
                         <div *ngIf="studentStats" class="profile-section">
                             <div class="avatar">
                                 <img *ngIf="studentStats.student?.profilePicture && !imageLoadFailed"

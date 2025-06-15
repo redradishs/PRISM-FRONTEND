@@ -22,7 +22,8 @@ export class CoordinatorComponent {
   username: string = '';
   profile: string = '';
   students: any[] = [];
-  
+  isLoading: boolean = true;
+
   // Pagination variables
   currentPage: number = 1;
   itemsPerPage: number = 10;
@@ -39,8 +40,8 @@ export class CoordinatorComponent {
   searchQuery: string = '';
   private searchSubject = new Subject<string>();
 
-  
-  
+
+
   constructor(private router: Router, private api: ApiService, private auth: AuthService, private title: Title) {
     this.title.setTitle('PRISM | Coordinator');
     this.setupSearch();
@@ -108,6 +109,7 @@ export class CoordinatorComponent {
         this.averagePerformance = resp.data.averagePerformanceVerified;
         this.atRiskCount = resp.data.atRiskCount;
         this.atRiskStudent = resp.data.atRiskStudents;
+        this.isLoading = false;
       },
       error: (error) => {
         console.error(error);

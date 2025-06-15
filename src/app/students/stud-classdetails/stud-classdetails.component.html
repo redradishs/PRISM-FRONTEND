@@ -20,13 +20,16 @@
                             </div>
                             <div *ngIf="!isMobile" class="flex items-center">
                                 <div class="relative mr-3">
-                                    <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                                        <img *ngIf="profile" [src]="profile" alt="Profile" class="w-full h-full object-cover">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profile" [src]="profile" alt="Profile"
+                                            class="w-full h-full object-cover">
                                         <span *ngIf="!profile" class="text-base md:text-lg font-medium text-gray-600">
                                             {{username.charAt(0) || 'A'}}
                                         </span>
                                     </div>
-                                    <div class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
                                     </div>
                                 </div>
                                 <div class="text-left">
@@ -45,87 +48,110 @@
 
             <div class="h-[65px] md:h-[68px] w-full"></div>
 
+
+            <div *ngIf="!loaded"
+                class="flex items-center justify-center min-h-[calc(100vh-68px)] bg-white transition-colors duration-300">
+                <div class="text-center animate-fade-in">
+                    <div class="relative w-16 h-16 mx-auto">
+                        <div
+                            class="absolute inset-0 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin">
+                        </div>
+                        <div
+                            class="absolute inset-2 rounded-full border-4 border-indigo-300 border-b-transparent animate-reverse-spin">
+                        </div>
+                    </div>
+                    <p class="mt-5 text-gray-600 text-lg font-medium animate-pulse">
+                        Loading student data...
+                    </p>
+                </div>
+            </div>
+
             <div class="p-4 md:p-6 lg:p-8 w-full">
                 <!-- Student Info Card -->
-
                 <div class="aukona">
                     <div class="hawtdog">
-                      <div class="bubble1"></div>
-                      <div class="bubble2"></div>
-                      <div class="content">
-                        <h3>Class Overview</h3>
-                        <p class="welcome-text">Welcome to <strong>{{studentStats.classDetails?.className}} - {{studentStats.classDetails?.classCode}}</strong>. Track your assessments and performance here.</p>
-                
-                        <div class="instructor">
-                          <img [src]="studentStats.instructor?.profilePicture" alt="Instructor" />
-                          <div>
-                            <p>Instructor</p>
-                            <p style="font-weight: 600; font-size: 1rem; margin: 0;">{{studentStats.instructor?.name}}</p>
-                          </div>
+                        <div class="bubble1"></div>
+                        <div class="bubble2"></div>
+                        <div class="content">
+                            <h3>Class Overview</h3>
+                            <p class="welcome-text">Welcome to <strong>{{studentStats.classDetails?.className}} -
+                                    {{studentStats.classDetails?.classCode}}</strong>. Track your assessments and
+                                performance here.</p>
+
+                            <div class="instructor">
+                                <img [src]="studentStats.instructor?.profilePicture" alt="Instructor" />
+                                <div>
+                                    <p>Instructor</p>
+                                    <p style="font-weight: 600; font-size: 1rem; margin: 0;">
+                                        {{studentStats.instructor?.name}}</p>
+                                </div>
+                            </div>
+
+                            <div class="grid">
+                                <div class="statlab">
+                                    <p class="label">Students Enrolled</p>
+                                    <p class="value">{{studentStats.classDetails?.totalStudents}}</p>
+                                </div>
+                                <div class="statlab">
+                                    <p class="label">Your Rank</p>
+                                    <p class="value">#{{studentStats.classDetails?.ranking}} <span
+                                            style="font-size: 0.875rem;">of
+                                            {{studentStats.classDetails?.totalStudents}}</span></p>
+                                </div>
+                            </div>
                         </div>
-                
-                        <div class="grid">
-                          <div class="statlab">
-                            <p class="label">Students Enrolled</p>
-                            <p class="value">{{studentStats.classDetails?.totalStudents}}</p>
-                          </div>
-                          <div class="statlab">
-                            <p class="label">Your Rank</p>
-                            <p class="value">#{{studentStats.classDetails?.ranking}} <span style="font-size: 0.875rem;">of {{studentStats.classDetails?.totalStudents}}</span></p>
-                          </div>
-                        </div>
-                      </div>
                     </div>
-                
+
                     <div class="gengengeng">
-                
-                      <div class="section">
-                        <div class="holder">
-                          <h3 class="r-text">Assessments</h3>
-                          <svg class="icon" fill="none" stroke="#7c3aed" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                            <polyline points="14 2 14 8 20 8" />
-                            <line x1="16" y1="13" x2="8" y2="13" />
-                            <line x1="16" y1="17" x2="8" y2="17" />
-                            <line x1="10" y1="9" x2="8" y2="9" />
-                          </svg>
+
+                        <div class="section">
+                            <div class="holder">
+                                <h3 class="r-text">Assessments</h3>
+                                <svg class="icon" fill="none" stroke="#7c3aed" stroke-width="2" viewBox="0 0 24 24">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                    <polyline points="14 2 14 8 20 8" />
+                                    <line x1="16" y1="13" x2="8" y2="13" />
+                                    <line x1="16" y1="17" x2="8" y2="17" />
+                                    <line x1="10" y1="9" x2="8" y2="9" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div
+                                    style="display: flex; justify-content: space-between; font-size: 0.875rem; color: #4b5563;">
+                                    <span>Completed</span>
+                                    <span>{{studentStats.assessmentStats?.completed}}</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="fill"></div>
+                                </div>
+                                <p class="text-xs">{{studentStats.assessmentStats?.remaining}} assessments remaining</p>
+                            </div>
                         </div>
-                        <div>
-                          <div style="display: flex; justify-content: space-between; font-size: 0.875rem; color: #4b5563;">
-                            <span>Completed</span>
-                            <span>{{studentStats.assessmentStats?.completed}}</span>
-                          </div>
-                          <div class="progress-bar">
-                            <div class="fill"></div>
-                          </div>
-                          <p class="text-xs">{{studentStats.assessmentStats?.remaining}} assessments remaining</p>
+
+                        <div class="section">
+                            <div class="holder">
+                                <h3 class="r-text">Performance</h3>
+                                <svg class="icon" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24">
+                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                                    <polyline points="17 6 23 6 23 12" />
+                                </svg>
+                            </div>
+                            <div class="text-3xl">{{studentStats.assessmentStats?.performancePercent}}%</div>
+                            <div class="score-grid">
+                                <div>
+                                    <p class="label">Average Score</p>
+                                    <p class="value">{{round(studentStats.assessmentStats?.averageScore)}}%</p>
+                                </div>
+                                <div>
+                                    <p class="label">Highest Score</p>
+                                    <p class="value">{{round(studentStats.assessmentStats?.highestScore)}}%</p>
+                                </div>
+                            </div>
                         </div>
-                      </div>
-                
-                      <div class="section">
-                        <div class="holder">
-                          <h3 class="r-text">Performance</h3>
-                          <svg class="icon" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24">
-                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                            <polyline points="17 6 23 6 23 12" />
-                          </svg>
-                        </div>
-                        <div class="text-3xl">{{studentStats.assessmentStats?.performancePercent}}%</div>
-                        <div class="score-grid">
-                          <div>
-                            <p class="label">Average Score</p>
-                            <p class="value">{{round(studentStats.assessmentStats?.averageScore)}}%</p>
-                          </div>
-                          <div>
-                            <p class="label">Highest Score</p>
-                            <p class="value">{{round(studentStats.assessmentStats?.highestScore)}}%</p>
-                          </div>
-                        </div>
-                      </div>
-                
+
                     </div>
-                
-                  </div>
+
+                </div>
 
 
                 <!-- Assessment Tabs and Search -->
@@ -160,7 +186,7 @@
                             <i class="fas fa-check-circle"></i>
                             Completed Assessments
                         </h2>
-                        <div  *ngIf="completedAssessments.length === 0 || filteredCompletedAssessments.length === 0">
+                        <div *ngIf="completedAssessments.length === 0 || filteredCompletedAssessments.length === 0">
                             <p class="text-center italic text-gray-600">The student hasn't completed any assessments
                                 yet.
                             </p>
@@ -178,7 +204,7 @@
                                         <div class="status-dot failed">
                                             <i class="fas fa-times-circle status-icon failed"></i>
                                         </div>
-                                       
+
                                     </ng-template>
                                 </div>
                                 <div class="assessment-info">
@@ -191,7 +217,8 @@
                                             <span class="status-badge" [ngClass]="{
                                                 'passed': c.passed === true || c.passed === 'true',
                                                 'failed': c.passed === false || c.passed === 'false'
-                                            }">{{c.passed === true || c.passed === 'true' ? 'Passed' : 'Failed'}}</span>
+                                            }">{{c.passed === true || c.passed === 'true' ? 'Passed' :
+                                                'Failed'}}</span>
                                         </div>
                                     </div>
                                     <p class="assessment-subject">{{c.category.charAt(0).toUpperCase() +
@@ -204,7 +231,8 @@
                                     </div>
                                     <div class="detail-group">
                                         <span class="label">RANK</span>
-                                        <span class="value">{{c.ranking}} <span style="font-size: 0.875rem;"></span></span>
+                                        <span class="value">{{c.ranking}} <span
+                                                style="font-size: 0.875rem;"></span></span>
                                     </div>
                                     <div class="detail-group">
                                         <span class="label">TIME SPENT</span>
@@ -225,14 +253,16 @@
                             <i class="fas fa-clock"></i>
                             Pending Assessments
                         </h2>
-                        <div *ngIf="(upcomingAssessments.length === 0 || filteredUpcomingAssessments.length === 0) && loaded">
+                        <div
+                            *ngIf="(upcomingAssessments.length === 0 || filteredUpcomingAssessments.length === 0) && loaded">
                             <p class="text-center italic text-gray-600">The student don't have any assigned assessment
                                 assign now.
                             </p>
                         </div>
                         <div class="assessment-items">
                             <!-- First Pending Assessment -->
-                            <div (click)="goToAssessment(u)" *ngFor="let u of filteredUpcomingAssessments" class="assessment-item">
+                            <div (click)="goToAssessment(u)" *ngFor="let u of filteredUpcomingAssessments"
+                                class="assessment-item">
                                 <div class="assessment-status">
                                     <div class="status-dot pending">
                                         <i class="fas fa-clock status-icon pending"></i>

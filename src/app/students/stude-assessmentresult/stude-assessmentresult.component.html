@@ -61,15 +61,25 @@
                 </div>
             </div>
 
+            <div *ngIf="!result"
+                class="flex items-center justify-center min-h-[calc(100vh-68px)] bg-white transition-colors duration-900">
+                <div class="text-center animate-fade-in">
+                    <div class="relative w-16 h-16 mx-auto">
+                        <div
+                            class="absolute inset-0 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin">
+                        </div>
+                        <div class="absolute inset-2 rounded-full border-4 border-indigo-300 border-b-transparent animate-spin"
+                            style="animation-direction: reverse;">
+                        </div>
+                    </div>
+                    <p class="mt-5 text-gray-600 text-lg font-medium animate-pulse">
+                        Loading student data...
+                    </p>
+                </div>
+            </div>
+
             <!-- Main Content -->
             <main class="cont">
-                <div *ngIf="!result" class="flex items-center justify-center min-h-[400px]">
-                    <div class="text-center">
-                        <i class="fas fa-spinner fa-spin text-4xl text-indigo-600 mb-4"></i>
-                        <p class="text-gray-600">Loading assessment result...</p>
-                    </div>
-                </div>
-
                 <div *ngIf="result" class="header-section">
                     <div class="header-content">
                         <div class="header-icon" [ngStyle]="{
@@ -185,7 +195,7 @@
                                     <i class="fas fa-calendar meta-icon"></i>
                                     <div class="meta-text">
                                         <span class="meta-label">Date: </span>
-                                        <span>{{result.submittedAt | date: 'MMM d, y, h:mm a'}}</span>
+                                        <span>{{result.submittedAt | date: 'MMM d, y, h:mm a':'UTC'}}</span>
                                     </div>
                                 </div>
                                 <div class="meta-item">
@@ -323,65 +333,65 @@
                         </div>
                     </section>
 
-        <section *ngIf="insights" class="insights-section">
-        <div class="insight-header">
-            <div class="insight-icon">
-                <i class="fas fa-lightbulb"></i>
-            </div>
-            <div class="insight-title">
-                <h1>Performance Insights</h1>
-                <span>Personalized Learning Analytics</span>
-            </div>
-        </div>
+                    <section *ngIf="insights" class="insights-section">
+                        <div class="insight-header">
+                            <div class="insight-icon">
+                                <i class="fas fa-lightbulb"></i>
+                            </div>
+                            <div class="insight-title">
+                                <h1>Performance Insights</h1>
+                                <span>Personalized Learning Analytics</span>
+                            </div>
+                        </div>
 
-        <div class="insights-row">
-            <!-- Performance Analysis Card -->
-            <div class="insight-card">
-                <div class="performance-analysis">
-                    <i class="fas fa-chart-line"></i>
-                    <h2>Performance Analysis</h2>
-                </div>
-                <div class="card-content">
-                    <p>{{insights}}</p>
-                </div>
-            </div>
+                        <div class="insights-row">
+                            <!-- Performance Analysis Card -->
+                            <div class="insight-card">
+                                <div class="performance-analysis">
+                                    <i class="fas fa-chart-line"></i>
+                                    <h2>Performance Analysis</h2>
+                                </div>
+                                <div class="card-content">
+                                    <p>{{insights}}</p>
+                                </div>
+                            </div>
 
-            <!-- Recommended Resources Card -->
-            <div *ngIf="searchResults" class="insight-card">
-                <div class="performance-analysis">
-                    <i class="fas fa-graduation-cap"></i>
-                    <h2>Recommended Learning Resources</h2>
-                </div>
-                <div class="card-content">
-                    <div class="resources-grid">
+                            <!-- Recommended Resources Card -->
+                            <div *ngIf="searchResults" class="insight-card">
+                                <div class="performance-analysis">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    <h2>Recommended Learning Resources</h2>
+                                </div>
+                                <div class="card-content">
+                                    <div class="resources-grid">
 
-                        <div *ngFor="let r of searchResults" class="resource-card">
-                            <div class="resource-icon">
-                                <i class="fas" [class]="{
+                                        <div *ngFor="let r of searchResults" class="resource-card">
+                                            <div class="resource-icon">
+                                                <i class="fas" [class]="{
                                 'fa-file-alt': r.contentType === 'Tutorial',
                                 'fa-video': r.contentType === 'Video',
                                 'fa-laptop-code': r.contentType === 'Practice',
                                 'fa-book': r.contentType === 'Article'
                                 }"></i>
-                            </div>
-                            <div class="resource-content">
-                                <h3>{{r.title}}</h3>
-                                <p>{{r.snippet}}</p>
-                                <div class="resource-meta">
-                                    <span class="resource-type">{{r.contentType}}</span>
+                                            </div>
+                                            <div class="resource-content">
+                                                <h3>{{r.title}}</h3>
+                                                <p>{{r.snippet}}</p>
+                                                <div class="resource-meta">
+                                                    <span class="resource-type">{{r.contentType}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="resource-action">
+                                                <button class="resource-btn" (click)="openResource(r.link)">
+                                                    <i class="fas fa-external-link-alt"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="resource-action">
-                                <button class="resource-btn" (click)="openResource(r.link)">
-                                    <i class="fas fa-external-link-alt"></i>
-                                </button>
-                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+                    </section>
 
                     <div *ngIf="!isFinished" class="notify">
                         <h1>The Assessment data will be available once the assessment is completed</h1>

@@ -28,8 +28,9 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
   qna: any[] = [];
   showViolations: boolean = false;
   show: boolean = true;
+  isLoading: boolean = true;
 
-  
+
   @HostListener('window:resize')
   onResize() {
     this.isMobile = window.innerWidth < 768;
@@ -40,13 +41,13 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
     this.checkMobileScreen();
     window.addEventListener('resize', () => this.checkMobileScreen());
     const navigation = this.router.getCurrentNavigation();
-    if(navigation?.extras?.state) {
+    if (navigation?.extras?.state) {
       this.studentId = navigation.extras.state['studentId'];
       this.assignedAssessmentId = navigation.extras.state['assessmentId'];
       this.show = navigation.extras.state['show'] !== false;
-      console.log('Show:', this.show);  
+      console.log('Show:', this.show);
       console.log('Student ID:', this.studentId);
-      console.log('Assessment ID:', this.assignedAssessmentId); 
+      console.log('Assessment ID:', this.assignedAssessmentId);
       this.assessmentData();
       this.qandAs();
     }
@@ -77,7 +78,7 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
     }
   }
 
-  assessmentData(){
+  assessmentData() {
     this.api.getAssessmentDataP(this.assignedAssessmentId, this.studentId).subscribe({
       next: (resp: any) => {
         this.assessmentDetails = resp.data;
@@ -88,11 +89,12 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
     })
   }
 
-  qandAs(){
+  qandAs() {
     this.api.getDetailedAnswers(this.assignedAssessmentId, this.studentId).subscribe({
       next: (resp: any) => {
         this.qna = resp.data;
         console.log('Assessment data:', this.qna);
+        this.isLoading = false;
       }, error: (error) => {
         console.error('Error fetching assessment data:', error);
       }
@@ -168,7 +170,7 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
           timerProgressBar: true,
           background: '#fff',
           iconColor: '#3b82f6'
-        });    
+        });
       },
       error: (error) => {
         console.error('Error saving grade:', error);
@@ -260,7 +262,7 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
     if (!name) return '';
     const nameParts = name.trim().split(' ');
     const firstInitial = nameParts[0] ? nameParts[0].charAt(0).toUpperCase() : '';
-    const lastInitial = nameParts[nameParts.length - 1] ? 
+    const lastInitial = nameParts[nameParts.length - 1] ?
       nameParts[nameParts.length - 1].charAt(0).toUpperCase() : '';
     return nameParts.length > 1 ? `${firstInitial}${lastInitial}` : firstInitial;
   }
@@ -281,13 +283,13 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
   getAssessmentTypeColor(assessment: string): string {
     switch (assessment) {
       case 'mastery':
-        return '#d97706'; 
+        return '#d97706';
       case 'public assessment':
-        return '#2563eb'; 
+        return '#2563eb';
       case 'assessment':
-        return '#4f46e5'; 
+        return '#4f46e5';
       default:
-        return '#4f46e5'; 
+        return '#4f46e5';
     }
   }
 

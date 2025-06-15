@@ -599,13 +599,6 @@ form {
     gap: 10px;
 }
 
-.button .spinner {
-    margin: 0;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
 .button svg {
     width: 24px;
     height: 24px;

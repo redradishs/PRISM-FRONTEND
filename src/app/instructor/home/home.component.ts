@@ -73,6 +73,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   charts: any[] = [];
   dueThisWeek: number = 0;
   isMobile = window.innerWidth < 768;
+  isLoading: boolean = true;
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
   @ViewChild('barChart') barChart?: BaseChartDirective;
   @ViewChild('pieChart') pieChart?: BaseChartDirective;
@@ -308,6 +309,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.totalOngoingAssessments = resp.data.total;
         this.remainingOngoingAssessments = resp.data.left;
         this.dueThisWeek = this.getDueThisWeek(this.onGoingAssessments);
+        this.isLoading = false;
       } catch (error) {
         console.error('Error getting ongoing assessments:', error);
       }

@@ -20,6 +20,7 @@ export class MasteryResultComponent {
   profile: string = '';
   assignedAssessmentId: string = '';
   resultData: any;
+  isLoading: boolean = true;
 
   isMobile = window.innerWidth < 768;
   @HostListener('window:resize')
@@ -58,6 +59,7 @@ export class MasteryResultComponent {
     this.api.masteryResultData(this.assignedAssessmentId).subscribe({
       next: (resp: any) => {
         this.resultData = resp.data;
+        this.isLoading = false;
       }, error: (err) => {
         console.error('There was a problem:', err.message)
       }

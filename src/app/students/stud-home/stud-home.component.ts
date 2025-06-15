@@ -16,10 +16,10 @@ import { PortalModule } from '@angular/cdk/portal';
   selector: 'app-stud-home',
   standalone: true,
   imports: [
-    SidebarComponent, 
-    CommonModule, 
-    RouterLink, 
-    FormsModule, 
+    SidebarComponent,
+    CommonModule,
+    RouterLink,
+    FormsModule,
     ReactiveFormsModule,
     MatDialogModule,
     OverlayModule,
@@ -51,6 +51,7 @@ export class StudHomeComponent implements OnInit {
   joinAssessmentForm: FormGroup;
   showJoinClassModal = false;
   showJoinAssessmentModal = false;
+  isLoading = true;
 
   constructor(
     private auth: AuthService,
@@ -88,7 +89,7 @@ export class StudHomeComponent implements OnInit {
         console.log(err);
       }
     })
-    
+
   }
 
   getStatistics(id: string) {
@@ -102,6 +103,7 @@ export class StudHomeComponent implements OnInit {
         this.dueThisWeek = this.getDueThisWeek(this.onGoingAssessments);
         this.upcomingAssessments = resp.data.scheduled;
         this.completedAssessments = resp.data.completed;
+        this.isLoading = false;
       },
       error: (err) => {
         console.log(err);
@@ -151,7 +153,7 @@ export class StudHomeComponent implements OnInit {
       });
     }
   }
-  
+
   goToConfirmation(assessment: any) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     this.router.navigate(['/student/confirmation'], {
@@ -170,31 +172,31 @@ export class StudHomeComponent implements OnInit {
 
   getDueThisWeek(assessments: any[]): number {
     const now = new Date();
-  
-    const day = now.getDay(); 
+
+    const day = now.getDay();
     const diffToMonday = day === 0 ? -6 : 1 - day;
     const startOfWeek = new Date(now);
     startOfWeek.setDate(now.getDate() + diffToMonday);
     startOfWeek.setHours(0, 0, 0, 0);
-  
+
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
     endOfWeek.setHours(23, 59, 59, 999);
-  
+
     const dueThisWeek = assessments.filter(assessment => {
       const dueDate = new Date(assessment.endDate);
       return dueDate >= startOfWeek && dueDate <= endOfWeek;
     });
-  
+
     return dueThisWeek.length;
   }
-  
+
 
   getStatusClass(assessment: any): string {
     if (assessment.hasSubmitted) {
       return 'status-result';
     }
-    
+
     switch (assessment.attemptStatus.toLowerCase()) {
       case 'ongoing':
         return 'status-ongoing';
@@ -234,7 +236,7 @@ export class StudHomeComponent implements OnInit {
       this.api.joinClass(data).subscribe({
         next: (resp: any) => {
           console.log(resp);
-          if(resp.remarks === "Success") {
+          if (resp.remarks === "Success") {
             this.getStatistics(this.userId);
             Swal.fire({
               title: 'Success',
@@ -261,7 +263,7 @@ export class StudHomeComponent implements OnInit {
             if (errorMessage === "Class is not open for Joining") {
               errorMessage = "Class is not open for joining";
             }
-            
+
             Swal.fire({
               title: 'Error',
               text: errorMessage,
@@ -314,7 +316,7 @@ export class StudHomeComponent implements OnInit {
       this.api.joinPublicAssessment(this.joinAssessmentForm.value.assessmentCode, studentId).subscribe({
         next: (resp: any) => {
           console.log(resp);
-          if(resp.remarks === "Success") {
+          if (resp.remarks === "Success") {
             this.getStatistics(this.userId);
             Swal.fire({
               title: 'Success',
@@ -335,16 +337,16 @@ export class StudHomeComponent implements OnInit {
               }
             })
             this.closeJoinAssessmentModal();
-          } else if(resp.remarks === "Failed") {
+          } else if (resp.remarks === "Failed") {
             let errorMessage = resp.message;
-            if(errorMessage === "Assessment not found") {
+            if (errorMessage === "Assessment not found") {
               errorMessage = "The assessment you are trying to join does not exist";
-            } else if(errorMessage === "This assessment has already ended") {
+            } else if (errorMessage === "This assessment has already ended") {
               errorMessage = "This assessment has already ended";
-            } else if(errorMessage === "You have already joined this assessment") {
+            } else if (errorMessage === "You have already joined this assessment") {
               errorMessage = "You have already joined this assessment";
             }
-            
+
             Swal.fire({
               title: 'Error',
               text: errorMessage,

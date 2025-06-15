@@ -18,7 +18,7 @@ interface Student {
   score: number;
   performance: string;
   percentage: number;
-} 
+}
 
 interface QuestionData {
   id: number;
@@ -59,7 +59,7 @@ export class ResultComponent implements OnInit, OnDestroy {
     mode: String,
     totalStudents: 0,
     averageScore: 0,
-    highestScore: 0, 
+    highestScore: 0,
     lowestScore: 0
   };
   username: string = '';
@@ -126,15 +126,14 @@ export class ResultComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const state = history.state as { assessmentId: string };
-    
+
     if (state && state.assessmentId) {
       this.assessmentId = state.assessmentId;
-      this.isLoading = true;
       Promise.all([
         this.getResultOverview(this.assessmentId),
         this.getClassResult(this.assessmentId)
       ]).finally(() => {
-        this.isLoading = false;
+        // this.isLoading = false;
       });
       console.log('Assessment ID:', this.assessmentId);
     } else {
@@ -144,8 +143,8 @@ export class ResultComponent implements OnInit, OnDestroy {
 
     this.auth.getCurrentUser().subscribe((user) => {
       this.userId = user.id,
-      this.username = user.name,
-      this.profile = user.profilePicture;
+        this.username = user.name,
+        this.profile = user.profilePicture;
     });
   }
 
@@ -181,7 +180,7 @@ export class ResultComponent implements OnInit, OnDestroy {
           if (data.assessmentId === this.assessmentId && data.student) {
             // Find the student in our list
             const studentIndex = this.allStudents.findIndex(s => s.id === data.student.id);
-            
+
             if (studentIndex !== -1) {
               // Get the student's current data
               const student = this.allStudents[studentIndex];
@@ -206,7 +205,7 @@ export class ResultComponent implements OnInit, OnDestroy {
               // Update our lists with the new data
               this.allStudents = updatedStudents;
               this.filteredStudents = [...updatedStudents];
-              
+
               // Re-sort and filter the list
               this.filterStudents();
 
@@ -220,7 +219,7 @@ export class ResultComponent implements OnInit, OnDestroy {
 
               // Count students in each status
               this.allStudents.forEach(s => {
-                switch(s.status.toLowerCase()) {
+                switch (s.status.toLowerCase()) {
                   case 'submitted':
                     counts.submitted++;
                     break;
@@ -247,7 +246,7 @@ export class ResultComponent implements OnInit, OnDestroy {
     // Handle any errors with the connection
     this.scoreStream.onerror = (error) => {
       console.error('Connection error:', error);
-      
+
       // Try to reconnect after 5 seconds
       setTimeout(() => {
         if (this.scoreStream) {
@@ -270,10 +269,10 @@ export class ResultComponent implements OnInit, OnDestroy {
           this.className = resp.data.classes[0].className;
           this.classCode = resp.data.classes[0].classCode;
         }
-        if(resp.data.status !== 'completed') {
+        if (resp.data.status !== 'completed') {
           this.setupScoreStream();
         }
-        if(resp.data.status === 'completed') {
+        if (resp.data.status === 'completed') {
           this.getItemAnalysis(this.assessmentId);
           this.insights = resp.data.insights;
         }
@@ -289,21 +288,21 @@ export class ResultComponent implements OnInit, OnDestroy {
 
   getItemAnalysis(id: string) {
     this.api.getQuestionAnalysis(this.assessmentId).subscribe({
-        next: (resp: any) => {
-            console.log('Question Analysis Response:', resp.data);
-            this.itemAnalysis = resp.data;
-            if (resp.data && resp.data.questions) {
-                this.allQuestions = resp.data.questions;
-                this.questions = [...this.allQuestions];
-                this.questionLength = this.questions.length;
-                console.log('Questions loaded:', this.questions);
-                console.log('Question Length:', this.questionLength);
-                this.getStudentPerformance(this.assessmentId);
-            }
-        },
-        error: (error) => {
-            console.error('Error getting item analysis:', error);
+      next: (resp: any) => {
+        console.log('Question Analysis Response:', resp.data);
+        this.itemAnalysis = resp.data;
+        if (resp.data && resp.data.questions) {
+          this.allQuestions = resp.data.questions;
+          this.questions = [...this.allQuestions];
+          this.questionLength = this.questions.length;
+          console.log('Questions loaded:', this.questions);
+          console.log('Question Length:', this.questionLength);
+          this.getStudentPerformance(this.assessmentId);
         }
+      },
+      error: (error) => {
+        console.error('Error getting item analysis:', error);
+      }
     });
   }
 
@@ -320,10 +319,10 @@ export class ResultComponent implements OnInit, OnDestroy {
         this.submissionStatus = resp.data.submissionStatus;
         this.completionStatistics = resp.data.submissionStatus;
         console.log('Class Overview:', this.classOverview);
-        if(this.classOverview.status === 'completed' && this.insights.length === 0) {
+        if (this.classOverview.status === 'completed' && this.insights.length === 0) {
           this.prismInsights();
         }
-      }, 
+      },
       error: (error) => {
         console.error('Error getting student performance:', error);
       }
@@ -337,6 +336,7 @@ export class ResultComponent implements OnInit, OnDestroy {
         this.classResult = resp.data;
         this.allStudents = resp.data.results;
         this.filteredStudents = [...this.allStudents];
+        this.isLoading = false;
       },
       error: (error) => {
         console.error('Error getting class result:', error);
@@ -344,18 +344,18 @@ export class ResultComponent implements OnInit, OnDestroy {
     });
   }
 
-  toggleShowSettings(){
-    this.showSettings =!this.showSettings;
-  } 
+  toggleShowSettings() {
+    this.showSettings = !this.showSettings;
+  }
 
   filterStudents() {
     let filtered = this.allStudents.filter(student => {
-      const statusMatch = this.selectedStatus === 'all' || 
-                         student.status.toLowerCase() === this.selectedStatus;
+      const statusMatch = this.selectedStatus === 'all' ||
+        student.status.toLowerCase() === this.selectedStatus;
 
       const searchMatch = !this.searchTerm ||
-                         student.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-                         (student.block && student.block.toLowerCase().includes(this.searchTerm.toLowerCase()));
+        student.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        (student.block && student.block.toLowerCase().includes(this.searchTerm.toLowerCase()));
 
       return statusMatch && searchMatch;
     });
@@ -389,11 +389,11 @@ export class ResultComponent implements OnInit, OnDestroy {
 
   filterQuestions() {
     if (this.selectedQuestionType === 'all') {
-        this.questions = [...this.allQuestions];
+      this.questions = [...this.allQuestions];
     } else {
-        this.questions = this.allQuestions.filter(question => 
-            question.questionType.toLowerCase() === this.selectedQuestionType.toLowerCase()
-        );
+      this.questions = this.allQuestions.filter(question =>
+        question.questionType.toLowerCase() === this.selectedQuestionType.toLowerCase()
+      );
     }
     this.questionLength = this.questions.length;
     console.log('Filtered Questions:', this.questions);
@@ -403,12 +403,12 @@ export class ResultComponent implements OnInit, OnDestroy {
 
   prismInsights() {
     console.log('Binabatong data:', this.itemAnalysis);
-    const formattedQuestions = this.allQuestions && this.allQuestions.length > 0 
+    const formattedQuestions = this.allQuestions && this.allQuestions.length > 0
       ? '\n\nQuestion Data:\n' + JSON.stringify(this.allQuestions, null, 2)
       : '';
     console.log('Formatted Questions:', formattedQuestions);
     const prompt = 'Analyze the following assessment results and provide insights on the students\' performance and any areas of concern or success.' + formattedQuestions;
-    
+
     this.api.analyzeResult(prompt).subscribe({
       next: (resp: any) => {
         console.log('Prism Insights:', resp.analysis);
@@ -435,7 +435,7 @@ export class ResultComponent implements OnInit, OnDestroy {
     this.api.saveInsights(data).subscribe({
       next: (resp: any) => {
         console.log('Insights saved:', resp);
-      }, 
+      },
       error: (error) => {
         console.error('Error saving insights:', error);
       }
@@ -443,7 +443,7 @@ export class ResultComponent implements OnInit, OnDestroy {
   }
 
   assessmentDetails(student: any) {
-    if(student.status?.toLowerCase() === 'submitted') {
+    if (student.status?.toLowerCase() === 'submitted') {
       this.router.navigate(['/instructor/response'], {
         state: { studentId: student.id, assessmentId: this.assessmentId }
       });
@@ -508,13 +508,13 @@ export class ResultComponent implements OnInit, OnDestroy {
   getAssessmentTypeColor(assessment: string): string {
     switch (assessment) {
       case 'mastery':
-        return '#d97706'; 
+        return '#d97706';
       case 'public assessment':
-        return '#2563eb'; 
+        return '#2563eb';
       case 'assessment':
-        return '#4f46e5'; 
+        return '#4f46e5';
       default:
-        return '#4f46e5'; 
+        return '#4f46e5';
     }
   }
 
@@ -664,22 +664,22 @@ export class ResultComponent implements OnInit, OnDestroy {
   toggleInsight(index: number) {
     this.expandedIndex = this.expandedIndex === index ? null : index;
   }
-  
+
   private getLastName(name: string): string {
     if (!name) return '';
-    
+
     const nameParts = name.trim().split(' ');
     if (nameParts.length <= 1) return name;
 
     // Check for compound last names
     let lastName = nameParts[nameParts.length - 1];
     let secondLastName = nameParts[nameParts.length - 2];
-    
+
     // Check if second to last word is a prefix
     if (this.lastNamePrefixes.includes(secondLastName)) {
       lastName = `${secondLastName} ${lastName}`;
     }
-    
+
     return lastName;
   }
 
@@ -773,7 +773,7 @@ export class ResultComponent implements OnInit, OnDestroy {
       const score = student.score || 0;
       const totalItems = this.classOverview.totalScore;
       const scorePercentage = (score / totalItems) * 100;
-      
+
       let style = { fontColor: '000000', bgColor: 'FFFFFF' };
       if (scorePercentage >= 90) {
         // Excellent - Soft Green
@@ -787,15 +787,15 @@ export class ResultComponent implements OnInit, OnDestroy {
       }
 
       // Apply style to score column (3rd)
-      row.getCell(3).font = { 
-        bold: true, 
+      row.getCell(3).font = {
+        bold: true,
         size: 11,
-        color: { argb: style.fontColor } 
+        color: { argb: style.fontColor }
       };
-      row.getCell(3).fill = { 
-        type: 'pattern', 
-        pattern: 'solid', 
-        fgColor: { argb: style.bgColor } 
+      row.getCell(3).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: style.bgColor }
       };
 
       // Optional: Apply alignments to all cells
@@ -823,7 +823,7 @@ export class ResultComponent implements OnInit, OnDestroy {
     const filename = `${this.assessmentTitle.replace(/[^a-zA-Z0-9]/g, '_')}_Results_${sortBy === 'score' ? 'Ranked' : 'Alphabetical'}.xlsx`;
     saveAs(blob, filename);
   }
-  
+
   // Helper methods
   private getStatusText(status: string): string {
     const statusMap: { [key: string]: string } = {
@@ -834,7 +834,7 @@ export class ResultComponent implements OnInit, OnDestroy {
     };
     return statusMap[status] || status;
   }
-  
+
   private getPerformanceCategory(score: number): string {
     if (score >= 90) return 'Excellent';
     if (score >= 75) return 'Good';

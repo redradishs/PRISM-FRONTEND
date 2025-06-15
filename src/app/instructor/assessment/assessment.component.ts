@@ -25,11 +25,11 @@ interface ClassPerformance {
 }
 
 interface ClassData {
-    _id: string;
-    classCode: string;
-    className: string;
-    block?: string;
-    year?: string;
+  _id: string;
+  classCode: string;
+  className: string;
+  block?: string;
+  year?: string;
 }
 
 interface AssessmentMode {
@@ -238,7 +238,7 @@ export class AssessmentComponent {
         this.filteredClasses = this.classes;
         this.getOnGoingAssessments(this.userId);
         this.loadScheduledAssessments(this.userId);
-        this.runUpdates();  
+        this.runUpdates();
       } else {
         console.log('No user found');
       }
@@ -256,9 +256,9 @@ export class AssessmentComponent {
       file: '',
       createdBy: this.userId,
       assignmentMode: this.selectedMode,
-      totalPoints: currentTotalPoints, 
+      totalPoints: currentTotalPoints,
       modeSettings: {
-        masteryScore: Math.min(90, currentTotalPoints) 
+        masteryScore: Math.min(90, currentTotalPoints)
       }
     };
 
@@ -341,7 +341,7 @@ export class AssessmentComponent {
     this.isLoading = true;
     this.api.getOwnAssessments(this.userId).subscribe({
       next: (resp: any) => {
-        this.ownAssessments = resp.data.sort((a: any, b:any) => new Date (b.createdAt).getTime() - new Date (a.createdAt).getTime())
+        this.ownAssessments = resp.data.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         this.isLoading = false;
       },
       error: (error) => {
@@ -594,8 +594,8 @@ export class AssessmentComponent {
       Swal.fire({
         icon: 'success',
         title: 'Assessment Assigned',
-        text: this.selectedMode === 'public' 
-          ? 'The public assessment has been successfully created.' 
+        text: this.selectedMode === 'public'
+          ? 'The public assessment has been successfully created.'
           : 'The assessment has been successfully assigned to all selected classes.',
       });
 
@@ -614,16 +614,16 @@ export class AssessmentComponent {
     }
   }
 
-runUpdates() {
-  this.api.getActiveAssessments(this.userId).subscribe({
-    next: (resp: any) => {
-      console.log('Active assessments', resp.data);
-    },
-    error: (error: any) => {
-      console.error('Error getting active assessments', error);
-    }
-  })
-}
+  runUpdates() {
+    this.api.getActiveAssessments(this.userId).subscribe({
+      next: (resp: any) => {
+        console.log('Active assessments', resp.data);
+      },
+      error: (error: any) => {
+        console.error('Error getting active assessments', error);
+      }
+    })
+  }
   getClassName(code: string): string {
     const classItem = this.classes.find(c => c.classCode === code);
     if (classItem) {
@@ -650,7 +650,7 @@ runUpdates() {
     }
 
     const searchTerm = this.searchClass.toLowerCase().trim();
-    this.filteredClasses = this.classes.filter(c => 
+    this.filteredClasses = this.classes.filter(c =>
       c.className.toLowerCase().includes(searchTerm) ||
       c.classCode.toLowerCase().includes(searchTerm) ||
       (c.block && c.block.toLowerCase().includes(searchTerm)) ||
@@ -727,7 +727,7 @@ runUpdates() {
 
   gotoAssessment(_id: string) {
     this.router.navigate(['/instructor/result'], {
-      state: {assessmentId: _id}
+      state: { assessmentId: _id }
     })
   }
 

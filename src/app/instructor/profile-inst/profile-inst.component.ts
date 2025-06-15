@@ -80,19 +80,20 @@ export class ProfileInstComponent implements OnInit {
     createdAt: new Date(),
     updatedAt: new Date()
   };
-  
+
   teachingSummary = {
     classCounts: 0,
     assessmentCounts: 0,
     studentCounts: 0,
   };
-  
+
   userId: string = '';
   username: string = '';
   activeTab = 'personal';
   isMobile = false;
   profilePicture: string = '';
-  
+  isLoading: boolean = true;
+
   // Password related properties with defaults
   showCurrentPassword = false;
   showNewPassword = false;
@@ -149,13 +150,11 @@ export class ProfileInstComponent implements OnInit {
     { id: '3', name: 'BSIT 3C', students: 45, avgScore: 88, completionRate: 90 },
   ];
 
-  constructor(private api: ApiService, private auth: AuthService, private router: Router) {}
+  constructor(private api: ApiService, private auth: AuthService, private router: Router) { }
 
   ngOnInit(): void {
     this.checkMobile();
     window.addEventListener('resize', () => this.checkMobile());
-
-    // Chain the API calls
     this.auth.getCurrentUser().subscribe((user) => {
       if (user) {
         this.userId = user.id;
@@ -167,13 +166,11 @@ export class ProfileInstComponent implements OnInit {
   }
 
   private loadProfileData(): void {
-    // Load profile data first
     this.auth.getCurrentProfile(this.userId).subscribe({
       next: (resp: any) => {
-        this.profile = { ...this.profile, ...resp.data }; // Merge with defaults
+        this.profile = { ...this.profile, ...resp.data };
         this.originalProfile = { ...resp.data };
-        
-        // Then load teaching summary
+        this.isLoading = false;
         this.loadTeachingSummary();
       },
       error: (error) => {
@@ -217,135 +214,135 @@ export class ProfileInstComponent implements OnInit {
   // Update the save method
   savePersonalInfo(): void {
     if (!this.originalProfile || !this.profile) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Profile data is not available'
-        });
-        return;
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Profile data is not available'
+      });
+      return;
     }
 
     const changes: ProfileChanges = {};
 
-    if (this.profile.department !== undefined && 
-        this.profile.department !== this.originalProfile.department) {
-        changes.department = this.profile.department;
+    if (this.profile.department !== undefined &&
+      this.profile.department !== this.originalProfile.department) {
+      changes.department = this.profile.department;
     }
-    
-    if (this.profile.position !== undefined && 
-        this.profile.position !== this.originalProfile.position) {
-        changes.position = this.profile.position;
+
+    if (this.profile.position !== undefined &&
+      this.profile.position !== this.originalProfile.position) {
+      changes.position = this.profile.position;
     }
-    
-    if (this.profile.phone !== undefined && 
-        this.profile.phone !== this.originalProfile.phone) {
-        changes.phone = this.profile.phone;
+
+    if (this.profile.phone !== undefined &&
+      this.profile.phone !== this.originalProfile.phone) {
+      changes.phone = this.profile.phone;
     }
-    
-    if (this.profile.alternateEmail !== undefined && 
-        this.profile.alternateEmail !== this.originalProfile.alternateEmail) {
-        changes.alternateEmail = this.profile.alternateEmail;
+
+    if (this.profile.alternateEmail !== undefined &&
+      this.profile.alternateEmail !== this.originalProfile.alternateEmail) {
+      changes.alternateEmail = this.profile.alternateEmail;
     }
-    
-    if (this.profile.bio !== undefined && 
-        this.profile.bio !== this.originalProfile.bio) {
-        changes.bio = this.profile.bio;
+
+    if (this.profile.bio !== undefined &&
+      this.profile.bio !== this.originalProfile.bio) {
+      changes.bio = this.profile.bio;
     }
-    
-    if (this.profile.isCoordinator !== undefined && 
-        this.profile.isCoordinator !== this.originalProfile.isCoordinator) {
-        changes.isCoordinator = this.profile.isCoordinator || 'no';
+
+    if (this.profile.isCoordinator !== undefined &&
+      this.profile.isCoordinator !== this.originalProfile.isCoordinator) {
+      changes.isCoordinator = this.profile.isCoordinator || 'no';
     }
 
     // Only make API call if there are changes
     if (Object.keys(changes).length > 0) {
-        // Show loading state
-        Swal.fire({
-            title: 'Saving changes...',
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
+      // Show loading state
+      Swal.fire({
+        title: 'Saving changes...',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
 
-        this.auth.updateProfile(this.userId, changes).subscribe({
-            next: (response) => {
-                this.originalProfile = { ...this.profile };
-        
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: 'Profile updated successfully',
-                    timer: 1500
-                });
-            },
-            error: (error) => {
-                console.error('Error updating profile:', error);
-                if (this.originalProfile) {
-                    this.profile = { ...this.originalProfile };
-                    this.profile.isCoordinator = this.originalProfile?.isCoordinator ?? 'no';
-                }
-                
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Failed to update profile. Please try again.'
-                });
-            }
-        });
-    } else {
-        Swal.fire({
-            icon: 'info',
-            title: 'No Changes',
-            text: 'No changes were made to save',
+      this.auth.updateProfile(this.userId, changes).subscribe({
+        next: (response) => {
+          this.originalProfile = { ...this.profile };
+
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: 'Profile updated successfully',
             timer: 1500
-        });
+          });
+        },
+        error: (error) => {
+          console.error('Error updating profile:', error);
+          if (this.originalProfile) {
+            this.profile = { ...this.originalProfile };
+            this.profile.isCoordinator = this.originalProfile?.isCoordinator ?? 'no';
+          }
+
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to update profile. Please try again.'
+          });
+        }
+      });
+    } else {
+      Swal.fire({
+        icon: 'info',
+        title: 'No Changes',
+        text: 'No changes were made to save',
+        timer: 1500
+      });
 
     }
   }
 
   updatePassword(): void {
     if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Password Mismatch',
-            text: 'New password and confirmation do not match'
-        });
-        return;
+      Swal.fire({
+        icon: 'error',
+        title: 'Password Mismatch',
+        text: 'New password and confirmation do not match'
+      });
+      return;
     }
 
     Swal.fire({
-        title: 'Updating password...',
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
+      title: 'Updating password...',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
     });
 
     this.auth.changePassword(this.userId, this.passwordData).subscribe({
-        next: (response) => {
-            this.passwordData = {
-                currentPassword: '',
-                newPassword: '',
-                confirmPassword: ''
-            };
-            
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: 'Password updated successfully',
-                timer: 1500
-            });
-        },
-        error: (error) => {
-            console.error('Error updating password:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: error.error.message || 'Failed to update password'
-            });
-        }
+      next: (response) => {
+        this.passwordData = {
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        };
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Success!',
+          text: 'Password updated successfully',
+          timer: 1500
+        });
+      },
+      error: (error) => {
+        console.error('Error updating password:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.error.message || 'Failed to update password'
+        });
+      }
     });
   }
 
@@ -354,7 +351,7 @@ export class ProfileInstComponent implements OnInit {
   }
 
   toggleSidebar(): void {
-    if(this.sidebar){
+    if (this.sidebar) {
       this.sidebar.toggleSidebar();
     }
   }
@@ -362,32 +359,32 @@ export class ProfileInstComponent implements OnInit {
   onCoordinatorToggle(event: Event): void {
     const checkbox = event.target as HTMLInputElement;
     if (this.profile) {
-        this.profile.isCoordinator = checkbox.checked ? 'yes' : 'no';
-        this.savePersonalInfo();
+      this.profile.isCoordinator = checkbox.checked ? 'yes' : 'no';
+      this.savePersonalInfo();
     }
   }
 
   getCoordinatorStatus(): string {
     if (!this.profile) return 'Not set';
-    return this.profile.isCoordinator === 'yes' ? 
-        'Yes, I want to be a coordinator' : 
-        'No, not at this time';
+    return this.profile.isCoordinator === 'yes' ?
+      'Yes, I want to be a coordinator' :
+      'No, not at this time';
   }
 
   getCoordinatorStatusLabel(): string {
     if (!this.profile) return 'Not Available';
-    
+
     switch (this.profile.coordinatorStatus) {
-        case 'PENDING':
-            return 'Application Pending';
-        case 'APPROVED':
-            return 'Coordinator Active';
-        case 'REJECTED':
-            return 'Application Rejected';
-        default:
-            return this.profile.isCoordinator === 'yes' ? 
-                'Applied for Coordinator Position' : 
-                'Not Applied';
+      case 'PENDING':
+        return 'Application Pending';
+      case 'APPROVED':
+        return 'Coordinator Active';
+      case 'REJECTED':
+        return 'Application Rejected';
+      default:
+        return this.profile.isCoordinator === 'yes' ?
+          'Applied for Coordinator Position' :
+          'Not Applied';
     }
   }
 
@@ -395,16 +392,16 @@ export class ProfileInstComponent implements OnInit {
     if (!this.profile) return '';
 
     switch (this.profile.coordinatorStatus) {
-        case 'PENDING':
-            return 'Your application is currently under review.';
-        case 'APPROVED':
-            return 'You are currently serving as a coordinator.';
-        case 'REJECTED':
-            return 'Your application was not approved. You may reapply after 30 days.';
-        default:
-            return this.profile.isCoordinator === 'yes' ?
-                'Your request to become a coordinator has been submitted.' :
-                'Toggle the switch to apply for a coordinator position.';
+      case 'PENDING':
+        return 'Your application is currently under review.';
+      case 'APPROVED':
+        return 'You are currently serving as a coordinator.';
+      case 'REJECTED':
+        return 'Your application was not approved. You may reapply after 30 days.';
+      default:
+        return this.profile.isCoordinator === 'yes' ?
+          'Your request to become a coordinator has been submitted.' :
+          'Toggle the switch to apply for a coordinator position.';
     }
   }
 
@@ -412,32 +409,32 @@ export class ProfileInstComponent implements OnInit {
     if (!this.profile) return '';
 
     switch (this.profile.coordinatorStatus) {
-        case 'PENDING':
-            return 'status-pending';
-        case 'APPROVED':
-            return 'status-approved';
-        case 'REJECTED':
-            return 'status-rejected';
-        default:
-            return '';
+      case 'PENDING':
+        return 'status-pending';
+      case 'APPROVED':
+        return 'status-approved';
+      case 'REJECTED':
+        return 'status-rejected';
+      default:
+        return '';
     }
   }
 
   onCoordinatorChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
     if (this.profile) {
-        this.profile.isCoordinator = select.value as 'yes' | 'no';
-        this.savePersonalInfo();
+      this.profile.isCoordinator = select.value as 'yes' | 'no';
+      this.savePersonalInfo();
     }
   }
 
   getInitials(name: string): string {
     if (!name) return '';
     return name
-        .split(' ')
-        .slice(0, 2)
-        .map(word => word.charAt(0))
-        .join('')
-        .toUpperCase();
+      .split(' ')
+      .slice(0, 2)
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase();
   }
 }
