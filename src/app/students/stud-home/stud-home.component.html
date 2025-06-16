@@ -71,7 +71,7 @@
 
             <main class="main-content">
                 <div class="content-wrapper">
-                    <div class="welcome-section">
+                    <div class="welcome-section" [class.animate-in]="!isLoading">
                         <div class="welcome-content">
                             <div class="welcome-text">
                                 <h1>Welcome Back, {{username}}</h1>
@@ -88,7 +88,7 @@
 
 
 
-                    <div class="tabs">
+                    <div class="tabs" [class.animate-in]="!isLoading">
                         <div (click)="goToHistory('scheduled')" class="card1">
                             <div class="card-content">
                                 <p class="card-title">Upcoming Assessments</p>
@@ -312,7 +312,7 @@
                                                             'fa-trophy': assessment.mode === 'mastery',
                                                             'fa-globe': assessment.mode === 'public'
                                                         }"></i>
-                                                    {{assessment.mode | titlecase}} Mode
+                                                    {{assessment.mode | titlecase}}
                                                 </span>
                                                 <p [ngClass]="{
                                                         'status-result': assessment.hasSubmitted && assessment.attemptStatus === 'submitted',
