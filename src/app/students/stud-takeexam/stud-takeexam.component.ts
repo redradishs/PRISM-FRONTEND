@@ -97,7 +97,6 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Getters
   get currentQuestion(): Question {
     return (
       this.assessmentData.questions[this.currentQuestionIndex] || {
@@ -109,14 +108,12 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
     );
   }
 
-  // Computed property for total pages
   get totalPages(): number {
     return Math.ceil(
       this.assessmentData.totalQuestions / this.questionsPerPage
     );
   }
 
-  // Get questions for current page
   getVisibleQuestions(): Question[] {
     const start = this.currentPage * this.questionsPerPage;
     const end = Math.min(
@@ -126,7 +123,6 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
     return this.assessmentData.questions.slice(start, end);
   }
 
-  // Get the actual question index from the visible index
   getQuestionIndex(visibleIndex: number): number {
     return this.currentPage * this.questionsPerPage + visibleIndex;
   }
@@ -188,10 +184,10 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
                       ? q.question.toLowerCase().includes('three')
                         ? 3
                         : q.question.toLowerCase().includes('two')
-                        ? 2
-                        : q.question.toLowerCase().includes('four')
-                        ? 4
-                        : 3
+                          ? 2
+                          : q.question.toLowerCase().includes('four')
+                            ? 4
+                            : 3
                       : undefined,
                   wordLimit: q.type === 'short-answer' ? 250 : undefined,
                 };
@@ -332,13 +328,12 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
   }
 
   getQuestionButtonClass(index: number, questionId: string): string {
-    return `p-2 rounded text-sm ${
-      this.currentQuestionIndex === index
-        ? 'bg-blue-600 text-white'
-        : this.answers[questionId]
+    return `p-2 rounded text-sm ${this.currentQuestionIndex === index
+      ? 'bg-blue-600 text-white'
+      : this.answers[questionId]
         ? 'bg-green-50 border-green-500'
         : 'bg-white border'
-    }`;
+      }`;
   }
 
   openSubmitDialog() {
@@ -363,7 +358,7 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
         sessionStorage.removeItem('violations');
         this.is.resetAllViolations();
         this.router.navigate(['/student/assessment/result'], {
-          state: {assessmentId: this.assignedAssessmentId}
+          state: { assessmentId: this.assignedAssessmentId }
         });
       },
       error: (error) => {
@@ -389,7 +384,6 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
           // Format the answer based on question type
           switch (question.type) {
             case 'multiple-choice':
-              // Handle both string and array types
               const index = this.answers[questionId];
               if (index !== undefined && index !== null) {
                 const indexValue = Array.isArray(index) ? index[0] : index;
@@ -410,16 +404,14 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
               break;
 
             case 'enumeration':
-              // Convert array of answers to lowercase
               const enumAnswer = this.answers[questionId];
-              formattedAnswer = Array.isArray(enumAnswer) 
+              formattedAnswer = Array.isArray(enumAnswer)
                 ? enumAnswer.map((ans: string) => ans.trim().toLowerCase())
                 : [];
               break;
 
             case 'short-answer':
             default:
-              // Use answer as is
               formattedAnswer = this.answers[questionId];
               break;
           }

@@ -1,14 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import {
-  FormControl,
-  ReactiveFormsModule,
-  FormBuilder,
-  FormGroup,
-  Validators,
-  FormsModule,
-} from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
 import { Title } from '@angular/platform-browser';
@@ -133,8 +126,6 @@ export class LoginComponent implements OnInit {
         const control = this.loginForm.get(key);
         control?.markAsTouched();
       });
-
-      // Check specific validation errors
       const emailControl = this.loginForm.get('email');
       if (emailControl?.errors) {
         if (emailControl.errors['required']) {
@@ -154,8 +145,6 @@ export class LoginComponent implements OnInit {
     this.clicked = true;
     this.loading = true;
     this.formError = '';
-
-    // Construct full email with domain
     const idOnly = this.loginForm.value.email;
     const fullEmail = this.getFullEmail(idOnly);
     const { password } = this.loginForm.value;
@@ -288,8 +277,8 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  //used to validate only gc domain
   validateGordonEmail(email: string): boolean {
-    // Allow any characters before @gordoncollege.edu.ph
     return email.trim().length > 0;
   }
 
@@ -330,8 +319,6 @@ export class LoginComponent implements OnInit {
         role: this.role,
         isCoordinator: formValues.isCoordinator
       };
-
-      // Only include coordinatedProgram if user is a coordinator
       if (formValues.isCoordinator === 'yes') {
         data.coordinatedProgram = formValues.coordinatedProgram;
       }

@@ -154,52 +154,39 @@ export class ResultComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Sets up a real-time connection to receive student score updates
-   * This allows us to see changes in scores and status immediately
-   */
+  //rt updates with the help of SSE
   private setupScoreStream(): void {
-    // Create a connection to get real-time updates
     this.scoreStream = this.api.getScoreStream(this.assessmentId);
 
     // Handle incoming messages
     this.scoreStream.onmessage = (event) => {
       this.ngZone.run(() => {
         try {
-          // Convert the received data from text to an object we can use
+          //convert to usable json object
           const data = JSON.parse(event.data);
           console.log('Received update:', data);
-
-          // If this is just a connection message, log it and stop
           if (data.type === 'connected') {
             console.log('PRISM: Connected to RealTime Updates');
             return;
           }
-
-          // Make sure this update is for our assessment and includes student data
           if (data.assessmentId === this.assessmentId && data.student) {
-            // Find the student in our list
             const studentIndex = this.allStudents.findIndex(s => s.id === data.student.id);
 
             if (studentIndex !== -1) {
-              // Get the student's current data
               const student = this.allStudents[studentIndex];
-
-              // Log what kind of update we received
               if (data.operation === 'insert') {
                 console.log(`${student.name} started the assessment`);
               } else if (data.operation === 'update') {
                 console.log(`${student.name}'s score updated to ${data.student.score}`);
               }
 
-              // Create a new list with the updated student data
               const updatedStudents = [...this.allStudents];
               updatedStudents[studentIndex] = {
-                ...student,                    // Keep existing student data
-                score: data.student.score,     // Update the score
-                status: data.student.status,   // Update the status
-                violationCount: data.student.violationCount,  // Update violations
-                block: data.student.block || student.block    // Keep existing block if new one is null
+                ...student,
+                score: data.student.score,
+                status: data.student.status,
+                violationCount: data.student.violationCount,
+                block: data.student.block || student.block
               };
 
               // Update our lists with the new data
@@ -208,16 +195,12 @@ export class ResultComponent implements OnInit, OnDestroy {
 
               // Re-sort and filter the list
               this.filterStudents();
-
-              // Update the counts of students by status
               const counts = {
                 submitted: 0,
                 inProgress: 0,
                 notStarted: 0,
                 total: this.allStudents.length
               };
-
-              // Count students in each status
               this.allStudents.forEach(s => {
                 switch (s.status.toLowerCase()) {
                   case 'submitted':
@@ -231,8 +214,7 @@ export class ResultComponent implements OnInit, OnDestroy {
                     break;
                 }
               });
-
-              // Update the status counts
+              //status count updater
               this.submissionStatus = counts;
               this.completionStatistics = { ...counts };
             }
@@ -243,11 +225,9 @@ export class ResultComponent implements OnInit, OnDestroy {
       });
     };
 
-    // Handle any errors with the connection
     this.scoreStream.onerror = (error) => {
       console.error('Connection error:', error);
 
-      // Try to reconnect after 5 seconds
       setTimeout(() => {
         if (this.scoreStream) {
           this.scoreStream.close();
@@ -361,29 +341,22 @@ export class ResultComponent implements OnInit, OnDestroy {
     });
 
     filtered.sort((a, b) => {
-      // Convert status to lowercase to make comparisons easier
       const statusA = a.status.toLowerCase();
       const statusB = b.status.toLowerCase();
 
-      // First, handle students who haven't started
-      // We want them at the bottom of the list
+      // for sorting of students, if not started they will be at the bottom
       if (statusA === 'not_started' && statusB !== 'not_started') {
-        return 1; // Move 'a' down
+        return 1;
       }
       if (statusB === 'not_started' && statusA !== 'not_started') {
-        return -1; // Move 'b' down
+        return -1;
       }
-
-      // If both students haven't started, sort them by name
+      //null sort by name
       if (statusA === 'not_started' && statusB === 'not_started') {
         return a.name.localeCompare(b.name);
       }
-
-      // For students who have started or submitted, sort by score
       return b.score - a.score; // Higher scores come first
     });
-
-    // Step 3: Update the filtered list
     this.filteredStudents = filtered;
   }
 
@@ -776,17 +749,12 @@ export class ResultComponent implements OnInit, OnDestroy {
 
       let style = { fontColor: '000000', bgColor: 'FFFFFF' };
       if (scorePercentage >= 90) {
-        // Excellent - Soft Green
-        style = { fontColor: '166534', bgColor: 'DCFCE7' }; // Dark green text on soft green background
+        style = { fontColor: '166534', bgColor: 'DCFCE7' };
       } else if (scorePercentage >= 75) {
-        // Average - Soft Yellow
-        style = { fontColor: '854D0E', bgColor: 'FEF9C3' }; // Dark yellow text on soft yellow background
+        style = { fontColor: '854D0E', bgColor: 'FEF9C3' };
       } else {
-        // Poor - Soft Red
-        style = { fontColor: '991B1B', bgColor: 'FEE2E2' }; // Dark red text on soft red background
+        style = { fontColor: '991B1B', bgColor: 'FEE2E2' };
       }
-
-      // Apply style to score column (3rd)
       row.getCell(3).font = {
         bold: true,
         size: 11,
@@ -797,17 +765,11 @@ export class ResultComponent implements OnInit, OnDestroy {
         pattern: 'solid',
         fgColor: { argb: style.bgColor }
       };
-
-      // Optional: Apply alignments to all cells
       row.eachCell(cell => {
         cell.alignment = { vertical: 'middle', horizontal: 'center' };
       });
-
-      // Left align name
       row.getCell(2).alignment = { horizontal: 'left' };
     });
-
-    // Set fixed widths for specific columns
     worksheet.getColumn(1).width = 22;  // #
     worksheet.getColumn(2).width = 30; // Student Name
     worksheet.getColumn(3).width = 12; // Score

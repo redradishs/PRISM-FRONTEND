@@ -918,12 +918,9 @@ export class StudentsComponent implements OnInit {
           // showResults: this.assignmentDetails.showResults
         };
 
-        // Call API to assign assessment
         this.api.assignAssessment(assignmentData).subscribe({
           next: (response) => {
             console.log('Assessment assigned successfully');
-
-            // Show success message
             Swal.fire({
               title: 'Success!',
               text: 'Assessment has been assigned to the class.',
@@ -931,7 +928,6 @@ export class StudentsComponent implements OnInit {
               confirmButtonColor: '#3b82f6'
             });
 
-            // Close modal and refresh assessment list
             this.toggleAssignAssessmentModal();
             this.getAssignedAssessments();
           },
@@ -1100,8 +1096,6 @@ export class StudentsComponent implements OnInit {
       }
 
       const workbook = new ExcelJS.Workbook();
-
-      // Process each assessment sequentially
       for (let i = 0; i < this.selectedAssessmentsForExport.length; i++) {
         const assessment = this.selectedAssessmentsForExport[i];
         try {
@@ -1128,8 +1122,8 @@ export class StudentsComponent implements OnInit {
             worksheet.addRow(['Highest Score:', `${Math.max(...response.data.results.map(s => s.score || 0))}`]);
             worksheet.addRow(['Assessment Status:', response.data.assessmentStatus.toUpperCase()]);
             const statusRow = worksheet.getRow(worksheet.rowCount);
-            statusRow.getCell(2).font = { bold: true, color: { argb: '166534' } }; // Dark green text
-            statusRow.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'DCFCE7' } }; // Light green background
+            statusRow.getCell(2).font = { bold: true, color: { argb: '166534' } };
+            statusRow.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'DCFCE7' } };
             statusRow.alignment = { horizontal: 'center' };
 
             // Mode row with styling
@@ -1137,15 +1131,14 @@ export class StudentsComponent implements OnInit {
             const modeCell = modeRow.getCell(2);
             modeCell.font = { bold: true };
             if (response.data.mode === 'mastery') {
-              modeCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'DCFCE7' } }; // Light green
-              modeCell.font.color = { argb: '166534' }; // Dark green
+              modeCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'DCFCE7' } };
+              modeCell.font.color = { argb: '166534' };
             } else {
-              modeCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FEF9C3' } }; // Light yellow
-              modeCell.font.color = { argb: '854D0E' }; // Dark yellow
+              modeCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FEF9C3' } };
+              modeCell.font.color = { argb: '854D0E' };
             }
             worksheet.addRow([]);
 
-            // Center align summary rows
             for (let i = 3; i <= 10; i++) {
               worksheet.getRow(i).alignment = { horizontal: 'center' };
             }
@@ -1159,7 +1152,6 @@ export class StudentsComponent implements OnInit {
               cell.alignment = { horizontal: 'center' };
             });
 
-            // Sort students by last name
             const sortedStudents = this.sortByLastName(response.data.results);
 
             // Data Rows
@@ -1176,13 +1168,10 @@ export class StudentsComponent implements OnInit {
               const score = student.score || 0;
               let style = { fontColor: '000000', bgColor: 'FFFFFF' };
               if (score >= 90) {
-                // Excellent - Soft Green
                 style = { fontColor: '166534', bgColor: 'DCFCE7' };
               } else if (score >= 75) {
-                // Average - Soft Yellow
                 style = { fontColor: '854D0E', bgColor: 'FEF9C3' };
               } else {
-                // Poor - Soft Red
                 style = { fontColor: '991B1B', bgColor: 'FEE2E2' };
               }
 

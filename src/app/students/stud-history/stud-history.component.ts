@@ -98,7 +98,7 @@ interface AssessmentCounts {
   templateUrl: './stud-history.component.html',
   styleUrl: './stud-history.component.css'
 })
-export class StudHistoryComponent{
+export class StudHistoryComponent {
   userId: string = '';
   username: string = '';
   profile: string = '';
@@ -145,7 +145,7 @@ export class StudHistoryComponent{
     private titleService: Title
   ) {
     this.titleService.setTitle('PRISM | Manage');
-    
+
     this.searchSubject.pipe(
       debounceTime(300),
       distinctUntilChanged()
@@ -160,12 +160,12 @@ export class StudHistoryComponent{
 
   ngOnInit() {
     this.auth.getCurrentUser().subscribe((user) => {
-      if(user) {
+      if (user) {
         console.log('User ID:', user.id);
         this.userId = user.id;
         this.username = user.name;
         this.profile = user.profilePicture;
-        
+
         this.route.queryParams.subscribe(params => {
           const tab = params['tab'];
           if (tab) {
@@ -173,7 +173,7 @@ export class StudHistoryComponent{
             localStorage.setItem('selectedAssessmentTab', tab);
           } else {
             const savedTab = localStorage.getItem('selectedAssessmentTab');
-            if(savedTab) {
+            if (savedTab) {
               this.selectedStatus = savedTab;
             }
           }
@@ -190,7 +190,7 @@ export class StudHistoryComponent{
   //this function sets the view mode to what is LS, if not it falls to the default list mode
   setInitialViewMode() {
     const savedViewMode = localStorage.getItem('assessmentViewMode');
-    if(savedViewMode === 'grid' || savedViewMode === 'list') {
+    if (savedViewMode === 'grid' || savedViewMode === 'list') {
       this.viewMode = savedViewMode;
     } else if (window.innerWidth <= 640) {
       this.viewMode = 'list';
@@ -206,7 +206,7 @@ export class StudHistoryComponent{
   onSearch(event: any) {
     const query = event.target.value.trim();
     this.searchQuery = query;
-    console.log('Search query:', query, 'Length:', query.length); 
+    console.log('Search query:', query, 'Length:', query.length);
     this.searchSubject.next(query);
   }
 
@@ -230,14 +230,13 @@ export class StudHistoryComponent{
           // Handle the different response format for search
           this.assessments = response.data.map((assessment: any) => ({
             ...assessment,
-            assignedClasses: [], // Initialize as empty since search response doesn't include classes
-            modeSettings: {}, // Initialize empty mode settings
+            assignedClasses: [],
+            modeSettings: {},
             questions: assessment.questions || 0,
             type: assessment.type || 'Assessment',
             status: assessment.status || 'ongoing'
           }));
 
-          // Since search doesn't return pagination info, adjust pagination
           this.pagination = {
             currentPage: 1,
             totalPages: 1,
@@ -334,7 +333,7 @@ export class StudHistoryComponent{
   onTabChange(status: string) {
     this.selectedStatus = status;
     localStorage.setItem('selectedAssessmentTab', status);
-    this.pagination.currentPage = 1; 
+    this.pagination.currentPage = 1;
     this.loadAssessments();
   }
 
@@ -409,7 +408,7 @@ export class StudHistoryComponent{
   getAssessmentProgress(classes: AssignedClass[]): number {
     const totalStudents = this.getTotalStudents(classes);
     if (totalStudents === 0) return 0;
-    
+
     const totalSubmitted = classes.reduce((total, c) => total + c.stats.submitted, 0);
     return (totalSubmitted / totalStudents) * 100;
   }
@@ -422,7 +421,7 @@ export class StudHistoryComponent{
 
   gotoResult(assessment: any) {
     console.log('Navigating to result for:', assessment.type);
-    if(assessment.status === 'completed' && assessment.studentStatus === 'not_started') {
+    if (assessment.status === 'completed' && assessment.studentStatus === 'not_started') {
       Swal.fire({
         icon: 'info',
         title: 'Assessment Not Attempted',
@@ -446,19 +445,19 @@ export class StudHistoryComponent{
       })
     }
     else if (assessment.status === 'scheduled' || assessment.status === 'ongoing') {
-    window.scrollTo({top: 0, behavior: 'smooth'});
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       this.router.navigate(['/student/confirmation'], {
         state: { assessmentId: assessment.id }
       });
     }
-    else if(assessment.type === 'Assessment' || assessment.type === 'Public Assessment') {
+    else if (assessment.type === 'Assessment' || assessment.type === 'Public Assessment') {
       console.log('Navigating to result for:', assessment.id);
-       window.scrollTo({top: 0, behavior: 'smooth'});
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       this.router.navigate(['/student/assessment/result'], {
         state: { assessmentId: assessment.id }
       })
     } else if (assessment.type === 'Mastery') {
-    window.scrollTo({top: 0, behavior: 'smooth'});
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       this.router.navigate(['/student/assessment/result'], {
         state: { assessmentId: assessment.id }
       })

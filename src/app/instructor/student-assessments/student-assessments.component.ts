@@ -107,7 +107,6 @@ export class StudentAssessmentsComponent implements OnInit {
   }
 
   filterAssessments() {
-    // Create a combined filtered list
     const filtered = this.assessments.filter(assessment => {
       const matchesSearch = !this.searchQuery ||
         assessment.title?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
@@ -120,7 +119,6 @@ export class StudentAssessmentsComponent implements OnInit {
       return matchesSearch && matchesTab;
     });
 
-    // Update the separate lists for display
     this.filteredCompletedAssessments = filtered.filter(a => a.status === 'completed');
     this.filteredUpcomingAssessments = filtered.filter(a => a.status !== 'completed');
   }

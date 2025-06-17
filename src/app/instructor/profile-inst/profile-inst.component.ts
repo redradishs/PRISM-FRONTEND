@@ -22,9 +22,9 @@ interface InstructorProfile {
   classesManaged: number;
   assessmentsCreated: number;
   totalStudents: number;
-  alternateEmail?: string; // Added property
-  bio?: string; // Added property
-  isCoordinator: 'yes' | 'no'; // Update type to match backend
+  alternateEmail?: string;
+  bio?: string;
+  isCoordinator: 'yes' | 'no';
 }
 
 interface Assessment {
@@ -44,7 +44,6 @@ interface ClassPerformance {
   completionRate: number;
 }
 
-// Add this interface for tracking changes
 interface ProfileChanges {
   department?: string;
   position?: string;
@@ -67,7 +66,6 @@ interface PasswordData {
   styleUrls: ['./profile-inst.component.css']
 })
 export class ProfileInstComponent implements OnInit {
-  // Initialize all properties with default values
   profile: any = {
     name: '',
     email: '',
@@ -94,7 +92,6 @@ export class ProfileInstComponent implements OnInit {
   profilePicture: string = '';
   isLoading: boolean = true;
 
-  // Password related properties with defaults
   showCurrentPassword = false;
   showNewPassword = false;
   showConfirmPassword = false;
@@ -254,9 +251,7 @@ export class ProfileInstComponent implements OnInit {
       changes.isCoordinator = this.profile.isCoordinator || 'no';
     }
 
-    // Only make API call if there are changes
     if (Object.keys(changes).length > 0) {
-      // Show loading state
       Swal.fire({
         title: 'Saving changes...',
         allowOutsideClick: false,

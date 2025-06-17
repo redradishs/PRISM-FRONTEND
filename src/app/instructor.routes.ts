@@ -3,7 +3,6 @@ import { HomeComponent } from './instructor/home/home.component';
 import { StudentsComponent } from './instructor/students/students.component';
 import { AssessmentComponent } from './instructor/assessment/assessment.component';
 import { GenerateAssessmentComponent } from './instructor/generate-assessment/generate-assessment.component';
-import { TakeAssessmentComponent } from './instructor/take-assessment/take-assessment.component';
 import { ResultComponent } from './instructor/result/result.component';
 import { CreateAssessmentComponent } from './instructor/create-assessment/create-assessment.component';
 import { ProfileInstComponent } from './instructor/profile-inst/profile-inst.component';
@@ -24,13 +23,12 @@ export const INSTRUCTOR_ROUTES: Routes = [
     { path: 'create', component: GenerateAssessmentComponent },
     { path: 'createAssessment', component: FinalGenerateAssessmentComponent },
     { path: 'assign', component: AssignAssessmentComponent },
-    { path: 'takeassessment', component: TakeAssessmentComponent },
     { path: 'result', component: ResultComponent },
     { path: 'result/mastery', component: MasteryResultComponent },
-    {path: 'coordinator', component: CoordinatorComponent},
-    {path: 'evaluate', component: EvaluateComponent},
-    {path: 'response', component: ResponseReviewComponent},
-    {path: 'students/assessments', component: StudentAssessmentsComponent},
-    {path: 'manage', component: ManageComponent},
+    { path: 'coordinator', component: CoordinatorComponent },
+    { path: 'evaluate', component: EvaluateComponent },
+    { path: 'response', component: ResponseReviewComponent },
+    { path: 'students/assessments', component: StudentAssessmentsComponent },
+    { path: 'manage', component: ManageComponent },
     { path: 'generate', component: CreateAssessmentComponent },
 ]; 

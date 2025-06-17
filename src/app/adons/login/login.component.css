@@ -490,7 +490,6 @@ form {
     border-radius: 4px;
 }
 
-/* Email domain input with pre-filled domain */
 .email-input-container {
     display: flex;
     align-items: center;
@@ -505,7 +504,7 @@ form {
     border: none;
     border-radius: 0;
     padding: 0.75rem;
-    font-size: 16px; /* Prevent iOS zoom */
+    font-size: 16px; 
     outline: none;
 }
 
@@ -513,7 +512,7 @@ form {
     background-color: #f1f5f9;
     padding: 0.75rem 0.5rem;
     color: #64748b;
-    font-size: 16px; /* Prevent iOS zoom */
+    font-size: 16px; 
     white-space: nowrap;
     border-left: 1px solid #e2e8f0;
 }
@@ -522,26 +521,22 @@ form {
     border-color: #ef4444;
 }
 
-/* Fix iOS zoom issue on all form inputs */
 .form-input,
 .form-group input,
 .form-group select {
-    font-size: 16px; /* Minimum font size to prevent iOS zoom */
+    font-size: 16px; 
 }
 
-/* Focus state for the email container */
 .email-input-container:focus-within {
     border-color: #3b82f6;
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
 }
 
-/* Ensure image isn't causing extra space */
 .logo img {
     display: block;
     margin: 0 auto 1rem;
 }
 
-/* Ensure form inputs don't have extra spacing */
 .form-group:first-child {
     margin-top: 0;
 }
@@ -639,14 +634,12 @@ form {
   }
 }
 
-/* Disabled button styles */
 .sign-in-btn:disabled,
 .button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
 
-/* Loading state transitions */
 .sign-in-btn,
 .button {
   transition: all 0.3s ease;

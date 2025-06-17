@@ -150,7 +150,7 @@
 
 .role-badges {
     display: flex;
-    justify-content: flex-start; /* Align badges to the left */
+    justify-content: flex-start; 
     gap: 15px;
     margin-top: 15px;
     margin-bottom: 15px;
@@ -185,7 +185,7 @@
 
 .profile-meta {
     display: flex;
-    justify-content: flex-start; /* Align meta items to the left */
+    justify-content: flex-start; 
     gap: 20px;
     margin-top: 15px;
     width: 100%;
@@ -210,7 +210,7 @@
     display: flex;
     gap: 10px;
     margin-top: 20px;
-    margin-left: auto; /* Keep logout button on the right */
+    margin-left: auto;
 }
 
 .edit-button, .logout-button {
@@ -683,15 +683,15 @@ input:checked + .slider:before {
 
     .profile-details {
         text-align: center;
-        align-items: center; /* Center items only on mobile */
+        align-items: center; 
     }
 
     .role-badges {
-        justify-content: center; /* Center badges on mobile */
+        justify-content: center; 
     }
 
     .profile-meta {
-        justify-content: center; /* Center meta items on mobile */
+        justify-content: center; 
         flex-wrap: wrap;
         gap: 15px;
     }

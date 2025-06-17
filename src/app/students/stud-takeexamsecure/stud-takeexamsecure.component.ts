@@ -21,7 +21,7 @@ interface Question {
     options?: string[];
     points: number;
     questionText: string;
-    type: 'multiple-choice' | 'true-false' |'short-answer' |'multiple-select' | 'enumeration';
+    type: 'multiple-choice' | 'true-false' | 'short-answer' | 'multiple-select' | 'enumeration';
     _id: string;
   }
   type: 'multiple-choice' | 'true-false' | 'short-answer' | 'multiple-select' | 'enumeration';
@@ -62,7 +62,7 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
   assessmentTitle: string = '';
 
   currentQuestionIndex = 0;
-  timeRemaining = 30 * 60; 
+  timeRemaining = 30 * 60;
   selectedAnswer: string | null = null;
   multiSelectAnswers: { [key: string]: string[] } = {};
   enumerationAnswers: string[] = [];
@@ -84,13 +84,13 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
   isRandomized: boolean = false;
 
   constructor(
-    private router: Router, 
-    private auth: AuthService, 
+    private router: Router,
+    private auth: AuthService,
     private api: StudentService,
     private is: IntegrityMonitoringService
   ) {
     const navigation = this.router.getCurrentNavigation();
-    if(navigation?.extras.state) {
+    if (navigation?.extras.state) {
       this.assignedAssessmentId = navigation.extras.state['assessmentId'];
       console.log('Assessment ID:', this.assignedAssessmentId);
     }
@@ -98,11 +98,11 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.auth.getCurrentUser().subscribe((user) => {
-      if(user) {
+      if (user) {
         this.userId = user.id;
         this.getSecureData(this.userId, this.assignedAssessmentId);
         this.nextQuestionA();
-        
+
         this.setupIntegrityMonitoring();
       } else {
         console.error('User not found');
@@ -128,11 +128,11 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
     if (this.questionTimerInterval) {
       clearInterval(this.questionTimerInterval);
     }
-    
+
     this.subscriptions.forEach(sub => sub.unsubscribe());
-    
+
     this.is.cleanup();
-    
+
     console.log('StudTakeexamsecureComponent destroyed and cleaned up');
   }
 
@@ -163,7 +163,7 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
           console.log('Time remaining:', this.timeRemaining);
           this.resetEnumerationAnswers();
           this.startTimer();
-          if(resp.data.status === 'submitted'){
+          if (resp.data.status === 'submitted') {
             this.router.navigate(['/student/assessment/result'], {
               state: { assessmentId: this.assignedAssessmentId }
             })
@@ -218,21 +218,21 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
       next: (resp: any) => {
         if (resp.remarks === 'Success') {
           console.log('Assessment finalized successfully');
-          
+
           this.is.cleanup();
           this.is.resetAllViolations();
-          
+
           localStorage.removeItem('violations');
           sessionStorage.removeItem('violations');
           localStorage.removeItem('assessment_data');
           sessionStorage.removeItem('assessment_data');
-          
+
           // Clear component state
           this.cheatingCount = 0;
           this.cheatMessage = null;
-          
+
           console.log('Integrity monitoring completely reset for assessment completion');
-          
+
           this.router.navigate(['/student/assessment/result'], {
             state: {
               assessmentId: this.assignedAssessmentId
@@ -244,7 +244,6 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
       },
       error: (err: any) => {
         console.log('Error finalizing assessment:', err);
-        // Even on error, clean up integrity monitoring
         this.is.cleanup();
         this.is.resetAllViolations();
       }
@@ -252,7 +251,6 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
   }
 
   submitAnswer() {
-    // Clear question timer if it exists
     if (this.questionTimerInterval) {
       clearInterval(this.questionTimerInterval);
       this.isQuestionTimed = false;
@@ -268,7 +266,7 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
       case 'short-answer':
         givenAnswer = this.selectedAnswer;
         break;
-      case'multiple-select':
+      case 'multiple-select':
         givenAnswer = this.multiSelectAnswers[q._id] || [];
         break;
       case 'enumeration':
@@ -288,19 +286,17 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
     if (this.cheatingCount > 0) {
       // Get all violations
       const violations = this.is.getViolations();
-      
+
       if (violations.length > 0) {
         // Get the most recent violation
         const sortedViolations = [...violations].sort((a, b) => b.timestamp - a.timestamp);
         const latestViolation = sortedViolations[0];
-        
-        // Use the exact violation type from the monitoring service
         data.violation = {
           type: latestViolation.type,
           fromQuestionId: q._id,
           violationCount: this.cheatingCount
         };
-        
+
         console.log('Sending exact violation type:', latestViolation.type);
       }
     }
@@ -309,11 +305,10 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
       next: (resp: any) => {
         if (resp.remarks === 'Success') {
           console.log('Answer submitted successfully:', resp);
-          
-          // Only clear the visual alert message, but keep tracking violations
+
           this.is.clearAlerts();
-          
-          if(this.data.isLastQuestion) {
+
+          if (this.data.isLastQuestion) {
             this.finalizeAssessment();
           } else {
             this.selectedAnswer = null;
@@ -345,14 +340,14 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
 
   handleTimeUp() {
     console.log('Assessment time expired');
-    
+
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
     }
     if (this.questionTimerInterval) {
       clearInterval(this.questionTimerInterval);
     }
-    
+
     this.finalizeAssessment();
   }
 
@@ -374,10 +369,10 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
     if (!this.multiSelectAnswers[currentQuestion._id]) {
       this.multiSelectAnswers[currentQuestion._id] = [];
     }
-    
+
     const answers = this.multiSelectAnswers[currentQuestion._id];
     const index = answers.indexOf(option);
-    
+
     if (index === -1) {
       answers.push(option);
     } else {
@@ -386,7 +381,7 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
   }
 
   canProceed(question: Question): boolean {
-    if(!question) return false;
+    if (!question) return false;
     switch (question.type) {
       case 'multiple-choice':
       case 'true-false':
@@ -464,9 +459,9 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
 
   private setupIntegrityMonitoring() {
     console.log('Setting up integrity monitoring...');
-    
+
     this.is.cleanup();
-    
+
     setTimeout(() => {
       this.setupEventListeners();
       this.subscriptions.push(
@@ -475,20 +470,20 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
           console.log('Cheating count updated:', count);
         })
       );
-      
+
       this.subscriptions.push(
         this.is.cheatMessage$.subscribe(message => {
           this.cheatMessage = message;
           console.log('Cheat message updated:', message);
         })
       );
-      
+
       console.log('Integrity monitoring setup complete');
     }, 100);
   }
 
   private setupEventListeners() {
-    
+
     // Tab switching detection
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
@@ -511,7 +506,7 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
         console.log('Alt+Tab detected - triggering violation');
         this.is.registerViolation('Alt+Tab detected', 'high');
       }
-      
+
       // Ctrl shortcuts detection
       if (e.ctrlKey) {
         const forbiddenKeys = ['c', 'v', 'x', 'a', 's', 'p', 'f', 'h', 'u', 'r', 'w', 't', 'n'];
@@ -553,11 +548,11 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
     // Window resize detection (potential DevTools)
     window.addEventListener('resize', () => {
       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      
+
       if (!isMobile) {
         const widthThreshold = window.outerWidth - window.innerWidth > 160;
         const heightThreshold = window.outerHeight - window.innerHeight > 160;
-        
+
         if (widthThreshold || heightThreshold) {
           console.log('Window resize/DevTools detected - triggering violation');
           this.is.registerViolation('Developer tools or window resize detected', 'medium');
@@ -582,7 +577,7 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
     if (this.questionTimer > 0) {
       this.questionTimer = this.timedQuestions;
       this.isQuestionTimed = true;
-      
+
       this.questionTimerInterval = setInterval(() => {
         this.questionTimer--;
         if (this.questionTimer <= 0) {

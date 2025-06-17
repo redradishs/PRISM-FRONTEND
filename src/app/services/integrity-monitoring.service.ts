@@ -31,10 +31,10 @@ export class IntegrityMonitoringService {
 
   // Window blur tracking
   private lastBlurTime = 0;
-  private readonly BLUR_COOLDOWN = 3000; // 3 seconds cooldown
+  private readonly BLUR_COOLDOWN = 3000;
   private isUserActive = true;
   private blurCount = 0;
-  private readonly MAX_BLUR_COUNT = 3; // Max number of quick blurs before violation
+  private readonly MAX_BLUR_COUNT = 3;
 
   // Storage monitoring
   private storageCheckInterval: any;
@@ -42,7 +42,7 @@ export class IntegrityMonitoringService {
   // Pattern detection
   private rapidActionCount = 0;
   private lastActionTime = 0;
-  private readonly RAPID_ACTION_THRESHOLD = 3000; // 3 seconds
+  private readonly RAPID_ACTION_THRESHOLD = 3000;
 
   // Public observables
   public cheatingCount$: Observable<number> =
@@ -54,13 +54,13 @@ export class IntegrityMonitoringService {
   constructor(private ngZone: NgZone) {
     // Initialize monitoring immediately
     this.setupMonitoring();
-    
+
     // Load any existing violations
     this.loadCheatingCount();
-    
+
     // Set up storage monitoring
     this.monitorStorageDeletion();
-    
+
     // Set up accidental action resets
     this.setupAccidentalActionResets();
   }
@@ -102,9 +102,6 @@ export class IntegrityMonitoringService {
     this.detectDevTools();
   }
 
-  // Public methods for external components to use
-
-  // Get current values
   public getCheatingCount(): number {
     return this._cheatingCount.value;
   }
@@ -118,8 +115,7 @@ export class IntegrityMonitoringService {
     return this._violations.value
       .map(
         (v) =>
-          `${new Date(v.timestamp).toLocaleTimeString()}: ${v.type} (${
-            v.severity
+          `${new Date(v.timestamp).toLocaleTimeString()}: ${v.type} (${v.severity
           })`
       )
       .join('\n');
@@ -135,18 +131,14 @@ export class IntegrityMonitoringService {
       severity: severity,
     });
 
-    // Update violations
     this._violations.next(violations);
 
-    // Update count
     this.updateCheatingCount();
 
-    // Show message
     this._cheatMessage.next(
       `Integrity Alert: ${reason}. This activity has been logged.`
     );
 
-    // Store data
     this.secureStoreViolations();
 
     console.warn(`Integrity Alert: ${reason}`);
@@ -159,7 +151,6 @@ export class IntegrityMonitoringService {
 
   // Cleanup method to call when component is destroyed
   public cleanup(): void {
-    // Clear all intervals
     if (this.storageCheckInterval) {
       clearInterval(this.storageCheckInterval);
       this.storageCheckInterval = null;
@@ -172,7 +163,7 @@ export class IntegrityMonitoringService {
       clearTimeout(this.altTabResetTimer);
       this.altTabResetTimer = null;
     }
-    
+
     // Remove all event listeners that were added
     document.removeEventListener('mousemove', this.handleMouseMove);
     document.removeEventListener('keydown', this.handleKeyDown);
@@ -184,7 +175,7 @@ export class IntegrityMonitoringService {
     window.removeEventListener('resize', this.handleWindowResize);
     window.removeEventListener('storage', this.handleStorageChange);
     window.removeEventListener('beforeunload', this.beforeUnloadHandler);
-    
+
     console.log('Integrity monitoring cleanup completed');
   }
 
@@ -209,13 +200,10 @@ export class IntegrityMonitoringService {
   }
 
   private setupAccidentalActionResets() {
-    // Remove the reset timers that decrease violation counts
-    // This ensures violations are permanent during the assessment session
-    
-    // Store violation data more frequently to prevent data loss
+    //for data integrity, saves the violation every 30 seconds
     setInterval(() => {
       this.secureStoreViolations();
-    }, 30000); // Every 30 seconds
+    }, 30000);
   }
 
   private monitorStorageDeletion() {
@@ -247,12 +235,12 @@ export class IntegrityMonitoringService {
   private onWindowResize() {
     // Check if it's a mobile device
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
+
     if (!isMobile) {
       // For desktop: check for significant resizing that might indicate dev tools
       const widthThreshold = window.outerWidth - window.innerWidth > 160;
       const heightThreshold = window.outerHeight - window.innerHeight > 160;
-      
+
       if (widthThreshold || heightThreshold) {
         this.registerViolation('Developer tools or window resize detected', 'medium');
       }
@@ -272,26 +260,20 @@ export class IntegrityMonitoringService {
   }
 
   private checkStorageIntegrity() {
-    // Compare localStorage and sessionStorage values
     const localData = localStorage.getItem('assessment_integrity_data');
     const sessionData = sessionStorage.getItem('assessment_integrity_data');
-    
+
     if (this._violations.value.length > 0) {
       if (!localData && !sessionData) {
         this.handleStorageDeletion();
         return;
       }
     }
-    
-    // If both exist but don't match, sync them rather than flagging
-    // This handles normal usage where one might update before the other
+    //check if tampering occurred
     if (localData && sessionData && localData !== sessionData) {
-      // Check if both are valid JSON before assuming tampering
       try {
         const localViolations = JSON.parse(atob(localData));
         const sessionViolations = JSON.parse(atob(sessionData));
-        
-        // If both parse successfully, use the one with more violations
         if (Array.isArray(localViolations) && Array.isArray(sessionViolations)) {
           if (localViolations.length >= sessionViolations.length) {
             sessionStorage.setItem('assessment_integrity_data', localData);
@@ -301,23 +283,21 @@ export class IntegrityMonitoringService {
           return;
         }
       } catch (e) {
-        // If parsing fails, then it might be tampering
+        // it not the same, log as tampering
         this.handleStorageTampering();
         return;
       }
     }
-    
+
     // Check timestamps
     const localTime = localStorage.getItem('assessment_init_time');
     const sessionTime = sessionStorage.getItem('assessment_init_time');
-    
+
     if (localTime && sessionTime && localTime !== sessionTime) {
-      // Instead of immediately flagging, try to sync them
       const localTimeNum = parseInt(localTime, 10);
       const sessionTimeNum = parseInt(sessionTime, 10);
-      
+
       if (!isNaN(localTimeNum) && !isNaN(sessionTimeNum)) {
-        // Use the earlier timestamp (more likely to be original)
         const earlierTime = Math.min(localTimeNum, sessionTimeNum).toString();
         localStorage.setItem('assessment_init_time', earlierTime);
         sessionStorage.setItem('assessment_init_time', earlierTime);
@@ -337,7 +317,6 @@ export class IntegrityMonitoringService {
     this.secureStoreViolations();
   }
 
-  // Core functionality
 
   private showWarning(message: string) {
     this._cheatMessage.next(`Warning: ${message}`);
@@ -351,41 +330,30 @@ export class IntegrityMonitoringService {
   }
 
   private updateCheatingCount() {
-    // Remove expired violations
     const now = Date.now();
     const currentViolations = this._violations.value.filter(
       (v) => now - v.timestamp < this.VIOLATION_EXPIRY
     );
 
-    // Update violations
     this._violations.next(currentViolations);
 
-    // Update count
     this._cheatingCount.next(currentViolations.length);
-
-    // Store count
     this.secureStoreCheatingCount();
   }
 
   private secureStoreViolations() {
-    // Use a simple encryption approach
     const dataToStore = JSON.stringify(this._violations.value);
-    
-    // Basic encryption (in production, use a more robust approach)
+
     const encoded = this.encryptData(dataToStore);
-    
-    // Store in multiple locations
     localStorage.setItem('assessment_integrity_data', encoded);
     sessionStorage.setItem('assessment_integrity_data', encoded);
-    
-    // Add timestamp to make tampering more difficult
+
     const timestamp = Date.now().toString();
     const hashedTimestamp = this.hashString(timestamp);
-    
+
     localStorage.setItem('assessment_integrity_time', hashedTimestamp);
     sessionStorage.setItem('assessment_integrity_time', hashedTimestamp);
-    
-    // Use HTTP-only cookie if possible (simulated here)
+
     document.cookie = `assessment_count=${this._cheatingCount.value};path=/;max-age=86400;secure`;
   }
 
@@ -403,36 +371,36 @@ export class IntegrityMonitoringService {
   private loadCheatingCount() {
     try {
       let encoded = sessionStorage.getItem('assessment_integrity_data');
-      
+
       if (!encoded) {
         encoded = localStorage.getItem('assessment_integrity_data');
       }
-      
+
       if (!encoded) {
         const cookieMatch = document.cookie.match(/assessment_count=(\d+)/);
         if (cookieMatch && cookieMatch[1]) {
           const count = parseInt(cookieMatch[1], 10);
           this._cheatingCount.next(count);
-          
+
           if (count > 0) {
             this.registerViolation('Storage data deletion detected', 'high');
             return;
           }
         }
       }
-      
+
       if (encoded) {
         try {
           const violations = JSON.parse(atob(encoded)) as Violation[];
-          
+
           const now = Date.now();
           const currentViolations = violations.filter(
             (v) => now - v.timestamp < this.VIOLATION_EXPIRY
           );
-          
+
           this._violations.next(currentViolations);
           this._cheatingCount.next(currentViolations.length);
-          
+
           this.secureStoreViolations();
         } catch (e) {
           console.warn('Error parsing integrity data');
@@ -444,79 +412,65 @@ export class IntegrityMonitoringService {
   }
 
   getViolations() {
-    // Simply return the raw violation objects
+
     return this._violations.value.map(violation => ({
-      type: violation.type,       // Keep the exact violation type
+      type: violation.type,
       severity: violation.severity,
       timestamp: violation.timestamp
     }));
   }
 
-  // Original resetViolations renamed to track it's only called on assessment end
   resetAllViolations() {
     this._violations.next([]);
     this._cheatingCount.next(0);
     this._cheatMessage.next(null);
-    
-    // Clear all storage mechanisms to ensure complete reset
+
     localStorage.removeItem('assessment_integrity_data');
     sessionStorage.removeItem('assessment_integrity_data');
     localStorage.removeItem('assessment_integrity_count');
     sessionStorage.removeItem('assessment_integrity_count');
     localStorage.removeItem('assessment_init_time');
     sessionStorage.removeItem('assessment_init_time');
-    
-    // Clear cookie
+
     document.cookie = 'assessment_count=0; path=/; max-age=0';
-    
-    // Re-initialize timestamp
     this.storeTimestamps();
-    
+
     console.log('Integrity monitoring system reset at', new Date().toISOString());
   }
 
   // Add encryption helper methods
   private encryptData(data: string): string {
-    // In production, use a proper encryption library
-    // This is a simple obfuscation for demonstration
     const key = "PRISM_ASSESSMENT_SYSTEM";
-    let result = btoa(data); // Base64 encode
-    
-    // Add a checksum
+    let result = btoa(data);
     const checksum = this.hashString(data).substring(0, 8);
     result = checksum + '_' + result;
-    
+
     return result;
   }
 
   private hashString(str: string): string {
-    // Simple hash function for demonstration
-    // In production, use a cryptographic hash function
+    // Simple hash function for enc
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
       hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32bit integer
+      hash = hash & hash;
     }
     return Math.abs(hash).toString(16);
   }
 
   // Detect if DevTools is open
   private detectDevTools() {
-    // Method 1: Check for debugger
     const startTime = new Date().getTime();
-    debugger; // This gets triggered if DevTools is open
+    debugger;
     const endTime = new Date().getTime();
-    
+
     if (endTime - startTime > 100) {
       this.registerViolation('Developer tools detected', 'high');
     }
-    
-    // Method 2: Console overriding
     const consoleCheck = () => {
       const original = window.console.log;
       window.console.log = (...args) => {
-        // Check if being used in DevTools
         const stack = new Error().stack || '';
         if (stack.includes('console-api') || stack.includes('debugger')) {
           this.registerViolation('Console API usage detected', 'medium');
@@ -524,19 +478,18 @@ export class IntegrityMonitoringService {
         original(...args);
       };
     };
-    
+
     consoleCheck();
-    
-    // Periodically check for DevTools (Firefox, Safari)
+
     setInterval(() => {
       // Check if it's a mobile device
       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      
+
       // Only check for DevTools on desktop devices
       if (!isMobile) {
         const widthThreshold = window.outerWidth - window.innerWidth > 160;
         const heightThreshold = window.outerHeight - window.innerHeight > 160;
-        
+
         if (widthThreshold || heightThreshold) {
           this.registerViolation('Developer tools potentially detected', 'medium');
         }
@@ -544,7 +497,6 @@ export class IntegrityMonitoringService {
     }, 5000);
   }
 
-  // Add event handler methods as class properties to properly remove them
   private handleMouseMove = () => {
     this.lastActivity = Date.now();
     this.isUserActive = true;
@@ -553,7 +505,7 @@ export class IntegrityMonitoringService {
   private handleKeyDown = (e: KeyboardEvent) => {
     this.lastActivity = Date.now();
     this.isUserActive = true;
-    
+
     // Screenshot detection
     if (e.key === 'PrintScreen' || (e.key === 'S' && (e.ctrlKey || e.metaKey) && e.shiftKey)) {
       this.registerViolation('Screenshot attempt detected', 'high');
@@ -587,8 +539,7 @@ export class IntegrityMonitoringService {
   private handleVisibilityChange = () => {
     if (document.hidden) {
       const now = Date.now();
-      
-      // Check for rapid switching
+
       if (now - this.lastActionTime < this.RAPID_ACTION_THRESHOLD) {
         this.rapidActionCount++;
         if (this.rapidActionCount >= 3) {
@@ -598,38 +549,37 @@ export class IntegrityMonitoringService {
         this.rapidActionCount = 1;
         this.registerViolation('Tab switch detected', 'medium');
       }
-      
+
       this.lastActionTime = now;
     }
   };
 
   private handleWindowBlur = () => {
     const now = Date.now();
-    
-    // Only count blur if user was active and it's been more than the cooldown period
+
     if (this.isUserActive && (now - this.lastBlurTime > this.BLUR_COOLDOWN)) {
       this.blurCount++;
-      
+
       if (this.blurCount === 1) {
         this.showWarning('Please stay focused on the exam');
       }
-      
+
       if (this.blurCount >= this.MAX_BLUR_COUNT) {
         this.registerViolation('Multiple window focus losses detected', 'medium');
         this.blurCount = 0;
       }
-      
+
       this.lastBlurTime = now;
     }
   };
 
   private handleWindowResize = () => {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
+
     if (!isMobile) {
       const widthThreshold = window.outerWidth - window.innerWidth > 160;
       const heightThreshold = window.outerHeight - window.innerHeight > 160;
-      
+
       if (widthThreshold || heightThreshold) {
         this.registerViolation('Developer tools or window resize detected', 'medium');
       }

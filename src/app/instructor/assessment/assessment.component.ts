@@ -562,7 +562,6 @@ export class AssessmentComponent {
     }
 
     try {
-      // Show loading state
       Swal.fire({
         title: 'Assigning Assessment',
         text: 'Please wait while we assign the assessment...',

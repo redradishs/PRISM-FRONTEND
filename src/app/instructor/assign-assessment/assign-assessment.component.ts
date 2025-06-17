@@ -71,7 +71,7 @@ interface AssignmentData {
     masteryScore?: number;
     joiningCode?: string;
     randomizeQuestions: boolean;
-    showResults: 'immediate' | 'completed' ;
+    showResults: 'immediate' | 'completed';
     passingScore: number;
   };
 }
@@ -87,11 +87,11 @@ export class AssignAssessmentComponent implements OnInit {
   userId: string = '';
   username: string = '';
   profile: string = '';
-  
+
   isMobile: boolean = window.innerWidth <= 768;
   currentStep: number = 1;
   selectedMode: 'assessment' | 'mastery' | 'public' = 'assessment';
-  
+
   // Assessment configuration
   startDate: string = '';
   dueDate: string = '';
@@ -102,14 +102,14 @@ export class AssignAssessmentComponent implements OnInit {
   attemptsAllowed: number = 1;
   randomizeQuestions: boolean = true;
   specialInstructions: string = '';
-  
+
   // Mastery mode settings
   masteryScore: number = 90;
-  
+
   // Public mode settings
   isPublic: boolean = false;
   joiningCode: string = '';
-  
+
   // Date presets
   startDatePresets: DatePreset[] = [
     {
@@ -159,7 +159,7 @@ export class AssignAssessmentComponent implements OnInit {
 
   private searchTimeout: any;
   isSearching: boolean = false;
-  
+
   isSearchLoading: boolean = false;
 
   selectedAssessmentPoints: number = 0;
@@ -273,7 +273,7 @@ export class AssignAssessmentComponent implements OnInit {
     this.assignmentType = type;
     this.selectedClasses.clear();
     this.selectedStudents.clear();
-    if(type === 'individual') {
+    if (type === 'individual') {
       this.selectedMode = 'public';
       this.attemptsAllowed = 1;
       this.showResults = 'completed';
@@ -285,7 +285,7 @@ export class AssignAssessmentComponent implements OnInit {
     if (!selectedClass) return;
 
     const classCode = selectedClass.classCode;
-    if(selectedClass.totalStudents === 0) {
+    if (selectedClass.totalStudents === 0) {
       this.showNoStudentsAlert();
       return;
     }
@@ -317,13 +317,11 @@ export class AssignAssessmentComponent implements OnInit {
       this.selectedAssessments.delete(assessmentId);
       this.selectedAssessmentPoints = 0;
     } else {
-      this.selectedAssessments.clear(); // Only allow one assessment at a time
+      this.selectedAssessments.clear();
       this.selectedAssessments.add(assessmentId);
-      // Update total points
       const assessment = this.assessments.find(a => a._id === assessmentId);
       if (assessment) {
         this.selectedAssessmentPoints = assessment.totalPoints;
-        // If in mastery mode, validate the mastery score
         if (this.selectedMode === 'mastery') {
           this.validateMasteryScore();
         }
@@ -358,9 +356,9 @@ export class AssignAssessmentComponent implements OnInit {
     return this.classes.filter(cls => {
       const searchTerm = this.classSearchQuery.toLowerCase();
       return cls.className.toLowerCase().includes(searchTerm) ||
-             cls.classCode.toLowerCase().includes(searchTerm) ||
-             cls.block.toLowerCase().includes(searchTerm) ||
-             cls.year.toLowerCase().includes(searchTerm);
+        cls.classCode.toLowerCase().includes(searchTerm) ||
+        cls.block.toLowerCase().includes(searchTerm) ||
+        cls.year.toLowerCase().includes(searchTerm);
     });
   }
 
@@ -377,14 +375,14 @@ export class AssignAssessmentComponent implements OnInit {
   async onNext() {
     if (this.currentStep === 1 && this.selectedAssessments.size > 0) {
       this.setStep(2);
-    } else if (this.currentStep === 2 && 
-              ((this.assignmentType === 'classes' && this.selectedClasses.size > 0) ||
-               (this.assignmentType === 'individual' && this.selectedStudents.size > 0))) {
+    } else if (this.currentStep === 2 &&
+      ((this.assignmentType === 'classes' && this.selectedClasses.size > 0) ||
+        (this.assignmentType === 'individual' && this.selectedStudents.size > 0))) {
       this.setStep(3);
     } else if (this.currentStep === 3) {
       this.setStep(4);
     } else if (this.currentStep === 4) {
-      if(this.assignmentType === 'individual') {
+      if (this.assignmentType === 'individual') {
         await this.assignSpecific();
       } else {
         await this.saveAssignment();
@@ -406,21 +404,19 @@ export class AssignAssessmentComponent implements OnInit {
 
   clearSelection() {
     if (this.assignmentType === 'individual') {
-        this.selectedStudents.clear();
+      this.selectedStudents.clear();
     } else {
-        this.selectedClasses.clear();
+      this.selectedClasses.clear();
     }
   }
 
   setAssessmentMode(mode: 'assessment' | 'mastery' | 'public') {
     this.selectedMode = mode;
-    
-    // Reset settings based on mode
+
     if (mode === 'mastery') {
       this.attemptsAllowed = 3;
       this.showResults = 'immediate';
       this.randomizeQuestions = true;
-      // Set initial mastery score
       this.masteryScore = Math.min(90, this.selectedAssessmentPoints);
     } else if (mode === 'public') {
       this.attemptsAllowed = 1;
@@ -445,7 +441,7 @@ export class AssignAssessmentComponent implements OnInit {
 
   applyStartDatePreset(preset: DatePreset) {
     this.startDate = this.formatDate(preset.startDate);
-    
+
     if (this.dueDate) {
       const startDateTime = new Date(this.startDate);
       const newDueDate = new Date(startDateTime);
@@ -483,14 +479,14 @@ export class AssignAssessmentComponent implements OnInit {
   getMinDueDate(): string {
     if (this.startDate) {
       const start = new Date(this.startDate);
-      start.setMinutes(start.getMinutes() + 10); 
-      return this.formatDate(start); 
+      start.setMinutes(start.getMinutes() + 10);
+      return this.formatDate(start);
     } else {
       const now = new Date();
       now.setMinutes(now.getMinutes() + 1);
-      return this.formatDate(now); 
+      return this.formatDate(now);
     }
-  } 
+  }
 
   validateDates(): string | null {
     if (this.startDate && this.dueDate) {
@@ -507,7 +503,7 @@ export class AssignAssessmentComponent implements OnInit {
           background: '#fff',
           iconColor: '#3b82f6'
         });
-  
+
         const fallbackDue = new Date(this.startDate);
         fallbackDue.setMinutes(fallbackDue.getMinutes() + 10);
         this.dueDate = this.formatDate(fallbackDue);
@@ -516,12 +512,11 @@ export class AssignAssessmentComponent implements OnInit {
     }
     return null;
   }
-  
+
 
   validateMasteryScore() {
     if (this.selectedAssessmentPoints > 0 && this.masteryScore > this.selectedAssessmentPoints) {
       this.masteryScore = this.selectedAssessmentPoints;
-      // Show warning to user
       Swal.fire({
         icon: 'warning',
         title: 'Mastery Score Adjusted',
@@ -529,7 +524,7 @@ export class AssignAssessmentComponent implements OnInit {
         timer: 2000,
         timerProgressBar: true,
         toast: true,
-        position: 'top-end' 
+        position: 'top-end'
       });
     }
   }
@@ -580,7 +575,6 @@ export class AssignAssessmentComponent implements OnInit {
     this.loadStudents();
   }
 
-  // Update the search method
   onStudentSearch(searchTerm: string) {
     if (this.searchTimeout) {
       clearTimeout(this.searchTimeout);
@@ -595,8 +589,8 @@ export class AssignAssessmentComponent implements OnInit {
 
     this.searchTimeout = setTimeout(() => {
       this.isSearching = true;
-      this.isSearchLoading = true; // Use separate loading state for search
-      
+      this.isSearchLoading = true;
+
       this.api.searchStudentUniversal(this.userId, searchTerm).subscribe({
         next: (response: any) => {
           if (this.studentSearchQuery === searchTerm) {
@@ -619,7 +613,7 @@ export class AssignAssessmentComponent implements OnInit {
 
   private getAssignmentData(): AssignmentData {
     const assignmentData: AssignmentData = {
-      assessmentId: Array.from(this.selectedAssessments)[0], // Get the first selected assessment
+      assessmentId: Array.from(this.selectedAssessments)[0],
       startDate: this.startDate,
       dueDate: this.dueDate,
       timeLimit: this.timeLimit,
@@ -627,7 +621,7 @@ export class AssignAssessmentComponent implements OnInit {
       instructions: this.specialInstructions,
       createdBy: this.userId,
       assignmentMode: this.selectedMode,
-      classCodes: this.assignmentType === 'classes' 
+      classCodes: this.assignmentType === 'classes'
         ? Array.from(this.selectedClasses)
         : Array.from(this.selectedStudents),
       maxAttempts: this.attemptsAllowed,
@@ -639,8 +633,6 @@ export class AssignAssessmentComponent implements OnInit {
     };
 
     console.log(assignmentData.classCodes);
-
-    // Add mode-specific settings
     if (this.selectedMode === 'mastery') {
       assignmentData.modeSettings.masteryScore = this.masteryScore;
     } else if (this.selectedMode === 'public') {
@@ -657,7 +649,7 @@ export class AssignAssessmentComponent implements OnInit {
 
     const startDateTime = new Date(this.startDate).getTime();
     const dueDateTime = new Date(this.dueDate).getTime();
-    
+
     if (startDateTime >= dueDateTime) {
       return 'Start date must be before due date.';
     }
@@ -672,15 +664,15 @@ export class AssignAssessmentComponent implements OnInit {
       }
     }
 
-    if (this.selectedMode !== 'public' && 
-        this.assignmentType === 'classes' && 
-        this.selectedClasses.size === 0) {
+    if (this.selectedMode !== 'public' &&
+      this.assignmentType === 'classes' &&
+      this.selectedClasses.size === 0) {
       return 'Please select at least one class.';
     }
 
-    if (this.selectedMode !== 'public' && 
-        this.assignmentType === 'individual' && 
-        this.selectedStudents.size === 0) {
+    if (this.selectedMode !== 'public' &&
+      this.assignmentType === 'individual' &&
+      this.selectedStudents.size === 0) {
       return 'Please select at least one student.';
     }
 
@@ -711,7 +703,7 @@ export class AssignAssessmentComponent implements OnInit {
       const assignmentData = this.getAssignmentData();
       console.log('Assignment Data:', assignmentData);
 
-      // For public mode, send without recipients
+      // public mode can send without classCodes
       if (this.selectedMode === 'public') {
         assignmentData.classCodes = [];
         this.api.assignAssessment(assignmentData).subscribe({
@@ -724,14 +716,13 @@ export class AssignAssessmentComponent implements OnInit {
           }
         });
       } else {
-        // For other modes, assign to each recipient sequentially
-        const recipients = this.assignmentType === 'classes' 
+        // classes will get added individually
+        const recipients = this.assignmentType === 'classes'
           ? Array.from(this.selectedClasses)
           : Array.from(this.selectedStudents);
 
         console.log('Recipients:', recipients);
 
-        // Create an array of observables for each assignment
         const assignments = recipients.map(recipient => {
           const singleAssignment = {
             ...assignmentData,
@@ -759,12 +750,12 @@ export class AssignAssessmentComponent implements OnInit {
             });
           });
         }, Promise.resolve())
-        .then(() => {
-          this.showSuccessAndNavigate();
-        })
-        .catch((error) => {
-          this.handleAssignmentError(error);
-        });
+          .then(() => {
+            this.showSuccessAndNavigate();
+          })
+          .catch((error) => {
+            this.handleAssignmentError(error);
+          });
       }
     } catch (error) {
       this.handleAssignmentError(error);
@@ -778,11 +769,11 @@ export class AssignAssessmentComponent implements OnInit {
       text: this.selectedMode === 'public'
         ? 'The public assessment has been successfully created.'
         : `The assessment has been successfully assigned to ${this.assignmentType === 'classes' ? 'all selected classes' : 'all selected students'},`,
-        timer: 2000,
-        timerProgressBar: true,
-        showConfirmButton: false,
-        toast: true,
-        position: 'top-end'
+      timer: 2000,
+      timerProgressBar: true,
+      showConfirmButton: false,
+      toast: true,
+      position: 'top-end'
     }).then(() => {
       this.router.navigate(['/instructor/dashboard']);
       this.runUpdates();
@@ -807,7 +798,7 @@ export class AssignAssessmentComponent implements OnInit {
       return matchesSearch && matchesDate;
     });
 
-    filtered = filtered.sort((a, b) => 
+    filtered = filtered.sort((a, b) =>
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
 
@@ -860,13 +851,13 @@ export class AssignAssessmentComponent implements OnInit {
         return this.selectedAssessments.size > 0;
       case 2:
         return (this.assignmentType === 'classes' && this.selectedClasses.size > 0) ||
-               (this.assignmentType === 'individual' && this.selectedStudents.size > 0);
+          (this.assignmentType === 'individual' && this.selectedStudents.size > 0);
       case 3:
         const validDates = !!(this.startDate && this.dueDate);
         const validTimeLimit = this.timeLimit >= 1;
         const validAttempts = this.attemptsAllowed >= 1;
 
-        if(this.assignmentType === 'individual') {
+        if (this.assignmentType === 'individual') {
           return validDates && validTimeLimit && validAttempts
         }
 
@@ -878,10 +869,10 @@ export class AssignAssessmentComponent implements OnInit {
         } else if (this.selectedMode === 'public') {
           modeValidation = this.joiningCode.length > 0;
         }
-        
+
         return validDates && validTimeLimit && validAttempts && modeValidation;
       case 4:
-        return true; 
+        return true;
       default:
         return false;
     }
@@ -928,7 +919,7 @@ export class AssignAssessmentComponent implements OnInit {
 
     try {
       const response = await this.api.assignSpecific(assignmentData).toPromise();
-      
+
       Swal.fire({
         icon: 'success',
         title: 'Assessment Assigned',
@@ -942,7 +933,7 @@ export class AssignAssessmentComponent implements OnInit {
 
       this.router.navigate(['/instructor/dashboard']);
 
-      
+
     } catch (error: any) {
       console.error('Error assigning assessment:', error);
       Swal.fire({
@@ -964,29 +955,29 @@ export class AssignAssessmentComponent implements OnInit {
     if (!this.startDate || !this.dueDate) {
       return 'Please set both start and due dates.';
     }
-  
+
     const startDateTime = new Date(this.startDate).getTime();
     const dueDateTime = new Date(this.dueDate).getTime();
-    
+
     if (startDateTime >= dueDateTime) {
       return 'Start date must be before due date.';
     }
-  
+
     if (this.timeLimit < 1) {
       return 'Time limit must be at least 1 minute.';
     }
-  
+
     if (this.selectedStudents.size === 0) {
       return 'Please select at least one student.';
     }
-  
+
     if (this.selectedAssessments.size === 0) {
       return 'Please select an assessment.';
     }
-  
+
     return null;
   }
-  
+
 
   showNoStudentsAlert(): void {
     Swal.fire({

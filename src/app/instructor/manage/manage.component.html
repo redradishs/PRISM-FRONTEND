@@ -20,13 +20,16 @@
                             </div>
                             <div *ngIf="!isMobile" class="flex items-center">
                                 <div class="relative mr-3">
-                                    <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                                        <img *ngIf="profile" [src]="profile" alt="Profile" class="w-full h-full object-cover">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profile" [src]="profile" alt="Profile"
+                                            class="w-full h-full object-cover">
                                         <span *ngIf="!profile" class="text-base md:text-lg font-medium text-gray-600">
                                             {{username.charAt(0) || 'A'}}
                                         </span>
                                     </div>
-                                    <div class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
                                     </div>
                                 </div>
                                 <div class="text-left">
@@ -95,10 +98,12 @@
                             </select>
                         </div>
                         <div class="view-toggle">
-                            <button class="view-toggle-btn" [class.active]="viewMode === 'grid'" (click)="setViewMode('grid')" title="Grid View">
+                            <button class="view-toggle-btn" [class.active]="viewMode === 'grid'"
+                                (click)="setViewMode('grid')" title="Grid View">
                                 <i class="fas fa-th-large"></i>
                             </button>
-                            <button class="view-toggle-btn" [class.active]="viewMode === 'list'" (click)="setViewMode('list')" title="List View">
+                            <button class="view-toggle-btn" [class.active]="viewMode === 'list'"
+                                (click)="setViewMode('list')" title="List View">
                                 <i class="fas fa-list"></i>
                             </button>
                         </div>
@@ -110,25 +115,29 @@
                     <button [class.active]="selectedStatus === ''" (click)="onTabChange('')" class="tab-trigger">
                         <i class="fas fa-layer-group tab-icon"></i>
                         <span class="tab-text">All</span>
-                        <span class="count-badge" [class.active]="selectedStatus === ''">{{assessmentCounts.total}}</span>
+                        <span class="count-badge"
+                            [class.active]="selectedStatus === ''">{{assessmentCounts.total}}</span>
                     </button>
                     <button [class.active]="selectedStatus === 'scheduled'" (click)="onTabChange('scheduled')"
                         class="tab-trigger">
                         <i class="fas fa-calendar tab-icon"></i>
                         <span class="tab-text">Scheduled</span>
-                        <span class="count-badge" [class.active]="selectedStatus === 'scheduled'">{{assessmentCounts.scheduled}}</span>
+                        <span class="count-badge"
+                            [class.active]="selectedStatus === 'scheduled'">{{assessmentCounts.scheduled}}</span>
                     </button>
                     <button [class.active]="selectedStatus === 'ongoing'" (click)="onTabChange('ongoing')"
                         class="tab-trigger">
                         <i class="fas fa-clock tab-icon"></i>
                         <span class="tab-text">Ongoing</span>
-                        <span class="count-badge" [class.active]="selectedStatus === 'ongoing'">{{assessmentCounts.ongoing}}</span>
+                        <span class="count-badge"
+                            [class.active]="selectedStatus === 'ongoing'">{{assessmentCounts.ongoing}}</span>
                     </button>
                     <button [class.active]="selectedStatus === 'completed'" (click)="onTabChange('completed')"
                         class="tab-trigger">
                         <i class="fas fa-check-circle tab-icon"></i>
                         <span class="tab-text">Completed</span>
-                        <span class="count-badge" [class.active]="selectedStatus === 'completed'">{{assessmentCounts.completed}}</span>
+                        <span class="count-badge"
+                            [class.active]="selectedStatus === 'completed'">{{assessmentCounts.completed}}</span>
                     </button>
                 </div>
 
@@ -156,27 +165,25 @@
                 </div>
 
                 <!-- Assessment Grid -->
-                <div class="assessment-grid" [class.list-view]="viewMode === 'list'" *ngIf="filteredAssessments.length > 0">
+                <div class="assessment-grid" [class.list-view]="viewMode === 'list'"
+                    *ngIf="filteredAssessments.length > 0">
                     <ng-container *ngIf="viewMode === 'list'; else gridView">
-                        <div (click)="gotoResult(assessment)" 
-                             *ngFor="let assessment of filteredAssessments" 
-                             class="assessment-list-card animate-card"
-                             [ngClass]="{
+                        <div (click)="gotoResult(assessment)" *ngFor="let assessment of filteredAssessments"
+                            class="assessment-list-card animate-card" [ngClass]="{
                                'border-assessment': assessment.type === 'Assessment',
                                'border-public': assessment.type === 'Public Assessment',
                                'border-mastery': assessment.type === 'Mastery'
                              }">
                             <!-- Icon: only show on desktop -->
-                            <div class="list-icon-centered"
-                            [ngClass]="{
+                            <div class="list-icon-centered" [ngClass]="{
                               'icon-assessment': assessment.type === 'Assessment',
                               'icon-public': assessment.type === 'Public Assessment',
                               'icon-mastery': assessment.type === 'Mastery'
                             }">
-                         <i class="fas {{getModeIcon(assessment.type)}}"></i>
-                       </div>
+                                <i class="fas {{getModeIcon(assessment.type)}}"></i>
+                            </div>
                             <div class="list-main">
-                                <!-- Desktop header (hidden on mobile) -->
+                                <!-- desktop hidden on mobile -->
                                 <div class="list-header-main">
                                     <span class="list-title">{{ assessment.title }}</span>
                                     <span class="badge badge-{{assessment.type | lowercase}}">{{assessment.type}}</span>
@@ -185,7 +192,7 @@
                                         <span>{{assessment.status | titlecase}}</span>
                                     </span>
                                 </div>
-                                <!-- Mobile header (hidden on desktop) -->
+                                <!-- for mobile hidden on desktop -->
                                 <div class="list-header-mobile">
                                     <span class="list-title">{{ assessment.title }}</span>
                                     <span class="badge badge-{{assessment.status}}">
@@ -212,19 +219,21 @@
                                         </span>
                                         <span *ngIf="assessment.type !== 'Public Assessment'">
                                             <i class="fas fa-users"></i>
-                                            {{assessment.assignedClasses[0].classCode}} - {{assessment.assignedClasses[0].className}}
+                                            {{assessment.assignedClasses[0].classCode}} -
+                                            {{assessment.assignedClasses[0].className}}
                                         </span>
                                         <span *ngIf="assessment.type !== 'Public Assessment'">
                                             <i class="fas fa-upload"></i>
-                                            {{assessment.assignedClasses[0].stats.submitted || 0}}/{{assessment.assignedClasses[0].totalStudents || 0}} Submissions
+                                            {{assessment.assignedClasses[0].stats.submitted ||
+                                            0}}/{{assessment.assignedClasses[0].totalStudents || 0}} Submissions
                                         </span>
-                                        <span *ngIf="assessment.type === 'Public Assessment' && assessment.modeSettings?.joiningCode">
+                                        <span
+                                            *ngIf="assessment.type === 'Public Assessment' && assessment.modeSettings?.joiningCode">
                                             <i class="fas fa-link"></i>
                                             Code: {{assessment.modeSettings.joiningCode}}
                                         </span>
                                     </div>
                                 </div>
-                                <!-- If you have score/percentage, show it here -->
                             </div>
                             <div class="list-side">
                                 <span *ngIf="assessment.status === 'completed'" class="completed-date-label">
@@ -245,21 +254,21 @@
                             </div>
                         </div>
                     </ng-container>
-                    
+
 
 
 
                     <!-- GRID VIEW  -->
                     <ng-template #gridView>
-                        <div (click)="gotoResult(assessment)" 
-                             *ngFor="let assessment of filteredAssessments"
-                             class="assessment-card card-{{assessment.type | lowercase}} animate-card">
+                        <div (click)="gotoResult(assessment)" *ngFor="let assessment of filteredAssessments"
+                            class="assessment-card card-{{assessment.type | lowercase}} animate-card">
                             <div class="card-header">
                                 <div class="card-header-top">
                                     <div class="card-mode">
                                         <i
                                             class="fas {{getModeIcon(assessment.type)}} mode-icon mode-icon-{{assessment.type | lowercase}}"></i>
-                                        <span class="badge badge-{{assessment.type | lowercase}}">{{assessment.type}}</span>
+                                        <span
+                                            class="badge badge-{{assessment.type | lowercase}}">{{assessment.type}}</span>
                                     </div>
                                     <span class="badge badge-{{assessment.status}}">
                                         <i class="fas {{getStatusIcon(assessment.status)}} badge-icon"></i>
@@ -321,18 +330,21 @@
                                 <div *ngIf="assessment.type !== 'Public Assessment'" class="assessment-details">
                                     <div class="detail-item">
                                         <i class="fas fa-file-alt detail-icon"></i>
-                                        <span>{{assessment.assignedClasses[0].classCode}} - {{assessment.assignedClasses[0].className}}</span>
+                                        <span>{{assessment.assignedClasses[0].classCode}} -
+                                            {{assessment.assignedClasses[0].className}}</span>
                                     </div>
                                     <div class="detail-item">
                                         <i class="far fa-clock detail-icon"></i>
-                                        <span>{{assessment.assignedClasses[0].stats.submitted || 0}}/{{assessment.assignedClasses[0].totalStudents || 0}} Submissions</span>
+                                        <span>{{assessment.assignedClasses[0].stats.submitted ||
+                                            0}}/{{assessment.assignedClasses[0].totalStudents || 0}} Submissions</span>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="card-footer">
                                 <div class="actions-container">
-                                    <button class="btn btn-primary" (click)="viewAssessmentDetails(assessment)">View Details</button>
+                                    <button class="btn btn-primary" (click)="viewAssessmentDetails(assessment)">View
+                                        Details</button>
                                     <div class="dropdown">
                                         <button class="btn-icon">
                                             <i class="fas fa-ellipsis-h"></i>

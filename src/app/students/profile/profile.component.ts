@@ -186,7 +186,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.auth.getCurrentProfile(this.userId).subscribe({
       next: (resp: any) => {
         if (resp?.data) {
-          // Merge with defaults while preserving the structure
           this.profile = {
             ...this.profile,
             ...resp.data,
@@ -196,7 +195,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
           };
           this.originalProfile = { ...this.profile };
 
-          // Load additional data if needed
           this.loadPerformanceData();
         }
         this.isLoading = false;
@@ -411,6 +409,5 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Cleanup code if needed
   }
 }

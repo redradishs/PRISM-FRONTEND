@@ -9,13 +9,16 @@
                         <div class="flex items-center">
                             <div *ngIf="!isMobile" class="flex items-center">
                                 <div class="relative mr-3">
-                                    <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                                        <img *ngIf="profile" [src]="profile" alt="Profile" class="w-full h-full object-cover">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profile" [src]="profile" alt="Profile"
+                                            class="w-full h-full object-cover">
                                         <span *ngIf="!profile" class="text-base md:text-lg font-medium text-gray-600">
                                             {{username.charAt(0) || 'A'}}
                                         </span>
                                     </div>
-                                    <div class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
                                     </div>
                                 </div>
                                 <div class="text-left">
@@ -47,7 +50,7 @@
                     </div>
 
                     <div class="publish-container">
-                        <button class="publish-button" [routerLink]="['/instructor/createAssessment']" >
+                        <button class="publish-button" [routerLink]="['/instructor/createAssessment']">
                             <i class="fas fa-plus"></i>
                             Create Assessment
                         </button>
@@ -122,8 +125,7 @@
                                 <!-- Assessment Grid -->
                                 <div class="assessment-grid">
                                     <ng-container *ngFor="let assessment of displayedAssessments">
-                                        <!-- Only display card if no selection or this card is selected -->
-                                        <div *ngIf="selectedAssessments.size === 0 || isAssessmentSelected(assessment._id)" 
+                                        <div *ngIf="selectedAssessments.size === 0 || isAssessmentSelected(assessment._id)"
                                             class="assessment-card"
                                             [class.selected]="isAssessmentSelected(assessment._id)"
                                             (click)="toggleAssessmentSelection(assessment._id)">
@@ -147,7 +149,8 @@
                                                         </div>
                                                         <div class="info-item">
                                                             <i class="fas fa-star info-icon"></i>
-                                                            <span class="info-value">{{assessment.totalPoints}} Points</span>
+                                                            <span class="info-value">{{assessment.totalPoints}}
+                                                                Points</span>
                                                         </div>
                                                     </div>
                                                     <div class="info-row">
@@ -159,22 +162,30 @@
                                                         <div class="info-item category-container">
                                                             <i class="fas fa-tag info-icon"></i>
                                                             <div class="category-wrapper">
-                                                                <ng-container *ngIf="assessment.category; else noCategory">
+                                                                <ng-container
+                                                                    *ngIf="assessment.category; else noCategory">
                                                                     <div class="category-pills">
-                                                                        <ng-container *ngIf="assessment.category.includes(',')">
+                                                                        <ng-container
+                                                                            *ngIf="assessment.category.includes(',')">
                                                                             <!-- Multiple categories -->
-                                                                            <span *ngFor="let cat of assessment.category.split(',')" class="category-pill">
+                                                                            <span
+                                                                                *ngFor="let cat of assessment.category.split(',')"
+                                                                                class="category-pill">
                                                                                 {{cat.trim() | uppercase}}
                                                                             </span>
                                                                         </ng-container>
-                                                                        <ng-container *ngIf="!assessment.category.includes(',')">
+                                                                        <ng-container
+                                                                            *ngIf="!assessment.category.includes(',')">
                                                                             <!-- Single category -->
-                                                                            <span class="category-pill">{{assessment.category | uppercase}}</span>
+                                                                            <span
+                                                                                class="category-pill">{{assessment.category
+                                                                                | uppercase}}</span>
                                                                         </ng-container>
                                                                     </div>
                                                                 </ng-container>
                                                                 <ng-template #noCategory>
-                                                                    <span class="category-pill no-category">NO CATEGORY</span>
+                                                                    <span class="category-pill no-category">NO
+                                                                        CATEGORY</span>
                                                                 </ng-template>
                                                             </div>
                                                         </div>
@@ -183,8 +194,10 @@
 
                                                 <!-- Question Types -->
                                                 <div class="question-types" *ngIf="assessment.questionTypes">
-                                                    <span *ngFor="let type of getQuestionTypes(assessment.questionTypes)"
-                                                        class="type-tag" [ngClass]="type.type.split(' ')[0].toLowerCase()">
+                                                    <span
+                                                        *ngFor="let type of getQuestionTypes(assessment.questionTypes)"
+                                                        class="type-tag"
+                                                        [ngClass]="type.type.split(' ')[0].toLowerCase()">
                                                         {{type.type | titlecase}}: {{type.count}}
                                                     </span>
                                                 </div>
@@ -195,14 +208,15 @@
 
                                 <!-- Clear Selection Button (when assessment selected) -->
                                 <div *ngIf="selectedAssessments.size > 0" class="clear-assessment-container">
-                                    <button (click)="clearAssessmentSelection()"  class="clear-assessment-button">
+                                    <button (click)="clearAssessmentSelection()" class="clear-assessment-button">
                                         <i class="fas fa-times-circle"></i>
                                         <span>Clear Assessment Selection</span>
                                     </button>
-                                </div>  
+                                </div>
 
                                 <!-- Show More Button (only when no assessment selected) -->
-                                <div *ngIf="remainingCount > 0 && selectedAssessments.size === 0" class="show-more-container">
+                                <div *ngIf="remainingCount > 0 && selectedAssessments.size === 0"
+                                    class="show-more-container">
                                     <button (click)="toggleShowAll()" class="show-more-button">
                                         <span *ngIf="!showingAll">Show {{remainingCount}} More</span>
                                         <span *ngIf="showingAll">Show Less</span>
@@ -262,12 +276,11 @@
                                 </div>
 
                                 <div class="class-list">
-                                    <div *ngFor="let class of filteredClasses" 
-                                         class="class-row"
-                                         [class.selected]="isClassSelected(class._id)"
-                                         [class.no-students]="class.totalStudents === 0"
-                                         (click)="class.totalStudents > 0 ? toggleClassSelection(class._id) : showNoStudentsAlert()">
-                                        
+                                    <div *ngFor="let class of filteredClasses" class="class-row"
+                                        [class.selected]="isClassSelected(class._id)"
+                                        [class.no-students]="class.totalStudents === 0"
+                                        (click)="class.totalStudents > 0 ? toggleClassSelection(class._id) : showNoStudentsAlert()">
+
                                         <!-- Class Card Content -->
                                         <div class="class-info">
                                             <div class="class-header">
@@ -276,10 +289,9 @@
                                                     <span class="class-code-badge">{{class.classCode}}</span>
                                                 </div>
                                                 <div class="selection-checkbox">
-                                                    <input type="checkbox" 
-                                                           [checked]="isClassSelected(class._id)"
-                                                           [disabled]="class.totalStudents === 0"
-                                                           (click)="$event.stopPropagation()">
+                                                    <input type="checkbox" [checked]="isClassSelected(class._id)"
+                                                        [disabled]="class.totalStudents === 0"
+                                                        (click)="$event.stopPropagation()">
                                                 </div>
                                             </div>
 
@@ -287,7 +299,7 @@
                                                 <div class="details-group">
                                                     <span class="detail-label">Year:</span>
                                                     <span class="detail-value"
-                                                          [class.not-available]="class.year === 'N/A'">
+                                                        [class.not-available]="class.year === 'N/A'">
                                                         {{class.year}}
                                                     </span>
                                                 </div>
@@ -295,20 +307,21 @@
                                                 <div class="details-group">
                                                     <span class="detail-label">Block:</span>
                                                     <span class="detail-value"
-                                                          [class.not-available]="class.block === 'N/A'">
+                                                        [class.not-available]="class.block === 'N/A'">
                                                         {{class.block}}
                                                     </span>
                                                 </div>
                                                 <div class="details-separator">•</div>
                                                 <div class="student-count"
-                                                     [class.no-students]="class.totalStudents === 0">
+                                                    [class.no-students]="class.totalStudents === 0">
                                                     <svg class="student-icon" viewBox="0 0 24 24" fill="none"
-                                                         stroke="currentColor">
+                                                        stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round"
-                                                              stroke-width="2"
-                                                              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                                            stroke-width="2"
+                                                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                                                     </svg>
-                                                    <span>{{class.totalStudents}} {{class.totalStudents === 1 ? 'Student' : 'Students'}}</span>
+                                                    <span>{{class.totalStudents}} {{class.totalStudents === 1 ?
+                                                        'Student' : 'Students'}}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -385,7 +398,8 @@
                                                     </div>
                                                     <div class="student-name">{{student.name}}</div>
                                                     <div class="student-program">
-                                                        <span *ngIf="student.program">{{student.program.toUpperCase()}}</span>
+                                                        <span
+                                                            *ngIf="student.program">{{student.program.toUpperCase()}}</span>
                                                         <span *ngIf="!student.program" class="text-gray-400 italic">Not
                                                             specified</span>
                                                     </div>
@@ -446,7 +460,8 @@
 
                         <div class="review-content">
                             <!-- Assessment Mode Selection -->
-                            <div *ngIf="assignmentType === 'classes'" class="bg-white rounded-lg p-2 md:p-6 shadow-sm mb-6">
+                            <div *ngIf="assignmentType === 'classes'"
+                                class="bg-white rounded-lg p-2 md:p-6 shadow-sm mb-6">
                                 <h3 class="text-lg font-semibold text-gray-900 mb-2">Assessment Mode</h3>
                                 <p class="text-sm text-gray-600 mb-4">Choose how students will interact with this
                                     assessment</p>
@@ -491,16 +506,18 @@
                                     </div>
                                 </div>
                             </div>
-                            <div *ngIf="assignmentType === 'individual'" class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                            <div *ngIf="assignmentType === 'individual'"
+                                class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
                                 <div class="flex items-center">
                                     <i class="fas fa-info-circle text-blue-500 mr-3"></i>
                                     <div>
                                         <h4 class="text-sm font-medium text-blue-900">Individual Assignment Mode</h4>
-                                        <p class="text-sm text-blue-700 mt-1">This assessment will be assigned directly to selected students in standard assessment mode.</p>
+                                        <p class="text-sm text-blue-700 mt-1">This assessment will be assigned directly
+                                            to selected students in standard assessment mode.</p>
                                     </div>
                                 </div>
                             </div>
-                    
+
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <!-- Due Date & Time -->
                                 <div class="bg-white rounded-lg p-6 shadow-sm">
@@ -521,8 +538,7 @@
                                             </div>
                                             <input type="datetime-local" [(ngModel)]="startDate"
                                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                [min]="getCurrentDateTime()"
-                                                (change)="validateDates()">
+                                                [min]="getCurrentDateTime()" (change)="validateDates()">
                                         </div>
 
                                         <!-- Due Date -->
@@ -538,8 +554,7 @@
                                             </div>
                                             <input type="datetime-local" [(ngModel)]="dueDate"
                                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                [min]="getMinDueDate()"
-                                                (change)="validateDates()">
+                                                [min]="getMinDueDate()" (change)="validateDates()">
                                         </div>
                                     </div>
                                 </div>
@@ -612,7 +627,8 @@
                                     <div class="space-y-4">
                                         <!-- Overall Time Limit -->
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Overall Time Limit (minutes)</label>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Overall Time
+                                                Limit (minutes)</label>
                                             <input type="number" [(ngModel)]="timeLimit" min="0"
                                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                                             <p class="mt-1 text-sm text-gray-500">Set to 0 for no time limit</p>
@@ -620,10 +636,12 @@
 
                                         <!-- Per Question Time Limit -->
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Time Limit per Question (seconds)</label>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Time Limit per
+                                                Question (seconds)</label>
                                             <input type="number" [(ngModel)]="timeLimitPerQuestion" min="0"
                                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                            <p class="mt-1 text-sm text-gray-500">Set to 0 to disable per-question time limit</p>
+                                            <p class="mt-1 text-sm text-gray-500">Set to 0 to disable per-question time
+                                                limit</p>
                                         </div>
 
 
@@ -667,18 +685,18 @@
                                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Question Randomization -->
-                                        <div class="flex items-start">
-                                            <div class="flex items-center h-5">
-                                                <input type="checkbox" [(ngModel)]="randomizeQuestions"
-                                                    class="checkbox">
-                                            </div>
-                                            <div class="ml-3">
-                                                <label class="text-sm font-medium text-gray-700">Randomize Questions</label>
-                                                <p class="text-sm text-gray-500">Questions will appear in random order for each student</p>
-                                            </div>
+                                    <div class="flex items-start">
+                                        <div class="flex items-center h-5">
+                                            <input type="checkbox" [(ngModel)]="randomizeQuestions" class="checkbox">
                                         </div>
+                                        <div class="ml-3">
+                                            <label class="text-sm font-medium text-gray-700">Randomize Questions</label>
+                                            <p class="text-sm text-gray-500">Questions will appear in random order for
+                                                each student</p>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- Additional Instructions when in public mode -->
