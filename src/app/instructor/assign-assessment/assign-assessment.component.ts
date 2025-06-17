@@ -100,7 +100,7 @@ export class AssignAssessmentComponent implements OnInit {
   showResults: 'immediate' | 'completed' = 'completed';
   passingScore: number = 70;
   attemptsAllowed: number = 1;
-  randomizeQuestions: boolean = true;
+  randomizeQuestions: boolean = false;
   specialInstructions: string = '';
 
   // Mastery mode settings
@@ -416,7 +416,7 @@ export class AssignAssessmentComponent implements OnInit {
     if (mode === 'mastery') {
       this.attemptsAllowed = 3;
       this.showResults = 'immediate';
-      this.randomizeQuestions = true;
+      this.randomizeQuestions = false;
       this.masteryScore = Math.min(90, this.selectedAssessmentPoints);
     } else if (mode === 'public') {
       this.attemptsAllowed = 1;
@@ -664,6 +664,16 @@ export class AssignAssessmentComponent implements OnInit {
       }
     }
 
+    if(this.selectedMode === 'mastery') {
+      if(this.attemptsAllowed < 1 || this.attemptsAllowed > 20) {
+        return 'Mastery mode must be between 1 and 20 attempts only.';
+      }
+    } else {
+      if(this.attemptsAllowed < 1 || this.attemptsAllowed > 5) {
+        return 'Assessment mode must be between 1 and 5 attempts only.';
+      }
+    }
+
     if (this.selectedMode !== 'public' &&
       this.assignmentType === 'classes' &&
       this.selectedClasses.size === 0) {
@@ -855,8 +865,13 @@ export class AssignAssessmentComponent implements OnInit {
       case 3:
         const validDates = !!(this.startDate && this.dueDate);
         const validTimeLimit = this.timeLimit >= 1;
-        const validAttempts = this.attemptsAllowed >= 1;
-
+        // const validAttempts = this.attemptsAllowed >= 1;
+        let validAttempts = false;
+        if (this.selectedMode === 'mastery') {
+          validAttempts = this.attemptsAllowed >= 1 && this.attemptsAllowed <=20;
+        } else {
+          validAttempts = this.attemptsAllowed >= 1 && this.attemptsAllowed <= 5;
+        }
         if (this.assignmentType === 'individual') {
           return validDates && validTimeLimit && validAttempts
         }
@@ -965,6 +980,10 @@ export class AssignAssessmentComponent implements OnInit {
 
     if (this.timeLimit < 1) {
       return 'Time limit must be at least 1 minute.';
+    }
+
+    if(this.attemptsAllowed < 1 || this.attemptsAllowed > 5) {
+      return 'Attempts must be between 1 and 5.';
     }
 
     if (this.selectedStudents.size === 0) {

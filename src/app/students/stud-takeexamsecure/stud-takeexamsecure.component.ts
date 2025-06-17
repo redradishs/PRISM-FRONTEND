@@ -92,7 +92,7 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state) {
       this.assignedAssessmentId = navigation.extras.state['assessmentId'];
-      console.log('Assessment ID:', this.assignedAssessmentId);
+      // console.log('Assessment ID:', this.assignedAssessmentId);
     }
   }
 
@@ -132,8 +132,6 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(sub => sub.unsubscribe());
 
     this.is.cleanup();
-
-    console.log('StudTakeexamsecureComponent destroyed and cleaned up');
   }
 
   startTimer() {
@@ -150,17 +148,17 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
     this.api.getSecureData(this.userId, this.assignedAssessmentId).subscribe({
       next: (resp: any) => {
         if (resp.remarks === 'Success' && resp.data) {
-          console.log('Secure data fetched successfully:', resp.data);
+          // console.log('Secure data fetched successfully:', resp.data);
           this.assessmentTitle = resp.data.title;
           this.timeRemaining = resp.data.time.remaining || 0;
           this.isTimed = resp.data.isTimed;
           this.timedQuestions = resp.data.timedQuestions;
           this.questionTimer = this.timedQuestions;
           this.isRandomized = resp.data.randomizeQuestions;
-          console.log('Is Randomized:', this.isRandomized);
-          console.log('Is Timed:', this.isTimed);
-          console.log('Timed Questions:', this.timedQuestions);
-          console.log('Time remaining:', this.timeRemaining);
+          // console.log('Is Randomized:', this.isRandomized);
+          // console.log('Is Timed:', this.isTimed);
+          // console.log('Timed Questions:', this.timedQuestions);
+          // console.log('Time remaining:', this.timeRemaining);
           this.resetEnumerationAnswers();
           this.startTimer();
           if (resp.data.status === 'submitted') {
@@ -174,6 +172,7 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
       },
       error: (err: any) => {
         console.log('Error fetching secure data:', err);
+        this.router.navigate(['/student/dashboard'])
       }
     })
   }
@@ -182,12 +181,12 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
     this.api.nextQuestionGrabber(this.userId, this.assignedAssessmentId).subscribe({
       next: (resp: any) => {
         if (resp.remarks === 'Success' && resp.data) {
-          console.log('Next question fetched successfully:', resp.data);
+          // console.log('Next question fetched successfully:', resp.data);
           this.selectedAnswer = null;
           this.multiSelectAnswers = {};
           this.enumerationAnswers = Array(resp.data.expectedAnswers || 0).fill('');
           this.data = resp.data;
-          console.log('Data:', this.data);
+          // console.log('Data:', this.data);
 
           // Start per-question timer if enabled and we have the data
           if (this.isTimed && this.timedQuestions > 0 && this.data) {
@@ -217,22 +216,14 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
     this.api.finalizeAssessment(this.userId, this.assignedAssessmentId).subscribe({
       next: (resp: any) => {
         if (resp.remarks === 'Success') {
-          console.log('Assessment finalized successfully');
+          // console.log('Assessment finalized successfully');
 
           this.is.cleanup();
           this.is.resetAllViolations();
 
-          localStorage.removeItem('violations');
-          sessionStorage.removeItem('violations');
-          localStorage.removeItem('assessment_data');
-          sessionStorage.removeItem('assessment_data');
-
           // Clear component state
           this.cheatingCount = 0;
           this.cheatMessage = null;
-
-          console.log('Integrity monitoring completely reset for assessment completion');
-
           this.router.navigate(['/student/assessment/result'], {
             state: {
               assessmentId: this.assignedAssessmentId
@@ -256,7 +247,6 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
       this.isQuestionTimed = false;
     }
 
-    console.log("Cheting Count: ", this.cheatingCount);
     if (!this.data?.question) return;
     let givenAnswer: any = null;
     const q = this.data.question;
@@ -288,7 +278,7 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
       const violations = this.is.getViolations();
 
       if (violations.length > 0) {
-        // Get the most recent violation
+        //most recent violation only
         const sortedViolations = [...violations].sort((a, b) => b.timestamp - a.timestamp);
         const latestViolation = sortedViolations[0];
         data.violation = {
@@ -297,14 +287,18 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
           violationCount: this.cheatingCount
         };
 
-        console.log('Sending exact violation type:', latestViolation.type);
+        // console.log('Sending exact violation type:', latestViolation.type);
       }
     }
 
     this.api.submitAnswer(data).subscribe({
       next: (resp: any) => {
         if (resp.remarks === 'Success') {
-          console.log('Answer submitted successfully:', resp);
+          // console.log('Answer submitted successfully:', resp);
+
+          if (this.cheatingCount > 0) {
+            this.is.resetAllViolations();
+          }
 
           this.is.clearAlerts();
 
@@ -353,7 +347,7 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
 
   selectOption(option: string) {
     this.selectedAnswer = option;
-    console.log('Selected option:', option);
+    // console.log('Selected option:', option);
   }
 
   isOptionSelected(option: string): boolean {
@@ -402,7 +396,6 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
   submitAssessment() {
     this.isSubmitting = true;
 
-    // Collect all answers in appropriate format
     const answers = this.questions.map((question, index) => {
       if (index === this.currentQuestionIndex) {
         switch (question.type) {
@@ -453,114 +446,26 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
 
     setTimeout(() => {
       this.isSubmitting = false;
-      console.log('Submitting answers:', answers);
+      // console.log('Submitting answers:', answers);
     }, 2000);
   }
 
   private setupIntegrityMonitoring() {
-    console.log('Setting up integrity monitoring...');
-
-    this.is.cleanup();
-
     setTimeout(() => {
-      this.setupEventListeners();
+      this.is.ensureInitialized();
+      
       this.subscriptions.push(
         this.is.cheatingCount$.subscribe(count => {
           this.cheatingCount = count;
-          console.log('Cheating count updated:', count);
         })
       );
 
       this.subscriptions.push(
         this.is.cheatMessage$.subscribe(message => {
           this.cheatMessage = message;
-          console.log('Cheat message updated:', message);
         })
       );
-
-      console.log('Integrity monitoring setup complete');
     }, 100);
-  }
-
-  private setupEventListeners() {
-
-    // Tab switching detection
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        console.log('Tab switch detected - triggering violation');
-        this.is.registerViolation('Tab switching detected', 'high');
-      }
-    });
-
-    // Window blur detection
-    window.addEventListener('blur', () => {
-      console.log('Window blur detected - triggering violation');
-      this.is.registerViolation('Window focus lost', 'medium');
-    });
-
-    // Keyboard shortcuts detection
-    document.addEventListener('keydown', (e: KeyboardEvent) => {
-      // Alt+Tab detection
-      if (e.altKey && e.key === 'Tab') {
-        e.preventDefault();
-        console.log('Alt+Tab detected - triggering violation');
-        this.is.registerViolation('Alt+Tab detected', 'high');
-      }
-
-      // Ctrl shortcuts detection
-      if (e.ctrlKey) {
-        const forbiddenKeys = ['c', 'v', 'x', 'a', 's', 'p', 'f', 'h', 'u', 'r', 'w', 't', 'n'];
-        if (forbiddenKeys.includes(e.key.toLowerCase())) {
-          e.preventDefault();
-          console.log(`Ctrl+${e.key.toUpperCase()} detected - triggering violation`);
-          this.is.registerViolation(`Keyboard shortcut Ctrl+${e.key.toUpperCase()} detected`, 'medium');
-        }
-      }
-
-      // F12 and other function keys
-      if (e.key === 'F12' || e.key === 'F11' || e.key === 'F5') {
-        e.preventDefault();
-        console.log(`${e.key} key detected - triggering violation`);
-        this.is.registerViolation(`${e.key} key press detected`, 'high');
-      }
-    });
-
-    // Right-click detection
-    document.addEventListener('contextmenu', (e: Event) => {
-      e.preventDefault();
-      console.log('Right-click detected - triggering violation');
-      this.is.registerViolation('Right-click attempt detected', 'low');
-    });
-
-    // Copy/paste detection
-    document.addEventListener('copy', (e: Event) => {
-      e.preventDefault();
-      console.log('Copy detected - triggering violation');
-      this.is.registerViolation('Copy attempt detected', 'medium');
-    });
-
-    document.addEventListener('paste', (e: Event) => {
-      e.preventDefault();
-      console.log('Paste detected - triggering violation');
-      this.is.registerViolation('Paste attempt detected', 'medium');
-    });
-
-    // Window resize detection (potential DevTools)
-    window.addEventListener('resize', () => {
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-      if (!isMobile) {
-        const widthThreshold = window.outerWidth - window.innerWidth > 160;
-        const heightThreshold = window.outerHeight - window.innerHeight > 160;
-
-        if (widthThreshold || heightThreshold) {
-          console.log('Window resize/DevTools detected - triggering violation');
-          this.is.registerViolation('Developer tools or window resize detected', 'medium');
-        }
-      }
-    });
-
-    console.log('All event listeners setup complete');
   }
 
   createRange(count: number): number[] {

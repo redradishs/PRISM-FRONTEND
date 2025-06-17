@@ -52,17 +52,11 @@ export class IntegrityMonitoringService {
   public violations$: Observable<Violation[]> = this._violations.asObservable();
 
   constructor(private ngZone: NgZone) {
-    // Initialize monitoring immediately
-    this.setupMonitoring();
-
-    // Load any existing violations
+    // load violations from storage
     this.loadCheatingCount();
 
-    // Set up storage monitoring
-    this.monitorStorageDeletion();
-
-    // Set up accidental action resets
-    this.setupAccidentalActionResets();
+    // Initialize monitoring when called
+    this.setupMonitoring();
   }
 
   // Initialize all monitoring
@@ -92,14 +86,17 @@ export class IntegrityMonitoringService {
     document.addEventListener('copy', this.handleCopy);
     document.addEventListener('paste', this.handlePaste);
 
-    // Context menu prevention
-    document.addEventListener('contextmenu', this.handleContextMenu);
-
     // Storage events
     window.addEventListener('storage', this.handleStorageChange);
 
     // Add DevTools detection
     this.detectDevTools();
+  }
+
+  // Public method to ensure initialization
+  public ensureInitialized(): void {
+    // Re-setup event listeners if needed
+    this.setupEventListeners();
   }
 
   public getCheatingCount(): number {
@@ -170,7 +167,6 @@ export class IntegrityMonitoringService {
     document.removeEventListener('visibilitychange', this.handleVisibilityChange);
     document.removeEventListener('copy', this.handleCopy);
     document.removeEventListener('paste', this.handlePaste);
-    document.removeEventListener('contextmenu', this.handleContextMenu);
     window.removeEventListener('blur', this.handleWindowBlur);
     window.removeEventListener('resize', this.handleWindowResize);
     window.removeEventListener('storage', this.handleStorageChange);
@@ -330,12 +326,7 @@ export class IntegrityMonitoringService {
   }
 
   private updateCheatingCount() {
-    const now = Date.now();
-    const currentViolations = this._violations.value.filter(
-      (v) => now - v.timestamp < this.VIOLATION_EXPIRY
-    );
-
-    this._violations.next(currentViolations);
+    const currentViolations = this._violations.value;
 
     this._cheatingCount.next(currentViolations.length);
     this.secureStoreCheatingCount();
@@ -376,38 +367,33 @@ export class IntegrityMonitoringService {
         encoded = localStorage.getItem('assessment_integrity_data');
       }
 
-      if (!encoded) {
-        const cookieMatch = document.cookie.match(/assessment_count=(\d+)/);
-        if (cookieMatch && cookieMatch[1]) {
-          const count = parseInt(cookieMatch[1], 10);
-          this._cheatingCount.next(count);
-
-          if (count > 0) {
-            this.registerViolation('Storage data deletion detected', 'high');
-            return;
-          }
-        }
-      }
-
       if (encoded) {
         try {
-          const violations = JSON.parse(atob(encoded)) as Violation[];
+          
+          let dataToDecrypt = encoded;
+          if (encoded.includes('_')) {
+            const parts = encoded.split('_');
+            if (parts.length === 2) {
+              const checksum = parts[0];
+              dataToDecrypt = parts[1];
+            }
+          }
+          
+          const violations = JSON.parse(atob(dataToDecrypt)) as Violation[];
 
-          const now = Date.now();
-          const currentViolations = violations.filter(
-            (v) => now - v.timestamp < this.VIOLATION_EXPIRY
-          );
-
-          this._violations.next(currentViolations);
-          this._cheatingCount.next(currentViolations.length);
+          this._violations.next(violations);
+          this._cheatingCount.next(violations.length);
 
           this.secureStoreViolations();
         } catch (e) {
-          console.warn('Error parsing integrity data');
+          console.warn('❌ Error parsing integrity data:', e);
         }
+      } else {
+        this._violations.next([]);
+        this._cheatingCount.next(0);
       }
     } catch (e) {
-      console.error('Error loading integrity data', e);
+      console.error('💥 Error loading integrity data:', e);
     }
   }
 
@@ -421,6 +407,7 @@ export class IntegrityMonitoringService {
   }
 
   resetAllViolations() {
+    
     this._violations.next([]);
     this._cheatingCount.next(0);
     this._cheatMessage.next(null);
@@ -435,7 +422,7 @@ export class IntegrityMonitoringService {
     document.cookie = 'assessment_count=0; path=/; max-age=0';
     this.storeTimestamps();
 
-    console.log('Integrity monitoring system reset at', new Date().toISOString());
+    console.log('Monitoring reset at', new Date().toISOString());
   }
 
   // Add encryption helper methods
@@ -505,7 +492,7 @@ export class IntegrityMonitoringService {
   private handleKeyDown = (e: KeyboardEvent) => {
     this.lastActivity = Date.now();
     this.isUserActive = true;
-
+    
     // Screenshot detection
     if (e.key === 'PrintScreen' || (e.key === 'S' && (e.ctrlKey || e.metaKey) && e.shiftKey)) {
       this.registerViolation('Screenshot attempt detected', 'high');
@@ -532,6 +519,14 @@ export class IntegrityMonitoringService {
         this.showWarning(
           `Alt+Tab detected (${this.altTabCount}/${this.ALT_TAB_ALLOWANCE} allowed)`
         );
+      }
+    }
+    
+    // ctrl keys detections
+    if (e.ctrlKey) {
+      const forbiddenKeys = ['c', 'v', 'x', 'a', 's', 'p', 'f', 'h', 'u', 'r', 'w', 't', 'n'];
+      if (forbiddenKeys.includes(e.key.toLowerCase())) {
+        this.registerViolation(`Keyboard shortcut Ctrl+${e.key.toUpperCase()} detected`, 'medium');
       }
     }
   };
@@ -594,11 +589,6 @@ export class IntegrityMonitoringService {
   private handlePaste = (e: Event) => {
     e.preventDefault();
     this.registerViolation('Paste attempt detected', 'medium');
-  };
-
-  private handleContextMenu = (e: Event) => {
-    e.preventDefault();
-    this.registerViolation('Right-click attempt detected', 'low');
   };
 
   private handleStorageChange = (e: StorageEvent) => {
