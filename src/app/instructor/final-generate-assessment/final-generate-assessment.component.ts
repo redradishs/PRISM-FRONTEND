@@ -254,14 +254,18 @@ export class FinalGenerateAssessmentComponent {
 
     console.log('Sending request data:', requestData);
 
-    this.api.finalGenerateAssessment(requestData).subscribe({
+    //temporary fix, another api for bulk generation to avoid slow and api 500 shitdown
+    const questionCount = Number(this.aiGeneration.questionCount);
+    const apiCall = questionCount > 20 
+      ? this.api.bulkfinalGenerateAssessment(requestData)
+      : this.api.finalGenerateAssessment(requestData);
+
+    apiCall.subscribe({
       next: (response: any) => {
         try {
           console.log('API Response:', response);
 
-          // Check for the new response structure with data wrapper
           if (response.success && response.data && response.data.questions && Array.isArray(response.data.questions)) {
-            // Pass the data object that contains the questions array
             this.handleGeneratedQuestions(response.data);
             this.generated = true;
             Swal.fire({

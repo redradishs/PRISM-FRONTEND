@@ -38,6 +38,12 @@ export class ApiService {
     return this.http.post(`${this.aiFinal}/assessment/generate`, data);
   }
 
+  bulkfinalGenerateAssessment(data: any) {
+    return this.http.post(`${this.aiFinal}/assessment/bulk-generate`, data);
+  }
+
+  
+
   verifyQuestions(questions: any) {
     return this.http.post(`${this.aiUrl}/verify`, questions);
   }
