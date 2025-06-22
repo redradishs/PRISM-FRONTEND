@@ -3,8 +3,10 @@
     <div class="login-section">
         <div class="login-container">
             <div class="logo">
-                <img src="prism_logo.png" alt="Logo" width="60">
+                <img src="gclogo.png" alt="Gordon College Logo" width="60">
+                <img src="ccslogo.png" alt="College of Computer Studies Logo" width="60">
             </div>
+
 
             <h1 *ngIf="activeTab === 'login'" class="wb">Welcome Back!</h1>
             <p *ngIf="activeTab === 'login'" class="subtitle">Sign in to your account to continue your assessment
@@ -17,7 +19,7 @@
 
             <form [formGroup]="loginForm" *ngIf="activeTab === 'login'" (ngSubmit)="handleLoginSubmit()">
                 <div class="form-group">
-                    <label for="email">Email Address</label>
+                    <label for="email">Student ID / Email Address</label>
                     <div class="email-input-container" [ngClass]="{'email-error': hasAtSymbol('email')}">
                         <input type="text" id="email" placeholder="ID Number" formControlName="email"
                             [ngClass]="{'invalid': loginForm.get('email')?.touched && loginForm.get('email')?.invalid}" />
@@ -198,6 +200,9 @@
 
             <div class="version">
                 Version 0.30 • © 2025 PRISM • ICTe Solutions
+            </div>
+            <div class="version">
+                Excellence • Character • Service
             </div>
         </div>
     </div>

@@ -7,7 +7,7 @@
 
 .wb {
     text-align: center;
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: bold;
     margin-top: 0;
 }
@@ -35,6 +35,8 @@
     justify-content: center;
     align-items: center;
     text-align: center;
+    gap: 1rem;
+    padding: 1rem;
 }
 
 .img {
@@ -45,7 +47,7 @@
 }
 
 h1 {
-    color: #6C5CE7;
+    color: #282626ef;
     font-size: 2rem;
     margin-bottom: 0.5rem;
 }
@@ -81,6 +83,7 @@ h1 {
 
 .form-group label {
     display: block;
+    font-size: 0.90rem;
     margin-bottom: 0.25rem;
     color: #333;
     font-weight: 500;
@@ -144,7 +147,7 @@ select.form-input {
 }
 
 .login-container {
-    max-width: 400px;
+    max-width: 500px;
     width: 100%;
     margin: auto;
     padding: 1.5rem;
@@ -279,7 +282,7 @@ select.form-input {
 }
 
 .branding-content {
-    max-width: 500px;
+    max-width: 600px;
 }
 
 .branding-content h2 {
@@ -293,8 +296,9 @@ select.form-input {
 }
 
 .branding-content h3 {
-    font-size: 2rem;
+    font-size: 1.6rem;
     margin-bottom: 1rem;
+    font-weight: 600;
 }
 
 .tagline {
@@ -309,9 +313,12 @@ select.form-input {
 }
 
 .feature {
-    background-color: transparent;
-    padding: 1rem;
-    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 1.25rem 0.75rem;
+    border-radius: 12px;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    animation: fadeIn 0.6s ease-out;
+    animation-fill-mode: both;
 }
 
 .feature i {
@@ -532,9 +539,12 @@ form {
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
 }
 
+
 .logo img {
     display: block;
-    margin: 0 auto 1rem;
+    width: 75px;
+    height: auto;
+    object-fit: contain;
 }
 
 .form-group:first-child {
