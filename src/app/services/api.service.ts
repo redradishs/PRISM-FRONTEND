@@ -42,7 +42,7 @@ export class ApiService {
     return this.http.post(`${this.aiFinal}/assessment/bulk-generate`, data);
   }
 
-  
+
 
   verifyQuestions(questions: any) {
     return this.http.post(`${this.aiUrl}/verify`, questions);
@@ -407,6 +407,16 @@ export class ApiService {
   // Get assessment counts
   getAssessmentCounts(instructorId: string) {
     return this.http.get(`${this.apiUrl}/assessments/counts/${instructorId}`);
+  }
+
+  //edit/update assessment page
+
+  retrieveAssessmentData(data: any) {
+    return this.http.post(`${this.apiUrl}/assessment/review`, data);
+  }
+
+  updateAssessmentData(data: any) {
+    return this.http.post(`${this.apiUrl}/assessment/update`, data);
   }
 
 

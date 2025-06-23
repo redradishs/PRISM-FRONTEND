@@ -1,0 +1,243 @@
+<div class="bg-gray-50 min-h-screen w-full overflow-x-hidden">
+    <div class="flex w-full">
+        <app-sidebar></app-sidebar>
+        <div class="flex-1 ml-0 md:ml-20 w-full">
+            <header class="bg-white shadow-sm fixed top-0 right-0 w-full md:w-[calc(100%-80px)] z-40">
+                <div class="w-full px-4 md:px-6 py-3 md:py-4">
+                    <div class="flex items-center justify-between">
+                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">Edit Assessment</h1>
+                        <div class="flex items-center">
+                            <div class="hidden md:flex items-center mr-4">
+                                <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
+                                <button (click)="createNewAssessment()"
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2">
+                                    New Assessment
+                                </button>
+                                <button (click)="updateAssessment()"
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
+                                    Update Assessment
+                                </button>
+                            </div>
+                            <div *ngIf="!isMobile" class="flex items-center">
+                                <div class="relative mr-3">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profile" [src]="profile" alt="Profile"
+                                            class="w-full h-full object-cover">
+                                        <span *ngIf="!profile" class="text-base md:text-lg font-medium text-gray-600">
+                                            {{username.charAt(0) || 'A'}}
+                                        </span>
+                                    </div>
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    </div>
+                                </div>
+                                <div class="text-left">
+                                    <div class="text-sm font-medium text-gray-900">{{username}}</div>
+                                    <div class="text-xs text-gray-500">Instructor</div>
+                                </div>
+                            </div>
+                            <button *ngIf="isMobile" (click)="toggleSidebar()"
+                                class="p-2 rounded-md hover:bg-gray-100 transition-colors">
+                                <i class="fas fa-bars w-5 h-5 text-gray-600"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="h-[65px] md:h-[68px] w-full"></div>
+
+            <div *ngIf="isLoading"
+                class="flex items-center justify-center min-h-[calc(100vh-68px)] bg-white transition-colors duration-900">
+                <div class="text-center animate-fade-in">
+                    <div class="relative w-16 h-16 mx-auto">
+                        <div
+                            class="absolute inset-0 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin">
+                        </div>
+                        <div class="absolute inset-2 rounded-full border-4 border-indigo-300 border-b-transparent animate-spin"
+                            style="animation-direction: reverse;">
+                        </div>
+                    </div>
+                    <p class="mt-5 text-gray-600 text-lg font-medium animate-pulse">
+                        Loading instructor data...
+                    </p>
+                </div>
+            </div>
+
+            <main class="p-2 md:p-4 w-full">
+
+                <!-- Mobile Update Button -->
+                <div class="md:hidden mb-4">
+                    <button (click)="updateAssessment()"
+                        class="w-full px-4 py-3 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors shadow-sm">
+                        <i class="fas fa-save mr-2"></i>
+                        Update Assessment
+                    </button>
+                </div>
+
+                <section class="questions-section">
+                    <h2 class="review-title">
+                        <i class="fas fa-clipboard-list mr-2"></i>
+                        Question Review
+                    </h2>
+
+                    <!-- Individual Question Cards -->
+                    <div class="questions-container">
+                        <div *ngFor="let question of questions; let i = index; trackBy: trackByQuestionIndex"
+                            class="question-card" [id]="'question-' + i">
+                            <div class="question-card-header">
+                                <div class="question-info">
+                                    <span class="question-number">Question {{i + 1}}</span>
+                                    <div class="points-badge">
+                                        <i class="fas fa-star"></i>
+                                        <span>{{question.points}} points</span>
+                                    </div>
+                                    <div class="type-badge">
+                                        <i [class]="'fas ' + getQuestionTypeIcon(question.type)"></i>
+                                        <span>{{getFriendlyTypeName(question.type)}}</span>
+                                    </div>
+                                </div>
+                                <div class="action-buttons">
+                                    <button (click)="editQuestion(i)" class="edit-btn">
+                                        <i class="fas fa-edit"></i>
+                                        Edit
+                                    </button>
+                                    <button (click)="deleteQuestion(i)" class="delete-btn">
+                                        <i class="fas fa-trash"></i>
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="question-card-content">
+                                <!-- Edit Mode -->
+                                <div *ngIf="question.isEditing" class="edit-mode">
+                                    <div class="edit-form">
+                                        <label class="form-label">Question Text:</label>
+                                        <textarea [(ngModel)]="question.questionText" class="form-textarea"
+                                            rows="3"></textarea>
+
+                                        <!-- Multiple Choice Edit -->
+                                        <div *ngIf="question.type === 'multiple-choice'" class="options-edit">
+                                            <div class="options-grid">
+                                                <div *ngFor="let option of question.options; let optionIndex = index; trackBy: trackByOptionIndex"
+                                                    class="option-item edit-mode-option"
+                                                    [class.correct-selected]="question.correctAnswer === getOptionLetter(optionIndex)">
+                                                    <input type="radio" [value]="getOptionLetter(optionIndex)"
+                                                        [(ngModel)]="question.correctAnswer" name="correct-{{i}}"
+                                                        class="option-radio">
+                                                    <span class="option-letter">{{getOptionLetter(optionIndex)}}</span>
+                                                    <input [(ngModel)]="question.options[optionIndex]"
+                                                        class="option-text-input"
+                                                        [placeholder]="'Enter option ' + getOptionLetter(optionIndex)">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- True/False Edit -->
+                                        <div *ngIf="question.type === 'true-false'" class="true-false-edit">
+                                            <label class="form-label">Correct Answer:</label>
+                                            <div class="tf-options">
+                                                <div class="tf-option"
+                                                    [class.selected]="question.correctAnswer?.toLowerCase() === 'true'">
+                                                    <input type="radio" value="true"
+                                                        [(ngModel)]="question.correctAnswer" name="tf-{{i}}"
+                                                        class="tf-radio">
+                                                    <span class="tf-label">True</span>
+                                                </div>
+                                                <div class="tf-option"
+                                                    [class.selected]="question.correctAnswer?.toLowerCase() === 'false'">
+                                                    <input type="radio" value="false"
+                                                        [(ngModel)]="question.correctAnswer" name="tf-{{i}}"
+                                                        class="tf-radio">
+                                                    <span class="tf-label">False</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Enumeration Edit -->
+                                        <div *ngIf="question.type === 'enumeration'" class="enumeration-edit">
+                                            <label class="form-label">Correct Answers:</label>
+                                            <div class="enum-answers-list">
+                                                <div *ngFor="let answer of getEnumerationAnswers(question.correctAnswer); let answerIndex = index; trackBy: trackByAnswerIndex"
+                                                    class="enum-answer-item">
+                                                    <div class="answer-number">{{answerIndex + 1}}.</div>
+                                                    <input [(ngModel)]="question.correctAnswer[answerIndex]"
+                                                        class="enum-input"
+                                                        [placeholder]="'Enter answer ' + (answerIndex + 1)">
+                                                    <button
+                                                        *ngIf="getEnumerationAnswers(question.correctAnswer).length > 1"
+                                                        (click)="removeEnumerationAnswer(question, answerIndex)"
+                                                        class="remove-answer-btn" type="button">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <button (click)="addEnumerationAnswer(question)" class="add-answer-btn">
+                                                <i class="fas fa-plus mr-2"></i> Add Answer
+                                            </button>
+                                        </div>
+
+                                        <div class="edit-actions">
+                                            <button (click)="saveQuestion(i)" class="save-btn">
+                                                <i class="fas fa-save"></i> Save
+                                            </button>
+                                            <button (click)="cancelEdit(i)" class="cancel-btn">
+                                                <i class="fas fa-times"></i> Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- View Mode -->
+                                <div *ngIf="!question.isEditing">
+                                    <div class="question-text">{{question.questionText}}</div>
+                                </div>
+
+                                <div *ngIf="!question.isEditing" class="answers-section">
+                                    <!-- Options display for multiple choice -->
+                                    <div *ngIf="question.type === 'multiple-choice'" class="options-grid">
+                                        <div *ngFor="let option of question.options; let optionIndex = index; trackBy: trackByOptionIndex"
+                                            class="option-item"
+                                            [class.correct]="question.correctAnswer === getOptionLetter(optionIndex)">
+                                            <span class="option-letter">{{getOptionLetter(optionIndex)}}</span>
+                                            <span class="option-text">{{option}}</span>
+                                            <i *ngIf="question.correctAnswer === getOptionLetter(optionIndex)"
+                                                class="fas fa-check text-green-600 ml-2"></i>
+                                        </div>
+                                    </div>
+
+                                    <!-- Answer display for enumeration -->
+                                    <div *ngIf="question.type === 'enumeration'" class="answer-container">
+                                        <div *ngIf="!question.isCorrect" class="answer-header correct mt-4">
+                                            <i class="fas fa-check-circle"></i>
+                                            <h4>Correct Answer</h4>
+                                        </div>
+                                        <div *ngIf="!question.isCorrect" class="answer-content correct">
+                                            {{formatAnswer(question.correctAnswer)}}
+                                        </div>
+                                    </div>
+
+                                    <div *ngIf="question.type === 'true-false'">
+                                        <div *ngIf="!question.isCorrect" class="answer-header correct mt-4">
+                                            <i class="fas fa-check-circle"></i>
+                                            <h4>Correct Answer</h4>
+                                        </div>
+                                        <div *ngIf="!question.isCorrect" class="answer-content correct">
+                                            {{formatAnswer(question.correctAnswer)}}
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+
+            </main>
+
+        </div>
+    </div>
+</div>
