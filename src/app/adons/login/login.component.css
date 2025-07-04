@@ -331,6 +331,12 @@ select.form-input {
     font-size: 0.875rem;
 }
 
+.kataga {
+    display: none;
+}
+
+
+
 @media (max-width: 768px) {
     .piper {
         flex-direction: column;
@@ -362,6 +368,18 @@ select.form-input {
     .social-login {
         flex-direction: column;
     }
+
+    .kataga {
+        margin-top: 5rem;
+        display: block;
+        text-align: center;
+        color: #666;
+        font-size: 0.80rem;
+    }
+    
+    
+
+
 }
 
 @keyframes fadeIn {

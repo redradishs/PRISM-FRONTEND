@@ -69,6 +69,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   scheduledAssessments: AssessmentProgress[] = [];
   totalScheduledAssessments: number = 0;
   remainingScheduledAssessments: number = 0;
+  onGoingDisputes: any[] = [];
   topPerformingStudents: any[] = [];
   charts: any[] = [];
   dueThisWeek: number = 0;
@@ -99,6 +100,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.getTotalClases(this.userId);
         this.getOnGoingAssessments(this.userId);
         this.getScheduledAssessments(this.userId);
+        this.getDisputes();
       } else {
         console.log('No user found');
       }
@@ -316,12 +318,23 @@ export class HomeComponent implements OnInit, AfterViewInit {
     })
   }
 
+  getDisputes() {
+    this.api.getOngoingDisputes(this.userId).subscribe({
+      next: (resp: any) => {
+        this.onGoingDisputes = resp.data;
+        console.log('Ongoing disputes:', this.onGoingDisputes);
+      }, error: (error) => {
+        console.error('Error getting ongoing disputes:', error);
+      }
+    })
+  }
+
   getDisplayedOngoingAssessments() {
     return this.showAllOngoing ? this.onGoingAssessments : this.onGoingAssessments.slice(0, 6);
   }
 
   gotoAssessment(ass: any) {
-    console.log('Going to assessment', ass);
+    // console.log('Going to assessment', ass);
     if (ass.type === 'Assessment' || ass.type === 'Public Assessment') {
       this.router.navigate(['/instructor/result'], {
         state: { assessmentId: ass.id }
@@ -403,6 +416,58 @@ export class HomeComponent implements OnInit, AfterViewInit {
   toggleSidebar() {
     if (this.sidebar) {
       this.sidebar.toggleSidebar();
+    }
+  }
+
+
+  viewAllReports() {
+    this.router.navigate(['/instructor/reports']);
+  }
+
+  getReasonBadgeClass(reason: string): string {
+    const reasonLower = reason.toLowerCase();
+    if (reasonLower.includes('wrong') || reasonLower.includes('incorrect')) {
+      return 'reason-error';
+    } else if (reasonLower.includes('technical') || reasonLower.includes('system')) {
+      return 'reason-technical';
+    } else if (reasonLower.includes('time') || reasonLower.includes('constraint')) {
+      return 'reason-time';
+    } else if (reasonLower.includes('unclear') || reasonLower.includes('wording')) {
+      return 'reason-unclear';
+    }
+    return 'reason-other';
+  }
+
+  getReasonIcon(reason: string): string {
+    const reasonLower = reason.toLowerCase();
+    if (reasonLower.includes('wrong') || reasonLower.includes('incorrect')) {
+      return 'fa-times-circle';
+    } else if (reasonLower.includes('technical') || reasonLower.includes('system')) {
+      return 'fa-cog';
+    } else if (reasonLower.includes('time') || reasonLower.includes('constraint')) {
+      return 'fa-clock';
+    } else if (reasonLower.includes('unclear') || reasonLower.includes('wording')) {
+      return 'fa-question-circle';
+    }
+    return 'fa-flag';
+  }
+
+  reviewReport(report: any) {
+    console.log('Reviewing report:', report);
+    this.router.navigate(['/instructor/response'], {
+      state: { studentId: report.studentId, assessmentId: report.assessmentId }
+    });
+  }
+
+  resolveReport(report: any) {
+    if (confirm(`Mark this report from ${report.studentName} as resolved?`)) {
+      // TODO: Call API to update report status
+      console.log('Resolving report:', report);
+      // Update the local data
+      const index = this.onGoingDisputes.findIndex(d => d.id === report.id);
+      if (index !== -1) {
+        this.onGoingDisputes[index].status = 'Resolved';
+      }
     }
   }
 

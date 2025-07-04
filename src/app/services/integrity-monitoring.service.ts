@@ -52,10 +52,12 @@ export class IntegrityMonitoringService {
   public violations$: Observable<Violation[]> = this._violations.asObservable();
 
   constructor(private ngZone: NgZone) {
-    // load violations from storage
+    // load violations from storage but don't start monitoring automatically
     this.loadCheatingCount();
+  }
 
-    // Initialize monitoring when called
+  // Public method to start monitoring - call this only on assessment pages
+  public startMonitoring(): void {
     this.setupMonitoring();
   }
 
@@ -93,11 +95,7 @@ export class IntegrityMonitoringService {
     this.detectDevTools();
   }
 
-  // Public method to ensure initialization
-  public ensureInitialized(): void {
-    // Re-setup event listeners if needed
-    this.setupEventListeners();
-  }
+
 
   public getCheatingCount(): number {
     return this._cheatingCount.value;
@@ -369,7 +367,7 @@ export class IntegrityMonitoringService {
 
       if (encoded) {
         try {
-          
+
           let dataToDecrypt = encoded;
           if (encoded.includes('_')) {
             const parts = encoded.split('_');
@@ -378,7 +376,7 @@ export class IntegrityMonitoringService {
               dataToDecrypt = parts[1];
             }
           }
-          
+
           const violations = JSON.parse(atob(dataToDecrypt)) as Violation[];
 
           this._violations.next(violations);
@@ -407,7 +405,7 @@ export class IntegrityMonitoringService {
   }
 
   resetAllViolations() {
-    
+
     this._violations.next([]);
     this._cheatingCount.next(0);
     this._cheatMessage.next(null);
@@ -492,7 +490,7 @@ export class IntegrityMonitoringService {
   private handleKeyDown = (e: KeyboardEvent) => {
     this.lastActivity = Date.now();
     this.isUserActive = true;
-    
+
     // Screenshot detection
     if (e.key === 'PrintScreen' || (e.key === 'S' && (e.ctrlKey || e.metaKey) && e.shiftKey)) {
       this.registerViolation('Screenshot attempt detected', 'high');
@@ -521,7 +519,7 @@ export class IntegrityMonitoringService {
         );
       }
     }
-    
+
     // ctrl keys detections
     if (e.ctrlKey) {
       const forbiddenKeys = ['c', 'v', 'x', 'a', 's', 'p', 'f', 'h', 'u', 'r', 'w', 't', 'n'];

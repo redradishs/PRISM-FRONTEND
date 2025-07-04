@@ -157,8 +157,16 @@
                                 <span>{{assessmentDetails.assessment?.classPerformance?.average}}%</span>
                             </div>
                             <div class="infoitem">
-                                <span>Class Highest:</span>
-                                <span>{{assessmentDetails.assessment?.classPerformance?.highest}}%</span>
+                                <span>Number of Attempts:</span>
+                                <span>{{assessmentDetails.student?.attempts}}</span>
+                            </div>
+                            <div *ngIf="assessmentDetails.student?.reportStatus !== 'N/A'" class="infoitem">
+                                <span>Report Status:</span>
+                                <span class="report-status-badge" [ngClass]="{
+                                    'status-pending': assessmentDetails.student?.reportStatus?.toLowerCase() === 'pending',
+                                    'status-resolved': assessmentDetails.student?.reportStatus?.toLowerCase() === 'resolved',
+                                    'status-reviewing': assessmentDetails.student?.reportStatus?.toLowerCase() === 'reviewing'
+                                }">{{assessmentDetails.student?.reportStatus.toUpperCase()}}</span>
                             </div>
                             <div class="infoitem violations-toggle" (click)="toggleViolationsView()"
                                 *ngIf="assessmentDetails.violations && assessmentDetails.violations.count > 0">
@@ -233,33 +241,49 @@
                             </div>
                         </div>
 
-                        <div class="feedbackbox">
-                            <div class="feedbackheader">
-                                <h3 class="feedbacktitle">
-                                    <i class="fas fa-comment"></i>
-                                    Instructor Feedback
+                        <!-- Attempts History -->
+                        <div class="attempts-history-box">
+                            <div class="attempts-header">
+                                <h3 class="attempts-title">
+                                    <i class="fas fa-history"></i>
+                                    Attempts History
                                 </h3>
-                                <button class="btn-ghost" (click)="toggleFeedbackEdit()" [disabled]="!show">
-                                    <i class="fas" [class.fa-edit]="!isEditingFeedback"
-                                        [class.fa-save]="isEditingFeedback"></i>
-                                </button>
+                                <span class="attempts-count">{{assessmentDetails.student?.attempts}} attempts</span>
                             </div>
-                            <ng-container *ngIf="isEditingFeedback; else displayFeedback">
-                                <div class="space-y-2">
-                                    <textarea [(ngModel)]="feedback" placeholder="Enter feedback for the student..."
-                                        class="w-full min-h-[100px] p-2 border rounded-md"></textarea>
-                                    <div class="flex justify-end gap-2">
-                                        <button class="btn-outline" (click)="cancelFeedbackEdit()">Cancel</button>
-                                        <button class="btn-primary" (click)="saveFeedback()">Save Feedback</button>
+                            <div class="attempts-content"
+                                *ngIf="assessmentDetails.student?.attempts && assessmentDetails.student?.attempts > 0; else noAttempts">
+                                <div class="attempts-list">
+                                    <div *ngFor="let attempt of assessmentDetails.student.attemptsHistory; let i = index"
+                                        class="attempt-item" [class.current-attempt]="i === 0"
+                                        (click)="viewAttempt(attempt, i + 1)">
+                                        <div class="attempt-number">
+                                            <div class="attempt-badge" [class.current]="i === 0">
+                                                <i class="fas fa-hashtag"></i>
+                                                <span>{{i + 1}}</span>
+                                            </div>
+                                            <div *ngIf="i === 0" class="current-label">Current</div>
+                                        </div>
+                                        <div class="attempt-details">
+                                            <div class="attempt-score">
+                                                <span class="score-value">{{attempt.score}}/{{totalPoints}}</span>
+                                            </div>
+                                            <div class="attempt-date">
+                                                <i class="fas fa-clock"></i>
+                                                <span>{{attempt.submittedAt | date: 'MMM d, y h:mm a':'UTC'}}</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </ng-container>
-                            <ng-template #displayFeedback>
-                                <p class="feedbacktext">
-                                    {{feedback || "No feedback provided yet. Click the edit button to add feedback."}}
-                                </p>
+                            </div>
+                            <ng-template #noAttempts>
+                                <div class="no-attempts">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>No attempt history available</span>
+                                </div>
                             </ng-template>
                         </div>
+
+
 
                         <!-- Rectification Information -->
                         <div *ngIf="assessmentDetails.rectification" class="rectification-box">
@@ -361,6 +385,10 @@
                                     <span class="question-title">Question {{i + 1}}</span>
                                 </div>
                                 <div class="question-meta">
+                                    <span class="review-badge" *ngIf="isQuestionMarkedForReview(q.questionId)">
+                                        <i class="fas fa-flag"></i>
+                                        Needs Review
+                                    </span>
                                     <span class="auto-grade-badge" *ngIf="q.method === 'auto'">Auto Graded</span>
                                     <span class="manual-grade-badge" *ngIf="q.method === 'manual'">Manually
                                         Graded</span>

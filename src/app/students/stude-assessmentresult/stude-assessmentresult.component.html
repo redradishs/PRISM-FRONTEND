@@ -105,9 +105,9 @@
                             <i class="fas fa-redo"></i>
                             Retake Assessment
                         </button>
-                        <button *ngIf="result.status === 'completed'" class="action-btn" (click)="goHome()">
-                            <i class="fas fa-file-export"></i>
-                            Export Results
+                        <button *ngIf="result.status === 'completed'" class="action-btn" (click)="openReportModal()">
+                            <i class="fas fa-flag"></i>
+                            Report Assessment
                         </button>
                         <button class="action-btn primary" (click)="goHome()">
                             <i class="fas fa-home"></i>
@@ -490,6 +490,104 @@
                     </section>
                 </ng-container>
             </main>
+        </div>
+    </div>
+
+    <!-- Report Assessment Modal -->
+    <div *ngIf="showReportModal" class="report-modal-overlay" (click)="closeReportModal()">
+        <div class="report-modal" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-flag"></i>
+                    <h2>Report Assessment</h2>
+                </div>
+                <button class="close-btn" (click)="closeReportModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form (ngSubmit)="submitReport()" #reportForm="ngForm">
+                    <!-- Reason Selection -->
+                    <div class="form-group">
+                        <label for="reason" class="form-label">
+                            <i class="fas fa-exclamation-circle"></i>
+                            Reason for Report *
+                        </label>
+                        <select id="reason" name="reason" [(ngModel)]="reportRequest.reason" class="form-select"
+                            required>
+                            <option value="" disabled>Select a reason</option>
+                            <option *ngFor="let reason of reportReasons" [value]="reason">
+                                {{reason}}
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Question Selection -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-clipboard-question"></i>
+                            Select Questions to Report *
+                        </label>
+                        <div class="question-selection-header">
+                            <div class="selection-actions">
+                                <button type="button" class="select-btn" (click)="selectAllQuestions()">
+                                    <i class="fas fa-check-square"></i>
+                                    Select All
+                                </button>
+                                <button type="button" class="select-btn" (click)="deselectAllQuestions()">
+                                    <i class="fas fa-square"></i>
+                                    Deselect All
+                                </button>
+                            </div>
+                            <div class="selected-count">
+                                {{reportRequest.selectedQuestions.length}} of {{analysis.length}} selected
+                            </div>
+                        </div>
+
+                        <div class="questions-list">
+                            <div *ngFor="let question of analysis; let i = index" class="question-item"
+                                [class.selected]="isQuestionSelected(question.questionId)"
+                                (click)="toggleQuestionSelection(question.questionId)">
+                                <div class="question-checkbox">
+                                    <i class="fas" [class.fa-check-square]="isQuestionSelected(question.questionId)"
+                                        [class.fa-square]="!isQuestionSelected(question.questionId)">
+                                    </i>
+                                </div>
+                                <div class="question-content">
+                                    <div class="question-header">
+                                        <span class="question-number">Question {{i + 1}}</span>
+                                        <div class="question-badges">
+                                            <span class="type-badge">
+                                                <i [class]="'fas ' + getQuestionTypeIcon(question.type)"></i>
+                                                {{getFriendlyTypeName(question.type)}}
+                                            </span>
+                                            <span class="status-badge" [class.correct]="question.isCorrect"
+                                                [class.incorrect]="!question.isCorrect">
+                                                {{question.isCorrect ? 'Correct' : 'Incorrect'}}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="question-text">{{question.questionText}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" (click)="closeReportModal()"
+                            [disabled]="isSubmittingReport">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn-primary" [disabled]="!isFormValid() || isSubmittingReport">
+                            <i *ngIf="!isSubmittingReport" class="fas fa-paper-plane"></i>
+                            <i *ngIf="isSubmittingReport" class="fas fa-spinner fa-spin"></i>
+                            {{isSubmittingReport ? 'Submitting...' : 'Submit Report'}}
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

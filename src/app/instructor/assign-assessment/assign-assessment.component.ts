@@ -163,7 +163,7 @@ export class AssignAssessmentComponent implements OnInit {
   isSearchLoading: boolean = false;
 
   selectedAssessmentPoints: number = 0;
-  displayLimit: number = 9;
+  displayLimit: number = 6;
   showingAll: boolean = false;
   dateFilter: string = 'all';
 
@@ -664,12 +664,12 @@ export class AssignAssessmentComponent implements OnInit {
       }
     }
 
-    if(this.selectedMode === 'mastery') {
-      if(this.attemptsAllowed < 1 || this.attemptsAllowed > 20) {
+    if (this.selectedMode === 'mastery') {
+      if (this.attemptsAllowed < 1 || this.attemptsAllowed > 20) {
         return 'Mastery mode must be between 1 and 20 attempts only.';
       }
     } else {
-      if(this.attemptsAllowed < 1 || this.attemptsAllowed > 5) {
+      if (this.attemptsAllowed < 1 || this.attemptsAllowed > 5) {
         return 'Assessment mode must be between 1 and 5 attempts only.';
       }
     }
@@ -868,7 +868,7 @@ export class AssignAssessmentComponent implements OnInit {
         // const validAttempts = this.attemptsAllowed >= 1;
         let validAttempts = false;
         if (this.selectedMode === 'mastery') {
-          validAttempts = this.attemptsAllowed >= 1 && this.attemptsAllowed <=20;
+          validAttempts = this.attemptsAllowed >= 1 && this.attemptsAllowed <= 20;
         } else {
           validAttempts = this.attemptsAllowed >= 1 && this.attemptsAllowed <= 5;
         }
@@ -982,7 +982,7 @@ export class AssignAssessmentComponent implements OnInit {
       return 'Time limit must be at least 1 minute.';
     }
 
-    if(this.attemptsAllowed < 1 || this.attemptsAllowed > 5) {
+    if (this.attemptsAllowed < 1 || this.attemptsAllowed > 5) {
       return 'Attempts must be between 1 and 5.';
     }
 
@@ -1014,5 +1014,9 @@ export class AssignAssessmentComponent implements OnInit {
         popup: 'swal2-toast'
       }
     });
+  }
+
+  viewAssessment(assessmentId: string): void {
+    this.router.navigate(['/instructor/edit'], { state: { assessmentId } });
   }
 }

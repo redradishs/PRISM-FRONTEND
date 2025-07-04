@@ -196,7 +196,7 @@
                             <div class="assessment-icon" [class]="getAssessmentTypeColor(ass)">
                                 <i class="fas" [class]="getAssessmentTypeIcon(ass)"></i>
                             </div>
-                            <div (click)="gotoAssessment(ass.id)" class="assessment-content">
+                            <div (click)="gotoAssessment(ass)" class="assessment-content">
                                 <div class="assessment-header">
                                     <h2>{{ass.title}}</h2>
                                     <span class="assessment-type" [class]="'type-' + getAssessmentTypeColor(ass)">
@@ -285,6 +285,76 @@
                     </div>
                 </div>
 
+                <!-- Student Reports Section -->
+                <div *ngIf="onGoingDisputes.length > 0" class="student-reports">
+                    <div class="header-section">
+                        <div>
+                            <h1>Student Reports</h1>
+                            <p>Assessment disputes submitted by students</p>
+                        </div>
+                        <button class="export-btn" (click)="viewAllReports()">View All Reports</button>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="reports-table">
+                            <thead>
+                                <tr>
+                                    <th class="student-col">Student</th>
+                                    <th class="assessment-col">Assessment Title</th>
+                                    <th class="reason-col">Dispute Reason</th>
+                                    <th class="date-col">Submitted</th>
+                                    <th class="status-col">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let report of onGoingDisputes" class="report-row"
+                                    (click)="reviewReport(report)">
+                                    <td class="student-col">
+                                        <div class="student-info">
+                                            <div class="avatar">{{getInitials(report.studentName)}}</div>
+                                            <div class="student-details">
+                                                <div class="student-name">{{report.studentName}}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="assessment-col">
+                                        <div class="assessment-info">
+                                            <div class="assessment-title">{{report.assessment.title}}</div>
+                                            <div class="assessment-meta">{{report.disputeRequest.questionCount}}
+                                                questions disputed
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="reason-col">
+                                        <div class="reason-text">
+                                            {{report.disputeRequest.reason}}
+                                        </div>
+                                    </td>
+                                    <td class="date-col">
+                                        <div class="date-info">
+                                            <div class="date">{{report.disputeRequest.filedAt | date: 'MMM d, y'}}</div>
+                                            <div class="time">{{report.disputeRequest.filedAt | date: 'h:mm a'}}</div>
+                                        </div>
+                                    </td>
+                                    <td class="status-col">
+                                        <span class="status-badge"
+                                            [class]="'status-' + report.disputeRequest.status.toLowerCase()">
+                                            {{report.disputeRequest.status}}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div *ngIf="onGoingDisputes.length === 0" class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <h2>No Student Reports</h2>
+                        <p>There are currently no assessment disputes submitted by students.</p>
+                    </div>
+                </div>
 
                 <div *ngIf="this.totalClasses > 0" class="assessments">
                     <div class="assessments-header">

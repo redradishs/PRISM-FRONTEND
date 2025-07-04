@@ -75,6 +75,10 @@ export class StudentService {
     return this.http.get(`${this.apiUrl}/assessment/review/${assessmentId}/${studentId}`);
   }
 
+  submitGradeDispute(data: any) {
+    return this.http.post(`${this.apiUrl}/dispute/file`, data);
+  }
+
   //Student History Page
 
   totalAssessments(studentId: String) {

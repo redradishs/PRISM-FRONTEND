@@ -451,21 +451,20 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
   }
 
   private setupIntegrityMonitoring() {
-    setTimeout(() => {
-      this.is.ensureInitialized();
-      
-      this.subscriptions.push(
-        this.is.cheatingCount$.subscribe(count => {
-          this.cheatingCount = count;
-        })
-      );
+    // Start integrity monitoring for secure assessment
+    this.is.startMonitoring();
 
-      this.subscriptions.push(
-        this.is.cheatMessage$.subscribe(message => {
-          this.cheatMessage = message;
-        })
-      );
-    }, 100);
+    this.subscriptions.push(
+      this.is.cheatingCount$.subscribe(count => {
+        this.cheatingCount = count;
+      })
+    );
+
+    this.subscriptions.push(
+      this.is.cheatMessage$.subscribe(message => {
+        this.cheatMessage = message;
+      })
+    );
   }
 
   createRange(count: number): number[] {

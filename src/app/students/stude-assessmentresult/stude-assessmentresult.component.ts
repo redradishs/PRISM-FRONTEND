@@ -1,6 +1,7 @@
 import { Component, HostListener, ViewChild, OnInit, ChangeDetectorRef } from '@angular/core';
 import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ApiService } from '../../services/api.service';
@@ -17,6 +18,11 @@ interface Question {
   studentAnswer: string | string[];
   correctAnswer: string | string[];
   options?: string[];
+}
+
+interface ReportRequest {
+  reason: string;
+  selectedQuestions: string[];
 }
 
 interface AssessmentResult {
@@ -61,7 +67,7 @@ interface AssessmentResult {
 @Component({
   selector: 'app-stude-assessmentresult',
   standalone: true,
-  imports: [SidebarComponent, CommonModule],
+  imports: [SidebarComponent, CommonModule, FormsModule],
   templateUrl: './stude-assessmentresult.component.html',
   styleUrl: './stude-assessmentresult.component.css'
 })
@@ -76,7 +82,7 @@ export class StudeAssessmentresultComponent implements OnInit {
   userId: string = '';
   result!: AssessmentResult;
   questionType: any;
-  
+
   questions: any[] = [];
   isFinished = false;
   analysis: any[] = [];
@@ -85,15 +91,32 @@ export class StudeAssessmentresultComponent implements OnInit {
   insights: any;
   search: any;
   searchResults: any;
-  
+
+  // Report Assessment Form State
+  showReportModal = false;
+  reportRequest: ReportRequest = {
+    reason: '',
+    selectedQuestions: [],
+  };
+  reportReasons = [
+    'Incorrect question or answer',
+    'Technical issue during assessment',
+    'Unclear question wording',
+    'Time constraint issues',
+    'System malfunction',
+    'Accessibility concerns',
+    'Other'
+  ];
+  isSubmittingReport = false;
+
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
-  
+
   showMasteryCelebration = false;
   outroActive = false;
-  
+
   constructor(private auth: AuthService, private api: StudentService, private router: Router, private cdr: ChangeDetectorRef, private ai: ApiService) {
     const navigation = this.router.getCurrentNavigation();
-    if(navigation?.extras.state) {
+    if (navigation?.extras.state) {
       this.assignedAssessmentId = navigation.extras.state['assessmentId'];
       console.log('Assigned Assessment ID:', this.assignedAssessmentId);
     } else {
@@ -111,7 +134,7 @@ export class StudeAssessmentresultComponent implements OnInit {
       this.profile = user.profilePicture;
       console.log('Username:', this.username);
       this.getResult();
-      this.getPerformancePerQuestion(); 
+      this.getPerformancePerQuestion();
       console.log('User ID:', this.userId);
     });
   }
@@ -121,11 +144,11 @@ export class StudeAssessmentresultComponent implements OnInit {
       next: (resp: any) => {
         if (resp.remarks === 'Success') {
           this.result = resp.data;
-          if(this.result.showResult === 'immediate') {
+          if (this.result.showResult === 'immediate') {
             this.viewAllQuestions();
             this.isFinished = true;
           }
-          if(this.result.status === 'completed') {
+          if (this.result.status === 'completed') {
             this.viewAllQuestions();
             this.isFinished = true;
           }
@@ -170,13 +193,13 @@ export class StudeAssessmentresultComponent implements OnInit {
       next: (resp: any) => {
         if (resp.remarks === 'Success') {
           this.analysis = [];
-          
+
           if (resp.data && resp.data.questions) {
             this.analysis = resp.data.questions;
             this.getAssessmentInsights();
           }
-          
-          console.log('Analysis:', this.analysis);  
+
+          console.log('Analysis:', this.analysis);
           console.log('Question overview:', resp.data);
         }
       },
@@ -238,13 +261,13 @@ export class StudeAssessmentresultComponent implements OnInit {
   getAssessmentTypeColor(assessment: string): string {
     switch (assessment) {
       case 'mastery':
-        return '#d97706'; 
+        return '#d97706';
       case 'public assessment':
-        return '#2563eb'; 
+        return '#2563eb';
       case 'assessment':
-        return '#4f46e5'; 
+        return '#4f46e5';
       default:
-        return '#4f46e5'; 
+        return '#4f46e5';
     }
   }
 
@@ -260,50 +283,50 @@ export class StudeAssessmentresultComponent implements OnInit {
   }
 
   getFriendlyTypeName(type: string): string {
-    return type.split('-').map(word => 
+    return type.split('-').map(word =>
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
   }
 
   retakeAssessment() {
-   Swal.fire({
-    title: 'Are you sure you want to retake this assessment?',
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    confirmButtonText: 'Yes, retake it!'
-   }).then((result: any) => {
-    if(result.isConfirmed) {
-      const data = {
-        assignedAssessmentId: this.assignedAssessmentId,
-        studentId: this.userId
-      }
-      this.api.recordStartTime(data).subscribe({
-        next: (resp: any) => {
-          console.log('Successfully recorded start time', resp);
-          if(this.result.mode !== 'mastery') {
-            this.router.navigate(['student/assessment/take/normal'], {
-              state: { assessmentId: this.assignedAssessmentId }
-            });
-          } else {
-            this.router.navigate(['student/assessment/take'], {
-              state: { assessmentId: this.assignedAssessmentId }
-            });
-          }
-        },
-        error: (error) => {
-          console.error('Error recording start time:', error);
-          Swal.fire({
-            title: 'Oops! ',
-            icon: 'error',
-            text: 'Error retaking the assessment. Please try again later.'          
-          })
+    Swal.fire({
+      title: 'Are you sure you want to retake this assessment?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, retake it!'
+    }).then((result: any) => {
+      if (result.isConfirmed) {
+        const data = {
+          assignedAssessmentId: this.assignedAssessmentId,
+          studentId: this.userId
         }
-      })
-    }     
-    
-   })
+        this.api.recordStartTime(data).subscribe({
+          next: (resp: any) => {
+            console.log('Successfully recorded start time', resp);
+            if (this.result.mode !== 'mastery') {
+              this.router.navigate(['student/assessment/take/normal'], {
+                state: { assessmentId: this.assignedAssessmentId }
+              });
+            } else {
+              this.router.navigate(['student/assessment/take'], {
+                state: { assessmentId: this.assignedAssessmentId }
+              });
+            }
+          },
+          error: (error) => {
+            console.error('Error recording start time:', error);
+            Swal.fire({
+              title: 'Oops! ',
+              icon: 'error',
+              text: 'Error retaking the assessment. Please try again later.'
+            })
+          }
+        })
+      }
+
+    })
   }
 
   formatAnswer(answer: string | string[]): string {
@@ -312,11 +335,11 @@ export class StudeAssessmentresultComponent implements OnInit {
     }
     return answer;
   }
-  
+
   scrollToQuestion(index: number) {
     const element = document.getElementById(`question-${index}`);
     if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ behavior: 'smooth' });
     }
   }
 
@@ -364,7 +387,7 @@ export class StudeAssessmentresultComponent implements OnInit {
       next: (resp: any) => {
         console.log('Successfully analyzed the assessment', resp);
         this.insights = resp.feedback;
-        if(resp.search_queries) {
+        if (resp.search_queries) {
           this.search = resp.search_queries[0];
           this.searchMaterials();
         }
@@ -392,5 +415,96 @@ export class StudeAssessmentresultComponent implements OnInit {
 
   openResource(url: string) {
     window.open(url, '_blank');
+  }
+
+  // Report Assessment Methods
+  openReportModal() {
+    this.showReportModal = true;
+    this.resetReportForm();
+  }
+
+  closeReportModal() {
+    this.showReportModal = false;
+    this.resetReportForm();
+  }
+
+  resetReportForm() {
+    this.reportRequest = {
+      reason: '',
+      selectedQuestions: [],
+    };
+  }
+
+  toggleQuestionSelection(questionId: string) {
+    const index = this.reportRequest.selectedQuestions.indexOf(questionId);
+    if (index > -1) {
+      this.reportRequest.selectedQuestions.splice(index, 1);
+    } else {
+      this.reportRequest.selectedQuestions.push(questionId);
+    }
+  }
+
+  isQuestionSelected(questionId: string): boolean {
+    return this.reportRequest.selectedQuestions.includes(questionId);
+  }
+
+  selectAllQuestions() {
+    if (this.analysis && this.analysis.length > 0) {
+      this.reportRequest.selectedQuestions = this.analysis.map(q => q.questionId);
+    }
+  }
+
+  deselectAllQuestions() {
+    this.reportRequest.selectedQuestions = [];
+  }
+
+  isFormValid(): boolean {
+    return this.reportRequest.reason.trim() !== '' &&
+      this.reportRequest.selectedQuestions.length > 0;
+  }
+
+  submitReport() {
+    if (!this.isFormValid()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Incomplete Form',
+        text: 'Please select a reason and at least one question to report.',
+        confirmButtonColor: '#3b82f6'
+      });
+      return;
+    }
+
+    this.isSubmittingReport = true;
+
+    const reportData = {
+      studentId: this.userId,
+      assignedAssessmentId: this.assignedAssessmentId,
+      reason: this.reportRequest.reason,
+      disputedQuestionIds: this.reportRequest.selectedQuestions,
+    };
+
+    this.api.submitGradeDispute(reportData).subscribe({
+      next: (response) => {
+        console.log('Successfully submitted grade dispute:', response);
+        this.isSubmittingReport = false;
+        this.closeReportModal();
+        Swal.fire({
+          icon: 'success',
+          title: 'Report Submitted',
+          text: 'Your assessment report has been submitted. The instructor will review your report and make any necessary adjustments.',
+          confirmButtonColor: '#10b981'
+        });
+      },
+      error: (error) => {
+        console.error('Error submitting grade dispute:', error);
+        this.isSubmittingReport = false;
+        Swal.fire({
+          icon: 'error',
+          title: 'Submission Failed',
+          text: 'Error submitting the report. Please try again later.',
+          confirmButtonColor: '#ef4444'
+        });
+      }
+    });
   }
 }

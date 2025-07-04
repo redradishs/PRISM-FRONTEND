@@ -3,8 +3,8 @@
     <div class="login-section">
         <div class="login-container">
             <div class="logo">
-                <img src="gclogo.png" alt="Gordon College Logo" width="60">
-                <img src="ccslogo.png" alt="College of Computer Studies Logo" width="60">
+                <img src="gclogo.webp" alt="Gordon College Logo" width="60">
+                <img src="ccslogo.webp" alt="College of Computer Studies Logo" width="60">
             </div>
 
 
@@ -84,6 +84,7 @@
                     Don't have an account? <a (click)="activeTab = 'signup'" class="auth-link">Create an account</a>
                 </p>
             </form>
+
 
 
             <form [formGroup]="signupForm" *ngIf="activeTab === 'signup'" (ngSubmit)="handleSignupSubmit($event)">
@@ -170,14 +171,18 @@
                     </a>
                 </p>
             </form>
+
+            <span class="kataga"> Excellence • Character • Service</span>
+
         </div>
+
     </div>
 
     <!-- Branding Section -->
     <div class="branding-section">
         <div class="branding-content">
             <div class="img">
-                <img src="prism_logo.png" alt="Logo" width="120">
+                <img src="prism_logo.webp" alt="Logo" width="120">
             </div>
             <h2 class="prism-logo">PRISM</h2>
             <h3>Elevate Your Assessment Journey</h3>

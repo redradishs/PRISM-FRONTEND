@@ -14,6 +14,7 @@ import { MasteryResultComponent } from './instructor/mastery-result/mastery-resu
 import { AssignAssessmentComponent } from './instructor/assign-assessment/assign-assessment.component';
 import { FinalGenerateAssessmentComponent } from './instructor/final-generate-assessment/final-generate-assessment.component';
 import { EditAssessmentComponent } from './instructor/edit-assessment/edit-assessment.component';
+import { StudentAttemptComponent } from './instructor/student-attempt/student-attempt.component';
 
 export const INSTRUCTOR_ROUTES: Routes = [
     { path: 'dashboard', component: HomeComponent },
@@ -31,4 +32,5 @@ export const INSTRUCTOR_ROUTES: Routes = [
     { path: 'students/assessments', component: StudentAssessmentsComponent },
     { path: 'edit', component: EditAssessmentComponent },
     { path: 'manage', component: ManageComponent },
+    { path: 'response/attempts', component: StudentAttemptComponent }
 ]; 

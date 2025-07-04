@@ -1708,3 +1708,304 @@
     }
 }
     
+/* student reports styles */
+.student-reports {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    margin-top: 2rem;
+    overflow: hidden;
+    border-left: 4px solid #6366f1;
+
+}
+
+.student-reports .header-section {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.student-reports .header-section h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
+}
+
+.student-reports .header-section p {
+    color: #6b7280;
+    margin: 0.25rem 0 0 0;
+    font-size: 0.875rem;
+}
+
+.reports-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+.reports-table thead {
+    background: #f9fafb;
+}
+
+.reports-table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.875rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.reports-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    vertical-align: top;
+}
+
+.report-row {
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+}
+
+.report-row:hover {
+    background-color: #f9fafb;
+}
+
+.reports-table .student-col {
+    width: 25%;
+}
+
+.reports-table .assessment-col {
+    width: 30%;
+}
+
+.reports-table .reason-col {
+    width: 25%;
+}
+
+.reports-table .date-col {
+    width: 15%;
+}
+
+.reports-table .status-col {
+    width: 15%;
+}
+
+.assessment-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.assessment-title {
+    font-weight: 600;
+    color: #111827;
+    font-size: 0.875rem;
+}
+
+.assessment-meta {
+    color: #6b7280;
+    font-size: 0.75rem;
+}
+
+.reason-text {
+    color: #374151;
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+.date-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.date-info .date {
+    font-weight: 500;
+    color: #111827;
+    font-size: 0.875rem;
+}
+
+.date-info .time {
+    color: #6b7280;
+    font-size: 0.75rem;
+}
+
+.status-badge {
+    display: inline-flex;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-badge.status-pending {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.status-badge.status-resolved {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.status-badge.status-reviewing {
+    background-color: #dbeafe;
+    color: #2563eb;
+}
+
+@media (max-width: 1024px) {
+    .student-reports .header-section {
+        padding: 1rem 1.5rem;
+    }
+    
+    .reports-table th,
+    .reports-table td {
+        padding: 0.75rem;
+        font-size: 0.8rem;
+    }
+    
+    .reports-table .assessment-col {
+        width: 35%;
+    }
+    
+    .reports-table .reason-col {
+        width: 30%;
+    }
+}
+
+@media (max-width: 768px) {
+    .student-reports .header-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
+    .student-reports .header-section .export-btn {
+        align-self: stretch;
+    }
+    
+    .reports-table {
+        font-size: 0.8rem;
+    }
+    
+    .reports-table th,
+    .reports-table td {
+        padding: 0.5rem;
+    }
+    
+    .reason-text {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .student-reports .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: #cbd5e1 #f1f5f9;
+    }
+    
+    .reports-table {
+        min-width: 700px;
+        white-space: nowrap;
+    }
+    
+    .reports-table th,
+    .reports-table td {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+    
+    .reports-table .student-col {
+        min-width: 180px;
+    }
+    
+    .reports-table .assessment-col {
+        min-width: 200px;
+    }
+    
+    .reports-table .reason-col {
+        min-width: 160px;
+    }
+    
+    .reports-table .date-col {
+        min-width: 120px;
+    }
+    
+    .reports-table .status-col {
+        min-width: 100px;
+    }
+    
+    .student-info {
+        min-width: max-content;
+    }
+    
+    .assessment-info {
+        min-width: max-content;
+    }
+    
+    .reason-text {
+        white-space: normal;
+        word-wrap: break-word;
+        max-width: 160px;
+        font-size: 0.75rem;
+    }
+    
+    .date-info {
+        min-width: max-content;
+    }
+    
+    .status-badge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+    }
+}
+    
+.student-reports .table-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.student-reports .table-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+.student-reports .table-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.student-reports .table-container::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.student-reports .table-container {
+    position: relative;
+}
+
+.student-reports .table-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 20px;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.8));
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+@media (max-width: 640px) {
+    .student-reports .table-container::after {
+        opacity: 1;
+    }
+}
+    

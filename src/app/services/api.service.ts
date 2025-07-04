@@ -114,6 +114,10 @@ export class ApiService {
     return this.http.get(url);
   }
 
+  getOngoingDisputes(id: string) {
+    return this.http.get(`${this.apiUrl}/disputes/${id}`);
+  }
+
   //  starts with generateAssessmentPage
 
   createAssessment(data: any) {
@@ -359,6 +363,10 @@ export class ApiService {
       `${this.apiUrl}/assessment/rectify/${assignedAssessmentId}/${studentId}`,
       data
     );
+  }
+
+  getAttemptHistory(data: any) {
+    return this.http.post(`${this.apiUrl}/attemptHistory/specific`, data);
   }
 
 

@@ -22,6 +22,14 @@ export class EditAssessmentComponent {
   isLoading: boolean = true;
   assessmentId: string = '';
   questions: any[] = [];
+  titleA: string = '';
+  totalPoints: number = 0;
+  category: string = '';
+
+  // ttl edits
+  isEditingTitle: boolean = false;
+  originalTitle: string = '';
+
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
   @HostListener('window:resize')
   onResize() {
@@ -30,15 +38,12 @@ export class EditAssessmentComponent {
 
   constructor(private api: ApiService, private auth: AuthService, private router: Router, private title: TitleService) {
     this.title.setTitle('PRISM | Edit');
-    this.assessmentId = "6826ab840973a13da6d13dfa"
-
-    // const navigation = this.router.getCurrentNavigation();
-    // if (navigation && navigation.extras.state) {
-    //   // this.assessmentId = navigation.extras.state['assessmentId'];
-    //   this.assessmentId = "6826ab840973a13da6d13dfa"
-    // } else {
-    //   // this.router.navigate(['/instructor/dashboard']);
-    // }
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation && navigation.extras.state) {
+      this.assessmentId = navigation.extras.state['assessmentId'];
+    } else {
+      this.router.navigate(['/instructor/dashboard']);
+    }
 
   }
 
@@ -60,6 +65,9 @@ export class EditAssessmentComponent {
       next: (resp: any) => {
         console.log('Retrieved assessment data:', resp);
         this.questions = resp.data.questions;
+        this.titleA = resp.data.title;
+        this.totalPoints = resp.data.totalPoints;
+        this.category = resp.data.category;
         this.isLoading = false;
       }, error: (error: any) => {
         console.error('Error retrieving assessment data', error);
@@ -71,6 +79,7 @@ export class EditAssessmentComponent {
     const data = {
       assessmentId: this.assessmentId,
       userId: this.userId,
+      title: this.titleA,
       questions: this.questions.map(question => ({
         type: question.type,
         questionText: question.questionText,
@@ -104,6 +113,31 @@ export class EditAssessmentComponent {
     })
   }
 
+  // ttl edit section
+  startEditingTitle(): void {
+    this.originalTitle = this.titleA;
+    this.isEditingTitle = true;
+  }
+
+  saveTitle(): void {
+    if (this.titleA.trim() === '') {
+      Swal.fire({
+        title: 'Invalid Title',
+        text: 'Assessment title cannot be empty.',
+        icon: 'warning',
+        toast: true,
+        position: 'top-end',
+        timer: 2000,
+      });
+      return;
+    }
+    this.isEditingTitle = false;
+  }
+
+  cancelTitleEdit(): void {
+    this.titleA = this.originalTitle;
+    this.isEditingTitle = false;
+  }
 
   getAssessmentTypeIcon(assessment: string): string {
     switch (assessment) {
@@ -253,10 +287,6 @@ export class EditAssessmentComponent {
   trackByAnswerIndex(index: number, answer: any): any {
     return index;
   }
-
-
-
-
 
   toggleSidebar() {
     if (this.sidebar) {

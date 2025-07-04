@@ -16,8 +16,6 @@ import Swal from 'sweetalert2';
 export class ResponseReviewComponent implements OnInit, OnDestroy {
   expandedQuestions: Set<string | number> = new Set();
   isMobile: boolean = false;
-  isEditingFeedback: boolean = false;
-  feedback: string = '';
   Array = Array;
   userId: string = '';
   username: string = '';
@@ -29,6 +27,7 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
   showViolations: boolean = false;
   show: boolean = true;
   isLoading: boolean = true;
+  totalPoints: number = 0;
 
 
   @HostListener('window:resize')
@@ -82,6 +81,7 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
     this.api.getAssessmentDataP(this.assignedAssessmentId, this.studentId).subscribe({
       next: (resp: any) => {
         this.assessmentDetails = resp.data;
+        this.totalPoints = resp.data.assessment.totalPoints;
         console.log('Assessment data:', this.assessmentDetails);
       }, error: (error) => {
         console.error('Error fetching assessment data:', error);
@@ -111,17 +111,12 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
     }
   }
 
-  toggleFeedbackEdit(): void {
-    this.isEditingFeedback = !this.isEditingFeedback;
+  viewAttempt(attempt: any, d: number) {
+    this.router.navigate(['/instructor/response/attempts'],
+      { state: { assessmentId: this.assignedAssessmentId, studentId: this.studentId, spec: d } });
   }
 
-  cancelFeedbackEdit(): void {
-    this.isEditingFeedback = false;
-  }
 
-  saveFeedback(): void {
-    this.isEditingFeedback = false;
-  }
 
   openGradeModal(question: any): void {
     console.log('Opening grade modal for:', question);
@@ -295,5 +290,12 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
 
   toggleViolationsView(): void {
     this.showViolations = !this.showViolations;
+  }
+
+  isQuestionMarkedForReview(questionId: string): boolean {
+    if (!questionId || !this.assessmentDetails?.student?.questionstoReview) {
+      return false;
+    }
+    return this.assessmentDetails.student.questionstoReview.includes(questionId);
   }
 }

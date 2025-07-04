@@ -9,7 +9,7 @@ import { AuthService } from '../../services/auth.service';
 import { GoogleAuthProvider, signInWithPopup } from '@angular/fire/auth';
 import { Auth } from '@angular/fire/auth';
 import { SeoService } from '../../services/seo.service';
-import { IntegrityMonitoringService } from '../../services/integrity-monitoring.service';
+
 
 @Component({
   selector: 'app-login',
@@ -48,7 +48,7 @@ export class LoginComponent implements OnInit {
     private auth: Auth,
     private seoService: SeoService,
     private route: ActivatedRoute,
-    private integ: IntegrityMonitoringService
+
   ) {
     this.loginForm = this.formBuilder.group({
       email: [
@@ -181,7 +181,8 @@ export class LoginComponent implements OnInit {
         }
 
         this.authService.setToken(response.data.jwt);
-        this.integ.resetAllViolations();
+        localStorage.removeItem('assessment_integrity_data');
+        sessionStorage.removeItem('assessment_integrity_data');
         const userRole = this.authService.getUserRole();
 
         Swal.fire({
@@ -429,7 +430,8 @@ export class LoginComponent implements OnInit {
       this.authService.googleSignIn({ idToken }).subscribe({
         next: (response: any) => {
           this.authService.setToken(response.data.jwt);
-          this.integ.resetAllViolations();
+          localStorage.removeItem('assessment_integrity_data');
+          sessionStorage.removeItem('assessment_integrity_data');
           const userRole = this.authService.getUserRole();
 
           Swal.fire({

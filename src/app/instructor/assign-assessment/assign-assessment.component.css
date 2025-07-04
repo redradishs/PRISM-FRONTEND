@@ -2575,8 +2575,55 @@ input[type="radio"]:hover:not(:checked) {
 @keyframes fadeIn {
     0% {
         opacity: 0;
+        transform: translateY(10px);
     }
     100% {
         opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Assessment Actions */
+.assessment-actions {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f3f4f6;
+}
+
+.view-assessment-btn {
+    background: #6366f1;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    width: 100%;
+    justify-content: center;
+}
+
+.view-assessment-btn:hover {
+    background: #4f46e5;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+}
+
+.view-assessment-btn:active {
+    transform: translateY(0);
+}
+
+.view-assessment-btn i {
+    font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+    .view-assessment-btn {
+        padding: 0.625rem 1rem;
+        font-size: 0.8125rem;
     }
 }

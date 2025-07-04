@@ -132,6 +132,8 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
     this.startTimer();
     this.initializeAnswers();
 
+    this.is.startMonitoring();
+
     this.auth.getCurrentUser().subscribe((user) => {
       this.userId = user.id;
       this.getData();
@@ -160,6 +162,8 @@ export class StudTakeexamComponent implements OnInit, OnDestroy {
     if (this.saveTimeout) {
       clearTimeout(this.saveTimeout);
     }
+
+    this.is.cleanup();
   }
 
   getData() {

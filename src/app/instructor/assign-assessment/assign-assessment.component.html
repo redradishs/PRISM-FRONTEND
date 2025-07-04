@@ -201,6 +201,15 @@
                                                         {{type.type | titlecase}}: {{type.count}}
                                                     </span>
                                                 </div>
+
+                                                <!-- View Assessment Button -->
+                                                <div class="assessment-actions">
+                                                    <button class="view-assessment-btn"
+                                                        (click)="viewAssessment(assessment._id); $event.stopPropagation()">
+                                                        <i class="fas fa-eye"></i>
+                                                        View Assessment
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </ng-container>

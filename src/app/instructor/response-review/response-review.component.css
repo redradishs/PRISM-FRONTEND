@@ -156,6 +156,36 @@
     color: #d97706;
 }
 
+/* Report Status Badge Styles */
+.report-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: capitalize;
+    transition: all 0.2s ease;
+}
+
+.report-status-badge.status-pending {
+    background-color: #fef3c7;
+    color: #d97706 !important;
+    border: 1px solid #fbbf24;
+}
+
+.report-status-badge.status-resolved {
+    background-color: #dcfce7;
+    color: #166534 !important;
+    border: 1px solid #22c55e;
+}
+
+.report-status-badge.status-reviewing {
+    background-color: #dbeafe;
+    color: #2563eb !important;
+    border: 1px solid #3b82f6;
+}
+
 /* Button Styles */
 .button {
     display: inline-flex;
@@ -692,6 +722,35 @@
     white-space: nowrap;
 }
 
+.review-badge {
+    background-color: #fef3c7;
+    color: #d97706;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    animation: reviewPulse 2s ease-in-out infinite;
+    border: 1px solid #fbbf24;
+}
+
+.review-badge i {
+    font-size: 0.625rem;
+}
+
+@keyframes reviewPulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.02);
+    }
+}
+
 /* Score Badge */
 .score-badge {
     display: flex;
@@ -708,7 +767,7 @@
         padding: 0.625rem 0.75rem;
     }
 
-    .manual-grade-badge, .auto-grade-badge {
+    .manual-grade-badge, .auto-grade-badge, .review-badge {
         padding: 0.25rem 0.5rem;
         font-size: 0.75rem;
     }
@@ -1700,47 +1759,248 @@
     stroke: #16A34A;
 }
 
-.feedbackbox {
+
+
+/* Attempts History Styles */
+.attempts-history-box {
     margin-top: 1.5rem;
-    background: #F9FAFB;
+    background: #f9fafb;
     border-radius: 0.5rem;
-    padding: 0.875rem;
-    border: 1px solid #E5E7EB;
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
     transition: all 0.2s ease;
 }
 
-.feedbackbox:hover {
-    background: #F5F3FF;
-    border-color: #E9D5FF;
+.attempts-history-box:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
 }
 
-.feedbackheader {
+.attempts-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e5e7eb;
 }
 
-.feedbacktitle {
+.attempts-title {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     color: #374151;
+    font-weight: 600;
+    font-size: 1rem;
+    margin: 0;
+}
+
+.attempts-title i {
+    color: #6366f1;
+    font-size: 0.875rem;
+}
+
+.attempts-count {
+    background-color: #e0e7ff;
+    color: #4338ca;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
     font-weight: 500;
 }
 
-.feedbacktitle i {
-    color: #7C3AED;
-    transition: transform 0.2s ease;
+.attempts-content {
+    max-height: 300px;
+    overflow-y: auto;
 }
 
-.feedbackbox:hover .feedbacktitle i {
-    transform: rotate(-5deg);
+.attempts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
 }
 
-.feedbacktext {
-    color: #6B7280;
+.attempt-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: white;
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb;
+    transition: all 0.2s ease;
+}
+
+.attempt-item:hover {
+    border-color: #d1d5db;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+
+
+
+
+.attempt-number {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    min-width: 60px;
+}
+
+.attempt-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    background-color: #f3f4f6;
+    color: #6b7280;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 2px solid #e5e7eb;
+}
+
+
+
+.attempt-badge i {
+    font-size: 0.625rem;
+}
+
+.current-label {
+    font-size: 0.625rem;
+    color: #6366f1;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.attempt-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.attempt-score {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.score-value {
+    font-weight: 600;
+    color: #111827;
     font-size: 0.875rem;
+}
+
+.score-percentage {
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.score-percentage.passed {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.score-percentage.failed {
+    background-color: #fef2f2;
+    color: #dc2626;
+}
+
+.attempt-date {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: #6b7280;
+    font-size: 0.75rem;
+}
+
+.attempt-date i {
+    font-size: 0.625rem;
+}
+
+
+
+.no-attempts {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 2rem;
+    color: #6b7280;
+    font-style: italic;
+}
+
+.no-attempts i {
+    font-size: 1.25rem;
+    color: #9ca3af;
+}
+
+.attempt-badge.current {
+    background-color: #6366f1;
+    color: white;
+    border-color: #6366f1;
+}
+
+
+/* Responsive Design for Attempts History */
+@media (max-width: 768px) {
+    .attempt-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .attempt-number {
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5rem;
+        min-width: auto;
+    }
+    
+    .attempt-details {
+        width: 100%;
+    }
+    
+    .attempt-score {
+        justify-content: space-between;
+    }
+    
+    .attempts-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .attempts-history-box {
+        padding: 0.75rem;
+    }
+    
+    .attempt-item {
+        padding: 0.5rem;
+    }
+    
+    .attempt-badge {
+        width: 2rem;
+        height: 2rem;
+        font-size: 0.625rem;
+    }
+    
+    .score-value {
+        font-size: 0.75rem;
+    }
+    
+    .attempts-title {
+        font-size: 0.875rem;
+    }
 }
 
 /* Add smooth scrolling to the page */
