@@ -104,14 +104,23 @@
                         </div>
 
                         <div class="demo-button-group">
-                            <button class="demo-button-secondary" (click)="exportCompletedAssessments()">
-                                <i class="fas fa-download demo-icon"></i>
-                                Export Results
-                            </button>
-                            <button class="demo-button-secondary" (click)="toggleClassSettingsModal()">
-                                <i class="fas fa-gear demo-icon"></i>
-                                Class Settings
-                            </button>
+                            <div class="demo-joining-code" *ngIf="selectedClass">
+                                <span class="demo-code-label">Joining Code:</span>
+                                <span class="demo-code-value">{{ selectedClass.classCode }}</span>
+                                <button class="demo-copy-button" (click)="copyClassCode()">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            <div class="demo-button-row">
+                                <button class="demo-button-secondary" (click)="exportCompletedAssessments()">
+                                    <i class="fas fa-download demo-icon"></i>
+                                    Export Results
+                                </button>
+                                <button class="demo-button-secondary" (click)="toggleClassSettingsModal()">
+                                    <i class="fas fa-gear demo-icon"></i>
+                                    Class Settings
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -7,7 +7,6 @@
   }
   
   /* Header Styles */
-  
   .oknato-header {
     display: flex;
     align-items: center;
@@ -225,8 +224,8 @@
   /* Question Type Grid */
   .cardhehe-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
     margin-bottom: 1rem;
   }
   
@@ -339,10 +338,67 @@
     color: #22c55e;
   }
   
-  .cardhehe-true-false .cardhehe-badge {
+    .cardhehe-true-false .cardhehe-badge {
     color: #22c55e;
   }
-  
+
+  @media (max-width: 768px) {
+    .cardhehe-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+    
+    .cardhehe-item {
+      padding: 0.75rem;
+    }
+    
+    .cardhehe-text h3 {
+      font-size: 1rem;
+      white-space: normal;
+      overflow: visible;
+      text-overflow: unset;
+    }
+    
+    .cardhehe-icon {
+      height: 2.25rem;
+      width: 2.25rem;
+    }
+    
+    .cardhehe-badge {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.4rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .cardhehe-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+    }
+    
+    .cardhehe-item {
+      padding: 0.6rem;
+    }
+    
+    .cardhehe-text h3 {
+      font-size: 0.9rem;
+    }
+    
+    .cardhehe-icon {
+      height: 2rem;
+      width: 2rem;
+    }
+    
+    .cardhehe-badge {
+      font-size: 0.65rem;
+      padding: 0.15rem 0.35rem;
+    }
+    
+    .cardhehe-content {
+      gap: 0.5rem;
+    }
+  }
+
   /* Responsive Styles */
   @media (min-width: 768px) {
     .katamat-container {
@@ -356,7 +412,7 @@
   
   @media (min-width: 1024px) {
     .katamat-container {
-      padding: 2rem;
+      padding: 1.3rem;
     }
   }
   
@@ -369,6 +425,9 @@
       0 2px 4px -1px rgba(0, 0, 0, 0.06);
     border-right: 8px solid #f199dc;
     border-left: 2px solid #f199dc;
+    transition: all 0.2s ease;
+    opacity: 0;
+    animation: slideUpFadeIn 0.7s cubic-bezier(0.23, 1, 0.32, 1) forwards;
   }
   
   .genform-warning {
@@ -558,7 +617,7 @@
   
   .genform-checkbox-content {
     flex: 1;
-    padding-left: 2.5rem;
+    padding-left: 2rem;
   }
   
   .genform-checkbox-header {
@@ -656,7 +715,7 @@
     }
   
     .genform-checkbox-header .checkbox-label {
-      font-size: 1rem;
+      font-size: 0.70rem;
     }
   
     .genform-checkbox-content p {
@@ -679,6 +738,9 @@
     border-right: 4px solid #3b82f6;
     margin-bottom: 2rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+    opacity: 0;
+    animation: slideUpFadeIn 0.7s cubic-bezier(0.23, 1, 0.32, 1) forwards;
   }
   
   .error-message {
@@ -1457,7 +1519,6 @@
     transform: rotate(180deg);
   }
   
-  /* Mobile Optimizations - preserving original styles but adding responsive adjustments */
   @media screen and (max-width: 768px) {
       .katamat-container {
           padding: 0.5rem;
@@ -1479,6 +1540,10 @@
   
       .oknato-header-content p {
           font-size: 0.875rem;
+      }
+
+      .genform-container {
+        border-right: 4px solid #f199dc;
       }
   
       .basicform-container,
@@ -1566,9 +1631,29 @@
           grid-template-columns: 1fr;
           gap: 0.5rem;
       }
+
+      .genform-checkbox-header {
+        gap: 0.5rem;
+        margin-bottom: 0.25rem;
+      }
+
+      
+      .genform-checkbox-item {
+        padding: 0.40rem;
+      }
+      
+      .checkbox-label {
+        font-size: 0.9rem;
+      }
+      
+      .genform-checkbox-content p {
+        font-size: 0.60rem;
+        margin-top: 0.1rem;
+      }
   
       .genform-checkbox-grid {
-          grid-template-columns: 1fr;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 0.75rem;
       }
   
       .oknato-icon-wrapper {
@@ -2223,6 +2308,35 @@
   
   .genform-export-btn i {
     font-size: 18px;
+  }
+  
+  
+  @keyframes slideUpFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  
+  @keyframes fadeInOnly {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideInRightFade {
+    from {
+      opacity: 0;
+      transform: translateX(60px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
   }
   
   

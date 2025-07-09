@@ -847,6 +847,39 @@ export class StudentsComponent implements OnInit {
     this.showClassSettingsModal = !this.showClassSettingsModal;
   }
 
+  copyClassCode() {
+    if (this.selectedClass?.classCode) {
+      navigator.clipboard.writeText(this.selectedClass.classCode).then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Copied!',
+          text: 'Class code copied to clipboard',
+          timer: 2000,
+          showConfirmButton: false,
+          toast: true,
+          position: 'top-end'
+        });
+      }).catch(() => {
+        const textArea = document.createElement('textarea');
+        textArea.value = this.selectedClass.classCode;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Copied!',
+          text: 'Class code copied to clipboard',
+          timer: 2000,
+          showConfirmButton: false,
+          toast: true,
+          position: 'top-end'
+        });
+      });
+    }
+  }
+
   saveClassSettings() {
     Swal.fire({
       title: 'Save Changes?',

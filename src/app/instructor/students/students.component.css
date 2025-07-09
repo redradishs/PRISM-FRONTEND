@@ -455,8 +455,63 @@
 }
 
 .demo-button-group {
-  display: flex;
-  gap: 8px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.demo-button-row {
+    display: flex;
+    gap: 8px;
+}
+
+/* Demo Joining Code in Button Group */
+.demo-joining-code {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+    width: auto;
+}
+
+.demo-code-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6366f1;
+    white-space: nowrap;
+}
+
+.demo-code-value {
+    font-size: 0.875rem;
+    font-weight: 700;
+    background: #6366f1;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    font-family: 'Courier New', monospace;
+}
+
+.demo-copy-button {
+    background: transparent;
+    border: 1px solid #6366f1;
+    border-radius: 4px;
+    color: #6366f1;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.75rem;
+}
+
+.demo-copy-button:hover {
+    background: #6366f1;
+    color: white;
 }
 
 /* Search Toolbar */
@@ -1864,6 +1919,31 @@ input:checked + .toggle-slider:before {
   .demo-stats-grid {
     grid-template-columns: repeat(3, 1fr);
   }
+
+  .demo-button-group {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .demo-joining-code {
+    margin-right: 0;
+    width: auto;
+    order: 0;
+    flex-shrink: 0;
+  }
+
+  .demo-button-row {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .demo-button-secondary {
+    flex: 0 0 auto;
+    text-align: center;
+    white-space: nowrap;
+  }
 }
 
 /* Status Styles - Pastel Minimalist */
@@ -3239,7 +3319,81 @@ input:checked + .toggle-slider:before {
   .demo-card {
     border-right: 0px solid #3678fc;
     border-left: 0px solid #3678fc;
+  }
+
+  .demo-button-group {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .demo-joining-code {
+    margin-right: 0;
+    margin-bottom: 0;
+    order: -1;
+    width: 100%;
+    justify-content: space-between;
+    padding: 0.5rem 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .demo-code-label {
+    font-size: 0.8rem;
+  }
+
+  .demo-code-value {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+    letter-spacing: 1px;
+  }
+
+  .demo-copy-button {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .demo-button-row {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .demo-button-secondary {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+    text-align: center;
+  }
 }
+
+@media (max-width: 480px) {
+  .demo-joining-code {
+    padding: 0.4rem 0.6rem;
+    gap: 0.4rem;
+  }
+
+  .demo-code-label {
+    font-size: 0.75rem;
+  }
+
+  .demo-code-value {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.4rem;
+    letter-spacing: 0.5px;
+  }
+
+  .demo-copy-button {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.7rem;
+  }
+
+  .demo-button-row {
+    gap: 0.4rem;
+  }
+
+  .demo-button-secondary {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
+  }
 }
 
     .custom-scrollbar::-webkit-scrollbar {
@@ -3259,4 +3413,3 @@ input:checked + .toggle-slider:before {
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
         background: #2563eb;
     }
-

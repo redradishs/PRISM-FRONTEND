@@ -9,11 +9,11 @@
                         <div class="flex items-center">
                             <div class="hidden md:flex items-center mr-4">
                                 <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
-                                <button (click)="scrollToSection('generate-section')"
+                                <button (click)="scrollToSection(1)"
                                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2">
                                     Generate Assessment
                                 </button>
-                                <button (click)="scrollToSection('basic-info')"
+                                <button (click)="scrollToSection(2)"
                                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
                                     Save Assessment
                                 </button>
@@ -51,7 +51,7 @@
 
             <div class="katamat-container">
 
-                <div class="genggengg">
+                <div class="genggengg" id="start">
                     <div class="oknato-header">
                         <div class="oknato-icon-wrapper">
                             <i class="fas fa-book-open oknato-icon"></i>
@@ -71,7 +71,7 @@
                 </div>
 
                 <!-- Basic Information Form -->
-                <div id="basic-info" class="basicform-container">
+                <div class="basicform-container" *ngIf="step === 2">
                     <div class="basicform-header">
                         <h2>Basic Information</h2>
                         <p>Set up the general parameters for your assessment</p>
@@ -125,7 +125,7 @@
 
 
                 <!-- Generate Forms Section -->
-                <div id="generate-section" class="genform-container">
+                <div *ngIf="step === 1" class="genform-container">
                     <div class="genform-header">
                         <div class="genform-title-group">
                             <div class="genform-title-wrapper">
@@ -342,6 +342,11 @@
                             (click)="clearQuestions()">
                             <i class="fas fa-trash"></i>
                             Clear Questions
+                        </button>
+
+                        <button (click)="scrollToSection(2)" class="inix-add-button">
+                            <i class=" fas fa-save"></i>
+                            Save
                         </button>
 
                         <button class="inix-add-button" (click)="showAddDialog = true">

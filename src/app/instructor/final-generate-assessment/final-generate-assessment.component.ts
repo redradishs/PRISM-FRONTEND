@@ -82,7 +82,7 @@ export class FinalGenerateAssessmentComponent {
   generated = false;
   isGenerating = false;
   loading = false;
-  step = 1;
+  step: number = 1;
   isMenuOpen = false;
   editingQuestionId: number | null = null;
   showAddDialog = false;
@@ -162,12 +162,7 @@ export class FinalGenerateAssessmentComponent {
     { value: 'robotics', label: 'Robotics', selected: false }
   ];
 
-  constructor(
-    private api: ApiService,
-    private router: Router,
-    private auth: AuthService,
-    private titleService: Title
-  ) {
+  constructor(private api: ApiService, private router: Router, private auth: AuthService, private titleService: Title) {
     this.titleService.setTitle('PRISM | Create');
   }
 
@@ -256,7 +251,7 @@ export class FinalGenerateAssessmentComponent {
 
     //temporary fix, another api for bulk generation to avoid slow and api 500 shitdown
     const questionCount = Number(this.aiGeneration.questionCount);
-    const apiCall = questionCount > 20 
+    const apiCall = questionCount > 20
       ? this.api.bulkfinalGenerateAssessment(requestData)
       : this.api.finalGenerateAssessment(requestData);
 
@@ -823,10 +818,33 @@ export class FinalGenerateAssessmentComponent {
     this.extractedText = '';
   }
 
-  scrollToSection(sectionId: string) {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  scrollToSection(section: number) {
+    // alert(`Scroll to section number ${section}`);
+    if (section === 1) {
+      this.step = section;
+      const sectionElement = document.getElementById('start');
+      if (sectionElement) {
+        sectionElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else if (section === 2) {
+
+      if (this.questions.length === 0) {
+        Swal.fire({
+          title: 'Error!',
+          text: 'Please add at least one question to proceed.',
+          icon: 'error',
+          showConfirmButton: false,
+          toast: true,
+          position: 'top-end',
+          timer: 1000
+        });
+        return;
+      }
+      const sectionElement = document.getElementById('start');
+      this.step = section;
+      if (sectionElement) {
+        sectionElement.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   }
 
