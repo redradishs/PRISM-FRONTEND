@@ -18,8 +18,8 @@ export const routes: Routes = [
     component: LoginComponent,
     data: {
       seo: {
-        title: 'PRISM | Login',
-        description: 'Sign in to PRISM Assessment Platform - Access your AI-powered assessment tools at Gordon College CCS',
+        title: 'PRISM - AI-Powered Assessment Platform | Gordon College CCS',
+        description: "PRISM (Platform for Real-time Intelligent Student Measurement System) is Gordon College CCS' advanced AI-powered assessment platform. Create, manage, and analyze assessments with real-time analytics and AI assistance",
         keywords: 'PRISM Login, Platform for RealTime Intelligent Student Measurement System, login, sign in, PRISM GC, PRISM, Gordon College, assessment platform, CCS'
       }
     }
