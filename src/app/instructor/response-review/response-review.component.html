@@ -106,7 +106,7 @@
                             </svg>
                             Settings
                         </button>
-                        <button class="button primary" [disabled]="!show">
+                        <button class="button primary" [disabled]="!show" (click)="gotoResult()">
                             <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
                                 <path d="M3 3v18h18M18 17V9M12 17V5M6 17v-3" />
                             </svg>
@@ -131,7 +131,7 @@
                                     <p class="studentemail">{{assessmentDetails.student?.email}}</p>
                                     <div *ngIf="assessmentDetails.student?.block" class="badgekoto">
                                         <span>ID: {{assessmentDetails.student?.email.split('@')[0]}}</span>
-                                        <span>{{assessmentDetails.student?.year}}{{assessmentDetails.student?.block}}</span>
+                                        <span>{{assessmentDetails.student?.year}}{{assessmentDetails.student?.block.toUpperCase()}}</span>
                                     </div>
                                 </div>
                             </div>
@@ -195,8 +195,8 @@
                                     <circle cx="50" cy="50" r="45" [style.strokeDasharray]="'282.7'"
                                         [style.strokeDashoffset]="282.7 * (1 - (assessmentDetails.assessment?.performance?.percentageScore || 0)/100)" />
                                 </svg>
-                                <div class="porsyento">{{assessmentDetails.assessment?.performance?.percentageScore ||
-                                    0}}%</div>
+                                <div class="porsyento">{{(assessmentDetails.assessment?.performance?.percentageScore ||
+                                    0) | number:'1.0-0'}}%</div>
                             </div>
 
                             <div class="barkopogi">
@@ -242,7 +242,7 @@
                         </div>
 
                         <!-- Attempts History -->
-                        <div class="attempts-history-box">
+                        <div *ngIf="assessmentDetails.student.attemptsHistory.length > 1" class="attempts-history-box">
                             <div class="attempts-header">
                                 <h3 class="attempts-title">
                                     <i class="fas fa-history"></i>

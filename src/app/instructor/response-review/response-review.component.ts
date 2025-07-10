@@ -82,6 +82,7 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
       next: (resp: any) => {
         this.assessmentDetails = resp.data;
         this.totalPoints = resp.data.assessment.totalPoints;
+        console.log('Assessment Attempts Length:', this.assessmentDetails.student.attemptsHistory.length);
         console.log('Assessment data:', this.assessmentDetails);
       }, error: (error) => {
         console.error('Error fetching assessment data:', error);
@@ -114,6 +115,11 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
   viewAttempt(attempt: any, d: number) {
     this.router.navigate(['/instructor/response/attempts'],
       { state: { assessmentId: this.assignedAssessmentId, studentId: this.studentId, spec: d } });
+  }
+
+  gotoResult() {
+    this.router.navigate(['/instructor/result'],
+      { state: { assessmentId: this.assignedAssessmentId } });
   }
 
 
