@@ -1,0 +1,419 @@
+<div class="bg-gray-50 min-h-screen w-full overflow-x-hidden">
+    <div class="flex w-full">
+        <app-sidebar></app-sidebar>
+        <div class="flex-1 ml-0 md:ml-20 w-full">
+            <header class="bg-white shadow-sm fixed top-0 right-0 w-full md:w-[calc(100%-80px)] z-40">
+                <div class="w-full px-4 md:px-6 py-3 md:py-4">
+                    <div class="flex items-center justify-between">
+                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">Admin Dashboard</h1>
+                        <div class="flex items-center">
+                            <div class="hidden md:flex items-center mr-4">
+                                <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
+                                <button
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2">
+                                    User Management
+                                </button>
+                                <button
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
+                                    Settings
+                                </button>
+                            </div>
+                            <div *ngIf="!isMobile" class="flex items-center">
+                                <div class="relative mr-3">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profile" [src]="profile" alt="Profile"
+                                            class="w-full h-full object-cover">
+                                        <span *ngIf="!profile" class="text-base md:text-lg font-medium text-gray-600">
+                                            {{username.charAt(0) || 'A'}}
+                                        </span>
+                                    </div>
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    </div>
+                                </div>
+                                <div class="text-left">
+                                    <div class="text-sm font-medium text-gray-900">{{username}}</div>
+                                    <div class="text-xs text-gray-500">Admin</div>
+                                </div>
+                            </div>
+                            <button *ngIf="isMobile" (click)="toggleSidebar()"
+                                class="p-2 rounded-md hover:bg-gray-100 transition-colors">
+                                <i class="fas fa-bars w-5 h-5 text-gray-600"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="h-[65px] md:h-[68px] w-full"></div>
+
+            <div *ngIf="isLoading"
+                class="flex items-center justify-center min-h-[calc(100vh-68px)] bg-white transition-colors duration-900">
+                <div class="text-center animate-fade-in">
+                    <div class="relative w-16 h-16 mx-auto">
+                        <div
+                            class="absolute inset-0 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin">
+                        </div>
+                        <div class="absolute inset-2 rounded-full border-4 border-indigo-300 border-b-transparent animate-spin"
+                            style="animation-direction: reverse;">
+                        </div>
+                    </div>
+                    <p class="mt-5 text-gray-600 text-lg font-medium animate-pulse">
+                        Loading Admin data...
+                    </p>
+                </div>
+            </div>
+
+            <main class="p-2 md:p-4 w-full">
+
+                <div class="welcome-section" [class.animate-in]="!isLoading">
+                    <div class="welcome-content">
+                        <div class="welcome-text">
+                            <h1>Welcome Back, {{username}}</h1>
+                            <p>Here's what's happening with the system today.</p>
+                            <div class="welcome-buttons">
+                                <button class="btn-create">CreateAssessment</button>
+                                <button class="btn-view">System Settings</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tabs" [class.animate-in]="!isLoading">
+                    <div [routerLink]="['/instructor/students']" class="card1">
+                        <div class="card-content">
+                            <p class="card-title">Total Students</p>
+                            <div class="card-numbers">
+                                <h1>999</h1>
+                                <p>across 9999 classes</p>
+                            </div>
+                            <p class="card-status positive">+1 this week</p>
+                        </div>
+                        <div class="card-icon blue">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+
+                    <div class="card2">
+                        <div class="card-content">
+                            <p class="card-title">Total Instructors</p>
+                            <div class="card-numbers">
+                                <h1>999</h1>
+                                <p>999</p>
+                            </div>
+                            <p class="card-status">On track</p>
+                        </div>
+                        <div class="card-icon purple">
+                            <i class="fas fa-book"></i>
+                        </div>
+                    </div>
+
+                    <div [routerLink]="['/instructor/students']" class="card3">
+                        <div class="card-content">
+                            <p class="card-title">Total Assessments</p>
+                            <div class="card-numbers">
+                                <h1>999</h1>
+                                <p>with 888 students</p>
+                            </div>
+                            <p class="card-status">All active</p>
+                        </div>
+                        <div class="card-icon pink">
+                            <i class="fas fa-table-cells"></i>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="rdrow" [class.animate-in]="!isLoading">
+                    <div class="left">
+                        <div class="ctitle">
+                            <i class="fas fa-clock"></i>
+                            <h1>Recent Activity</h1>
+                        </div>
+
+                        <div class="c-conts">
+                            <div class="activity-item">
+                                <div class="activity-icon activity-user">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-text">
+                                        <span class="activity-action">New student registered</span>
+                                        <span class="activity-detail">John Smith joined Computer Science 101</span>
+                                    </div>
+                                    <div class="activity-time">2 minutes ago</div>
+                                </div>
+                            </div>
+
+                            <div class="activity-item">
+                                <div class="activity-icon activity-assessment">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-text">
+                                        <span class="activity-action">Assessment completed</span>
+                                        <span class="activity-detail">Mathematics Quiz - 25 students submitted</span>
+                                    </div>
+                                    <div class="activity-time">15 minutes ago</div>
+                                </div>
+                            </div>
+
+                            <div class="activity-item">
+                                <div class="activity-icon activity-instructor">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-text">
+                                        <span class="activity-action">New instructor added</span>
+                                        <span class="activity-detail">Dr. Sarah Johnson - Physics Department</span>
+                                    </div>
+                                    <div class="activity-time">1 hour ago</div>
+                                </div>
+                            </div>
+
+                            <div class="activity-item">
+                                <div class="activity-icon activity-grade">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-text">
+                                        <span class="activity-action">High scores achieved</span>
+                                        <span class="activity-detail">Chemistry Lab Assessment - Average: 92%</span>
+                                    </div>
+                                    <div class="activity-time">2 hours ago</div>
+                                </div>
+                            </div>
+
+                            <div class="activity-item">
+                                <div class="activity-icon activity-system">
+                                    <i class="fas fa-cog"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-text">
+                                        <span class="activity-action">System maintenance</span>
+                                        <span class="activity-detail">Database backup completed successfully</span>
+                                    </div>
+                                    <div class="activity-time">3 hours ago</div>
+                                </div>
+                            </div>
+
+                            <div class="activity-item">
+                                <div class="activity-icon activity-user">
+                                    <i class="fas fa-user-graduate"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-text">
+                                        <span class="activity-action">Student graduation</span>
+                                        <span class="activity-detail">Emily Chen completed Advanced Calculus
+                                            program</span>
+                                    </div>
+                                    <div class="activity-time">4 hours ago</div>
+                                </div>
+                            </div>
+
+                            <div class="activity-item">
+                                <div class="activity-icon activity-assessment">
+                                    <i class="fas fa-clipboard-list"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-text">
+                                        <span class="activity-action">New assessment created</span>
+                                        <span class="activity-detail">Biology Midterm - 150 questions added</span>
+                                    </div>
+                                    <div class="activity-time">6 hours ago</div>
+                                </div>
+                            </div>
+
+                            <div class="activity-item">
+                                <div class="activity-icon activity-instructor">
+                                    <i class="fas fa-user-tie"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-text">
+                                        <span class="activity-action">Class schedule updated</span>
+                                        <span class="activity-detail">Prof. Williams modified Chemistry 202
+                                            schedule</span>
+                                    </div>
+                                    <div class="activity-time">8 hours ago</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="view-all-activity">
+                            <button class="btn-view-all">View All Activity</button>
+                        </div>
+                    </div>
+
+                    <div class="right">
+                        <div class="ctitle">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h1>System Alerts</h1>
+                        </div>
+
+                        <div class="c-conts">
+                            <div class="alert-item alert-warning">
+                                <div class="alert-icon">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="alert-content">
+                                    <div class="alert-title">Storage Warning</div>
+                                    <div class="alert-message">Database storage is 85% full. Consider cleanup or
+                                        expansion.</div>
+                                    <div class="alert-time">30 minutes ago</div>
+                                </div>
+                                <button class="alert-action">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            <div class="alert-item alert-info">
+                                <div class="alert-icon">
+                                    <i class="fas fa-info-circle"></i>
+                                </div>
+                                <div class="alert-content">
+                                    <div class="alert-title">Scheduled Maintenance</div>
+                                    <div class="alert-message">System maintenance scheduled for tomorrow 2:00 AM - 4:00
+                                        AM EST.</div>
+                                    <div class="alert-time">1 hour ago</div>
+                                </div>
+                                <button class="alert-action">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            <div class="alert-item alert-success">
+                                <div class="alert-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="alert-content">
+                                    <div class="alert-title">Backup Completed</div>
+                                    <div class="alert-message">Daily data backup completed successfully at 3:00 AM.
+                                    </div>
+                                    <div class="alert-time">8 hours ago</div>
+                                </div>
+                                <button class="alert-action">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            <div class="alert-item alert-error">
+                                <div class="alert-icon">
+                                    <i class="fas fa-times-circle"></i>
+                                </div>
+                                <div class="alert-content">
+                                    <div class="alert-title">Login Anomaly</div>
+                                    <div class="alert-message">Multiple failed login attempts detected from IP:
+                                        192.168.1.100</div>
+                                    <div class="alert-time">Yesterday</div>
+                                </div>
+                                <button class="alert-action">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            <div class="alert-item alert-warning">
+                                <div class="alert-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="alert-content">
+                                    <div class="alert-title">Session Timeout</div>
+                                    <div class="alert-message">User session limits increased due to high server load.
+                                    </div>
+                                    <div class="alert-time">2 days ago</div>
+                                </div>
+                                <button class="alert-action">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            <div class="alert-item alert-info">
+                                <div class="alert-icon">
+                                    <i class="fas fa-bell"></i>
+                                </div>
+                                <div class="alert-content">
+                                    <div class="alert-title">Feature Update</div>
+                                    <div class="alert-message">New assessment analytics dashboard available in admin
+                                        panel.</div>
+                                    <div class="alert-time">3 days ago</div>
+                                </div>
+                                <button class="alert-action">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            <div class="alert-item alert-success">
+                                <div class="alert-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <div class="alert-content">
+                                    <div class="alert-title">Security Update</div>
+                                    <div class="alert-message">System security patches applied successfully.</div>
+                                    <div class="alert-time">1 week ago</div>
+                                </div>
+                                <button class="alert-action">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+
+
+                        </div>
+                        <div class="view-all-alerts">
+                            <button class="btn-view-all">Manage Alerts</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="frow" [class.animate-in]="!isLoading">
+
+                    <div class="f-left">
+                        <h1>Database Status</h1>
+                        <div class="ttlrow"></div>
+                        <div class="f-cont">
+                            <i class="fas fa-check"></i>
+                            <p>Connected</p>
+                            <span class="mbleft">(34mb/500mb)</span>
+
+                        </div>
+
+
+                        <div class="f-cont2">
+                            <div class="f-cont2-title">
+                                <span>Storage Used</span>
+                                <span>12%</span>
+                            </div>
+
+                            <div class="progressbar"></div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="f-right">
+                        <h1>Active Sessions</h1>
+                        <div class="ttlrow"></div>
+
+                        <div class="cont">
+                            <div class="middle">
+                                <h2>1,457</h2>
+                                <p>Users currently online</p>
+                            </div>
+
+                            <div class="bottom">
+                                <p>This Month:</p>
+                                <p>2,999</p>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+
+            </main>
+
+        </div>
+    </div>
+</div>

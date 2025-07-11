@@ -461,9 +461,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   resolveReport(report: any) {
     if (confirm(`Mark this report from ${report.studentName} as resolved?`)) {
-      // TODO: Call API to update report status
       console.log('Resolving report:', report);
-      // Update the local data
       const index = this.onGoingDisputes.findIndex(d => d.id === report.id);
       if (index !== -1) {
         this.onGoingDisputes[index].status = 'Resolved';

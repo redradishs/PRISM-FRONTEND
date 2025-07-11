@@ -14,14 +14,14 @@ export class SidebarComponent {
   isExpanded = false;
   selectedTab = 'home';
   isMobile = false;
-  private resizeListener: () => void = () => {};
+  private resizeListener: () => void = () => { };
   username: string = '';
   currentRoute: string = '';
   role: string = '';
   isCoordinator: boolean = false;
   navItems: any[] = [];
 
-  constructor(private auth: AuthService, private router: Router){
+  constructor(private auth: AuthService, private router: Router) {
     this.auth.getCurrentUser().subscribe((user) => {
       this.role = user?.role || '';
       this.username = user?.name || '';
@@ -47,28 +47,30 @@ export class SidebarComponent {
     { icon: 'fas fa-tasks', label: 'Assessment', id: 'assessment', route: '/instructor/assessment' },
     // { icon: 'fas fa-star', label: 'Generate', id: 'Generate', route: '/instructor/generate' }, this is the original generate
     // { icon: 'fas fa-star', label: 'Create', id: 'Create', route: '/instructor/create' }, this is the new Nebius with AI,
-    { icon: 'fas fa-star', label: 'Create', id: 'Create', route: '/instructor/createAssessment' }, 
+    { icon: 'fas fa-star', label: 'Create', id: 'Create', route: '/instructor/createAssessment' },
     { icon: 'fas fa-user-group', label: 'Coordinator', id: 'coordinator', route: '/instructor/coordinator', coordinatorOnly: true },
     { icon: 'fas fa-user', label: 'Profile', id: 'profile', route: '/instructor/profile' },
   ];
-  
+
   userNav = [
     { icon: 'fas fa-home', label: 'Home', id: 'home', route: '/student/dashboard' },
     { icon: 'fas fa-book', label: 'Class', id: 'classes', route: '/student/classes' },
     { icon: 'fas fa-history', label: 'History', id: 'history', route: '/student/history' },
     { icon: 'fas fa-user', label: 'Profile', id: 'profile', route: '/student/profile' },
-    
+
   ];
 
   adminNav = [
     { icon: 'fas fa-home', label: 'Home', id: 'home', route: '/admin/dashboard' },
     { icon: 'fas fa-users', label: 'Users', id: 'users', route: '/admin/users' },
+    { icon: 'fas fa-user', label: 'Profile', id: 'profile', route: '/admin/profile' },
+    { icon: 'fas fa-gear', label: 'Settings', id: 'settings', route: '/admin/settings' },
   ]
 
   private navItemSet(): void {
     switch (this.role.toLowerCase()) {
       case 'instructor':
-        this.navItems = this.instructorNav.filter(item => 
+        this.navItems = this.instructorNav.filter(item =>
           !item.coordinatorOnly || (item.coordinatorOnly && this.isCoordinator)
         );
         break;
@@ -102,7 +104,7 @@ export class SidebarComponent {
     this.selectedTab = id;
     this.router.navigate([route]);
     this.isExpanded = false;
-    if(this.isMobile) {
+    if (this.isMobile) {
       this.toggleSidebar();
     }
   }
@@ -118,13 +120,13 @@ export class SidebarComponent {
   }
 
   getInitials(): string {
-    if(!this.username) return 'PR';
+    if (!this.username) return 'PR';
     return this.username
-    .split(' ')
-    .map(name => name.charAt(0))
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
+      .split(' ')
+      .map(name => name.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
   }
 
   setSelectedTab(tabId: string) {
@@ -142,7 +144,7 @@ export class SidebarComponent {
             ${this.currentRoute.startsWith(itemRoute) ? 'bg-violet-800 text-white' : 'hover:bg-violet-800'} 
             ${!this.isExpanded ? 'justify-center' : ''}`;
   }
-  
+
   getLogoutButtonClasses(): string {
     return `w-full flex items-center p-3 rounded-lg hover:bg-gray-800 transition-colors 
             ${!this.isExpanded ? 'justify-center' : ''}`;

@@ -5,7 +5,7 @@
             <header class="bg-white shadow-sm fixed top-0 right-0 w-full md:w-[calc(100%-80px)] z-40">
                 <div class="w-full px-4 md:px-6 py-3 md:py-4">
                     <div class="flex items-center justify-between">
-                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">Admin Dashboard</h1>
+                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">Admin Profile</h1>
                         <div class="flex items-center">
                             <div class="hidden md:flex items-center mr-4">
                                 <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
@@ -72,31 +72,3 @@
         </div>
     </div>
 </div>
-
-
-
-userId: string = '';
-username: string = '';
-profile: string = '';
-isMobile = window.innerWidth < 768; isLoading: boolean=false; //dfg to change @ViewChild(SidebarComponent) sidebar!:
-    SidebarComponent; @HostListener('window:resize') onResize() { this.isMobile=window.innerWidth < 768; }
-    constructor(private auth: AuthService, private api: AdminService) { } ngOnInit(): void {
-    this.auth.getCurrentUser().subscribe(user=> {
-    this.userId = user.id,
-    this.username = user.name,
-    this.profile = user.profilePicture
-    })
-
-
-    }
-
-
-
-    toggleSidebar() {
-    if (this.sidebar) {
-    this.sidebar.toggleSidebar();
-    }
-    }
-
-
-    }
