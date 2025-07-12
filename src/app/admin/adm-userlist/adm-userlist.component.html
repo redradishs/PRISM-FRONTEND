@@ -34,7 +34,7 @@
                                 </div>
                                 <div class="text-left">
                                     <div class="text-sm font-medium text-gray-900">{{username}}</div>
-                                    <div class="text-xs text-gray-500">Instructor</div>
+                                    <div class="text-xs text-gray-500">ADMIN</div>
                                 </div>
                             </div>
                             <button *ngIf="isMobile" (click)="toggleSidebar()"
@@ -60,12 +60,286 @@
                         </div>
                     </div>
                     <p class="mt-5 text-gray-600 text-lg font-medium animate-pulse">
-                        Loading instructor data...
+                        Loading admin data...
                     </p>
                 </div>
             </div>
 
             <main class="p-2 md:p-4 w-full">
+
+                <div class="genggengg">
+                    <div class="oknato-header">
+                        <div class="oknato-icon-wrapper">
+                            <i class="fas fa-users oknato-icon"></i>
+                        </div>
+                        <div class="oknato-header-content">
+                            <h1>User Management</h1>
+                            <p>Manage Instructors, Students, and system users.</p>
+                        </div>
+                    </div>
+
+                    <div class="publish-container">
+                        <button class="publish-button">
+                            <i class="fas fa-file-export"></i>
+                            Export List
+                        </button>
+                    </div>
+                </div>
+
+
+                <div class="tabs" [class.animate-in]="!isLoading">
+                    <div [routerLink]="['/instructor/students']" class="card1">
+                        <div class="card-content">
+                            <p class="card-title">Total Users</p>
+                            <div class="card-numbers">
+                                <h1>999</h1>
+                                <p>across 9999 classes</p>
+                            </div>
+                            <p class="card-status positive">+1 this week</p>
+                        </div>
+                        <div class="card-icon blue">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+
+                    <div class="card2">
+                        <div class="card-content">
+                            <p class="card-title">Total Students</p>
+                            <div class="card-numbers">
+                                <h1>999</h1>
+                                <p>999</p>
+                            </div>
+                            <p class="card-status">On track</p>
+                        </div>
+                        <div class="card-icon purple">
+                            <i class="fas fa-book"></i>
+                        </div>
+                    </div>
+
+                    <div [routerLink]="['/instructor/students']" class="card3">
+                        <div class="card-content">
+                            <p class="card-title">Total Instructors</p>
+                            <div class="card-numbers">
+                                <h1>999</h1>
+                                <p>with 888 students</p>
+                            </div>
+                            <p class="card-status">All active</p>
+                        </div>
+                        <div class="card-icon pink">
+                            <i class="fas fa-table-cells"></i>
+                        </div>
+                    </div>
+
+                    <div [routerLink]="['/instructor/students']" class="card4">
+                        <div class="card-content">
+                            <p class="card-title">Banned</p>
+                            <div class="card-numbers">
+                                <h1>999</h1>
+                                <p>with 888 students</p>
+                            </div>
+                            <p class="card-status">All active</p>
+                        </div>
+                        <div class="card-icon pink">
+                            <i class="fas fa-exclamation"></i>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Filters Section -->
+                <div class="filters-section">
+                    <div class="search-container">
+                        <svg class="icon search" viewBox="0 0 24 24" width="18" height="18">
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg>
+                        <input type="text" placeholder="Search students..." class="search-input">
+                    </div>
+                    <div class="filters-container">
+                        <select class="select">
+                            <option value="all">All Programs</option>
+                            <option value="bsit">BS Information Technology</option>
+                            <option value="bscs">BS Computer Science</option>
+                            <option value="bsis">BS Information Systems</option>
+                        </select>
+                        <select class="select">
+                            <option value="all">All Years</option>
+                            <option value="1st">1st Year</option>
+                            <option value="2nd">2nd Year</option>
+                            <option value="3rd">3rd Year</option>
+                            <option value="4th">4th Year</option>
+                        </select>
+                        <select class="select">
+                            <option value="all">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="at-risk">At Risk</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Students Table -->
+                <div class="table-container">
+                    <div class="table-wrapper">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <div class="th-content">
+                                            Name
+                                            <svg class="icon sort" viewBox="0 0 24 24" width="14" height="14">
+                                                <path d="M7 15l5 5 5-5M7 9l5-5 5 5" />
+                                            </svg>
+                                        </div>
+                                    </th>
+                                    <th>Role</th>
+                                    <th>Program</th>
+                                    <th class="text-center">Classes</th>
+                                    <th class="text-center">Assessments</th>
+                                    <th>Status</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let student of students; trackBy: trackByStudentId"
+                                    [class.dropdown-active]="student.showDropdown">
+                                    <td class="font-medium">{{student.name}}</td>
+                                    <td>
+                                        <span class="role-badge" [ngClass]="{
+                                            'student': student.role === 'Student',
+                                            'instructor': student.role === 'Instructor'
+                                        }">
+                                            {{student.role}}
+                                        </span>
+                                    </td>
+                                    <td *ngIf="student.program !== null">{{student.program | uppercase}}</td>
+                                    <td *ngIf="student.program == null">unassigned</td>
+                                    <td class="text-center">
+                                        <div class="stat-display">
+                                            <span class="stat-number">{{student.role === 'Student' ?
+                                                student.classesJoined : student.classesCreated}}</span>
+                                            <span class="stat-label">{{student.role === 'Student' ? 'Joined' :
+                                                'Created'}}</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="stat-display">
+                                            <span class="stat-number">{{student.role === 'Student' ?
+                                                student.assessmentsTaken : student.assessmentsCreated}}</span>
+                                            <span class="stat-label">{{student.role === 'Student' ? 'Taken' :
+                                                'Created'}}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span *ngIf="student.isVerified" class="status-badge verified">Verified</span>
+                                        <span *ngIf="!student.isVerified"
+                                            class="status-badge unverified">Unverified</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="dropdown">
+                                            <button class="action-btn dropdown-toggle"
+                                                (click)="toggleDropdown(student.id, $event)">
+                                                <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
+                                                    <circle cx="12" cy="12" r="1" />
+                                                    <circle cx="12" cy="5" r="1" />
+                                                    <circle cx="19" cy="12" r="1" />
+                                                </svg>
+                                            </button>
+                                            <div class="dropdown-menu" [class.show]="student.showDropdown">
+                                                <div class="dropdown-header">User Actions</div>
+                                                <button type="button" class="dropdown-item"
+                                                    (click)="onActionClick('view-profile', student.id, $event)">
+                                                    <svg class="icon" viewBox="0 0 24 24" width="14" height="14">
+                                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                                        <circle cx="12" cy="7" r="4" />
+                                                    </svg>
+                                                    View Profile
+                                                </button>
+                                                <button type="button" class="dropdown-item"
+                                                    (click)="onActionClick('reset-password', student.id, $event)">
+                                                    <svg class="icon" viewBox="0 0 24 24" width="14" height="14">
+                                                        <path d="M9 12l2 2 4-4" />
+                                                        <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3" />
+                                                        <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3" />
+                                                    </svg>
+                                                    Reset Password
+                                                </button>
+                                                <button type="button" class="dropdown-item"
+                                                    (click)="onActionClick('view-logs', student.id, $event)">
+                                                    <svg class="icon" viewBox="0 0 24 24" width="14" height="14">
+                                                        <path
+                                                            d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                                        <polyline points="14,2 14,8 20,8" />
+                                                        <line x1="16" y1="13" x2="8" y2="13" />
+                                                        <line x1="16" y1="17" x2="8" y2="17" />
+                                                        <polyline points="10,9 9,9 8,9" />
+                                                    </svg>
+                                                    View Logs
+                                                </button>
+                                                <div class="dropdown-divider"></div>
+                                                <button type="button" class="dropdown-item"
+                                                    (click)="onActionClick('suspend', student.id, $event)">
+                                                    <svg class="icon" viewBox="0 0 24 24" width="14" height="14">
+                                                        <circle cx="12" cy="12" r="3" />
+                                                        <path d="M12 1v6m0 6v6" />
+                                                    </svg>
+                                                    Suspend User
+                                                </button>
+                                                <button type="button" class="dropdown-item text-red"
+                                                    (click)="onActionClick('delete', student.id, $event)">
+                                                    <svg class="icon" viewBox="0 0 24 24" width="14" height="14">
+                                                        <polyline points="3,6 5,6 21,6" />
+                                                        <path
+                                                            d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                    </svg>
+                                                    Delete User
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination">
+                        <div class="pagination-info">
+                            Showing <span class="font-medium">1</span> to <span
+                                class="font-medium">{{students.length}}</span> of
+                            <span class="font-medium">{{students.length}}</span> students
+                        </div>
+                        <div class="pagination-controls">
+                            <!-- Previous page button -->
+                            <button class="button outline icon-only">
+                                <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
+                                    <polyline points="15 18 9 12 15 6" />
+                                </svg>
+                            </button>
+
+                            <!-- Page numbers -->
+                            <ng-container>
+                                <button class="button">
+
+                                </button>
+                                <button class="button" disabled>
+                                    ...
+                                </button>
+                            </ng-container>
+
+                            <!-- Next page button -->
+                            <button class="button icon-only">
+                                <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
+                                    <polyline points="9 18 15 12 9 6" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
 
             </main>
 

@@ -5,17 +5,17 @@
             <header class="bg-white shadow-sm fixed top-0 right-0 w-full md:w-[calc(100%-80px)] z-40">
                 <div class="w-full px-4 md:px-6 py-3 md:py-4">
                     <div class="flex items-center justify-between">
-                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">User Management</h1>
+                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">System Settings</h1>
                         <div class="flex items-center">
                             <div class="hidden md:flex items-center mr-4">
                                 <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
                                 <button
                                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2">
-                                    New Assessment
+                                    Maintenance
                                 </button>
                                 <button
                                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
-                                    Add Student
+                                    Home
                                 </button>
                             </div>
                             <div *ngIf="!isMobile" class="flex items-center">
@@ -34,7 +34,7 @@
                                 </div>
                                 <div class="text-left">
                                     <div class="text-sm font-medium text-gray-900">{{username}}</div>
-                                    <div class="text-xs text-gray-500">Instructor</div>
+                                    <div class="text-xs text-gray-500">ADMIN</div>
                                 </div>
                             </div>
                             <button *ngIf="isMobile" (click)="toggleSidebar()"
@@ -66,6 +66,298 @@
             </div>
 
             <main class="p-2 md:p-4 w-full">
+
+                <div class="genggengg">
+                    <div class="oknato-header">
+                        <div class="oknato-icon-wrapper">
+                            <i class="fas fa-gear oknato-icon"></i>
+                        </div>
+                        <div class="oknato-header-content">
+                            <h1>System Settings</h1>
+                            <p>Configure System Wide Settings and Preferences.</p>
+                        </div>
+                    </div>
+
+                    <div class="publish-container">
+                        <button class="publish-button">
+                            <i class="fas fa-arrows-spin"></i>
+                            Restore Default
+                        </button>
+                        <button class="publish-button">
+                            <i class="fas fa-file-export"></i>
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+
+                <div class="butbar">
+                    <button [class.selected]="selectedTab === 'Registration'" (click)="selectTab('Registration')">
+                        Registration
+                    </button>
+                    <button [class.selected]="selectedTab === 'Assessments'" (click)="selectTab('Assessments')">
+                        Assessments & Communication
+                    </button>
+                    <button [class.selected]="selectedTab === 'AI'" (click)="selectTab('AI')">
+                        AI & Security
+                    </button>
+                </div>
+
+
+                <div class="reg-cont" [class.animate-in]="!isLoading" *ngIf="selectedTab === 'Registration'">
+                    <div class="titlebar">
+                        <i class="fas fa-user"></i>
+                        <h1>User Registration and Settings</h1>
+                    </div>
+
+                    <div class="frow">
+                        <div class="frow-left">
+                            <div class="set-ttl">
+                                <label for="student-reg">Enable Student Registration</label>
+                                <p>Allow Students to Register their accounts.</p>
+                            </div>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="student-reg" [(ngModel)]="studentRegistrationEnabled"
+                                    (change)="onToggleChange('student', $event)">
+                                <label for="student-reg" class="toggle-label">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="frow-right">
+                            <div class="set-ttl">
+                                <label for="instructor-reg">Enable Instructor Registration</label>
+                                <p>Allow Instructors to Register their accounts.</p>
+                            </div>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="instructor-reg" [(ngModel)]="instructorRegistrationEnabled"
+                                    (change)="onToggleChange('instructor', $event)">
+                                <label for="instructor-reg" class="toggle-label">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mid-row">
+                        <div class="set-ttl">
+                            <label for="instructor-reg">Require Email Verification</label>
+                            <p>Require all of the users to verify their email when registering.</p>
+                        </div>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="instructor-reg" [(ngModel)]="instructorRegistrationEnabled"
+                                (change)="onToggleChange('instructor', $event)">
+                            <label for="instructor-reg" class="toggle-label">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                    </div>
+
+                    <div class="final">
+                        <div class="set-ttl">
+                            <label for="default-role">Default User Role</label>
+                        </div>
+                        <div class="select-wrapper">
+                            <select id="default-role" [(ngModel)]="defaultUserRole" (change)="onRoleChange($event)">
+                                <option value="Student">Student</option>
+                                <option value="Instructor">Instructor</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mid-row">
+                        <div class="set-ttl">
+                            <label for="instructor-reg">Maintenance Mode</label>
+                            <p>Enable Maintenance Mode to prevent users from accessing the website during updats.</p>
+                        </div>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="instructor-reg" [(ngModel)]="instructorRegistrationEnabled"
+                                (change)="onToggleChange('instructor', $event)">
+                            <label for="instructor-reg" class="toggle-label">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reg-cont" *ngIf="selectedTab === 'Assessments'">
+                    <div class="titlebar">
+                        <i class="fas fa-book"></i>
+                        <h1>Assessment and Communication Settings</h1>
+                    </div>
+
+                    <div class="mid-row">
+                        <div class="set-ttl">
+                            <label for="instructor-reg">Allow Sharing Assessments</label>
+                            <p>Allow instructors to share their assessments to other instructors.</p>
+                        </div>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="instructor-reg" [(ngModel)]="instructorRegistrationEnabled"
+                                (change)="onToggleChange('instructor', $event)">
+                            <label for="instructor-reg" class="toggle-label">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                    </div>
+
+                    <div class="final">
+                        <div class="set-ttl">
+                            <label for="default-role">Auto Archive Classes After</label>
+                        </div>
+                        <div class="select-wrapper">
+                            <select id="default-role" [(ngModel)]="defaultUserRole" (change)="onRoleChange($event)">
+                                <option value="Student">1 month</option>
+                                <option value="Instructor">6 months</option>
+                                <option value="Instructor">1 year</option>
+                                <option value="Instructor">Never</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="frow">
+                        <div class="frow-left">
+                            <div class="set-ttl">
+                                <label for="student-reg">Enable In App Announcements</label>
+                                <p>Allow Announcements to appear on the user side.</p>
+                            </div>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="student-reg" [(ngModel)]="studentRegistrationEnabled"
+                                    (change)="onToggleChange('student', $event)">
+                                <label for="student-reg" class="toggle-label">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="frow-right">
+                            <div class="set-ttl">
+                                <label for="instructor-reg">Send Platfrom Wide Messages</label>
+                                <p>Enable sending messages to all users.</p>
+                            </div>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="instructor-reg" [(ngModel)]="instructorRegistrationEnabled"
+                                    (change)="onToggleChange('instructor', $event)">
+                                <label for="instructor-reg" class="toggle-label">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="breaker"></div>
+
+                    <h1 class="alone-text">Send Platform Wide Message</h1>
+
+                    <div class="message-form">
+                        <div class="form-group">
+                            <label for="message-title">Message Title</label>
+                            <input type="text" id="message-title" [(ngModel)]="messageTitle"
+                                placeholder="Enter message title" class="form-input">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message-content">Message Content</label>
+                            <textarea id="message-content" [(ngModel)]="messageContent"
+                                placeholder="Enter your message content" rows="4" class="form-textarea"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="recipients">Recipients</label>
+                            <div class="select-wrapper">
+                                <select id="recipients" [(ngModel)]="selectedRecipients"
+                                    (change)="onRecipientsChange($event)">
+                                    <option value="All">All Users</option>
+                                    <option value="Student">Students</option>
+                                    <option value="Instructor">Instructors</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn-send" (click)="sendMessage()">
+                                <i class="fas fa-paper-plane"></i>
+                                Send Message
+                            </button>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+                <div class="reg-cont" *ngIf="selectedTab === 'AI'">
+                    <div class="titlebar">
+                        <i class="fas fa-shield-halved"></i>
+                        <h1>AI Features Settings</h1>
+                    </div>
+
+                    <div class="frow">
+                        <div class="frow-left">
+                            <div class="set-ttl">
+                                <label for="student-reg">Enable AI Question Generation</label>
+                                <p>Allow AI to Generate Questions for Instructors.</p>
+                            </div>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="student-reg" [(ngModel)]="studentRegistrationEnabled"
+                                    (change)="onToggleChange('student', $event)">
+                                <label for="student-reg" class="toggle-label">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="frow-right">
+                            <div class="set-ttl">
+                                <label for="instructor-reg">Enable AI Feedback for Students</label>
+                                <p>Provide AI Powered Feedback on Students.</p>
+                            </div>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="instructor-reg" [(ngModel)]="instructorRegistrationEnabled"
+                                    (change)="onToggleChange('instructor', $event)">
+                                <label for="instructor-reg" class="toggle-label">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="final">
+                        <div class="set-ttl">
+                            <label for="max-ai-usage">Max AI Users per Day (per user)</label>
+                        </div>
+                        <div class="input-wrapper">
+                            <input type="number" id="max-ai-usage" [(ngModel)]="maxAiUsagePerDay" min="1" max="100"
+                                placeholder="10" class="form-input-number">
+                        </div>
+                        <span class="helper">Set 0 for unlimited usage</span>
+                    </div>
+
+                    <div class="breaker"></div>
+
+                    <h1 class="alone-text">Security Settings</h1>
+
+                    <div class="num-inputs">
+                        <div class="left-inp">
+                            <label for="session-timeout">Session Timeout (Minutes)</label>
+                            <div class="input-wrapper">
+                                <input type="number" id="session-timeout" [(ngModel)]="sessionTimeout" min="0"
+                                    max="1800" placeholder="60" class="form-input-number">
+                            </div>
+                            <span class="helper">Set 0 for unlimited session</span>
+                        </div>
+
+                        <div class="right-inp">
+                            <label for="max-login-attempts">Max Login Attempts</label>
+                            <div class="input-wrapper">
+                                <input type="number" id="max-login-attempts" [(ngModel)]="maxLoginAttempts" min="0"
+                                    max="20" placeholder="5" class="form-input-number">
+                            </div>
+                            <span class="helper">Set 0 for unlimited attempts</span>
+                        </div>
+                    </div>
+                </div>
 
             </main>
 

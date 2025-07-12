@@ -5,26 +5,29 @@
             <header class="bg-white shadow-sm fixed top-0 right-0 w-full md:w-[calc(100%-80px)] z-40">
                 <div class="w-full px-4 md:px-6 py-3 md:py-4">
                     <div class="flex items-center justify-between">
-                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">Admin Profile</h1>
+                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">Profile</h1>
                         <div class="flex items-center">
                             <div class="hidden md:flex items-center mr-4">
                                 <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
                                 <button
-                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2">
-                                    New Assessment
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2"
+                                    (click)="setActiveTab('security')">
+                                    Change Password
                                 </button>
                                 <button
-                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
-                                    Add Student
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors"
+                                    (click)="goHome()">
+                                    Home
                                 </button>
                             </div>
                             <div *ngIf="!isMobile" class="flex items-center">
                                 <div class="relative mr-3">
                                     <div
                                         class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                                        <img *ngIf="profile" [src]="profile" alt="Profile"
+                                        <img *ngIf="profilePicture" [src]="profilePicture" alt="Profile"
                                             class="w-full h-full object-cover">
-                                        <span *ngIf="!profile" class="text-base md:text-lg font-medium text-gray-600">
+                                        <span *ngIf="!profilePicture"
+                                            class="text-base md:text-lg font-medium text-gray-600">
                                             {{username.charAt(0) || 'A'}}
                                         </span>
                                     </div>
@@ -34,7 +37,7 @@
                                 </div>
                                 <div class="text-left">
                                     <div class="text-sm font-medium text-gray-900">{{username}}</div>
-                                    <div class="text-xs text-gray-500">Instructor</div>
+                                    <div class="text-xs text-gray-500">ADMIN</div>
                                 </div>
                             </div>
                             <button *ngIf="isMobile" (click)="toggleSidebar()"
@@ -60,14 +63,194 @@
                         </div>
                     </div>
                     <p class="mt-5 text-gray-600 text-lg font-medium animate-pulse">
-                        Loading instructor data...
+                        Loading admin data...
                     </p>
                 </div>
             </div>
 
-            <main class="p-2 md:p-4 w-full">
+            <div class="main-content">
+                <div class="profile-header">
+                    <div class="header-background"></div>
+                    <div class="profile-card">
+                        <div class="profile-info">
+                            <div class="avatar-container">
+                                <div class="avatar">
+                                    <ng-container *ngIf="profilePicture; else initialsAvatar">
+                                        <img [src]="profilePicture" [alt]="username">
+                                    </ng-container>
+                                    <ng-template #initialsAvatar>
+                                        <div class="initials-avatar">
+                                            {{ getInitials(username) }}
+                                        </div>
+                                    </ng-template>
+                                </div>
+                            </div>
 
-            </main>
+                            <div class="profile-details">
+                                <div class="name-role">
+                                    <h2>{{profile.name}}</h2>
+                                    <div class="email">
+                                        <i class="fas fa-at"></i>
+                                        <span>{{profile.email}}</span>
+                                    </div>
+                                </div>
+
+                                <div class="role-badges">
+                                    <span class="badge student-badge">
+                                        <i class="fas fa-user-tie"></i>
+                                        ADMIN
+                                    </span>
+                                </div>
+
+                                <div class="profile-meta">
+                                    <div class="meta-item">
+                                        <span class="label">Admin instance</span>
+                                        <span class="value">{{profile.email.split('@')[0]}}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="label">Joined:</span>
+                                        <span class="value">{{profile.createdAt | date:'MMM d, y'}}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="label">Last Updated:</span>
+                                        <span class="value">{{profile.updatedAt | date:'MMM d, y, h:mm a'}}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profile-actions">
+                                <button class="logout-button" (click)="logout()">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    <span>Logout</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="tabs-container">
+                    <div class="tabs-header">
+                        <button class="tab-button" [ngClass]="{'active': activeTab === 'personal'}"
+                            (click)="setActiveTab('personal')">
+                            <i class="fas fa-user"></i>
+                            <span>Personal Information</span>
+                        </button>
+                        <button class="tab-button" [ngClass]="{'active': activeTab === 'security'}"
+                            (click)="setActiveTab('security')">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Change Password</span>
+                        </button>
+
+                    </div>
+
+                    <!-- Personal Information Tab -->
+                    <div class="tab-content" *ngIf="activeTab === 'personal'">
+                        <div class="grid-layout">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="fte"><i class="fas fa-user icon"></i> Personal Information</h3>
+                                    <p>Update your personal details and contact information</p>
+                                </div>
+                                <div class="card-body">
+                                    <form class="form-grid">
+                                        <div class="form-group">
+                                            <label for="fullName">Full Name</label>
+                                            <input type="text" id="fullName" [(ngModel)]="profile.name" name="fullName">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="email">Email Address</label>
+                                            <input type="email" id="email" [(ngModel)]="profile.email" name="email"
+                                                readonly>
+                                        </div>
+
+                                        <div class="form-group full-width">
+                                            <label for="bio">Bio / About Me</label>
+                                            <textarea id="bio" [(ngModel)]="profile.bio" name="bio"
+                                                placeholder="Tell us about yourself"></textarea>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="card-footer">
+                                    <button class="save-button" (click)="savePersonalInfo()">Save Changes</button>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                    <!-- Change Password Tab -->
+                    <div class="tab-content" *ngIf="activeTab === 'security'">
+                        <div class="grid-layout">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3><i class="fas fa-key icon"></i> Change Password</h3>
+                                    <p>Update your password to keep your account secure</p>
+                                </div>
+                                <div class="card-body">
+                                    <form class="password-form" #passwordForm="ngForm" (ngSubmit)="updatePassword()">
+                                        <div class="form-group">
+                                            <label for="currentPassword">Current Password</label>
+                                            <div class="password-input">
+                                                <input [type]="showCurrentPassword ? 'text' : 'password'"
+                                                    id="currentPassword" name="currentPassword"
+                                                    [(ngModel)]="passwordData.currentPassword" required
+                                                    #currentPassword="ngModel" placeholder="Enter current password">
+                                                <button type="button" class="toggle-password"
+                                                    (click)="togglePasswordVisibility('current')">
+                                                    <i class="fas"
+                                                        [ngClass]="{'fa-eye': !showCurrentPassword, 'fa-eye-slash': showCurrentPassword}"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="newPassword">New Password</label>
+                                            <div class="password-input">
+                                                <input [type]="showNewPassword ? 'text' : 'password'" id="newPassword"
+                                                    name="newPassword" [(ngModel)]="passwordData.newPassword" required
+                                                    minlength="8" #newPassword="ngModel"
+                                                    placeholder="Enter new password">
+                                                <button type="button" class="toggle-password"
+                                                    (click)="togglePasswordVisibility('new')">
+                                                    <i class="fas"
+                                                        [ngClass]="{'fa-eye': !showNewPassword, 'fa-eye-slash': showNewPassword}"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="confirmPassword">Confirm New Password</label>
+                                            <div class="password-input">
+                                                <input [type]="showConfirmPassword ? 'text' : 'password'"
+                                                    id="confirmPassword" name="confirmPassword"
+                                                    [(ngModel)]="passwordData.confirmPassword" required
+                                                    #confirmPassword="ngModel" placeholder="Confirm new password">
+                                                <button type="button" class="toggle-password"
+                                                    (click)="togglePasswordVisibility('confirm')">
+                                                    <i class="fas"
+                                                        [ngClass]="{'fa-eye': !showConfirmPassword, 'fa-eye-slash': showConfirmPassword}"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="card-footer">
+                                            <button type="submit" class="update-button"
+                                                [disabled]="!passwordForm.valid">
+                                                Update Password
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
 
         </div>
     </div>
