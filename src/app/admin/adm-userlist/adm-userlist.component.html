@@ -88,12 +88,12 @@
 
 
                 <div class="tabs" [class.animate-in]="!isLoading">
-                    <div [routerLink]="['/instructor/students']" class="card1">
+                    <div (click)="setFilter('all')" class="card1">
                         <div class="card-content">
                             <p class="card-title">Total Users</p>
                             <div class="card-numbers">
-                                <h1>999</h1>
-                                <p>across 9999 classes</p>
+                                <h1>{{totalUserDB}}</h1>
+                                <p> {{basicData?.totalUnverifiedUsers}} unverified users</p>
                             </div>
                             <p class="card-status positive">+1 this week</p>
                         </div>
@@ -102,11 +102,11 @@
                         </div>
                     </div>
 
-                    <div class="card2">
+                    <div (click)="setFilter('student')" class="card2">
                         <div class="card-content">
                             <p class="card-title">Total Students</p>
                             <div class="card-numbers">
-                                <h1>999</h1>
+                                <h1>{{basicData?.totalStudents}}</h1>
                                 <p>999</p>
                             </div>
                             <p class="card-status">On track</p>
@@ -116,12 +116,12 @@
                         </div>
                     </div>
 
-                    <div [routerLink]="['/instructor/students']" class="card3">
+                    <div (click)="setFilter('instructor')" class="card3">
                         <div class="card-content">
                             <p class="card-title">Total Instructors</p>
                             <div class="card-numbers">
-                                <h1>999</h1>
-                                <p>with 888 students</p>
+                                <h1>{{basicData?.totalInstructors}}</h1>
+                                <p>with {{basicData?.totalClasses}} classes</p>
                             </div>
                             <p class="card-status">All active</p>
                         </div>
@@ -134,7 +134,7 @@
                         <div class="card-content">
                             <p class="card-title">Banned</p>
                             <div class="card-numbers">
-                                <h1>999</h1>
+                                <h1>0</h1>
                                 <p>with 888 students</p>
                             </div>
                             <p class="card-status">All active</p>
@@ -153,27 +153,25 @@
                             <circle cx="11" cy="11" r="8" />
                             <line x1="21" y1="21" x2="16.65" y2="16.65" />
                         </svg>
-                        <input type="text" placeholder="Search students..." class="search-input">
+                        <input type="text" placeholder="Search students..." class="search-input"
+                            [(ngModel)]="searchTerm" (input)="onSearch($event)" (keyup.enter)="onEnterSearch($event)">
                     </div>
                     <div class="filters-container">
-                        <select class="select">
+                        <select class="select" [(ngModel)]="program" (change)="onProgramChange(program)">
                             <option value="all">All Programs</option>
                             <option value="bsit">BS Information Technology</option>
                             <option value="bscs">BS Computer Science</option>
                             <option value="bsis">BS Information Systems</option>
                         </select>
-                        <select class="select">
-                            <option value="all">All Years</option>
-                            <option value="1st">1st Year</option>
-                            <option value="2nd">2nd Year</option>
-                            <option value="3rd">3rd Year</option>
-                            <option value="4th">4th Year</option>
+                        <select class="select" [(ngModel)]="role" (change)="onRoleChange(role)">
+                            <option value="all">All Users</option>
+                            <option value="student">Students</option>
+                            <option value="instructor">Instructors</option>
                         </select>
-                        <select class="select">
+                        <select class="select" [(ngModel)]="verified" (change)="onVerifiedChange(verified)">
                             <option value="all">All Status</option>
-                            <option value="active">Active</option>
-                            <option value="at-risk">At Risk</option>
-                            <option value="inactive">Inactive</option>
+                            <option value="verified">Verified</option>
+                            <option value="unverified">Unverified</option>
                         </select>
                     </div>
                 </div>
@@ -201,38 +199,41 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let student of students; trackBy: trackByStudentId"
+                                <tr *ngFor="let student of userList; trackBy: trackByStudentId"
                                     [class.dropdown-active]="student.showDropdown">
                                     <td class="font-medium">{{student.name}}</td>
                                     <td>
                                         <span class="role-badge" [ngClass]="{
-                                            'student': student.role === 'Student',
-                                            'instructor': student.role === 'Instructor'
+                                            'student': student.role === 'student',
+                                            'instructor': student.role === 'instructor',
+                                            'admin': student.role === 'admin'
                                         }">
-                                            {{student.role}}
+                                            {{student.role | titlecase}}
                                         </span>
                                     </td>
                                     <td *ngIf="student.program !== null">{{student.program | uppercase}}</td>
                                     <td *ngIf="student.program == null">unassigned</td>
                                     <td class="text-center">
                                         <div class="stat-display">
-                                            <span class="stat-number">{{student.role === 'Student' ?
-                                                student.classesJoined : student.classesCreated}}</span>
-                                            <span class="stat-label">{{student.role === 'Student' ? 'Joined' :
+                                            <span class="stat-number">{{student.role === 'student' ?
+                                                student.stats.classes.count : student.stats.classes.count}}</span>
+                                            <span class="stat-label">{{student.role === 'student' ? 'Joined' :
                                                 'Created'}}</span>
                                         </div>
                                     </td>
                                     <td class="text-center">
                                         <div class="stat-display">
-                                            <span class="stat-number">{{student.role === 'Student' ?
-                                                student.assessmentsTaken : student.assessmentsCreated}}</span>
-                                            <span class="stat-label">{{student.role === 'Student' ? 'Taken' :
+                                            <span class="stat-number">{{student.role === 'student' ?
+                                                student.stats.assessments.count :
+                                                student.stats.assessments.count}}</span>
+                                            <span class="stat-label">{{student.role === 'student' ? 'Taken' :
                                                 'Created'}}</span>
                                         </div>
                                     </td>
                                     <td>
-                                        <span *ngIf="student.isVerified" class="status-badge verified">Verified</span>
-                                        <span *ngIf="!student.isVerified"
+                                        <span *ngIf="student.status === 'verified'"
+                                            class="status-badge verified">Verified</span>
+                                        <span *ngIf="student.status === 'unverified'"
                                             class="status-badge unverified">Unverified</span>
                                     </td>
                                     <td class="text-center">
@@ -298,6 +299,25 @@
                                         </div>
                                     </td>
                                 </tr>
+
+                                <tr *ngIf="userList.length === 0 && !isLoading">
+                                    <td colspan="7" class="no-data-cell">
+                                        <div class="no-data-container">
+                                            <div class="no-data-icon">
+                                                <svg viewBox="0 0 24 24" width="48" height="48">
+                                                    <path fill="currentColor"
+                                                        d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1H5C3.89 1 3 1.89 3 3V21C3 22.1 3.89 23 5 23H19C20.1 23 21 22.1 21 21V9M19 21H5V3H13V9H19V21Z" />
+                                                </svg>
+                                            </div>
+                                            <div class="no-data-content">
+                                                <h3 class="no-data-title">No users found</h3>
+                                                <p class="no-data-message">
+                                                    Try adjusting your filter settings or search criteria to find users.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -305,30 +325,52 @@
                     <!-- Pagination -->
                     <div class="pagination">
                         <div class="pagination-info">
-                            Showing <span class="font-medium">1</span> to <span
-                                class="font-medium">{{students.length}}</span> of
-                            <span class="font-medium">{{students.length}}</span> students
+                            Showing <span class="font-medium">{{(currentPage - 1) * limit + 1}}</span> to <span
+                                class="font-medium">{{Math.min(currentPage * limit, totalUsers)}}</span> of
+                            <span class="font-medium">{{totalUsers}}</span> users
                         </div>
                         <div class="pagination-controls">
                             <!-- Previous page button -->
-                            <button class="button outline icon-only">
+                            <button class="button outline icon-only" [disabled]="!hasPrevious" (click)="previousPage()">
                                 <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
                                     <polyline points="15 18 9 12 15 6" />
                                 </svg>
                             </button>
 
-                            <!-- Page numbers -->
-                            <ng-container>
-                                <button class="button">
+                            <!-- First page if not in range -->
+                            <button *ngIf="getPageNumbers()[0] > 1" class="button" (click)="goToPage(1)">
+                                1
+                            </button>
 
-                                </button>
-                                <button class="button" disabled>
-                                    ...
+                            <!-- Ellipsis  -->
+                            <button *ngIf="getPageNumbers()[0] > 2" class="button" disabled>
+                                ...
+                            </button>
+
+                            <!-- Page numbers -->
+                            <ng-container *ngFor="let pageNum of getPageNumbers()">
+                                <button class="button" [class.active]="pageNum === currentPage"
+                                    (click)="goToPage(pageNum)">
+                                    {{ pageNum }}
                                 </button>
                             </ng-container>
 
+                            <!-- Ellipsis-->
+                            <button
+                                *ngIf="getPageNumbers().length > 0 && getPageNumbers()[getPageNumbers().length - 1] < totalPages - 1"
+                                class="button" disabled>
+                                ...
+                            </button>
+
+                            <!-- Last page  -->
+                            <button
+                                *ngIf="getPageNumbers().length > 0 && getPageNumbers()[getPageNumbers().length - 1] < totalPages"
+                                class="button" (click)="goToPage(totalPages)">
+                                {{ totalPages }}
+                            </button>
+
                             <!-- Next page button -->
-                            <button class="button icon-only">
+                            <button class="button icon-only" [disabled]="!hasNext" (click)="nextPage()">
                                 <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
                                     <polyline points="9 18 15 12 9 6" />
                                 </svg>

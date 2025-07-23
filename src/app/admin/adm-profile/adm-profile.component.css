@@ -315,6 +315,197 @@
     text-align: right;
 }
 
+.login-history {
+    min-height: 300px;
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+.login-history::-webkit-scrollbar {
+    width: 6px;
+}
+
+.login-history::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.login-history::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.login-history::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+.login-item {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    transition: all 0.2s ease;
+}
+
+.login-item:hover {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.login-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.login-primary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.login-icons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.device-icon,
+.browser-icon {
+    font-size: 18px;
+    color: #64748b;
+}
+
+.device-icon {
+    color: #3b82f6;
+}
+
+.browser-icon {
+    color: #10b981;
+}
+
+.login-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.login-title {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 14px;
+}
+
+.login-method {
+    font-size: 12px;
+    color: #64748b;
+    padding: 2px 8px;
+    background-color: #e2e8f0;
+    border-radius: 12px;
+    display: inline-block;
+    width: fit-content;
+}
+
+.login-time {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.time-ago {
+    font-weight: 500;
+    color: #374151;
+    font-size: 13px;
+}
+
+.exact-time {
+    font-size: 11px;
+    color: #9ca3af;
+}
+
+.device-breakdown {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.device-breakdown h4 {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    color: #374151;
+    font-weight: 600;
+}
+
+.device-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.device-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    background-color: #f8fafc;
+    border-radius: 6px;
+}
+
+.device-item i {
+    font-size: 16px;
+    color: #3b82f6;
+    width: 20px;
+}
+
+.device-name {
+    flex: 1;
+    font-weight: 500;
+    color: #374151;
+    font-size: 14px;
+}
+
+.device-count {
+    font-size: 12px;
+    color: #6b7280;
+    background-color: #e5e7eb;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.no-data {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6b7280;
+}
+
+.no-data i {
+    font-size: 48px;
+    color: #d1d5db;
+    margin-bottom: 16px;
+}
+
+.no-data h4 {
+    margin: 0 0 8px 0;
+    color: #374151;
+    font-size: 18px;
+}
+
+.no-data p {
+    margin: 0;
+    font-size: 14px;
+}
+
+
+
+
+
+
+
 /* Forms */
 .form-grid {
     display: grid;
@@ -723,6 +914,72 @@ input:checked + .slider:before {
     .name-role {
         text-align: center;
     }
+
+    .login-item {
+        padding: 12px;
+    }
+
+    .login-primary {
+        gap: 8px;
+    }
+
+    .login-icons {
+        gap: 6px;
+    }
+
+    .device-icon,
+    .browser-icon {
+        font-size: 16px;
+    }
+
+    .login-title {
+        font-size: 13px;
+    }
+
+    .login-method {
+        font-size: 11px;
+        padding: 1px 6px;
+    }
+
+    .time-ago {
+        font-size: 12px;
+    }
+
+    .exact-time {
+        font-size: 10px;
+    }
+
+    .device-breakdown h4 {
+        font-size: 15px;
+    }
+
+    .device-item {
+        padding: 6px 10px;
+        gap: 10px;
+    }
+
+    .device-item i {
+        font-size: 14px;
+    }
+
+    .device-name {
+        font-size: 13px;
+    }
+
+    .device-count {
+        font-size: 11px;
+        padding: 1px 6px;
+    }
+
+    /* Scrollable Login History Mobile Adjustments */
+    .login-history {
+        max-height: 400px;
+        padding-right: 4px;
+    }
+
+    .login-history::-webkit-scrollbar {
+        width: 4px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -750,6 +1007,39 @@ input:checked + .slider:before {
     .logout-button {
         font-size: 0.875rem;
         padding: 6px 10px;
+    }
+
+    .login-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .login-time {
+        text-align: left;
+        align-self: flex-start;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .stat-card {
+        padding: 12px;
+    }
+
+    .stat-value {
+        font-size: 20px;
+    }
+
+    .stat-label {
+        font-size: 12px;
+    }
+
+
+    .login-history {
+        max-height: 350px;
     }
 }
 

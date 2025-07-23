@@ -104,7 +104,7 @@ export class AuthService {
 
   logout(): void {
     if (isPlatformBrowser(this.platformId) && isLocalStorageAvailable()) {
-      localStorage.removeItem(this.tokenKey);
+      localStorage.clear();
       this.currentUserSubject.next(null);
       this.router.navigate(['/login']);
     }
@@ -197,6 +197,10 @@ export class AuthService {
 
   googleSignIn(data: any): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/oauth/google`, data);
+  }
+
+  loginHistory(userId: string) {
+    return this.http.get(`${this.baseUrl}/loginHistory/${userId}`);
   }
 
 }

@@ -17,7 +17,10 @@ export class AdmDashboardComponent {
   username: string = '';
   profile: string = '';
   isMobile = window.innerWidth < 768;
-  isLoading: boolean = false; //dfg to change
+  isLoading: boolean = false;
+  basicData: any = [];
+  dbData: any = [];
+  storageUsedPercentage: number = 0;
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
   @HostListener('window:resize')
   onResize() {
@@ -26,7 +29,8 @@ export class AdmDashboardComponent {
 
 
 
-  constructor(private auth: AuthService, private api: AdminService) {
+  constructor(private auth: AuthService, private api: AdminService, private title: TitleService) {
+    this.title.setTitle('Admin Dashboad | PRISM')
   }
 
 
@@ -35,17 +39,54 @@ export class AdmDashboardComponent {
       this.userId = user.id,
         this.username = user.name,
         this.profile = user.profilePicture
+      this.getData();
+      this.getDBData();
     })
-
-
   }
-
 
 
   toggleSidebar() {
     if (this.sidebar) {
       this.sidebar.toggleSidebar();
     }
+  }
+
+  getData() {
+    this.api.getBasicData().subscribe({
+      next: (resp: any) => {
+        console.log(resp);
+        this.basicData = resp.data;
+        this.isLoading = false;
+      },
+      error: err => {
+        console.error(err);
+        this.isLoading = false;
+      }
+    })
+  }
+
+  getDBData() {
+    this.api.getDBData().subscribe({
+      next: (resp: any) => {
+        console.log(resp);
+        this.dbData = resp.data;
+        this.storageUsageFormula();
+      },
+      error: err => {
+        console.error(err);
+        this.isLoading = false;
+      }
+    })
+  }
+
+  storageUsageFormula() {
+    const dbInfo = this.dbData.dbData;
+    const totalSize = 500;
+    const usedSize = dbInfo.storageSize || '0 MB';
+    const usedSizeNum = parseFloat(usedSize.replace(' MB', ''));
+    const storagePercentage = (usedSizeNum / totalSize) * 100;
+    console.log('Storage Percentage:', storagePercentage.toFixed(2));
+    this.storageUsedPercentage = Number(storagePercentage.toFixed(2));
   }
 
 

@@ -734,6 +734,10 @@
     background-color: #f3e8ff;
     color: #7c3aed;
 }
+.role-badge.admin {
+    background-color: #f0ffe8;
+    color: #007804;
+}
 
 .role-badge::before {
     content: '';
@@ -749,6 +753,10 @@
 
 .role-badge.instructor::before {
     background-color: #7c3aed;
+}
+
+.role-badge.admin::before {
+    background-color: #6ded3a;
 }
 
 /* Stat Display */
@@ -1150,3 +1158,68 @@
     stroke: currentColor;
     stroke-width: 2.5;
 } 
+
+.no-data-cell {
+  padding: 3rem 2rem !important;
+  background-color: #fafafa;
+  border: none;
+}
+
+.no-data-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.no-data-icon {
+  color: #9ca3af;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+.no-data-icon svg {
+  width: 48px;
+  height: 48px;
+}
+
+.no-data-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.no-data-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+}
+
+.no-data-message {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+@media (max-width: 768px) {
+  .no-data-cell {
+    padding: 2rem 1rem !important;
+  }
+  
+  .no-data-icon svg {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .no-data-title {
+    font-size: 1rem;
+  }
+  
+  .no-data-message {
+    font-size: 0.8rem;
+  }
+}

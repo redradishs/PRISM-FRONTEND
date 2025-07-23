@@ -134,6 +134,11 @@
                                 <i class="fas fa-user"></i>
                                 <span>Personal Information</span>
                             </button>
+                            <button class="tab-button" [ngClass]="{'active': activeTab === 'login-history'}"
+                                (click)="setActiveTab('login-history')">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Login History</span>
+                            </button>
                             <button class="tab-button" [ngClass]="{'active': activeTab === 'security'}"
                                 (click)="setActiveTab('security')">
                                 <i class="fas fa-shield-alt"></i>
@@ -250,6 +255,94 @@
                                     </div>
                                     <div class="card-footer">
                                         <button class="view-button">Manage Teaching Schedule</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-content" *ngIf="activeTab === 'login-history'">
+                            <div class="grid-layout">
+                                <!-- Summary Card -->
+                                <div class="card" *ngIf="loginSummary">
+                                    <div class="card-header">
+                                        <h3><i class="fas fa-chart-bar icon"></i> Login Summary</h3>
+                                        <p>Overview of your recent login activity</p>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="stats-grid">
+                                            <div class="stat-card">
+                                                <div class="stat-value">{{loginSummary.totalLogins}}</div>
+                                                <div class="stat-label">Total Logins</div>
+                                            </div>
+                                            <div class="stat-card">
+                                                <div class="stat-value">{{loginSummary.mostUsedDevice}}</div>
+                                                <div class="stat-label">Most Used Device</div>
+                                            </div>
+                                            <div class="stat-card">
+                                                <div class="stat-value">{{loginSummary.lastLogin | date:'MMM d, h:mm
+                                                    a'}}
+                                                </div>
+                                                <div class="stat-label">Last Login</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="device-breakdown">
+                                            <h4>Device Usage</h4>
+                                            <div class="device-stats"
+                                                *ngFor="let device of loginSummary.deviceBreakdown | keyvalue">
+                                                <div class="device-item">
+                                                    <i [class]="getDeviceIcon(device.key)"></i>
+                                                    <span class="device-name">{{device.key}}</span>
+                                                    <span class="device-count">{{device.value}} logins</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Login History Card -->
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3><i class="fas fa-history icon"></i> Recent Login Activity</h3>
+                                        <p>Your recent login sessions and security details</p>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="login-history" *ngIf="loginHistory.length > 0; else noLoginHistory">
+                                            <div class="login-item"
+                                                *ngFor="let login of loginHistory; trackBy: trackByLoginDate">
+                                                <div class="login-info">
+                                                    <div class="login-primary">
+                                                        <div class="login-icons">
+                                                            <i [class]="getDeviceIcon(login.deviceType)"
+                                                                class="device-icon"></i>
+                                                            <i [class]="getBrowserIcon(login.browser)"
+                                                                class="browser-icon"></i>
+                                                        </div>
+                                                        <div class="login-details">
+                                                            <div class="login-title">
+                                                                {{login.deviceType}} • {{login.browser}}
+                                                            </div>
+                                                            <div class="login-method">
+                                                                {{getLoginTypeDisplayName(login.loginType)}}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="login-time">
+                                                        <div class="time-ago">{{login.timeAgo}}</div>
+                                                        <div class="exact-time">{{login.loginDate | date:'MMM d, y, h:mm
+                                                            a'}}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <ng-template #noLoginHistory>
+                                            <div class="no-data">
+                                                <i class="fas fa-history"></i>
+                                                <h4>No Login History</h4>
+                                                <p>No recent login activity found.</p>
+                                            </div>
+                                        </ng-template>
                                     </div>
                                 </div>
                             </div>

@@ -73,8 +73,8 @@
                             <h1>Welcome Back, {{username}}</h1>
                             <p>Here's what's happening with the system today.</p>
                             <div class="welcome-buttons">
-                                <button class="btn-create">CreateAssessment</button>
-                                <button class="btn-view">System Settings</button>
+                                <button class="btn-create" [routerLink]="['/admin/users']">User Management</button>
+                                <button class="btn-view" [routerLink]="['/admin/settings']">System Settings</button>
                             </div>
                         </div>
                     </div>
@@ -85,8 +85,8 @@
                         <div class="card-content">
                             <p class="card-title">Total Students</p>
                             <div class="card-numbers">
-                                <h1>999</h1>
-                                <p>across 9999 classes</p>
+                                <h1>{{basicData?.totalStudents}}</h1>
+                                <p>across {{basicData?.totalClasses}} classes</p>
                             </div>
                             <p class="card-status positive">+1 this week</p>
                         </div>
@@ -99,7 +99,7 @@
                         <div class="card-content">
                             <p class="card-title">Total Instructors</p>
                             <div class="card-numbers">
-                                <h1>999</h1>
+                                <h1>{{basicData?.totalInstructors}}</h1>
                                 <p>999</p>
                             </div>
                             <p class="card-status">On track</p>
@@ -113,8 +113,8 @@
                         <div class="card-content">
                             <p class="card-title">Total Assessments</p>
                             <div class="card-numbers">
-                                <h1>999</h1>
-                                <p>with 888 students</p>
+                                <h1>{{basicData?.totalAssessments}}</h1>
+                                <p>with {{basicData?.totalAssignedAssessments}} assigned</p>
                             </div>
                             <p class="card-status">All active</p>
                         </div>
@@ -372,18 +372,18 @@
                         <div class="f-cont">
                             <i class="fas fa-check"></i>
                             <p>Connected</p>
-                            <span class="mbleft">(34mb/500mb)</span>
-
+                            <span class="mbleft">({{dbData?.dbData?.totalSize}}/500mb)</span>
                         </div>
 
 
                         <div class="f-cont2">
                             <div class="f-cont2-title">
-                                <span>Storage Used</span>
-                                <span>12%</span>
+                                <span>Storage Used: {{dbData?.dbData?.dbName}}</span>
+                                <span>{{this.storageUsedPercentage || 0}} %</span>
                             </div>
 
-                            <div class="progressbar"></div>
+                            <div class="progressbar" [style.--progress-width]="(storageUsedPercentage || 0) + '%'">
+                            </div>
                         </div>
 
                     </div>
@@ -395,13 +395,13 @@
 
                         <div class="cont">
                             <div class="middle">
-                                <h2>1,457</h2>
+                                <h2>{{(dbData?.activeSession || 1) | number}}</h2>
                                 <p>Users currently online</p>
                             </div>
 
                             <div class="bottom">
                                 <p>This Month:</p>
-                                <p>2,999</p>
+                                <p>{{(dbData?.lastMonthActiveSessions || 1) | number}}</p>
                             </div>
                         </div>
 

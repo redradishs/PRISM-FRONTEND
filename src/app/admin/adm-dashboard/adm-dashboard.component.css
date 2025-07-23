@@ -980,14 +980,13 @@
     overflow: hidden;
     position: relative;
 }
-
 .progressbar::after {
     content: '';
     position: absolute;
     left: 0;
     top: 0;
     height: 100%;
-    width: 12%;
+    width: var(--progress-width);
     background: linear-gradient(90deg, #3b82f6, #1d4ed8);
     border-radius: 4px;
     transition: width 0.3s ease;

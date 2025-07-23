@@ -59,6 +59,28 @@ interface PasswordData {
   confirmPassword: string;
 }
 
+interface LoginHistoryItem {
+  loginDate: string;
+  loginType: string;
+  deviceType: string;
+  browser: string;
+  timeAgo: string;
+}
+
+interface LoginHistorySummary {
+  totalLogins: number;
+  lastLogin: string;
+  deviceBreakdown: {
+    [key: string]: number;
+  };
+  mostUsedDevice: string;
+}
+
+interface LoginHistoryData {
+  loginHustory: LoginHistoryItem[];
+  summary: LoginHistorySummary;
+}
+
 @Component({
   selector: 'app-profile-inst',
   imports: [CommonModule, FormsModule, ReactiveFormsModule, SidebarComponent],
@@ -91,6 +113,7 @@ export class ProfileInstComponent implements OnInit {
   isMobile = false;
   profilePicture: string = '';
   isLoading: boolean = true;
+  loginData: any;
 
   showCurrentPassword = false;
   showNewPassword = false;
@@ -158,6 +181,7 @@ export class ProfileInstComponent implements OnInit {
         this.username = user.name;
         this.profilePicture = user.profilePicture;
         this.loadProfileData();
+        this.loadHistory();
       }
     });
   }
@@ -342,8 +366,74 @@ export class ProfileInstComponent implements OnInit {
   }
 
   logout(): void {
-    this.auth.logout();
+    Swal.fire({
+      text: 'Are you sure you want to log out?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No',
+      confirmButtonColor: '#3085d6'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.auth.logout();
+      }
+    });
   }
+
+  private loadHistory() {
+    this.auth.loginHistory(this.userId).subscribe({
+      next: (resp: any) => {
+        this.loginData = resp.data;
+        // console.log('Login history:', this.loginData);
+      }, error: (error) => {
+        console.error('Error loading login history:', error);
+      }
+    })
+  }
+
+  get loginHistory(): LoginHistoryItem[] {
+    return this.loginData?.loginHustory || [];
+  }
+
+  get loginSummary(): LoginHistorySummary | null {
+    return this.loginData?.summary || null;
+  }
+
+  getBrowserIcon(browser: string): string {
+    const browserLower = browser.toLowerCase();
+    if (browserLower.includes('chrome')) return 'fab fa-chrome';
+    if (browserLower.includes('firefox')) return 'fab fa-firefox-browser';
+    if (browserLower.includes('safari')) return 'fab fa-safari';
+    if (browserLower.includes('edge')) return 'fab fa-edge';
+    if (browserLower.includes('opera')) return 'fab fa-opera';
+    return 'fas fa-globe';
+  }
+
+  getDeviceIcon(deviceType: string): string {
+    const deviceLower = deviceType.toLowerCase();
+    if (deviceLower.includes('mobile')) return 'fas fa-mobile-alt';
+    if (deviceLower.includes('tablet')) return 'fas fa-tablet-alt';
+    if (deviceLower.includes('desktop')) return 'fas fa-desktop';
+    return 'fas fa-laptop';
+  }
+
+  getLoginTypeDisplayName(loginType: string): string {
+    switch (loginType) {
+      case 'email_password':
+        return 'Email & Password';
+      case 'google':
+        return 'Google OAuth';
+      case 'github':
+        return 'GitHub OAuth';
+      default:
+        return loginType.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    }
+  }
+
+  trackByLoginDate(index: number, item: LoginHistoryItem): string {
+    return item.loginDate;
+  }
+
 
   toggleSidebar(): void {
     if (this.sidebar) {
