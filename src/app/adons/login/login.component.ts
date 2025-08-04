@@ -210,8 +210,8 @@ export class LoginComponent implements OnInit {
         <!-- Contact Info -->
         <p style="color: #9ca3af; font-size: 13px; margin: 0;">
           Need immediate assistance? Contact us at 
-          <a href="mailto:prismictesolutions@gmail.com" style="color: #f59e0b; text-decoration: none; font-weight: 500;">
-            prismictesolutions@gmail.com
+          <a href="mailto:administrator@prismgcccs.live" style="color: #f59e0b; text-decoration: none; font-weight: 500;">
+            administrator@prismgcccs.live
           </a>
         </p>
       </div>
@@ -325,7 +325,7 @@ export class LoginComponent implements OnInit {
                 <p style="color: #6b7280; font-size: 13px; margin: 0;">
                   If you believe this is a mistake, please contact support.
                   <br>
-                  prismictesolutions@gmail.com
+                  administrator@prismgcccs.live
                 </p>
               </div>
             `,
