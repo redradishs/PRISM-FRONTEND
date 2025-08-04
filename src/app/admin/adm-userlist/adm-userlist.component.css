@@ -822,6 +822,7 @@
 .status-badge::before {
     content: '';
     display: inline-block;
+    margin-right: 0.5rem;
     width: 0.5rem;
     height: 0.5rem;
     border-radius: 50%;
@@ -853,6 +854,36 @@
 .status-badge.inactive {
     background-color: #f1f5f9;
     color: #64748b;
+}
+
+.status-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.status-badge.banned {
+  background-color: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.status-badge.active {
+  background-color: #dcfce7;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+
+.ban-status-info {
+  font-size: 0.75rem;
+}
+
+.status-badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  display: inline-block;
 }
 
 /* Student name column */
@@ -1222,4 +1253,12 @@
   .no-data-message {
     font-size: 0.8rem;
   }
+}
+
+::ng-deep .swal2-container-high-z {
+  z-index: 99999 !important;
+}
+
+::ng-deep .swal2-container {
+  z-index: 99999 !important;
 }

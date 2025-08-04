@@ -333,7 +333,14 @@
                         </div>
                     </section>
 
-                    <section *ngIf="insights" class="insights-section">
+                    <div *ngIf="!enableStudentFeedback" class="ai-disabled-banner">
+                        <div class="banner-content">
+                            <i class="fas fa-exclamation-triangle banner-icon"></i>
+                            <span class="banner-text">AI INSIGHTS HAS BEEN DISABLED BY THE ADMINISTRATOR</span>
+                        </div>
+                    </div>
+
+                    <section *ngIf="insights && enableStudentFeedback" class="insights-section">
                         <div class="insight-header">
                             <div class="insight-icon">
                                 <i class="fas fa-lightbulb"></i>

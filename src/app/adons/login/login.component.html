@@ -52,11 +52,13 @@
 
 
                 </div>
+
+                <p *ngIf="isMaintenanceMode" class="maintenance-mode">System is Under Maintenance</p>
+
                 <button type="submit" class="sign-in-btn" [disabled]="loading">
                     <span *ngIf="loading" class="spinner"></span>
                     <span *ngIf="!loading">Sign in</span>
                 </button>
-
                 <div class="divider">or</div>
 
                 <button type="button" class="button" (click)="loginWithGoogle()" [disabled]="googleLoading">
@@ -80,9 +82,13 @@
                     </span>
                 </button>
 
-                <p class="create-account">
+                <p *ngIf="allowSignup" class="create-account">
                     Don't have an account? <a (click)="activeTab = 'signup'" class="auth-link">Create an account</a>
                 </p>
+                <p *ngIf="!allowSignup" class="disable-signup">
+                    Manual Registration is currently disabled. Please contact the administrator.
+                </p>
+
             </form>
 
 
@@ -133,8 +139,8 @@
                         required
                         [ngClass]="{'invalid': loginForm.get('role')?.touched && loginForm.get('role')?.invalid}">
                         <option value="" disabled selected>Select a role</option>
-                        <option value="student">Student</option>
-                        <option value="instructor">Instructor</option>
+                        <option value="student" *ngIf="enableUserRegistration">Student</option>
+                        <option value="instructor" *ngIf="enableInstructorRegistration">Instructor</option>
                     </select>
                 </div>
 

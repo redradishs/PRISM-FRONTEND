@@ -678,3 +678,144 @@ form {
 .button:disabled {
   transform: scale(0.98);
 }
+
+.maintenance-mode {
+    background: #fef3c7;
+    border-left: 4px solid #f59e0b;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 20px 0;
+    text-align: center;
+    color: #92400e;
+    font-weight: 500;
+    font-size: 13px;
+    box-shadow: 0 2px 4px rgba(245, 158, 11, 0.1);
+}
+
+.disable-signup {   
+    text-align: center;
+    margin-top: 20px;
+    font-size: 12px;
+    color: #6b7280;
+    line-height: 1.4;
+  }
+
+/* Custom SweetAlert styles for ban alert */
+::ng-deep .ban-alert-popup {
+  border-radius: 16px !important;
+  padding: 0 !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+}
+
+::ng-deep .ban-alert-popup .swal2-title {
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  color: #dc2626 !important;
+  margin: 20px 0 10px 0 !important;
+  padding: 0 20px !important;
+}
+
+::ng-deep .ban-alert-popup .swal2-html-container {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+::ng-deep .ban-alert-popup .swal2-icon.swal2-error {
+  border-color: #dc2626 !important;
+  color: #dc2626 !important;
+  margin: 20px auto 10px auto !important;
+}
+
+::ng-deep .ban-alert-popup .swal2-actions {
+  margin: 20px 0 25px 0 !important;
+}
+
+::ng-deep .ban-alert-popup .swal2-confirm {
+  border-radius: 8px !important;
+  padding: 12px 24px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  transition: all 0.3s ease !important;
+}
+
+::ng-deep .ban-alert-popup .swal2-confirm:hover {
+  background-color: #b91c1c !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3) !important;
+}
+
+/* Maintenance alert styles - Updated */
+::ng-deep .maintenance-alert-popup {
+  border-radius: 20px !important;
+  padding: 0 !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
+  border: none !important;
+  background: white !important;
+  z-index: 99999 !important; /* Ensure high z-index */
+}
+
+::ng-deep .maintenance-alert-popup .swal2-html-container {
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+}
+
+::ng-deep .maintenance-confirm-btn {
+  border-radius: 12px !important;
+  padding: 14px 28px !important;
+  font-weight: 600 !important;
+  font-size: 15px !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3) !important;
+  z-index: 99999 !important; /* Ensure button is clickable */
+  position: relative !important;
+}
+
+::ng-deep .maintenance-confirm-btn:hover {
+  background-color: #d97706 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4) !important;
+}
+
+::ng-deep .maintenance-alert-popup .swal2-actions {
+  margin: 0 !important;
+  padding: 0 20px 30px 20px !important;
+  z-index: 99999 !important;
+}
+
+/* Ensure SweetAlert2 container has proper z-index */
+::ng-deep .swal2-container {
+  z-index: 99999 !important;
+}
+
+/* Remove any pointer-events issues */
+::ng-deep .maintenance-alert-popup * {
+  pointer-events: auto !important;
+}
+
+/* Animation keyframes */
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(-50px);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  ::ng-deep .maintenance-alert-popup {
+    width: 95% !important;
+    margin: 0 auto !important;
+  }
+}

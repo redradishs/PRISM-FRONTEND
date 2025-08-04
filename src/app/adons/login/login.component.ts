@@ -40,6 +40,17 @@ export class LoginComponent implements OnInit {
 
   activeTab: string = 'login';
 
+  //platfrom settings
+  allowSignup: boolean = true;
+  platformSettings: any = null;
+  isMaintenanceMode: boolean = false;
+  maintenanceMessage: string = '';
+  platformMessage: any = null;
+  enableUserRegistration: boolean = false;
+  enableInstructorRegistration: boolean = false;
+  requireEmailVerification: boolean = true;
+  defaultUserRole: string = 'student';
+
   constructor(
     private router: Router,
     private formBuilder: FormBuilder,
@@ -47,7 +58,7 @@ export class LoginComponent implements OnInit {
     private title: Title,
     private auth: Auth,
     private seoService: SeoService,
-    private route: ActivatedRoute,
+    private route: ActivatedRoute
 
   ) {
     this.loginForm = this.formBuilder.group({
@@ -94,6 +105,7 @@ export class LoginComponent implements OnInit {
       });
     }
     this.title.setTitle('PRISM | Login');
+    this.getPlatformSettings();
     const storedEmail = localStorage.getItem('rememberedEmail');
     if (storedEmail) {
       this.loginForm.patchValue({ email: this.stripDomainFromEmail(storedEmail) });
@@ -120,6 +132,104 @@ export class LoginComponent implements OnInit {
       return email.split('@')[0];
     }
     return email;
+  }
+
+  getPlatformSettings() {
+    this.authService.platformWideSettings().subscribe({
+      next: (resp: any) => {
+        console.log('Platform Wide Settings:', resp);
+        this.platformSettings = resp.data;
+        this.isMaintenanceMode = resp.data.maintenanceMode?.enabled || false;
+        this.maintenanceMessage = resp.data.maintenanceMode?.message || '';
+
+        this.platformMessage = resp.data.platformMessage || null;
+
+        this.allowSignup = resp.data.enableSignup ?? true;
+        this.enableUserRegistration = resp.data.enableUserRegistration ?? true;
+        this.enableInstructorRegistration = resp.data.enableInstructorRegistration ?? true;
+        this.requireEmailVerification = resp.data.requireEmailVerification ?? true;
+
+        if (this.defaultUserRole) {
+          this.signupForm.patchValue({ role: this.defaultUserRole });
+        }
+
+        // if (this.isMaintenanceMode) {
+        //   this.showMaintenanceAlert();
+        // }
+
+      }, error: (error: any) => {
+        console.error(error);
+        this.errorMessage = 'Failed to fetch platform wide settings';
+      }
+    })
+  }
+
+  showMaintenanceAlert() {
+    Swal.fire({
+      html: `
+      <div style="text-align: center; padding: 30px 20px;">
+        <!-- Icon Section -->
+        <div style="margin-bottom: 25px;">
+          <div style="width: 80px; height: 80px; margin: 0 auto; 
+                      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+                      border-radius: 50%; display: flex; align-items: center; 
+                      justify-content: center; box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3);">
+            <i class="fas fa-tools" style="font-size: 32px; color: white;"></i>
+          </div>
+        </div>
+
+        <!-- Title -->
+        <h2 style="color: #1f2937; margin: 0 0 15px 0; font-size: 28px; font-weight: 700;">
+          System Maintenance
+        </h2>
+
+        <!-- Main Message Card -->
+        <div style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); 
+                    border-radius: 16px; padding: 25px; margin-bottom: 20px;
+                    border: 1px solid #fde68a; position: relative; overflow: hidden;">
+          
+          <!-- Decorative elements -->
+          <div style="position: absolute; top: -20px; right: -20px; width: 60px; height: 60px;
+                      background: rgba(245, 158, 11, 0.1); border-radius: 50%;"></div>
+          <div style="position: absolute; bottom: -10px; left: -10px; width: 40px; height: 40px;
+                      background: rgba(245, 158, 11, 0.1); border-radius: 50%;"></div>
+          
+          <div style="position: relative; z-index: 1;">
+            <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+              <div style="width: 4px; height: 30px; background: #f59e0b; border-radius: 2px; margin-right: 12px;"></div>
+              <h3 style="color: #92400e; margin: 0; font-size: 18px; font-weight: 600;">
+                Scheduled Maintenance in Progress
+              </h3>
+            </div>
+            <p style="color: #78350f; margin: 0; font-size: 15px; line-height: 1.5;">
+              ${this.maintenanceMessage}
+            </p>
+          </div>
+        </div>
+
+        <!-- Contact Info -->
+        <p style="color: #9ca3af; font-size: 13px; margin: 0;">
+          Need immediate assistance? Contact us at 
+          <a href="mailto:prismictesolutions@gmail.com" style="color: #f59e0b; text-decoration: none; font-weight: 500;">
+            prismictesolutions@gmail.com
+          </a>
+        </p>
+      </div>
+    `,
+      showConfirmButton: true,
+      confirmButtonText: '<i class="fas fa-check" style="margin-right: 8px;"></i> I Understand',
+      confirmButtonColor: '#f59e0b',
+      allowOutsideClick: true,
+      allowEscapeKey: true,
+      width: '480px',
+      backdrop: true,
+      customClass: {
+        popup: 'maintenance-alert-popup',
+        confirmButton: 'maintenance-confirm-btn'
+      }
+    }).then((result) => {
+      console.log('Maintenance modal result:', result);
+    });
   }
 
   handleLoginSubmit(): void {
@@ -177,6 +287,58 @@ export class LoginComponent implements OnInit {
             }
           });
 
+          return;
+        }
+
+        if (response.data.maintenanceMode) {
+          this.loading = false;
+          this.clicked = false;
+          this.showMaintenanceAlert();
+        }
+        if (response.data.isBanned) {
+          this.loading = false;
+          this.clicked = false;
+
+          Swal.fire({
+            html: `
+              <div style="text-align: center; padding: 20px;">
+                <div style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); 
+                            border-radius: 12px; padding: 20px; margin-bottom: 20px;
+                            border-left: 4px solid #dc2626;">
+                  <h3 style="color: #dc2626; margin: 0 0 10px 0; font-weight: 600;">
+                    ${response.data.message}
+                  </h3>
+                  <p style="color: #7f1d1d; margin: 0; font-size: 14px;">
+                    <strong>Reason:</strong> ${response.data.reason}
+                  </p>
+                </div>
+                
+                <div style="background: #f9fafb; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                  <p style="color: #374151; margin: 0; font-size: 14px;">
+                    <strong>🕒 Status:</strong><br>
+                    <span style="color: #059669; font-weight: 600; font-size: 16px;">
+                      ${response.data.unbannedAt}
+                    </span>
+                  </p>
+                </div>
+                
+                <p style="color: #6b7280; font-size: 13px; margin: 0;">
+                  If you believe this is a mistake, please contact support.
+                  <br>
+                  prismictesolutions@gmail.com
+                </p>
+              </div>
+            `,
+            icon: 'error',
+            confirmButtonText: 'I Understand',
+            confirmButtonColor: '#dc2626',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            width: '450px',
+            customClass: {
+              popup: 'ban-alert-popup'
+            }
+          });
           return;
         }
 
@@ -429,6 +591,57 @@ export class LoginComponent implements OnInit {
 
       this.authService.googleSignIn({ idToken }).subscribe({
         next: (response: any) => {
+          if (response.data.maintenanceMode) {
+            this.loading = false;
+            this.clicked = false;
+            this.showMaintenanceAlert();
+          }
+          if (response.data.isBanned) {
+            this.googleLoading = false;
+
+            Swal.fire({
+              html: `
+                <div style="text-align: center; padding: 20px;">
+                  <div style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); 
+                              border-radius: 12px; padding: 20px; margin-bottom: 20px;
+                              border-left: 4px solid #dc2626;">
+                    <h3 style="color: #dc2626; margin: 0 0 10px 0; font-weight: 600;">
+                      ${response.data.message}
+                    </h3>
+                    <p style="color: #7f1d1d; margin: 0; font-size: 14px;">
+                      <strong>Reason:</strong> ${response.data.reason}
+                    </p>
+                  </div>
+                  
+                  <div style="background: #f9fafb; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                    <p style="color: #374151; margin: 0; font-size: 14px;">
+                      <strong>🕒 Status:</strong><br>
+                      <span style="color: #059669; font-weight: 600; font-size: 16px;">
+                        ${response.data.unbannedAt}
+                      </span>
+                    </p>
+                  </div>
+                  
+                  <p style="color: #6b7280; font-size: 13px; margin: 0;">
+                    If you believe this is a mistake, please contact support.
+                    <br>
+                    administrator@prismgcccs.live
+                  </p>
+                </div>
+              `,
+              icon: 'error',
+              confirmButtonText: 'I Understand',
+              confirmButtonColor: '#dc2626',
+              allowOutsideClick: false,
+              allowEscapeKey: false,
+              width: '450px',
+              customClass: {
+                popup: 'ban-alert-popup'
+              }
+            });
+            return;
+          }
+
           this.authService.setToken(response.data.jwt);
           localStorage.removeItem('assessment_integrity_data');
           sessionStorage.removeItem('assessment_integrity_data');

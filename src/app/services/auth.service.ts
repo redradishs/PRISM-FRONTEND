@@ -27,8 +27,10 @@ interface ProfileChanges {
 })
 export class AuthService {
   // private baseUrl = 'http://localhost:8000/user';
+  // private prism_set = 'http://localhost:8000/settings';
   // private baseUrl = 'https://prismcdn.onrender.com/user';
   private baseUrl = 'https://prismapi2.onrender.com/user';
+  private prism_set = 'https://prismapi2.onrender.com/settings';
   private tokenKey = 'jwt';
   private currentUserSubject: BehaviorSubject<any> = new BehaviorSubject<any>(
     null
@@ -46,6 +48,10 @@ export class AuthService {
         this.currentUserSubject.next(decoded?.data || null);
       }
     }
+  }
+
+  platformWideSettings() {
+    return this.http.get(`${this.prism_set}/prism_sws`);
   }
 
   userLogin(data: any): Observable<any> {

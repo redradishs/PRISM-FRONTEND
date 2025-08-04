@@ -19,24 +19,27 @@
                                 </button>
 
                                 <button *ngIf="viewMode === 'list'" (click)="setViewMode('grid')"
-                                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
-                                Grid View
-                            </button>
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
+                                    Grid View
+                                </button>
                             </div>
                             <div *ngIf="!isMobile" class="flex items-center">
                                 <div class="relative mr-3">
-                                    <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                                        <img *ngIf="profile" [src]="profile" alt="Profile" class="w-full h-full object-cover">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profile" [src]="profile" alt="Profile"
+                                            class="w-full h-full object-cover">
                                         <span *ngIf="!profile" class="text-base md:text-lg font-medium text-gray-600">
                                             {{username.charAt(0) || 'A'}}
                                         </span>
                                     </div>
-                                    <div class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
                                     </div>
                                 </div>
                                 <div class="text-left">
                                     <div class="text-sm font-medium text-gray-900">{{username}}</div>
-                                    <div class="text-xs text-gray-500">Student</div>    
+                                    <div class="text-xs text-gray-500">Student</div>
                                 </div>
                             </div>
                             <button *ngIf="isMobile" (click)="toggleSidebar()"
@@ -63,9 +66,10 @@
                                     <div class="card-info">
                                         <div class="card-title-container">
                                             <div class="icon-container">
-                                                <svg class="graduation-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                                                    <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
+                                                <svg class="graduation-icon" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2">
+                                                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                                                    <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
                                                 </svg>
                                             </div>
                                             <h3 class="card-title">Total Classes</h3>
@@ -82,7 +86,7 @@
                             </div>
                         </div>
                     </div>
-            
+
                     <!-- Pending Applications Card -->
                     <div (click)="setActiveTab('pending')" class="card">
                         <div class="card-gradient card-gradient-fuchsia">
@@ -92,9 +96,10 @@
                                     <div class="card-info">
                                         <div class="card-title-container">
                                             <div class="icon-container">
-                                                <svg class="clock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <circle cx="12" cy="12" r="10"/>
-                                                    <path d="M12 6v6l4 2"/>
+                                                <svg class="clock-icon" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2">
+                                                    <circle cx="12" cy="12" r="10" />
+                                                    <path d="M12 6v6l4 2" />
                                                 </svg>
                                             </div>
                                             <h3 class="card-title">Pending Applications</h3>
@@ -118,222 +123,239 @@
 
 
 
-    <!-- Search and Apply Section -->
-    <div class="search-card">
-        <div class="search-card-content">
-            <div class="blur-circle blur-circle-purple"></div>
-            <div class="blur-circle blur-circle-fuchsia"></div>
-            <div class="search-container">
-                <div class="search-input-group">
-                    <div class="search-wrapper">
-                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"/>
-                            <path d="M21 21l-4.35-4.35"/>
-                        </svg>
-                        <input type="text" placeholder="Search classes..." class="search-input" [formControl]="searchControl">
-                    </div>
-                    <div class="apply-group">
-                        <form [formGroup]="joinClassForm">
-                            <input type="text" placeholder="Enter class code" class="code-input" formControlName="classCode">
-                            <button class="apply-button" (click)="onSubmitJoinClass()">Apply</button>
-                        </form>
-                    </div>
-                </div>
-                    </div>
-                </div>
-    </div>
-
-
-    <section class="tabs">
-        <div class="tab-switches">
-            <button class="tab-switch" [class.active]="activeTab === 'enrolled'" (click)="setActiveTab('enrolled')">
-                <span class="tab-text-full">Enrolled Classes</span>
-                <span class="tab-text-mobile">Enrolled</span>
-            </button>
-            <button class="tab-switch" [class.active]="activeTab === 'pending'" (click)="setActiveTab('pending')">
-                <span class="tab-text-full">Pending Applications</span>
-                <span class="tab-text-mobile">Pending</span>
-            </button>
-        </div>
-
-        <div class="views">
-            <button class="view-button" [class.active]="viewMode === 'grid'" (click)="setViewMode('grid')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="3" width="7" height="7"/>
-                    <rect x="14" y="3" width="7" height="7"/>
-                    <rect x="3" y="14" width="7" height="7"/>
-                    <rect x="14" y="14" width="7" height="7"/>
-                </svg>
-            </button>
-            <button class="view-button" [class.active]="viewMode === 'list'" (click)="setViewMode('list')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="3" y1="6" x2="21" y2="6"/>
-                    <line x1="3" y1="12" x2="21" y2="12"/>
-                    <line x1="3" y1="18" x2="21" y2="18"/>
-                </svg>
-            </button>
-        </div>
-    </section>
-
-    <div class="info-message">
-        <h1 *ngIf="activeTab === 'enrolled'">Enrolled Classes</h1>
-        <span *ngIf="activeTab === 'enrolled'">Classes you are currently enrolled in.</span>
-        <h1 *ngIf="activeTab === 'pending'">Pending Applications</h1>
-        <span *ngIf="activeTab === 'pending'">Applications you have applied for.</span>
-    </div>
-
-
-    <section *ngIf="activeTab === 'enrolled' && viewMode === 'grid'" class="classes-container">
-
-        <div (click)="goToClassDetails(c)" *ngFor="let c of classes" class="card-grid">
-            <div class="titlebar">
-                <span class="badge code">{{c.classCode}}</span>
-                <span class="badge code">{{c.className}}</span>
-            </div>
-            <h1 class="class-title">{{c.className}}</h1>
-            <div class="instructor">
-                <img [src]="c.instructor.profilePicture" alt="{{c.instructor}}" class="instructor-img">
-                <div>
-                    <span class="instructor-name">{{c.instructor.name}}</span>
-                    <span class="instructor-role">{{c.instructor.role || 'Instructor'}}</span>
-                </div>
-            </div>
-            <div class="performance-card">
-                <div class="performance-card-content">
-                    <span class="performance-label">Performance</span>
-                    <span class="performance-value">{{c.performance}}%</span>
-                </div>
-                <span class="performance-detail">
-                    <i class="fas fa-user-graduate"></i> {{c.completed}}/{{c.totalAssessments}} assessments completed
-                </span>
-            </div>
-            <div class="updates">
-                <i class="fas fa-bell"></i>
-                <span *ngIf="c.nearestDue && c.nearestDue !== 'You\'re all Good!'">
-                    "{{c.nearestDue.title}}" due on {{c.nearestDue.dueDate | date:'MMM d, yyyy'}}
-                </span>
-                <span *ngIf="!c.nearestDue || c.nearestDue === 'You\'re all Good!'">
-                    You're all Good!
-                </span>
-            </div>
-            <div class="stats">
-                <div class="stat">
-                    <span class="stat-value">{{c.totalAssessments}}</span>
-                    <span class="stat-label">Assessments</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-value">{{c.completed}}</span>
-                    <span class="stat-label">Materials</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-value">{{c.ongoing}}</span>
-                    <span class="stat-label">Ongoing</span>
-                </div>
-            </div>
-            <div class="actions">
-                <button class="enter-class"><i class="fas fa-eye"></i> Enter Class</button>
-                <button class="more"><i class="fas fa-arrow-right"></i></button>
-            </div>
-        </div>
-
-
-       
-    </section>
-    
-    <div *ngIf="classes.length === 0 && searchControl.value && searchControl.value.length >= 2" class="no-applications">
-        <i class="fas fa-clipboard-list"></i>
-        <h1>No classes found.</h1>
-      </div>
-
-      <div *ngIf="classes.length === 0 && !searchControl.value" class="no-applications">
-        <i class="fas fa-clipboard-list"></i>
-        <h1>You have no classes at the moment.</h1>
-      </div>
-
-    <section *ngIf="activeTab === 'enrolled' && viewMode === 'list'" class="list-view">
-        <div class="class-list-table">
-            <div class="class-list-header">
-                <div>Class Code</div>
-                <div>Class Name</div>
-                <div>Instructor</div>
-                <div>Assessments</div>
-                <div>Performance</div>
-                <div>Actions</div>
-            </div>
-            <div (click)="goToClassDetails(c)" class="class-list-row" *ngFor="let c of classes; let i = index">
-                <div class="class-code-cell">
-                    <span class="class-code-bar" [ngStyle]="{'background': getBadgeColor(i)}"></span>
-                    <span class="class-code-badge" [ngStyle]="{'color': getBadgeColor(i), 'borderColor': getBadgeColor(i)}">{{ c.classCode }}</span>
-                </div>
-                <div class="class-name-cell">{{ c.className }}</div>
-                <div class="instructor-cell">
-                    <img [src]="c.instructor.profilePicture" alt="{{c.instructor.name}}" class="instructor-avatar" />
-                    <div>
-                        <div class="instructor-name">{{ c.instructor.name }}</div>
-                        <div class="instructor-role">{{ c.instructor.role || 'Instructor' }}</div>
+                <!-- Search and Apply Section -->
+                <div class="search-card">
+                    <div class="search-card-content">
+                        <div class="blur-circle blur-circle-purple"></div>
+                        <div class="blur-circle blur-circle-fuchsia"></div>
+                        <div class="search-container">
+                            <div class="search-input-group">
+                                <div class="search-wrapper">
+                                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <circle cx="11" cy="11" r="8" />
+                                        <path d="M21 21l-4.35-4.35" />
+                                    </svg>
+                                    <input type="text" placeholder="Search classes..." class="search-input"
+                                        [formControl]="searchControl">
+                                </div>
+                                <div class="apply-group">
+                                    <form [formGroup]="joinClassForm">
+                                        <input type="text" placeholder="Enter class code" class="code-input"
+                                            formControlName="classCode">
+                                        <button class="apply-button" (click)="onSubmitJoinClass()">Apply</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="assessments-cell">
-                  <span class="assessment-icon">
-                    <i class="fas fa-file-alt"></i>
-                  </span>
-                  <span class="assessment-progress">{{ c.completed }}/{{ c.totalAssessments }}</span>
-                </div>
-                <div class="performance-cell">
-                    <span class="performance-badge" [ngStyle]="{'background': c.performanceBg, 'color': c.performanceColor}">
-                        {{ c.performance }}%
-                    </span>
-                </div>
-                <div class="actions-cell">
-                    <button class="exit-btn" (click)="exitClass(c)">Exit</button>
-                </div>
-            </div>
-        </div>
-    </section>
 
 
-
-
-
-
-    <section *ngIf="activeTab === 'pending'" class="pending-applications">
-        <div class="class-list-table">
-            <div class="class-list-header">
-                <div>Class Code</div>
-                <div>Class Name</div>
-                <div>Instructor</div>
-                <div>Applied Date</div>
-                <div class="status-cell">Status</div>
-                <div>Actions</div>
-            </div>
-            <div (click)="goToClassDetails(p)" class="class-list-row" *ngFor="let p of pendingApplications; let i = index">
-                <div class="class-code-cell">
-                    <span class="class-code-bar" [ngStyle]="{'background': getBadgeColor(i)}"></span>
-                    <span class="class-code-badge" [ngStyle]="{'color': getBadgeColor(i), 'borderColor': getBadgeColor(i)}">{{ p.classCode }}</span>
-                </div>
-                <div class="class-name-cell">{{ p.className }}</div>
-                <div class="instructor-cell">
-                    <img [src]="p.instructor.profilePicture" alt="{{p.instructor.name}}" class="instructor-avatar" />
-                    <div>
-                        <div class="instructor-name">{{ p.instructor.name }}</div>
-                        <div class="instructor-role">{{ p.instructor.role || 'Instructor' }}</div>
+                <section class="tabs">
+                    <div class="tab-switches">
+                        <button class="tab-switch" [class.active]="activeTab === 'enrolled'"
+                            (click)="setActiveTab('enrolled')">
+                            <span class="tab-text-full">Enrolled Classes</span>
+                            <span class="tab-text-mobile">Enrolled</span>
+                        </button>
+                        <button class="tab-switch" [class.active]="activeTab === 'pending'"
+                            (click)="setActiveTab('pending')">
+                            <span class="tab-text-full">Pending Applications</span>
+                            <span class="tab-text-mobile">Pending</span>
+                        </button>
                     </div>
-                </div>
-                <div class="applied-date-cell">{{ p.appliedDate | date:'MMM d, yyyy hh:mm a' }}</div>
-                <div class="status-cell"> <span class="celd">
-                    {{ p.status | uppercase }}
-                </span></div>
-                <div class="actions-cell">
-                    <button class="exit-btn" (click)="cancelApplication(p)">Cancel</button>
-                </div>
-            </div>
-        </div>
 
-        <div *ngIf="pendingApplications === undefined" class="no-applications">
-            <i class="fas fa-clipboard-list"></i>
-            <h1>You have no pending applications at the moment.</h1>
-        </div>
-    </section>
+                    <div class="views">
+                        <button class="view-button" [class.active]="viewMode === 'grid'" (click)="setViewMode('grid')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7" />
+                                <rect x="14" y="3" width="7" height="7" />
+                                <rect x="3" y="14" width="7" height="7" />
+                                <rect x="14" y="14" width="7" height="7" />
+                            </svg>
+                        </button>
+                        <button class="view-button" [class.active]="viewMode === 'list'" (click)="setViewMode('list')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="3" y1="6" x2="21" y2="6" />
+                                <line x1="3" y1="12" x2="21" y2="12" />
+                                <line x1="3" y1="18" x2="21" y2="18" />
+                            </svg>
+                        </button>
+                    </div>
+                </section>
+
+                <div class="info-message">
+                    <h1 *ngIf="activeTab === 'enrolled'">Enrolled Classes</h1>
+                    <span *ngIf="activeTab === 'enrolled'">Classes you are currently enrolled in.</span>
+                    <h1 *ngIf="activeTab === 'pending'">Pending Applications</h1>
+                    <span *ngIf="activeTab === 'pending'">Applications you have applied for.</span>
+                </div>
+
+
+                <section *ngIf="activeTab === 'enrolled' && viewMode === 'grid'" class="classes-container">
+
+                    <div (click)="goToClassDetails(c)" *ngFor="let c of classes" class="card-grid">
+                        <div class="titlebar">
+                            <span class="badge code">{{c.classCode}}</span>
+                            <span class="badge code">{{c.className}}</span>
+                        </div>
+                        <h1 class="class-title">{{c.className}}</h1>
+                        <div class="instructor">
+                            <img [src]="c.instructor.profilePicture" alt="{{c.instructor}}" class="instructor-img">
+                            <div>
+                                <span class="instructor-name">{{c.instructor.name}}</span>
+                                <span class="instructor-role">{{c.instructor.role || 'Instructor'}}</span>
+                            </div>
+                        </div>
+                        <div class="performance-card">
+                            <div class="performance-card-content">
+                                <span class="performance-label">Performance</span>
+                                <span class="performance-value">{{c.performance}}%</span>
+                            </div>
+                            <span class="performance-detail">
+                                <i class="fas fa-user-graduate"></i> {{c.completed}}/{{c.totalAssessments}} assessments
+                                completed
+                            </span>
+                        </div>
+                        <div class="updates">
+                            <i class="fas fa-bell"></i>
+                            <span *ngIf="c.nearestDue && c.nearestDue !== 'You\'re all Good!'">
+                                "{{c.nearestDue.title}}" due on {{c.nearestDue.dueDate | date:'MMM d, yyyy'}}
+                            </span>
+                            <span *ngIf="!c.nearestDue || c.nearestDue === 'You\'re all Good!'">
+                                You're all Good!
+                            </span>
+                        </div>
+                        <div class="stats">
+                            <div class="stat">
+                                <span class="stat-value">{{c.totalAssessments}}</span>
+                                <span class="stat-label">Assessments</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value">{{c.completed}}</span>
+                                <span class="stat-label">Materials</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value">{{c.ongoing}}</span>
+                                <span class="stat-label">Ongoing</span>
+                            </div>
+                        </div>
+                        <div class="actions">
+                            <button class="enter-class"><i class="fas fa-eye"></i> Enter Class</button>
+                            <button class="more"><i class="fas fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+
+
+
+                </section>
+
+                <div *ngIf="classes.length === 0 && searchControl.value && searchControl.value.length >= 2"
+                    class="no-applications">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h1>No classes found.</h1>
+                </div>
+
+                <div *ngIf="(classes.length === 0 && !searchControl.value) && (activeTab === 'enrolled' && classes.length === 0)"
+                    class="no-applications">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h1>You have no classes at the moment.</h1>
+                </div>
+
+                <section *ngIf="(activeTab === 'enrolled' && viewMode === 'list') && classes.length !== 0"
+                    class="list-view">
+                    <div class="class-list-table">
+                        <div class="class-list-header">
+                            <div>Class Code</div>
+                            <div>Class Name</div>
+                            <div>Instructor</div>
+                            <div>Assessments</div>
+                            <div>Performance</div>
+                            <div>Actions</div>
+                        </div>
+                        <div (click)="goToClassDetails(c)" class="class-list-row"
+                            *ngFor="let c of classes; let i = index">
+                            <div class="class-code-cell">
+                                <span class="class-code-bar" [ngStyle]="{'background': getBadgeColor(i)}"></span>
+                                <span class="class-code-badge"
+                                    [ngStyle]="{'color': getBadgeColor(i), 'borderColor': getBadgeColor(i)}">{{
+                                    c.classCode }}</span>
+                            </div>
+                            <div class="class-name-cell">{{ c.className }}</div>
+                            <div class="instructor-cell">
+                                <img [src]="c.instructor.profilePicture" alt="{{c.instructor.name}}"
+                                    class="instructor-avatar" />
+                                <div>
+                                    <div class="instructor-name">{{ c.instructor.name }}</div>
+                                    <div class="instructor-role">{{ c.instructor.role || 'Instructor' }}</div>
+                                </div>
+                            </div>
+                            <div class="assessments-cell">
+                                <span class="assessment-icon">
+                                    <i class="fas fa-file-alt"></i>
+                                </span>
+                                <span class="assessment-progress">{{ c.completed }}/{{ c.totalAssessments }}</span>
+                            </div>
+                            <div class="performance-cell">
+                                <span class="performance-badge"
+                                    [ngStyle]="{'background': c.performanceBg, 'color': c.performanceColor}">
+                                    {{ c.performance }}%
+                                </span>
+                            </div>
+                            <div class="actions-cell">
+                                <button class="exit-btn" (click)="exitClass(c)">Exit</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+
+
+
+
+
+                <section *ngIf="activeTab === 'pending'" class="pending-applications">
+                    <div class="class-list-table">
+                        <div class="class-list-header">
+                            <div>Class Code</div>
+                            <div>Class Name</div>
+                            <div>Instructor</div>
+                            <div>Applied Date</div>
+                            <div class="status-cell">Status</div>
+                            <div>Actions</div>
+                        </div>
+                        <div class="class-list-row" *ngFor="let p of pendingApplications; let i = index">
+                            <div class="class-code-cell">
+                                <span class="class-code-bar" [ngStyle]="{'background': getBadgeColor(i)}"></span>
+                                <span class="class-code-badge"
+                                    [ngStyle]="{'color': getBadgeColor(i), 'borderColor': getBadgeColor(i)}">{{
+                                    p.classCode }}</span>
+                            </div>
+                            <div class="class-name-cell">{{ p.className }}</div>
+                            <div class="instructor-cell">
+                                <img [src]="p.instructor.profilePicture" alt="{{p.instructor.name}}"
+                                    class="instructor-avatar" />
+                                <div>
+                                    <div class="instructor-name">{{ p.instructor.name }}</div>
+                                    <div class="instructor-role">{{ p.instructor.role || 'Instructor' }}</div>
+                                </div>
+                            </div>
+                            <div class="applied-date-cell">{{ p.appliedDate | date:'MMM d, yyyy hh:mm a':'UTC' }}</div>
+                            <div class="status-cell"> <span class="celd">
+                                    {{ p.status | uppercase }}
+                                </span></div>
+                            <div class="actions-cell">
+                                <button class="exit-btn" (click)="cancelApplication(p)">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div *ngIf="pendingApplications === undefined" class="no-applications">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h1>You have no pending applications at the moment.</h1>
+                    </div>
+                </section>
 
             </main>
         </div>
@@ -342,15 +364,18 @@
 
 
 <!-- Join Class Modal -->
-<div *ngIf="showJoinClassModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+<div *ngIf="showJoinClassModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog"
+    aria-modal="true">
     <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="fixed inset-0 backdrop-blur-[5px] bg-black/10 transition-opacity" aria-hidden="true" (click)="closeJoinClassModal()"></div>
-            
-        
+        <div class="fixed inset-0 backdrop-blur-[5px] bg-black/10 transition-opacity" aria-hidden="true"
+            (click)="closeJoinClassModal()"></div>
+
+
         <!-- Modal Container -->
         <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md transform transition-all">
             <!-- Decorative Header -->
-            <div class="rounded-t-2xl p-6 text-center relative" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
+            <div class="rounded-t-2xl p-6 text-center relative"
+                style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
                 <h2 class="text-3xl font-bold text-white mb-1">JOIN CLASS</h2>
                 <p class="text-blue-100 text-sm">Enter your class code below</p>
             </div>
@@ -363,47 +388,38 @@
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                             <i class="fas fa-key text-blue-500"></i>
                         </div>
-                        <input type="text" 
-                               id="classCode"
-                               formControlName="classCode"
-                               class="block w-full pl-11 pr-10 py-3.5 text-lg rounded-xl border-2 border-gray-200
+                        <input type="text" id="classCode" formControlName="classCode" class="block w-full pl-11 pr-10 py-3.5 text-lg rounded-xl border-2 border-gray-200
                                       placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 
                                       focus:ring-blue-200 transition-all duration-200
-                                      tracking-wider font-medium text-center"
-                               placeholder="• • • • • •"
-                               maxlength="10"
-                               autocomplete="off">
+                                      tracking-wider font-medium text-center" placeholder="• • • • • •" maxlength="10"
+                            autocomplete="off">
                         <div class="absolute inset-y-0 right-4 flex items-center">
-                            <i *ngIf="joinClassForm.get('classCode')?.valid" 
-                               class="fas fa-check-circle text-green-500 text-xl animate-scale"></i>
-                            <i *ngIf="joinClassForm.get('classCode')?.invalid && joinClassForm.get('classCode')?.touched" 
-                               class="fas fa-exclamation-circle text-red-500 text-xl animate-scale"></i>
+                            <i *ngIf="joinClassForm.get('classCode')?.valid"
+                                class="fas fa-check-circle text-green-500 text-xl animate-scale"></i>
+                            <i *ngIf="joinClassForm.get('classCode')?.invalid && joinClassForm.get('classCode')?.touched"
+                                class="fas fa-exclamation-circle text-red-500 text-xl animate-scale"></i>
                         </div>
                     </div>
 
                     <!-- Error Message -->
-                    <div *ngIf="joinClassForm.get('classCode')?.invalid && joinClassForm.get('classCode')?.touched" 
-                         class="text-center text-red-500 text-sm flex items-center justify-center space-x-1 animate-fade-in">
+                    <div *ngIf="joinClassForm.get('classCode')?.invalid && joinClassForm.get('classCode')?.touched"
+                        class="text-center text-red-500 text-sm flex items-center justify-center space-x-1 animate-fade-in">
                         <i class="fas fa-exclamation-circle"></i>
                         <span>Please enter a valid class code</span>
                     </div>
 
                     <!-- Action Buttons -->
                     <div class="flex flex-col gap-3 mt-6">
-                        <button type="submit"
-                                [disabled]="joinClassForm.invalid"
-                                class="w-full inline-flex justify-center items-center px-6 py-3.5 rounded-xl
+                        <button type="submit" [disabled]="joinClassForm.invalid" class="w-full inline-flex justify-center items-center px-6 py-3.5 rounded-xl
                                        text-white font-semibold hover:opacity-90 focus:outline-none focus:ring-2 
                                        focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 
                                        disabled:cursor-not-allowed transform hover:scale-[1.02] 
                                        active:scale-[0.98] transition-all duration-200"
-                                style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
+                            style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
                             <i class="fas fa-sign-in-alt mr-2"></i>
                             Join Class
                         </button>
-                        <button type="button"
-                                (click)="closeJoinClassModal()"
-                                class="w-full inline-flex justify-center items-center px-6 py-3.5 rounded-xl
+                        <button type="button" (click)="closeJoinClassModal()" class="w-full inline-flex justify-center items-center px-6 py-3.5 rounded-xl
                                        border-2 border-gray-200 text-gray-600 font-semibold bg-white
                                        hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-2
                                        focus:ring-gray-200 focus:ring-offset-2 transform hover:scale-[1.02]
@@ -417,5 +433,3 @@
         </div>
     </div>
 </div>
-
-

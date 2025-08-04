@@ -110,7 +110,7 @@ export class StudClassesComponent implements OnInit {
       debounceTime(300),
       distinctUntilChanged()
     ).subscribe((value: string | null) => {
-      if(value && value.length >= 2) {
+      if (value && value.length >= 2) {
         this.searchClasses();
       } else {
         this.enrolledClasses();
@@ -208,7 +208,7 @@ export class StudClassesComponent implements OnInit {
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
     }).then((result) => {
-      if(result.isConfirmed) {
+      if (result.isConfirmed) {
         const data = {
           "studentId": this.userId,
           "classCode": application.classCode
@@ -242,7 +242,7 @@ export class StudClassesComponent implements OnInit {
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
     }).then((result) => {
-      if(result.isConfirmed) {
+      if (result.isConfirmed) {
         const data = {
           "studentId": this.userId,
           "classCode": classObj.classCode
@@ -304,7 +304,7 @@ export class StudClassesComponent implements OnInit {
       this.api.joinClass(data).subscribe({
         next: (resp: any) => {
           console.log(resp);
-          if(resp.remarks === "Success") {
+          if (resp.remarks === "Success") {
             this.getStats();
             this.enrolledClasses();
             this.pendingApplicationList();
@@ -333,7 +333,7 @@ export class StudClassesComponent implements OnInit {
             if (errorMessage === "Class is not open for Joining") {
               errorMessage = "Class is not open for joining";
             }
-            
+
             Swal.fire({
               title: 'Error',
               text: errorMessage,

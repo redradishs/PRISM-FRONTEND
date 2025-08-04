@@ -180,6 +180,30 @@ export class StudentsComponent implements OnInit {
 
   dateError: string = "";
 
+  startDatePresets = [
+    {
+      label: 'Now',
+      startDate: new Date(),
+      dueDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
+    },
+    {
+      label: 'Tomorrow',
+      startDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+      dueDate: new Date(new Date().getTime() + 48 * 60 * 60 * 1000)
+    },
+    {
+      label: 'Next Week',
+      startDate: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
+      dueDate: new Date(new Date().getTime() + 14 * 24 * 60 * 60 * 1000)
+    }
+  ];
+
+  dueDatePresets = [
+    { label: '1hr', hoursToAdd: 1 },
+    { label: '24hrs', hoursToAdd: 24 },
+    { label: '1 week', hoursToAdd: 24 * 7 }
+  ];
+
   initialClassCodeToSelect: string | null = null;
 
   selectedAssessmentsForExport: any[] = [];
@@ -283,7 +307,6 @@ export class StudentsComponent implements OnInit {
       return;
     }
     this.currentPage2 = page;
-    this.isLoading = true;
     this.api.assignedAssessments(this.userId, this.selectedClass.classCode, this.currentPage2, this.itemsPerPage2).subscribe({
       next: (resp: any) => {
         this.assignedAssessments = resp.data.assessments;
@@ -1023,45 +1046,80 @@ export class StudentsComponent implements OnInit {
     })
   }
 
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
+
   getCurrentDateTimeString(): string {
-    const now = new Date();
-    now.setSeconds(0);
-    now.setMilliseconds(0);
-    return now.toISOString().slice(0, 16);
+    return this.formatDate(new Date());
   }
 
   getMinDueDateString(): string {
-    if (!this.assignmentDetails.startDate) {
-      return this.getCurrentDateTimeString();
+    if (this.assignmentDetails.startDate) {
+      const start = new Date(this.assignmentDetails.startDate);
+      start.setMinutes(start.getMinutes() + 10);
+      return this.formatDate(start);
+    } else {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() + 1);
+      return this.formatDate(now);
     }
-
-    const startDate = new Date(this.assignmentDetails.startDate);
-    startDate.setMinutes(startDate.getMinutes() + 5);
-    return startDate.toISOString().slice(0, 16);
   }
 
+  validateDates(): string | null {
+    if (this.assignmentDetails.startDate && this.assignmentDetails.dueDate) {
+      if (new Date(this.assignmentDetails.dueDate) <= new Date(this.assignmentDetails.startDate)) {
+        this.dateError = 'Due date must be after start date';
+        const fallbackDue = new Date(this.assignmentDetails.startDate);
+        fallbackDue.setMinutes(fallbackDue.getMinutes() + 10);
+        this.assignmentDetails.dueDate = this.formatDate(fallbackDue);
+        return this.formatDate(fallbackDue);
+      }
+    }
+    this.dateError = '';
+    return null;
+  }
+
+  applyStartDatePreset(preset: any) {
+    this.assignmentDetails.startDate = this.formatDate(preset.startDate);
+
+    // if there is an existing due, adjust it as well.
+    if (this.assignmentDetails.dueDate) {
+      const startDateTime = new Date(this.assignmentDetails.startDate);
+      const newDueDate = new Date(startDateTime);
+      newDueDate.setHours(startDateTime.getHours() + 24);
+      this.assignmentDetails.dueDate = this.formatDate(newDueDate);
+    }
+    this.dateError = '';
+  }
+
+  applyDueDatePreset(preset: { label: string; hoursToAdd: number }) {
+    if (!this.assignmentDetails.startDate) {
+      const now = new Date();
+      const newDueDate = new Date(now.getTime() + preset.hoursToAdd * 60 * 60 * 1000);
+      this.assignmentDetails.dueDate = this.formatDate(newDueDate);
+    } else {
+      const startDateTime = new Date(this.assignmentDetails.startDate);
+      const newDueDate = new Date(startDateTime.getTime() + preset.hoursToAdd * 60 * 60 * 1000);
+      this.assignmentDetails.dueDate = this.formatDate(newDueDate);
+    }
+
+    this.dateError = '';
+  }
 
   isFormValid(): boolean {
     if (!this.selectedAssessment) return false;
     if (!this.assignmentDetails.startDate || !this.assignmentDetails.dueDate || !this.assignmentDetails.timeLimit) return false;
 
     if (this.assignmentDetails.timeLimit <= 0) return false;
+    this.validateDates();
+    if (this.dateError) return false;
 
-    const startDate = new Date(this.assignmentDetails.startDate);
-    const dueDate = new Date(this.assignmentDetails.dueDate);
-    const now = new Date();
-
-    if (startDate < now) {
-      this.dateError = "Start date cannot be in the past";
-      return false;
-    }
-
-    if (dueDate <= startDate) {
-      this.dateError = "Due date must be after start date";
-      return false;
-    }
-
-    this.dateError = "";
     return true;
   }
 

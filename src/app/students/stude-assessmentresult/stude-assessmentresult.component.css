@@ -2771,3 +2771,53 @@ main.max-w-8xl {
     }
 }
 
+.ai-disabled-banner {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 1px solid #f59e0b;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(245, 158, 11, 0.1);
+}
+
+.banner-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+
+.banner-icon {
+    color: #f59e0b;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.banner-text {
+    color: #92400e;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+    .ai-disabled-banner {
+        padding: 10px 12px;
+        margin-bottom: 15px;
+    }
+
+    .banner-content {
+        gap: 10px;
+    }
+
+    .banner-icon {
+        font-size: 16px;
+    }
+
+    .banner-text {
+        font-size: 13px;
+    }
+}
+  

@@ -72,6 +72,7 @@ export class FinalGenerateAssessmentComponent {
   username: string = '';
   userId: string = '';
   profile: string = '';
+  enableGeneration: boolean = true;
   multipleChoiceOptions: string[] = Array(4).fill('');
   enumerationItems: string[] = Array(5).fill('');
   selectedTypes: string[] = [];
@@ -172,7 +173,7 @@ export class FinalGenerateAssessmentComponent {
         this.userId = user.id;
         this.username = user.name;
         this.profile = user.profilePicture;
-        console.log(this.userId);
+        this.enableGeneration = user.enableQuestionGeneration;
       },
       (error: any) => {
         console.error('Error getting current user', error);

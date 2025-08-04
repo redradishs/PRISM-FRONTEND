@@ -80,6 +80,7 @@ export class StudeAssessmentresultComponent implements OnInit {
 
   assignedAssessmentId: string = '';
   userId: string = '';
+  enableStudentFeedback: boolean = false;
   result!: AssessmentResult;
   questionType: any;
 
@@ -133,6 +134,7 @@ export class StudeAssessmentresultComponent implements OnInit {
       this.username = user.name;
       this.profile = user.profilePicture;
       console.log('Username:', this.username);
+      this.enableStudentFeedback = user.enableStudentFeedback;
       this.getResult();
       this.getPerformancePerQuestion();
       console.log('User ID:', this.userId);
@@ -196,7 +198,12 @@ export class StudeAssessmentresultComponent implements OnInit {
 
           if (resp.data && resp.data.questions) {
             this.analysis = resp.data.questions;
-            this.getAssessmentInsights();
+
+            if (this.enableStudentFeedback) {
+              this.getAssessmentInsights();
+            }
+
+
           }
 
           console.log('Analysis:', this.analysis);

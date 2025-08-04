@@ -384,7 +384,7 @@
 
 <!-- Pending Admission Requests Modal with Backdrop Blur -->
 <div class="modal-overlay cs-backdrop-blur" *ngIf="showPendingModal" (click)="togglePendingModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-content pending-modal" (click)="$event.stopPropagation()">
         <div class="modal-header">
             <div class="header-content">
                 <h2>Pending Admission Requests</h2>
@@ -457,12 +457,14 @@
     </div>
 </div>
 
-<!-- Create Class Modal with Updated Fields -->
+
+<!-- create class modal -->
 <div class="modal-overlay cs-backdrop-blur" *ngIf="showCreateClassModal" (click)="toggleCreateClassModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-content create-class-modal" (click)="$event.stopPropagation()">
         <div class="modal-header">
             <div class="header-content">
                 <h2>Create New Class</h2>
+                <p class="modal-subtitle">Set up a new class for your students</p>
             </div>
             <button class="close-button" (click)="toggleCreateClassModal()">
                 <i class="fas fa-times"></i>
@@ -471,13 +473,13 @@
         <div class="modal-body">
             <form (ngSubmit)="createClass()">
                 <div class="form-group">
-                    <label for="className">Class Name*</label>
+                    <label for="className">Class Name</label>
                     <input type="text" id="className" name="className" [(ngModel)]="newClass.className" required
                         placeholder="Enter class name (e.g. BSIT 3A)" class="form-input">
                 </div>
 
                 <div class="form-group">
-                    <label for="classCode">Class Code*</label>
+                    <label for="classCode">Class Code</label>
                     <input type="text" id="classCode" name="classCode" [(ngModel)]="newClass.classCode" required
                         placeholder="Enter class code (e.g. CS101)" class="form-input">
                 </div>
@@ -485,7 +487,7 @@
                 <!-- Year and Block on same line -->
                 <div class="form-row">
                     <div class="form-group half-width">
-                        <label for="year">Year Level*</label>
+                        <label for="year">Year Level</label>
                         <select id="year" name="year" [(ngModel)]="newClass.year" class="form-select" required>
                             <option value="" disabled selected>Select Year</option>
                             <option value="1">1st Year</option>
@@ -495,7 +497,7 @@
                         </select>
                     </div>
                     <div class="form-group half-width">
-                        <label for="block">Block*</label>
+                        <label for="block">Block</label>
                         <select id="block" name="block" [(ngModel)]="newClass.block" class="form-select" required>
                             <option value="" disabled selected>Select Block</option>
                             <option value="A">Block A</option>
@@ -511,8 +513,11 @@
                 <!-- Toggles on same line -->
                 <div class="form-row">
                     <div class="form-group half-width toggle-container">
-                        <label class="toggle-label flex space-x-4">
-                            <span>Auto Admission</span>
+                        <label class="toggle-label">
+                            <div>
+                                <span>Auto Admission</span>
+                                <small>Students join automatically</small>
+                            </div>
                             <div class="toggle-switch">
                                 <input type="checkbox" [(ngModel)]="newClass.autoAdmission" name="autoAdmission">
                                 <span class="toggle-slider"></span>
@@ -521,8 +526,11 @@
                     </div>
 
                     <div class="form-group half-width toggle-container">
-                        <label class="toggle-label flex space-x-4">
-                            <span>Allow Joining</span>
+                        <label class="toggle-label">
+                            <div>
+                                <span>Allow Joining</span>
+                                <small>Enable class discovery</small>
+                            </div>
                             <div class="toggle-switch">
                                 <input type="checkbox" [(ngModel)]="newClass.allowJoining" name="allowJoining">
                                 <span class="toggle-slider"></span>
@@ -541,7 +549,7 @@
 </div>
 
 
-<!-- Add Student Modal with Enhanced Styling -->
+<!-- Add Student Modal  -->
 <div class="modal-overlay cs-backdrop-blur" *ngIf="showAddStudentModal" (click)="toggleAddStudentModal()">
     <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
@@ -601,7 +609,6 @@
                         </div>
 
                         <div class="student-actions">
-                            <!-- Status Badges -->
                             <div class="status-wrapper">
                                 <span *ngIf="student.status === 'enrolled'" class="status-badge enrolled">
                                     <i class="fas fa-user-check"></i> Enrolled
@@ -636,7 +643,7 @@
                 <i class="fas" [ngClass]="showSelectedStudents ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
             </button>
 
-            <!-- Selected Students - Collapsible Section -->
+            <!-- Selected Students -->
             <div class="selected-container" *ngIf="selectedStudents.length > 0 && showSelectedStudents">
                 <h3 class="results-title">
                     Selected Students
@@ -756,9 +763,9 @@
     </div>
 </div>
 
-<!-- Assign Assessment Modal with Dropdown and Search -->
+<!-- Assign Assessment Modal  -->
 <div class="modal-overlay cs-backdrop-blur" *ngIf="showAssignAssessmentModal" (click)="toggleAssignAssessmentModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-content assign-assessment-modal" (click)="$event.stopPropagation()">
         <div class="modal-header">
             <div class="header-content">
                 <h2>Assign Assessment</h2>
@@ -781,7 +788,7 @@
 
             </div>
 
-            <!-- Dropdown Selection Tab Improvements -->
+            <!-- Dropdown Selection  -->
             <div *ngIf="activeTab === 'dropdown'" class="tab-content">
                 <div class="form-group">
                     <label for="assessmentDropdown" class="form-label">Select Assessment</label>
@@ -892,31 +899,41 @@
                 </div>
 
                 <form (ngSubmit)="assignAssessment()">
-                    <!-- Date validation error message -->
                     <div *ngIf="dateError" class="date-error-message">
                         <i class="fas fa-exclamation-circle"></i> {{dateError}}
                     </div>
 
-                    <!-- Improved Date/Time Selectors -->
                     <div class="form-row">
                         <div class="form-group half-width">
                             <label for="startDate" class="form-label">Start Date & Time*</label>
+                            <div class="date-presets">
+                                <button *ngFor="let preset of startDatePresets" (click)="applyStartDatePreset(preset)"
+                                    type="button" class="preset-button">
+                                    {{preset.label}}
+                                </button>
+                            </div>
                             <div class="date-input-wrapper">
                                 <i class="fas fa-calendar-alt date-icon"></i>
                                 <input type="datetime-local" id="startDate" name="startDate"
                                     [(ngModel)]="assignmentDetails.startDate" required class="form-input"
-                                    [min]="getCurrentDateTimeString()">
+                                    [min]="getCurrentDateTimeString()" (change)="validateDates()">
                             </div>
                             <small class="date-hint">Earliest: Today</small>
                         </div>
 
                         <div class="form-group half-width">
                             <label for="dueDate" class="form-label">Due Date & Time*</label>
+                            <div class="date-presets">
+                                <button *ngFor="let preset of dueDatePresets" (click)="applyDueDatePreset(preset)"
+                                    type="button" class="preset-button">
+                                    {{preset.label}}
+                                </button>
+                            </div>
                             <div class="date-input-wrapper">
                                 <i class="fas fa-calendar-alt date-icon"></i>
                                 <input type="datetime-local" id="dueDate" name="dueDate"
                                     [(ngModel)]="assignmentDetails.dueDate" required class="form-input"
-                                    [min]="getMinDueDateString()">
+                                    [min]="getMinDueDateString()" (change)="validateDates()">
                             </div>
                             <small class="date-hint">Must be after start date</small>
                         </div>
@@ -934,17 +951,12 @@
                         <textarea id="instructions" name="instructions" [(ngModel)]="assignmentDetails.instructions"
                             class="form-textarea" placeholder="Enter instructions for students (optional)"></textarea>
                     </div>
-
-                    <!-- Additional options (checkboxes) -->
-                    <div class="form-group">
+                    <div class="checkbox-row">
                         <div class="checkbox-container">
                             <input type="checkbox" id="randomizeQuestions" name="randomizeQuestions"
                                 [(ngModel)]="assignmentDetails.randomizeQuestions">
                             <label for="randomizeQuestions">Randomize questions order</label>
                         </div>
-                    </div>
-
-                    <div class="form-group">
                         <div class="checkbox-container">
                             <input type="checkbox" id="showResults" name="showResults"
                                 [(ngModel)]="assignmentDetails.showResults">
@@ -969,8 +981,7 @@
 <div *ngIf="showExportModal"
     class="fixed inset-0 backdrop-blur-[1px] bg-black/40 flex items-center justify-center z-50">
     <div
-        class="bg-white rounded-xl w-full max-w-2xl shadow-xl transform transition-all border-l-4 border-r-4 border-indigo-500">
-        <!-- Enhanced Header Section -->
+        class="bb bg-white rounded-xl w-full max-w-2xl shadow-xl transform transition-all border-l-4 border-r-4 border-indigo-500">
         <div class="bg-gradient-to-r from-indigo-500 to-purple-500 rounded-t-xl p-5 border-b border-indigo-400/20">
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-3">
@@ -1032,7 +1043,26 @@
                     </div>
                 </div>
             </div>
+            <div *ngIf="assignedAssessments && assignedAssessments.length > 0 && totalPages2 > 1"
+                class="flex justify-between items-center py-3 border-t border-gray-100">
+                <div class="text-sm text-gray-500">
+                    Showing {{currentPage2}} of {{totalPages2}} pages ({{totalAssessments}} assessments)
+                </div>
+                <div class="flex space-x-2">
+                    <button
+                        class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-all duration-200 flex items-center border border-gray-200 hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                        [disabled]="currentPage2 === 1" (click)="getAssignedAssessments(currentPage2 - 1)">
+                        <i class="fas fa-chevron-left mr-1"></i> Previous
+                    </button>
+                    <button
+                        class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-all duration-200 flex items-center border border-gray-200 hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                        [disabled]="currentPage2 === totalPages2" (click)="getAssignedAssessments(currentPage2 + 1)">
+                        Next <i class="fas fa-chevron-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
 
+            <!-- Action Buttons -->
             <div class="flex justify-end space-x-3 pt-4 border-t border-gray-100">
                 <button (click)="showExportModal = false"
                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-lg transition-all duration-200 flex items-center border border-gray-200 hover:border-gray-300">
@@ -1046,6 +1076,8 @@
                     Export Selected
                 </button>
             </div>
+
+
         </div>
     </div>
 </div>

@@ -466,7 +466,6 @@
     gap: 8px;
 }
 
-/* Demo Joining Code in Button Group */
 .demo-joining-code {
     display: flex;
     align-items: center;
@@ -514,7 +513,7 @@
     color: white;
 }
 
-/* Search Toolbar */
+
 .student-toolbar {
     display: flex;
     justify-content: space-between;
@@ -625,7 +624,6 @@
     }
 }
 
-/* Modal Styles */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -646,7 +644,7 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   width: 100%;
   max-width: 600px;
-  max-height: 90vh; /* Limit height to 90% of viewport */
+  max-height: 90vh; 
   display: flex;
   flex-direction: column;
   position: relative;
@@ -659,7 +657,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-shrink: 0; /* Prevent header from shrinking */
+  flex-shrink: 0; 
   position: relative;
 }
 
@@ -701,11 +699,10 @@
 
 .modal-body {
   padding: 1rem;
-  overflow-y: auto; /* Enable scrolling */
-  flex: 1;         /* Take remaining space */
+  overflow-y: auto; 
+  flex: 1;        
 }
 
-/* Form styling */
 .form-group {
   margin-bottom: 1.25rem;
 }
@@ -734,7 +731,7 @@
 .form-textarea {
   min-height: 90px;
   resize: vertical;
-  max-height: 150px; /* Limit height to prevent excessive modal height */
+  max-height: 150px;
 }
 
 .form-input:focus, .form-textarea:focus {
@@ -743,7 +740,7 @@
   outline: none;
 }
 
-/* Form row styling for side-by-side fields */
+
 .form-row {
   display: flex;
   gap: 1rem;
@@ -775,9 +772,8 @@
   outline: none;
 }
 
-/* Toggle switch styling */
 .toggle-container {
-  margin-bottom: 0.5rem; /* Reduce bottom margin */
+  margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -890,7 +886,6 @@ input:checked + .toggle-slider:before {
   cursor: not-allowed;
 }
 
-/* Add Student Modal Specific Styles */
 .search-container {
   margin-bottom: 1rem;
 }
@@ -928,7 +923,6 @@ input:checked + .toggle-slider:before {
   padding: 0.25rem;
 }
 
-/* Empty state */
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -958,19 +952,19 @@ input:checked + .toggle-slider:before {
   margin: 0;
 }
 
-/* Search Results */
+
 .search-results-container {
   border: 1px solid #e5e7eb;
   border-radius: 6px;
   margin-bottom: 1rem;
-  max-height: calc(100vh - 20rem); /* Limit the height */
+  max-height: calc(100vh - 20rem); 
   display: flex;
   flex-direction: column;
 }
 
 .search-results {
   overflow-y: auto;
-  max-height: 300px; /* Fixed height for results with scrolling */
+  max-height: 300px; 
   padding: 0.5rem;
 }
 
@@ -1315,10 +1309,9 @@ input:checked + .toggle-slider:before {
   color: #4b5563;
 }
 
-/* Better loading state that doesn't disrupt focus */
 .search-loading-overlay {
   position: absolute;
-  top: 70px; /* Position below the search box */
+  top: 70px; 
   left: 50%;
   transform: translateX(-50%);
   background-color: white;
@@ -1329,19 +1322,17 @@ input:checked + .toggle-slider:before {
   align-items: center;
   gap: 0.5rem;
   z-index: 50;
-  pointer-events: none; /* Allow clicks to pass through */
+  pointer-events: none; 
 }
 
 .input-loading {
   background-color: #f9fafb;
 }
 
-/* Hide the previous loading container */
 .loading-container.position-absolute {
   display: none;
 }
 
-/* Loading Animations */
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -1477,7 +1468,6 @@ input:checked + .toggle-slider:before {
   padding: 0.5rem;
 }
 
-/* Updated grid layout for search result items */
 .search-result-item {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -1503,7 +1493,6 @@ input:checked + .toggle-slider:before {
   cursor: not-allowed;
 }
 
-/* Student info section (left side) */
 .student-info {
   display: flex;
   align-items: center;
@@ -1534,7 +1523,6 @@ input:checked + .toggle-slider:before {
   text-overflow: ellipsis;
 }
 
-/* Right side with status and selection indicator */
 .student-actions {
   display: flex;
   align-items: center;
@@ -1542,7 +1530,6 @@ input:checked + .toggle-slider:before {
   justify-content: flex-end;
 }
 
-/* Status badge styles */
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -1568,8 +1555,6 @@ input:checked + .toggle-slider:before {
   background-color: #dbeafe;
   color: #1e40af;
 }
-
-/* Selection indicator */
 .selection-indicator {
   display: flex;
   align-items: center;
@@ -1583,7 +1568,6 @@ input:checked + .toggle-slider:before {
   color: #3b82f6;
 }
 
-/* Selected Students */
 .selected-container {
   border: 1px solid #e5e7eb;
   border-radius: 8px;
@@ -1734,7 +1718,6 @@ input:checked + .toggle-slider:before {
   cursor: not-allowed;
 }
 
-/* Status Badge Styles - Updated for better alignment */
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -1776,14 +1759,13 @@ input:checked + .toggle-slider:before {
   to { transform: rotate(360deg); }
 }
 
-/* Responsive Styles */
 @media (max-height: 600px) {
   .modal-content {
-    max-height: 95vh; /* Use more space on small screens */
+    max-height: 95vh; 
   }
   
   .form-group {
-    margin-bottom: 0.75rem; /* Less spacing on small screens */
+    margin-bottom: 0.75rem;
   }
   
   .modal-body {
@@ -1828,8 +1810,6 @@ input:checked + .toggle-slider:before {
     justify-content: center;
   }
 }
-
-/* Mobile-specific styles */
 @media (max-width: 640px) {
   .header-content {
     flex-direction: column;
@@ -1861,7 +1841,6 @@ input:checked + .toggle-slider:before {
   }
 }
 
-/* Responsive media queries */
 @media (min-width: 640px) {
   .demo-button-primary,
   .demo-button-secondary {
@@ -2001,26 +1980,26 @@ input:checked + .toggle-slider:before {
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 500;
-  background-color: #eef8ff; /* Lighter, softer blue */
-  color: #4682b4; /* Softer steel blue color */
+  background-color: #eef8ff; 
+  color: #4682b4;
   border: 1px solid #d6eaff;
   transition: all 0.2s ease;
 }
 
-/* When you add Mastery mode later, you can add this style */
+
 .mastery-mode-badge {
   display: inline-block;
   padding: 0.25rem 0.75rem;
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 500;
-  background-color: #fff8e6; /* Lighter, softer yellow */
-  color: #d4a76a; /* Softer amber color */
+  background-color: #fff8e6; 
+  color: #d4a76a;
   border: 1px solid #ffefc8;
   transition: all 0.2s ease;
 }
 
-/* Responsive adjustments */
+
 @media (min-width: 640px) {
   .status-completed,
   .status-ongoing,
@@ -2578,6 +2557,7 @@ input:checked + .toggle-slider:before {
     align-items: center;
     justify-content: center;
     z-index: 1000;
+
 }
 
 .cs-backdrop-blur {
@@ -2591,6 +2571,13 @@ input:checked + .toggle-slider:before {
     max-width: 520px;
     position: relative;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    animation: modalSlideIn 0.3s ease-out;
+
+}
+
+.bb {
+  animation: modalSlideIn 0.3s ease-out;
+
 }
 
 /* Modal Header */
@@ -2847,45 +2834,7 @@ input:checked + .toggle-slider:before {
     }
 }
 
-/* Assign Assessment Modal Styles */
-.tab-container {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 20px;
-}
 
-.tab-button {
-  flex: 1;
-  padding: 12px;
-  background-color: #f3f4f6;
-  border: none;
-  border-radius: 6px;
-  color: #6b7280;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.tab-button:hover {
-  background-color: #e5e7eb;
-}
-
-.tab-button.active {
-  background-color: #3b82f6;
-  color: white;
-}
-
-.tab-button i {
-  font-size: 16px;
-}
-
-.tab-content {
-  margin-top: 20px;
-}
 
 .dropdown-with-clear {
   position: relative;
@@ -2958,67 +2907,9 @@ input:checked + .toggle-slider:before {
   margin: 0 0 20px 0;
 }
 
-.date-input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
 
-.date-icon {
-  position: absolute;
-  left: 12px;
-  color: #6b7280;
-}
 
-.date-hint {
-  display: block;
-  font-size: 12px;
-  color: #6b7280;
-  margin-top: 4px;
-}
 
-.date-error-message {
-  background-color: #fee2e2;
-  border: 1px solid #fecaca;
-  border-radius: 6px;
-  padding: 12px;
-  margin-bottom: 16px;
-  color: #dc2626;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-}
-
-.date-error-message i {
-  font-size: 16px;
-}
-
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 8px 0;
-}
-
-.checkbox-container input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  border-radius: 4px;
-  border: 2px solid #d1d5db;
-  cursor: pointer;
-}
-
-.checkbox-container input[type="checkbox"]:checked {
-  background-color: #3b82f6;
-  border-color: #3b82f6;
-}
-
-.checkbox-container label {
-  font-size: 14px;
-  color: #374151;
-  cursor: pointer;
-}
 
 /* Assessment Search Results */
 .assessment-info {
@@ -3102,119 +2993,7 @@ input:checked + .toggle-slider:before {
   ring: 2px solid #bfdbfe;
 }
 
-/* Pending Modal Styles */
-.pending-table {
-  width: 100%;
-  border-collapse: collapse;
-}
 
-.pending-table thead tr {
-  background-color: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.pending-table th {
-  padding: 12px 16px;
-  text-align: left;
-  font-size: 14px;
-  font-weight: 500;
-  color: #6b7280;
-}
-
-.pending-table td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #f3f4f6;
-}
-
-.pending-row {
-  transition: background-color 0.2s;
-}
-
-.pending-row:hover {
-  background-color: #f9fafb;
-}
-
-.student-name-cell {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.actions-cell {
-  width: 200px;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 8px;
-}
-
-.approve-button, .reject-button {
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-}
-
-.approve-button {
-  background-color: #dcfce7;
-  color: #16a34a;
-}
-
-.approve-button:hover {
-  background-color: #bbf7d0;
-}
-
-.reject-button {
-  background-color: #fee2e2;
-  color: #dc2626;
-}
-
-.reject-button:hover {
-  background-color: #fecaca;
-}
-
-.auto-admit-toggle {
-  display: flex;
-  align-items: center;
-  padding: 8px 16px;
-  background-color: #f9fafb;
-  border-radius: 8px;
-  margin-right: 40px;
-}
-
-.toggle-text {
-  font-size: 14px;
-  color: #4b5563;
-  margin-right: 12px;
-}
-
-/* Responsive styles for pending table */
-@media (max-width: 640px) {
-  .action-buttons {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .actions-cell {
-    width: auto;
-  }
-
-  .auto-admit-toggle {
-    margin-right: 24px;
-  }
-
-  .pending-table th,
-  .pending-table td {
-    padding: 8px 12px;
-  }
-}
 
 .performance-badge {
     padding: 0.35rem 0.6rem;
@@ -3413,3 +3192,1428 @@ input:checked + .toggle-slider:before {
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
         background: #2563eb;
     }
+.create-class-modal {
+  background: white;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 600px;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.create-class-modal .modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 24px 32px;
+  border-bottom: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.create-class-modal .modal-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+  opacity: 0.3;
+}
+
+.create-class-modal .header-content {
+  position: relative;
+  z-index: 2;
+}
+
+.create-class-modal .header-content h2 {
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.create-class-modal .modal-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  margin-top: 4px;
+  font-weight: 400;
+}
+
+.create-class-modal .close-button {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+  z-index: 3;
+}
+
+.create-class-modal .close-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.create-class-modal .modal-body {
+  padding: 32px;
+  background: white;
+}
+
+.create-class-modal .form-group {
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.create-class-modal .form-group label {
+  display: block;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+  font-size: 14px;
+  position: relative;
+}
+
+.create-class-modal .form-group:has(input[required]) label::after,
+.create-class-modal .form-group:has(select[required]) label::after {
+  content: '*';
+  color: #ef4444;
+  margin-left: 4px;
+  font-weight: 500;
+}
+
+.create-class-modal .form-input,
+.create-class-modal .form-select {
+  width: 100%;
+  padding: 16px 20px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 16px;
+  color: #1f2937;
+  background: #fafafa;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.create-class-modal .form-input:focus,
+.create-class-modal .form-select:focus {
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.create-class-modal .form-input::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+.create-class-modal .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.create-class-modal .form-row .form-group {
+  margin-bottom: 0;
+}
+
+.create-class-modal .form-row:has(.toggle-container) {
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.create-class-modal .toggle-container {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 0;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.create-class-modal .toggle-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.create-class-modal .toggle-container:hover {
+  border-color: #cbd5e1;
+  background: #f1f5f9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.create-class-modal .toggle-container:has(input:checked)::before {
+  opacity: 1;
+}
+
+.create-class-modal .toggle-container:has(input:checked) {
+  background: #f0f7ff;
+  border-color: #bfdbfe;
+}
+
+.create-class-modal .toggle-container .toggle-label {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin: 0 !important;
+  cursor: pointer;
+  font-weight: 500;
+  color: #374151;
+  width: 100% !important;
+  gap: 0 !important;
+}
+
+.create-class-modal .toggle-container .toggle-switch {
+  position: relative !important;
+  width: 48px !important;
+  height: 24px !important;
+  margin-left: 0 !important;
+  margin: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+.create-class-modal .toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.create-class-modal .toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #cbd5e1;
+  transition: all 0.3s ease;
+  border-radius: 24px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.create-class-modal .toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 2px;
+  bottom: 2px;
+  background: white;
+  transition: all 0.3s ease;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.create-class-modal .toggle-switch input:checked + .toggle-slider {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.create-class-modal .toggle-switch input:checked + .toggle-slider:before {
+  transform: translateX(24px);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+}
+
+.create-class-modal .form-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 2px solid #f1f5f9;
+}
+
+.create-class-modal .cancel-button {
+  padding: 14px 24px;
+  background: #f8fafc;
+  color: #64748b;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 100px;
+}
+
+.create-class-modal .cancel-button:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #475569;
+  transform: translateY(-1px);
+}
+
+.create-class-modal .submit-button {
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 140px;
+  position: relative;
+  overflow: hidden;
+}
+
+.create-class-modal .submit-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.create-class-modal .submit-button:active {
+  transform: translateY(0);
+}
+
+.create-class-modal .submit-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.create-class-modal .submit-button:hover::before {
+  left: 100%;
+}
+
+.create-class-modal .form-select {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23667eea' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 16px 12px;
+  padding-right: 48px;
+  appearance: none;
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .create-class-modal {
+    margin: 16px;
+    border-radius: 12px;
+  }
+  
+  .create-class-modal .modal-header {
+    padding: 20px 24px;
+  }
+  
+  .create-class-modal .header-content h2 {
+    font-size: 20px;
+  }
+  
+  .create-class-modal .modal-body {
+    padding: 24px;
+  }
+  
+  .create-class-modal .form-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .create-class-modal .form-input,
+  .create-class-modal .form-select {
+    padding: 14px 16px;
+    font-size: 16px;
+  }
+  
+  .create-class-modal .toggle-container {
+    padding: 16px;
+  }
+  
+  .create-class-modal .form-footer {
+    flex-direction: column-reverse;
+    gap: 12px;
+  }
+  
+  .create-class-modal .cancel-button,
+  .create-class-modal .submit-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.create-class-modal .form-input:focus-visible,
+.create-class-modal .form-select:focus-visible,
+.create-class-modal .cancel-button:focus-visible,
+.create-class-modal .submit-button:focus-visible {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+.create-class-modal .submit-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.create-class-modal .submit-button:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.create-class-modal .close-button i {
+  font-size: 16px;
+}
+
+.create-class-modal .form-group:last-of-type {
+  margin-bottom: 0;
+}
+
+.create-class-modal .toggle-container .toggle-label span {
+  font-size: 14px;
+  line-height: 1.4;
+  display: block;
+  color: #374151;
+  font-weight: 500;
+}
+
+.create-class-modal .toggle-container .toggle-label small {
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 400;
+  display: block;
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
+.create-class-modal .toggle-container .toggle-label > div:first-child {
+  flex: 1 !important;
+}
+
+.create-class-modal .form-input,
+.create-class-modal .form-select,
+.create-class-modal .toggle-container {
+  animation: formElementFadeIn 0.3s ease-out forwards;
+  opacity: 0;
+}
+
+.create-class-modal .form-input {
+  animation-delay: 0.1s;
+}
+
+.create-class-modal .form-select {
+  animation-delay: 0.2s;
+}
+
+.create-class-modal .toggle-container {
+  animation-delay: 0.3s;
+}
+
+@keyframes formElementFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.pending-modal {
+  background: white;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 800px;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+.pending-modal .modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 24px 32px;
+  border-bottom: none;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pending-modal .modal-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+  opacity: 0.3;
+}
+
+.pending-modal .header-content {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+}
+
+.pending-modal .header-content h2 {
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pending-modal .modal-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  margin-top: 4px;
+  font-weight: 400;
+}
+
+.pending-modal .auto-admit-toggle {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  margin: 0 40px 0 20px;
+  backdrop-filter: blur(10px);
+  z-index: 2;
+  position: relative;
+}
+
+.pending-modal .toggle-text {
+  font-size: 14px;
+  color: white;
+  margin-right: 12px;
+  font-weight: 500;
+}
+
+.pending-modal .close-button {
+  position: relative;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+  z-index: 3;
+}
+
+.pending-modal .close-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.pending-modal .modal-body {
+  padding: 32px;
+  background: white;
+}
+
+.pending-modal .table-container {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid #f1f5f9;
+  margin-bottom: 24px;
+}
+
+.pending-modal .pending-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.pending-modal .pending-table thead tr {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.pending-modal .pending-table th {
+  padding: 16px 20px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pending-modal .pending-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+}
+
+.pending-modal .pending-row {
+  transition: all 0.2s ease;
+}
+
+.pending-modal .pending-row:hover {
+  background: #fafbfc;
+  transform: translateY(-1px);
+}
+
+.pending-modal .pending-row:last-child td {
+  border-bottom: none;
+}
+
+.pending-modal .action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.pending-modal .approve-button, 
+.pending-modal .reject-button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.pending-modal .approve-button {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.pending-modal .approve-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.pending-modal .reject-button {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.pending-modal .reject-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+/* Enhanced Empty State */
+.pending-modal .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  background: linear-gradient(135deg, #fafbfc 0%, #f1f5f9 100%);
+  border-radius: 12px;
+  border: 2px dashed #e2e8f0;
+}
+
+.pending-modal .empty-icon {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 28px;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.pending-modal .empty-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+}
+
+.pending-modal .empty-subtext {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Enhanced Responsive Design */
+@media (max-width: 768px) {
+  .pending-modal {
+    max-width: 95%;
+    margin: 16px;
+    border-radius: 12px;
+  }
+  
+  .pending-modal .modal-header {
+    padding: 20px 24px;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  
+  .pending-modal .header-content h2 {
+    font-size: 20px;
+  }
+  
+  .pending-modal .modal-subtitle {
+    font-size: 13px;
+  }
+  
+  .pending-modal .modal-body {
+    padding: 24px 20px;
+  }
+  
+  .pending-modal .auto-admit-toggle {
+    margin: 0;
+    width: 100%;
+    justify-content: space-between;
+    padding: 10px 14px;
+  }
+  
+  .pending-modal .close-button {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    width: 36px;
+    height: 36px;
+  }
+  
+  .pending-modal .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .pending-modal .pending-table {
+    min-width: 500px;
+  }
+  
+  .pending-modal .pending-table th,
+  .pending-modal .pending-table td {
+    padding: 12px 8px;
+    white-space: nowrap;
+  }
+  
+  .pending-modal .pending-table th {
+    font-size: 12px;
+  }
+  
+  .pending-modal .pending-table td {
+    font-size: 13px;
+  }
+  
+  .pending-modal .student-info {
+    min-width: 150px;
+  }
+  
+  .pending-modal .action-buttons {
+    flex-direction: column;
+    gap: 6px;
+    min-width: 120px;
+  }
+  
+  .pending-modal .approve-button, 
+  .pending-modal .reject-button {
+    padding: 6px 12px;
+    font-size: 12px;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .pending-modal {
+    max-width: 98%;
+    margin: 8px;
+    border-radius: 10px;
+  }
+  
+  .pending-modal .modal-header {
+    padding: 16px 20px;
+  }
+  
+  .pending-modal .header-content h2 {
+    font-size: 18px;
+  }
+  
+  .pending-modal .modal-body {
+    padding: 20px 16px;
+  }
+  
+  .pending-modal .pending-table {
+    min-width: 480px;
+  }
+  
+  .pending-modal .pending-table th,
+  .pending-modal .pending-table td {
+    padding: 10px 6px;
+  }
+  
+  .pending-modal .auto-admit-toggle {
+    padding: 8px 12px;
+  }
+  
+  .pending-modal .toggle-text {
+    font-size: 13px;
+  }
+  
+  .pending-modal .empty-state {
+    padding: 32px 16px;
+  }
+  
+  .pending-modal .empty-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 24px;
+    margin-bottom: 16px;
+  }
+  
+  .pending-modal .empty-text {
+    font-size: 16px;
+  }
+  
+  .pending-modal .empty-subtext {
+    font-size: 13px;
+  }
+}
+
+@media (max-height: 600px) {
+  .pending-modal .modal-body {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+  
+  .pending-modal .table-container {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+}
+
+.assign-assessment-modal {
+  background: white;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 700px;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  animation: modalSlideIn 0.3s ease-out;
+}
+.assign-assessment-modal .modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 24px 32px;
+  border-bottom: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.assign-assessment-modal .modal-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+  opacity: 0.3;
+}
+
+.assign-assessment-modal .header-content {
+  position: relative;
+  z-index: 2;
+}
+
+.assign-assessment-modal .header-content h2 {
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.assign-assessment-modal .modal-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  margin-top: 4px;
+  font-weight: 400;
+}
+
+.assign-assessment-modal .close-button {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+  z-index: 3;
+}
+
+.assign-assessment-modal .close-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.assign-assessment-modal .modal-body {
+  padding: 32px;
+  background: white;
+}
+.assign-assessment-modal .tab-container {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 12px;
+}
+
+.assign-assessment-modal .tab-button {
+  flex: 1;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  color: #64748b;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.assign-assessment-modal .tab-button:hover {
+  background: rgba(255, 255, 255, 0.7);
+  color: #475569;
+}
+
+.assign-assessment-modal .tab-button.active {
+  background: white;
+  color: #3b82f6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.assign-assessment-modal .tab-button i {
+  font-size: 16px;
+}
+
+.assign-assessment-modal .form-group {
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.assign-assessment-modal .form-group label,
+.assign-assessment-modal .form-label {
+  display: block;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.assign-assessment-modal .form-input,
+.assign-assessment-modal .form-select,
+.assign-assessment-modal .form-textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 16px;
+  color: #1f2937;
+  background: #fafafa;
+  transition: all 0.2s ease;
+}
+
+.assign-assessment-modal .form-input:focus,
+.assign-assessment-modal .form-select:focus,
+.assign-assessment-modal .form-textarea:focus {
+  border-color: #3b82f6;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.assign-assessment-modal .form-input::placeholder,
+.assign-assessment-modal .form-textarea::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+.assign-assessment-modal .date-input-wrapper {
+  position: relative;
+}
+
+.assign-assessment-modal .date-input-wrapper .form-input {
+  padding-left: 44px;
+}
+
+.assign-assessment-modal .date-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+  font-size: 16px;
+  z-index: 1;
+}
+
+.assign-assessment-modal .date-hint {
+  display: block;
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 6px;
+  font-style: italic;
+}
+
+.assign-assessment-modal .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.assign-assessment-modal .form-row .form-group {
+  margin-bottom: 0;
+}
+
+.assign-assessment-modal .search-container {
+  margin-bottom: 24px;
+}
+
+.assign-assessment-modal .search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.assign-assessment-modal .search-icon {
+  position: absolute;
+  left: 16px;
+  color: #6b7280;
+  font-size: 16px;
+  z-index: 1;
+}
+
+.assign-assessment-modal .search-input {
+  width: 100%;
+  padding: 14px 16px 14px 48px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 16px;
+  color: #1f2937;
+  background: #fafafa;
+  transition: all 0.2s ease;
+}
+
+.assign-assessment-modal .search-input:focus {
+  border-color: #3b82f6;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+  outline: none;
+}
+
+.assign-assessment-modal .clear-button {
+  position: absolute;
+  right: 16px;
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.assign-assessment-modal .clear-button:hover {
+  color: #ef4444;
+  background: #fef2f2;
+}
+
+.assign-assessment-modal .selected-assessment-info {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 2px solid #bae6fd;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 24px 0;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  position: relative;
+  overflow: hidden;
+}
+
+.assign-assessment-modal .selected-assessment-info::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1e40af);
+}
+
+.assign-assessment-modal .assessment-icon.large {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 28px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.assign-assessment-modal .selected-assessment-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e40af;
+  margin: 0 0 6px 0;
+}
+
+.assign-assessment-modal .selected-assessment-desc {
+  font-size: 14px;
+  color: #475569;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.assign-assessment-modal .checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.assign-assessment-modal .checkbox-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.assign-assessment-modal .checkbox-row .checkbox-container {
+  margin: 0;
+}
+
+.assign-assessment-modal .checkbox-container:hover {
+  background: #f1f5f9;
+}
+
+.assign-assessment-modal .checkbox-container input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 2px solid #d1d5db;
+  cursor: pointer;
+  position: relative;
+  background: white;
+  transition: all 0.2s ease;
+}
+
+.assign-assessment-modal .checkbox-container input[type="checkbox"]:checked {
+  background: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.assign-assessment-modal .checkbox-container input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.assign-assessment-modal .checkbox-container label {
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.assign-assessment-modal .date-presets {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.assign-assessment-modal .preset-button {
+  padding: 6px 12px;
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.assign-assessment-modal .preset-button:hover {
+  background: #e2e8f0;
+  color: #475569;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.assign-assessment-modal .preset-button:active {
+  transform: translateY(0);
+}
+
+.assign-assessment-modal .form-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 2px solid #f1f5f9;
+}
+
+.assign-assessment-modal .cancel-button {
+  padding: 14px 24px;
+  background: #f8fafc;
+  color: #64748b;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 100px;
+}
+
+.assign-assessment-modal .cancel-button:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #475569;
+  transform: translateY(-1px);
+}
+
+.assign-assessment-modal .submit-button {
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 160px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.assign-assessment-modal .submit-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+}
+
+.assign-assessment-modal .submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.assign-assessment-modal .submit-button:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.assign-assessment-modal .submit-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.assign-assessment-modal .submit-button:hover::before {
+  left: 100%;
+}
+
+.assign-assessment-modal .date-error-message {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fecaca;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 20px;
+  color: #dc2626;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.assign-assessment-modal .date-error-message i {
+  font-size: 18px;
+  color: #ef4444;
+}
+
+
+.assign-assessment-modal .assignment-settings {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 2px solid #f1f5f9;
+}
+
+.assign-assessment-modal .settings-heading {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 24px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.assign-assessment-modal .settings-heading::before {
+  content: '';
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+  border-radius: 2px;
+}
+@media (max-width: 640px) {
+  .assign-assessment-modal {
+    margin: 16px;
+    border-radius: 12px;
+  }
+  
+  .assign-assessment-modal .modal-header {
+    padding: 20px 24px;
+  }
+  
+  .assign-assessment-modal .header-content h2 {
+    font-size: 20px;
+  }
+  
+  .assign-assessment-modal .modal-body {
+    padding: 24px;
+  }
+  
+  .assign-assessment-modal .form-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .assign-assessment-modal .form-input,
+  .assign-assessment-modal .form-select,
+  .assign-assessment-modal .form-textarea {
+    padding: 12px 14px;
+    font-size: 16px;
+  }
+  
+  .assign-assessment-modal .form-footer {
+    flex-direction: column-reverse;
+    gap: 12px;
+  }
+  
+  .assign-assessment-modal .cancel-button,
+  .assign-assessment-modal .submit-button {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .assign-assessment-modal .tab-container {
+    flex-direction: row;
+    padding: 3px;
+  }
+  
+  .assign-assessment-modal .tab-button {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  
+  .assign-assessment-modal .checkbox-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .assign-assessment-modal .date-presets {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  
+  .assign-assessment-modal .preset-button {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+}

@@ -123,9 +123,15 @@
                     <span class="error-message">{{ basicInfoError }}</span>
                 </div>
 
-
+                <div *ngIf="!enableGeneration" class="ai-disabled-banner">
+                    <div class="banner-content">
+                        <i class="fas fa-exclamation-triangle banner-icon"></i>
+                        <span class="banner-text">AI Assisted question generation has been disabled by the
+                            administrator.</span>
+                    </div>
+                </div>
                 <!-- Generate Forms Section -->
-                <div *ngIf="step === 1" class="genform-container">
+                <div *ngIf="step === 1 && enableGeneration" class="genform-container">
                     <div class="genform-header">
                         <div class="genform-title-group">
                             <div class="genform-title-wrapper">

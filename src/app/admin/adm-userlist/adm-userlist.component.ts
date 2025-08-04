@@ -5,10 +5,12 @@ import { AdminService } from '../../services/admin.service';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule, NgModel } from '@angular/forms';
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-adm-userlist',
-  imports: [CommonModule, SidebarComponent, RouterLink, FormsModule],
+  imports: [CommonModule, SidebarComponent, FormsModule],
   templateUrl: './adm-userlist.component.html',
   styleUrl: './adm-userlist.component.css'
 })
@@ -24,12 +26,20 @@ export class AdmUserlistComponent {
 
   private searchTimeout: any;
 
+  showResetPasswordModal: boolean = false;
+  showBanUserModal: boolean = false;
+  selectedUser: any = null;
+  newPassword: string = '';
+  selectedBanDuration: number = 60;
+  banReason: string = 'Malicious Activity Detected';
+
   // QUERY PARAMS 
   currentPage: number = 1;
   hasNext: boolean = false;
   hasPrevious: boolean = false;
   totalPages: number = 0;
   totalUsers: number = 0;
+  isBanned: boolean = false;
 
   role: string = 'student';
   program: string = 'bsit';
@@ -99,9 +109,10 @@ export class AdmUserlistComponent {
   }
   getList() {
     this.isLoadingUsers = true;
+
     const apiCall = this.searchTerm.trim()
-      ? this.api.searchAllUsers(this.role, this.limit, this.program, this.currentPage, this.searchTerm, this.verified)
-      : this.api.getAllUsers(this.role, this.limit, this.program, this.currentPage, this.verified);
+      ? this.api.searchAllUsers(this.role, this.limit, this.program, this.currentPage, this.searchTerm, this.verified, this.isBanned)
+      : this.api.getAllUsers(this.role, this.limit, this.program, this.currentPage, this.verified, this.isBanned);
 
     apiCall.subscribe({
       next: (resp: any) => {
@@ -114,11 +125,12 @@ export class AdmUserlistComponent {
         this.hasPrevious = pagination.hasPrev;
         this.limit = pagination.limit;
         this.isLoadingUsers = false;
-      }, error: (error: any) => {
+      },
+      error: (error: any) => {
         console.error('Error fetching users', error);
         this.isLoadingUsers = false;
       }
-    })
+    });
   }
 
   getData() {
@@ -190,11 +202,12 @@ export class AdmUserlistComponent {
     }
     return pages
   }
-  trackByStudentId(index: number, student: any): number {
-    return student.id;
+  trackByStudentId(index: number, student: any): any {
+    return student._id;
   }
 
   setFilter(role: string) {
+    this.isBanned = false;
     if (role === 'all') {
       this.role = role;
       this.verified = 'all';
@@ -207,28 +220,36 @@ export class AdmUserlistComponent {
       this.getList();
     }
   }
+  viewBanned() {
+    this.isBanned = true;
+    this.role = 'all';
+    this.verified = 'all';
+    this.program = 'all';
+    this.currentPage = 1;
+    this.getList();
+  }
 
-  toggleDropdown(studentId: number, event?: Event) {
+  toggleDropdown(studentId: any, event?: Event) {
     if (event) {
       event.stopPropagation();
     }
 
     this.userList.forEach(student => {
-      if (student.id !== studentId) {
+      if (student._id !== studentId) {
         student.showDropdown = false;
       }
     });
 
-    const student = this.userList.find(s => s.id === studentId);
+    const student = this.userList.find(s => s._id === studentId);
     if (student) {
       student.showDropdown = !student.showDropdown;
     }
   }
 
-  onActionClick(action: string, studentId: number, event: Event) {
+  onActionClick(action: string, studentId: any, event: Event) {
     event.stopPropagation();
 
-    const student = this.userList.find(s => s.id === studentId);
+    const student = this.userList.find(s => s._id === studentId);
     if (student) {
       student.showDropdown = false;
     }
@@ -249,9 +270,190 @@ export class AdmUserlistComponent {
     }
   }
 
+  unbanUser(userData: any) {
+    console.log('Unbanning user:', userData);
+
+    Swal.fire({
+      title: 'Unban User',
+      text: `Are you sure you want to unban ${userData.name}?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#059669',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, unban user',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.api.unbanUser(userData._id).subscribe({
+          next: (resp: any) => {
+            console.log('User unbanned successfully', resp.data);
+            this.getList();
+            this.getData();
+            Swal.fire({
+              title: 'User Unbanned!',
+              text: `${userData.name} has been unbanned successfully`,
+              icon: 'success',
+              confirmButtonColor: '#059669'
+            });
+          },
+          error: (error: any) => {
+            console.error('Error unbanning user', error);
+            Swal.fire({
+              title: 'Error!',
+              text: 'Failed to unban user. Please try again.',
+              icon: 'error',
+              confirmButtonColor: '#dc2626'
+            });
+          }
+        });
+      }
+    });
+  }
+
+  resetPassword(userData: any) {
+    const data = {
+      newPassword: 'new-password'
+    }
+    this.api.resetUserPassword(userData.id, data).subscribe({
+      next: (resp: any) => {
+        console.log('Password reset successfully', resp.data);
+        this.getList();
+      }, error: (e: any) => {
+        console.error('Error resetting password', e);
+      }
+    })
+  }
+
   ngOnDestroy() {
     if (this.searchTimeout) {
       clearTimeout(this.searchTimeout);
+    }
+  }
+
+  openResetPasswordModal(user: any) {
+    this.selectedUser = user;
+    this.newPassword = '';
+    this.showResetPasswordModal = true;
+  }
+
+  closeResetPasswordModal() {
+    this.showResetPasswordModal = false;
+    this.selectedUser = null;
+    this.newPassword = '';
+  }
+
+  confirmResetPassword() {
+    if (this.selectedUser && this.newPassword) {
+      Swal.fire({
+        title: 'Reset Password',
+        text: `Are you sure you want to reset the password for ${this.selectedUser.name}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#6366f1',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, reset password',
+        cancelButtonText: 'Cancel'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const data = {
+            newPassword: this.newPassword
+          };
+          this.api.resetUserPassword(this.selectedUser._id, data).subscribe({
+            next: (resp: any) => {
+              console.log('Password reset successfully', resp.data);
+              this.getList();
+              this.closeResetPasswordModal();
+              Swal.fire({
+                title: 'Password Reset!',
+                text: `Password has been reset for ${this.selectedUser.name}`,
+                icon: 'success',
+                confirmButtonColor: '#6366f1'
+              });
+            },
+            error: (e: any) => {
+              console.error('Error resetting password', e);
+              Swal.fire({
+                title: 'Error!',
+                text: 'Failed to reset password. Please try again.',
+                icon: 'error',
+                confirmButtonColor: '#dc2626'
+              });
+            }
+          });
+        }
+      });
+    }
+  }
+
+  openBanUserModal(user: any) {
+    this.selectedUser = user;
+    this.selectedBanDuration = 60;
+    this.banReason = 'Inappropriate behavior';
+    this.showBanUserModal = true;
+    // console.log('This is the selected user', this.selectedUser);
+  }
+
+  closeBanUserModal() {
+    this.showBanUserModal = false;
+    this.selectedUser = null;
+    this.selectedBanDuration = 60;
+    this.banReason = 'Inappropriate behavior';
+  }
+
+  confirmBanUser() {
+    if (this.selectedUser && this.selectedBanDuration) {
+      const durationText = this.getBanDurationText(this.selectedBanDuration);
+
+      Swal.fire({
+        title: 'Ban User',
+        html: `Are you sure you want to ban <strong>${this.selectedUser.name}</strong> for <strong>${durationText}</strong>?<br><br>Reason: ${this.banReason}`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Yes, ban user',
+        cancelButtonText: 'Cancel'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const data = {
+            banDuration: this.selectedBanDuration,
+            banReason: this.banReason
+          };
+          this.api.banUser(this.selectedUser._id, data).subscribe({
+            next: (resp: any) => {
+              console.log('User banned successfully', resp.data);
+              this.getList();
+              this.getData();
+              this.closeBanUserModal();
+              Swal.fire({
+                title: 'User Banned!',
+                text: `${this.selectedUser.name} has been banned for ${durationText}`,
+                icon: 'success',
+                confirmButtonColor: '#dc2626'
+              });
+            },
+            error: (error: any) => {
+              console.error('Error banning user', error);
+              Swal.fire({
+                title: 'Error!',
+                text: 'Failed to ban user. Please try again.',
+                icon: 'error',
+                confirmButtonColor: '#dc2626'
+              });
+            }
+          });
+        }
+      });
+    }
+  }
+
+  getBanDurationText(duration: number): string {
+    switch (duration) {
+      case 60: return '1 Hour';
+      case 1440: return '1 Day';
+      case 10080: return '7 Days';
+      case 43200: return '1 Month';
+      default: return `${duration} minutes`;
     }
   }
 

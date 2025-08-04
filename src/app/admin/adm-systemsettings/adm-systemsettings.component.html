@@ -79,11 +79,11 @@
                     </div>
 
                     <div class="publish-container">
-                        <button class="publish-button">
+                        <button class="publish-button" (click)="resetSettings()">
                             <i class="fas fa-arrows-spin"></i>
                             Restore Default
                         </button>
-                        <button class="publish-button">
+                        <button class="publish-button" (click)="saveSettings()">
                             <i class="fas fa-file-export"></i>
                             Save Changes
                         </button>
@@ -141,13 +141,13 @@
 
                     <div class="mid-row">
                         <div class="set-ttl">
-                            <label for="instructor-reg">Require Email Verification</label>
+                            <label for="email-verification">Require Email Verification</label>
                             <p>Require all of the users to verify their email when registering.</p>
                         </div>
                         <div class="toggle-switch">
-                            <input type="checkbox" id="instructor-reg" [(ngModel)]="instructorRegistrationEnabled"
-                                (change)="onToggleChange('instructor', $event)">
-                            <label for="instructor-reg" class="toggle-label">
+                            <input type="checkbox" id="email-verification" [(ngModel)]="requireEmailVerification"
+                                (change)="onToggleChange('emailVerification', $event)">
+                            <label for="email-verification" class="toggle-label">
                                 <span class="toggle-slider"></span>
                             </label>
                         </div>
@@ -160,21 +160,48 @@
                         </div>
                         <div class="select-wrapper">
                             <select id="default-role" [(ngModel)]="defaultUserRole" (change)="onRoleChange($event)">
-                                <option value="Student">Student</option>
-                                <option value="Instructor">Instructor</option>
+                                <option value="student">Student</option>
+                                <option value="instructor">Instructor</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="mid-row">
                         <div class="set-ttl">
-                            <label for="instructor-reg">Maintenance Mode</label>
-                            <p>Enable Maintenance Mode to prevent users from accessing the website during updats.</p>
+                            <label for="maintenance-mode">Maintenance Mode</label>
+                            <p>Enable Maintenance Mode to prevent users from accessing the website during updates.</p>
                         </div>
                         <div class="toggle-switch">
-                            <input type="checkbox" id="instructor-reg" [(ngModel)]="instructorRegistrationEnabled"
-                                (change)="onToggleChange('instructor', $event)">
-                            <label for="instructor-reg" class="toggle-label">
+                            <input type="checkbox" id="maintenance-mode" [(ngModel)]="maintenanceModeEnabled"
+                                (change)="onToggleChange('maintenance', $event)">
+                            <label for="maintenance-mode" class="toggle-label">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Maintenance Message Input - Show below the toggle when enabled -->
+                    <div class="maintenance-message-section" *ngIf="maintenanceModeEnabled">
+                        <div class="form-group">
+                            <label for="maintenance-message">Maintenance Message</label>
+                            <textarea id="maintenance-message" [(ngModel)]="maintenanceMessage"
+                                placeholder="Enter maintenance message to display to users..." rows="3"
+                                class="form-textarea maintenance-textarea"></textarea>
+                            <span class="helper">This message will be displayed to users when they try to access the
+                                platform during maintenance.</span>
+                        </div>
+                    </div>
+
+                    <!-- Add this in the Registration tab, after the maintenance mode section -->
+                    <div class="mid-row">
+                        <div class="set-ttl">
+                            <label for="platform-message-toggle">Enable Platform Message</label>
+                            <p>Show a persistent message banner to users across the platform.</p>
+                        </div>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="platform-message-toggle" [(ngModel)]="platformMessageEnabled"
+                                (change)="onToggleChange('platformMessage', $event)">
+                            <label for="platform-message-toggle" class="toggle-label">
                                 <span class="toggle-slider"></span>
                             </label>
                         </div>
@@ -189,13 +216,13 @@
 
                     <div class="mid-row">
                         <div class="set-ttl">
-                            <label for="instructor-reg">Allow Sharing Assessments</label>
+                            <label for="share-assessments">Allow Sharing Assessments</label>
                             <p>Allow instructors to share their assessments to other instructors.</p>
                         </div>
                         <div class="toggle-switch">
-                            <input type="checkbox" id="instructor-reg" [(ngModel)]="instructorRegistrationEnabled"
-                                (change)="onToggleChange('instructor', $event)">
-                            <label for="instructor-reg" class="toggle-label">
+                            <input type="checkbox" id="share-assessments" [(ngModel)]="allowSharingAssessments"
+                                (change)="onToggleChange('shareAssessments', $event)">
+                            <label for="share-assessments" class="toggle-label">
                                 <span class="toggle-slider"></span>
                             </label>
                         </div>
@@ -204,14 +231,15 @@
 
                     <div class="final">
                         <div class="set-ttl">
-                            <label for="default-role">Auto Archive Classes After</label>
+                            <label for="auto-archive-after">Auto Archive Classes After</label>
                         </div>
                         <div class="select-wrapper">
-                            <select id="default-role" [(ngModel)]="defaultUserRole" (change)="onRoleChange($event)">
-                                <option value="Student">1 month</option>
-                                <option value="Instructor">6 months</option>
-                                <option value="Instructor">1 year</option>
-                                <option value="Instructor">Never</option>
+                            <select id="auto-archive-after" [(ngModel)]="autoArchiveAfter"
+                                (change)="onRoleChange($event)">
+                                <option value="1month">1 month</option>
+                                <option value="6months">6 months</option>
+                                <option value="1year">1 year</option>
+                                <option value="never">Never</option>
                             </select>
                         </div>
                     </div>
@@ -219,13 +247,13 @@
                     <div class="frow">
                         <div class="frow-left">
                             <div class="set-ttl">
-                                <label for="student-reg">Enable In App Announcements</label>
+                                <label for="announcements">Enable In App Announcements</label>
                                 <p>Allow Announcements to appear on the user side.</p>
                             </div>
                             <div class="toggle-switch">
-                                <input type="checkbox" id="student-reg" [(ngModel)]="studentRegistrationEnabled"
-                                    (change)="onToggleChange('student', $event)">
-                                <label for="student-reg" class="toggle-label">
+                                <input type="checkbox" id="announcements" [(ngModel)]="enableAnnouncements"
+                                    (change)="onToggleChange('announcements', $event)">
+                                <label for="announcements" class="toggle-label">
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
@@ -233,13 +261,13 @@
 
                         <div class="frow-right">
                             <div class="set-ttl">
-                                <label for="instructor-reg">Send Platfrom Wide Messages</label>
+                                <label for="platform-messages">Send Platfrom Wide Messages</label>
                                 <p>Enable sending messages to all users.</p>
                             </div>
                             <div class="toggle-switch">
-                                <input type="checkbox" id="instructor-reg" [(ngModel)]="instructorRegistrationEnabled"
-                                    (change)="onToggleChange('instructor', $event)">
-                                <label for="instructor-reg" class="toggle-label">
+                                <input type="checkbox" id="platform-messages" [(ngModel)]="platformMessageEnabled"
+                                    (change)="onToggleChange('platformMessage', $event)">
+                                <label for="platform-messages" class="toggle-label">
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
@@ -263,15 +291,31 @@
                                 placeholder="Enter your message content" rows="4" class="form-textarea"></textarea>
                         </div>
 
-                        <div class="form-group">
-                            <label for="recipients">Recipients</label>
-                            <div class="select-wrapper">
-                                <select id="recipients" [(ngModel)]="selectedRecipients"
-                                    (change)="onRecipientsChange($event)">
-                                    <option value="All">All Users</option>
-                                    <option value="Student">Students</option>
-                                    <option value="Instructor">Instructors</option>
-                                </select>
+                        <!-- Add Message Type Selection -->
+                        <div class="form-row">
+                            <div class="form-group half-width">
+                                <label for="message-type">Message Type</label>
+                                <div class="select-wrapper">
+                                    <select id="message-type" [(ngModel)]="messageType">
+                                        <option value="info">Info</option>
+                                        <option value="success">Success</option>
+                                        <option value="warning">Warning</option>
+                                        <option value="error">Error</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group half-width">
+                                <label for="recipients">Recipients</label>
+                                <div class="select-wrapper">
+                                    <select id="recipients" [(ngModel)]="selectedRecipients"
+                                        (change)="onRecipientsChange($event)">
+                                        <option value="all">All Users</option>
+                                        <option value="students">Students</option>
+                                        <option value="instructors">Instructors</option>
+                                        <option value="admins">Admins</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
@@ -280,6 +324,41 @@
                                 <i class="fas fa-paper-plane"></i>
                                 Send Message
                             </button>
+                        </div>
+                    </div>
+
+                    <!-- Platform Message Configuration - Show when enabled -->
+                    <div class="platform-message-config" *ngIf="platformMessageEnabled">
+                        <div class="form-group">
+                            <label for="platform-msg-content">Platform Message Content</label>
+                            <textarea id="platform-msg-content" [(ngModel)]="platformMessage"
+                                placeholder="Enter platform-wide message..." rows="3" class="form-textarea"></textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group half-width">
+                                <label for="platform-msg-type">Message Type</label>
+                                <div class="select-wrapper">
+                                    <select id="platform-msg-type" [(ngModel)]="platformMessageType">
+                                        <option value="info">Info</option>
+                                        <option value="warning">Warning</option>
+                                        <option value="error">Error</option>
+                                        <option value="success">Success</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group half-width">
+                                <label for="platform-msg-recipients">Target Recipients</label>
+                                <div class="select-wrapper">
+                                    <select id="platform-msg-recipients" [(ngModel)]="platformMessageRecipients">
+                                        <option value="all">All Users</option>
+                                        <option value="students">Students Only</option>
+                                        <option value="instructors">Instructors Only</option>
+                                        <option value="admins">Admins Only</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -296,13 +375,13 @@
                     <div class="frow">
                         <div class="frow-left">
                             <div class="set-ttl">
-                                <label for="student-reg">Enable AI Question Generation</label>
+                                <label for="question-generation">Enable AI Question Generation</label>
                                 <p>Allow AI to Generate Questions for Instructors.</p>
                             </div>
                             <div class="toggle-switch">
-                                <input type="checkbox" id="student-reg" [(ngModel)]="studentRegistrationEnabled"
-                                    (change)="onToggleChange('student', $event)">
-                                <label for="student-reg" class="toggle-label">
+                                <input type="checkbox" id="question-generation" [(ngModel)]="enableQuestionGeneration"
+                                    (change)="onToggleChange('questionGeneration', $event)">
+                                <label for="question-generation" class="toggle-label">
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
@@ -310,13 +389,13 @@
 
                         <div class="frow-right">
                             <div class="set-ttl">
-                                <label for="instructor-reg">Enable AI Feedback for Students</label>
+                                <label for="student-feedback">Enable AI Feedback for Students</label>
                                 <p>Provide AI Powered Feedback on Students.</p>
                             </div>
                             <div class="toggle-switch">
-                                <input type="checkbox" id="instructor-reg" [(ngModel)]="instructorRegistrationEnabled"
-                                    (change)="onToggleChange('instructor', $event)">
-                                <label for="instructor-reg" class="toggle-label">
+                                <input type="checkbox" id="student-feedback" [(ngModel)]="enableStudentFeedback"
+                                    (change)="onToggleChange('studentFeedback', $event)">
+                                <label for="student-feedback" class="toggle-label">
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
@@ -331,7 +410,7 @@
                             <input type="number" id="max-ai-usage" [(ngModel)]="maxAiUsagePerDay" min="1" max="100"
                                 placeholder="10" class="form-input-number">
                         </div>
-                        <span class="helper">Set 0 for unlimited usage</span>
+                        <span class="helper">Set 100 for unlimited usage</span>
                     </div>
 
                     <div class="breaker"></div>
@@ -349,12 +428,12 @@
                         </div>
 
                         <div class="right-inp">
-                            <label for="max-login-attempts">Max Login Attempts</label>
+                            <label for="lockout-duration">Lockout Duration (Minutes)</label>
                             <div class="input-wrapper">
-                                <input type="number" id="max-login-attempts" [(ngModel)]="maxLoginAttempts" min="0"
-                                    max="20" placeholder="5" class="form-input-number">
+                                <input type="number" id="lockout-duration" [(ngModel)]="lockoutDuration" min="0"
+                                    max="1440" placeholder="15" class="form-input-number">
                             </div>
-                            <span class="helper">Set 0 for unlimited attempts</span>
+                            <span class="helper">Duration to lock account after max attempts</span>
                         </div>
                     </div>
                 </div>
