@@ -9,6 +9,7 @@ import { AuthService } from '../../services/auth.service';
 import { GoogleAuthProvider, signInWithPopup } from '@angular/fire/auth';
 import { Auth } from '@angular/fire/auth';
 import { SeoService } from '../../services/seo.service';
+import { PwaService } from '../../services/pwa.service';
 
 
 @Component({
@@ -51,6 +52,9 @@ export class LoginComponent implements OnInit {
   requireEmailVerification: boolean = true;
   defaultUserRole: string = 'student';
 
+  canInstallPwa: boolean = false;
+  pwaInstallLoading: boolean = false;
+
   constructor(
     private router: Router,
     private formBuilder: FormBuilder,
@@ -58,7 +62,8 @@ export class LoginComponent implements OnInit {
     private title: Title,
     private auth: Auth,
     private seoService: SeoService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private pwaService: PwaService
 
   ) {
     this.loginForm = this.formBuilder.group({
@@ -106,6 +111,7 @@ export class LoginComponent implements OnInit {
     }
     this.title.setTitle('PRISM | Login');
     this.getPlatformSettings();
+    this.initializePwaInstall();
     const storedEmail = localStorage.getItem('rememberedEmail');
     if (storedEmail) {
       this.loginForm.patchValue({ email: this.stripDomainFromEmail(storedEmail) });
@@ -228,7 +234,7 @@ export class LoginComponent implements OnInit {
         confirmButton: 'maintenance-confirm-btn'
       }
     }).then((result) => {
-      console.log('Maintenance modal result:', result);
+      // console.log('Maintenance modal result:', result);
     });
   }
 
@@ -294,6 +300,7 @@ export class LoginComponent implements OnInit {
           this.loading = false;
           this.clicked = false;
           this.showMaintenanceAlert();
+          return;
         }
         if (response.data.isBanned) {
           this.loading = false;
@@ -449,7 +456,7 @@ export class LoginComponent implements OnInit {
 
   handleSignupSubmit(event: Event): void {
     event.preventDefault();
-    console.log(this.signupForm.value);
+    // console.log(this.signupForm.value);
 
     if (this.signupForm.invalid) {
       Swal.fire({
@@ -488,13 +495,13 @@ export class LoginComponent implements OnInit {
         data.coordinatedProgram = formValues.coordinatedProgram;
       }
 
-      console.log('Signup payload:', data);
+      // console.log('Signup payload:', data);
 
       this.loading = true;
       this.authService.userSignUp(data).subscribe({
         next: (resp: any) => {
           this.loading = false;
-          console.log('Signup response:', resp);
+          // console.log('Signup response:', resp);
 
           if (resp.remarks === 'Success') {
             if (resp.data && resp.data.userId) {
@@ -595,6 +602,7 @@ export class LoginComponent implements OnInit {
             this.loading = false;
             this.clicked = false;
             this.showMaintenanceAlert();
+            return;
           }
           if (response.data.isBanned) {
             this.googleLoading = false;
@@ -716,6 +724,45 @@ export class LoginComponent implements OnInit {
         confirmButtonText: 'OK',
         confirmButtonColor: '#1976D2',
       });
+    }
+  }
+
+  initializePwaInstall(): void {
+    this.pwaService.isInstallable.subscribe(canInstall => {
+      this.canInstallPwa = canInstall && !this.pwaService.isStandaloneMode();
+    });
+  }
+
+  async installPwa(): Promise<void> {
+    try {
+      this.pwaInstallLoading = true;
+      const installed = await this.pwaService.promptInstall();
+
+      if (installed) {
+        Swal.fire({
+          title: 'App Installed!',
+          text: 'PRISM has been successfully installed on your device.',
+          icon: 'success',
+          confirmButtonText: 'Great!',
+          confirmButtonColor: '#1976D2',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+        });
+      }
+    } catch (error) {
+      console.error('PWA install error:', error);
+      Swal.fire({
+        title: 'Installation Failed',
+        text: 'Unable to install the app. Please try again later.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#1976D2',
+      });
+    } finally {
+      this.pwaInstallLoading = false;
     }
   }
 }

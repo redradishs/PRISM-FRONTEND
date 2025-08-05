@@ -82,6 +82,18 @@
                     </span>
                 </button>
 
+                <!-- PWA Install Button -->
+                <div class="pwa-install-wrapper" *ngIf="canInstallPwa">
+                    <button class="pwa-install-btn-inline" (click)="installPwa()" [disabled]="pwaInstallLoading"
+                        title="Install PRISM as an app on your device">
+                        <span *ngIf="pwaInstallLoading" class="pwa-spinner-inline"></span>
+                        <span *ngIf="!pwaInstallLoading" class="pwa-content-inline">
+                            <i class="fas fa-mobile-alt"></i>
+                            <span>Install App</span>
+                        </span>
+                    </button>
+                </div>
+
                 <p *ngIf="allowSignup" class="create-account">
                     Don't have an account? <a (click)="activeTab = 'signup'" class="auth-link">Create an account</a>
                 </p>
@@ -170,6 +182,18 @@
                 <button type="submit" class="sign-in-btn" [disabled]="loading">
                     {{ loading ? 'Creating account...' : 'Create account' }}
                 </button>
+
+                <!-- PWA Install Button -->
+                <div class="pwa-install-wrapper" *ngIf="canInstallPwa">
+                    <button class="pwa-install-btn-inline" (click)="installPwa()" [disabled]="pwaInstallLoading"
+                        title="Install PRISM as an app on your device">
+                        <span *ngIf="pwaInstallLoading" class="pwa-spinner-inline"></span>
+                        <span *ngIf="!pwaInstallLoading" class="pwa-content-inline">
+                            <i class="fas fa-mobile-alt"></i>
+                            <span>Install App</span>
+                        </span>
+                    </button>
+                </div>
 
                 <p class="create-account">
                     Already have an account? <a (click)="activeTab = 'login'" class="auth-link">

@@ -812,10 +812,84 @@ form {
   }
 }
 
+/* PWA Install Section - Inline Version */
+.pwa-install-wrapper {
+  margin: 16px 0;
+  text-align: center;
+}
+
+.pwa-install-btn-inline {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+  width: 100%;
+  justify-content: center;
+  border: 1px solid rgba(79, 70, 229, 0.2);
+}
+
+.pwa-install-btn-inline:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+  background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+}
+
+.pwa-install-btn-inline:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.pwa-install-btn-inline:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pwa-content-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pwa-content-inline i {
+  font-size: 14px;
+}
+
+.pwa-spinner-inline {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 /* Responsive adjustments */
 @media (max-width: 480px) {
   ::ng-deep .maintenance-alert-popup {
     width: 95% !important;
     margin: 0 auto !important;
+  }
+  
+  .pwa-install-wrapper {
+    margin: 12px 0;
+  }
+  
+  .pwa-install-btn-inline {
+    padding: 12px 16px;
+    font-size: 14px;
   }
 }

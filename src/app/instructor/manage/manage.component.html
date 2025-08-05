@@ -158,9 +158,9 @@
                         selectedStatus ? 'No ' + selectedStatus + ' assessments available.' :
                         'Create your first assessment to get started.'}}
                     </p>
-                    <button class="create-assessment-btn" (click)="createNewAssessment()">
+                    <button class="publish-button" (click)=" createNewAssessment()">
                         <i class="fas fa-plus"></i>
-                        Create Assessment
+                        Assign Assessment
                     </button>
                 </div>
 
@@ -242,11 +242,11 @@
                                 </span>
                                 <span *ngIf="assessment.status === 'scheduled'" class="status-label">
                                     <i class="far fa-calendar"></i>
-                                    Scheduled: {{assessment.startDate | date:'MMM d, y, h:mm a'}}
+                                    Scheduled: {{assessment.startDate | date:'MMM d, y, h:mm a':'UTC'}}
                                 </span>
                                 <span *ngIf="assessment.status === 'ongoing'" class="status-label">
                                     <i class="fas fa-clock"></i>
-                                    Due {{assessment.dueDate | date:'MMM d, y, h:mm a'}}
+                                    Due {{assessment.dueDate | date:'MMM d, y, h:mm a':'UTC'}}
                                 </span>
                                 <button class="btn btn-primary" (click)="viewAssessmentDetails(assessment)">
                                     {{ assessment.status === 'completed' ? 'View Results' : 'Configure Assessment' }}

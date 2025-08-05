@@ -69,7 +69,8 @@ interface NewQuestion {
   templateUrl: './generate-assessment.component.html',
   styleUrl: './generate-assessment.component.css'
 })
-export class GenerateAssessmentComponent {isMobile = window.innerWidth < 768;
+export class GenerateAssessmentComponent {
+    isMobile = window.innerWidth < 768;
   @HostListener('window:resize')
   onResize() {
     this.isMobile = window.innerWidth < 768;
@@ -101,7 +102,7 @@ export class GenerateAssessmentComponent {isMobile = window.innerWidth < 768;
     enumeration: 1,
   }
   username: string = '';
-  userId:  string = '';
+  userId: string = '';
   profile: string = '';
   multipleChoiceOptions: string[] = Array(4).fill('');
   enumerationItems: string[] = Array(5).fill('');
@@ -226,22 +227,22 @@ export class GenerateAssessmentComponent {isMobile = window.innerWidth < 768;
       cancelButtonText: 'No, keep questions'
     }).then((result) => {
       if (result.isConfirmed) {
-    this.questions = [];
-    this.nextId = 1;
-    this.errorMessage = null;
-    this.showAddDialog = false;
-    this.editingQuestionId = null;
+        this.questions = [];
+        this.nextId = 1;
+        this.errorMessage = null;
+        this.showAddDialog = false;
+        this.editingQuestionId = null;
       }
     });
 
   }
 
   generateQuestions(): void {
-    if(!this.aiGeneration.topic) {
+    if (!this.aiGeneration.topic) {
       this.errorMessage = 'Please enter a topic';
       return;
     }
-    if(this.selectedTypes.length === 0) {
+    if (this.selectedTypes.length === 0) {
       this.errorMessage = 'Please select at least one question type';
       return;
     }
@@ -249,7 +250,7 @@ export class GenerateAssessmentComponent {isMobile = window.innerWidth < 768;
       this.errorMessage = 'You have unlimited generation of questions. PRISM recommends to generate maximum of 50 questions per request.';
       return;
     }
-    if(this.selectedTypes.length === 0) {
+    if (this.selectedTypes.length === 0) {
       this.errorMessage = 'Please select at least one question type';
       return;
     }
@@ -266,7 +267,7 @@ export class GenerateAssessmentComponent {isMobile = window.innerWidth < 768;
         try {
           const content = response.choices[0].message.content;
           const parsedResponse = JSON.parse(content);
-          
+
           if (parsedResponse.questions && Array.isArray(parsedResponse.questions)) {
             this.handleGeneratedQuestions(parsedResponse);
             this.generated = true;
@@ -302,13 +303,13 @@ export class GenerateAssessmentComponent {isMobile = window.innerWidth < 768;
   private handleGeneratedQuestions(response: any): void {
     try {
       const questions = response.questions;
-      if(!Array.isArray(questions)) {
+      if (!Array.isArray(questions)) {
         throw new Error('Invalid questions array format');
       }
       const expectedCount = Number(this.aiGeneration.questionCount);
       console.log(`Expected ${expectedCount} questions, got ${questions.length}`);
       const questionToAddOnly = questions.slice(0, expectedCount);
-      
+
       if (Array.isArray(questionToAddOnly)) {
         questionToAddOnly.forEach((question: any) => {
           const formattedQuestion = {
@@ -324,7 +325,7 @@ export class GenerateAssessmentComponent {isMobile = window.innerWidth < 768;
             } : undefined,
             answer: question.type === 'true/false' ? String(question.answer).toLowerCase() : question.answer,
             difficulty: question.difficulty,
-            points: 1 
+            points: 1
           };
 
           if (formattedQuestion.type === 'multiple-choice' && question.options) {
@@ -367,8 +368,8 @@ export class GenerateAssessmentComponent {isMobile = window.innerWidth < 768;
       .filter(type => type)
       .join(', ');
 
-      console.log('Selected types:', this.selectedTypes);
-      console.log('Selected types text:', selectedTypesText);
+    console.log('Selected types:', this.selectedTypes);
+    console.log('Selected types text:', selectedTypesText);
 
     let contextPrompt = '';
     if (this.extractedText && this.extractedText.trim() !== '') {
@@ -488,11 +489,11 @@ VERIFICATION CHECKLIST before responding:
       .filter((q) => q.type === type)
       .sort((a, b) => a.questionNumber - b.questionNumber);
   }
-  
+
   getUnverifiedQuestionCount(): number {
     return this.questions.filter(q => !q.verified).length;
   }
-  
+
   getVerifiedQuestionCount(): number {
     return this.questions.filter(q => q.verified).length;
   }
@@ -538,7 +539,7 @@ VERIFICATION CHECKLIST before responding:
 
   toggleEditAndSave(question: any): void {
     const questionId = question.id;
-    
+
     if (this.editingQuestionId === questionId) {
       this.editingQuestionId = null;
       console.log('Saved question:', question);
@@ -560,7 +561,7 @@ VERIFICATION CHECKLIST before responding:
   //function to edit the questions, each question type has its own editing option
   handleKeyPress(event: any, questionId: number, type?: string, key?: string, index?: number) {
     const keyEvent = event as KeyboardEvent;
-    
+
     if (keyEvent.key === 'Enter' && !keyEvent.shiftKey) {
       event.preventDefault();
       const value = (event.target as HTMLTextAreaElement)?.value;
@@ -602,7 +603,7 @@ VERIFICATION CHECKLIST before responding:
 
     if (this.isEditing(question.id)) {
       if (!question.options) {
-        question.options = {}; 
+        question.options = {};
       }
       const updatedOptions = { ...question.options };
       updatedOptions[optionKey] = newValue;
@@ -639,16 +640,16 @@ VERIFICATION CHECKLIST before responding:
               type === 'true-false'
                 ? 'True'
                 : type === 'enumeration'
-                ? []
-                : '',
+                  ? []
+                  : '',
             options:
               type === 'multiple-choice'
                 ? {
-                    A: '',
-                    B: '',
-                    C: '',
-                    D: '',
-                  }
+                  A: '',
+                  B: '',
+                  C: '',
+                  D: '',
+                }
                 : undefined,
             verified: false
           };
@@ -743,7 +744,7 @@ VERIFICATION CHECKLIST before responding:
 
       return base;
     });
-    
+
     const totalPoints = this.questions.reduce((sum, q) => sum + (q.points || 0), 0);
 
     const assessmentData = {
@@ -940,7 +941,7 @@ VERIFICATION CHECKLIST before responding:
     return this.categoryOptions
       .filter(c => c.selected)
       .map(c => c.label)
-      .slice(0, 3); 
+      .slice(0, 3);
   }
 
   deselectCategory(label: string) {
@@ -964,16 +965,16 @@ VERIFICATION CHECKLIST before responding:
   getDisplayNumber(type: string, question: Question): number {
     const orderedTypes = ['multiple-choice', 'enumeration', 'short-answer', 'true-false'];
     let displayNumber = 1;
-    
+
     for (const t of orderedTypes) {
       if (t === type) break;
       displayNumber += this.getQuestionsByType(t).length;
     }
-    
+
     const questionsOfType = this.getQuestionsByType(type);
     const index = questionsOfType.findIndex(q => q.id === question.id);
     displayNumber += index;
-    
+
     return displayNumber;
   }
 
@@ -995,7 +996,7 @@ VERIFICATION CHECKLIST before responding:
       return;
     }
     const unverifiedQuestions = this.questions.filter(q => !q.verified);
-    
+
     if (unverifiedQuestions.length === 0) {
       Swal.fire({
         title: 'All Verified',
@@ -1053,33 +1054,33 @@ VERIFICATION CHECKLIST before responding:
     this.api.verifyQuestions(exportData).subscribe({
       next: (resp: any) => {
         console.log('Response from verification:', resp);
-        
+
         if (resp.success) {
           Swal.close();
-          
+
           if (resp.verification && resp.verification.length > 0) {
             const unverifiedIds = unverifiedQuestions.map(q => q.id);
             this.questions = this.questions.filter(q => !unverifiedIds.includes(q.id));
             resp.verification.forEach((verifiedQuestion: any, index: number) => {
 
               const { options, updatedAnswer } = this.getOptionsForQuestion(verifiedQuestion);
-              
+
               const question: Question = {
                 id: this.nextId++,
                 questionNumber: this.questions.length + index + 1,
                 type: this.mapQuestionType(verifiedQuestion.type),
                 question: verifiedQuestion.question,
-                answer: verifiedQuestion.type.toLowerCase() === 'multiple choice' 
-                  ? updatedAnswer 
+                answer: verifiedQuestion.type.toLowerCase() === 'multiple choice'
+                  ? updatedAnswer
                   : this.convertAnswer(verifiedQuestion.type, verifiedQuestion.answer),
-                points: 1, 
+                points: 1,
                 options: options,
-                verified: true  
+                verified: true
               };
-              
+
               this.questions.push(question);
             });
-            
+
             this.updateQuestionNumbers();
 
             Swal.fire({
@@ -1140,7 +1141,7 @@ VERIFICATION CHECKLIST before responding:
     console.log(JSON.stringify(exportData, null, 4));
   }
 
-//helper method to save the api response to the mapped response i have in the ts.
+  //helper method to save the api response to the mapped response i have in the ts.
   private convertAnswer(type: string, answer: any): string | string[] | boolean {
     if (type.toLowerCase() === 'true/false') {
       return answer === true ? 'true' : 'false';
@@ -1151,18 +1152,18 @@ VERIFICATION CHECKLIST before responding:
   // Helper method to extract options for multiple choice questions, if an option E exists
   private getOptionsForQuestion(verifiedQuestion: any): { options: { [key: string]: string } | undefined, updatedAnswer: string | boolean | string[] } {
     let updatedAnswer = verifiedQuestion.answer;
-    
+
     if (verifiedQuestion.type.toLowerCase() === 'multiple choice' && verifiedQuestion.options) {
 
       const hasOptionE = verifiedQuestion.options.E !== undefined;
-      
+
       const options: { [key: string]: string } = {
         A: verifiedQuestion.options.A || '',
         B: verifiedQuestion.options.B || '',
         C: verifiedQuestion.options.C || '',
         D: verifiedQuestion.options.D || ''
       };
-      
+
       if (hasOptionE) {
         console.log('Found question with option E:', verifiedQuestion.question);
         console.log('Original options:', JSON.stringify(verifiedQuestion.options));
@@ -1171,22 +1172,22 @@ VERIFICATION CHECKLIST before responding:
         const originalB = options['B'];
 
         options['B'] = verifiedQuestion.options.E || '';
-        
+
         if (updatedAnswer === 'E') {
           updatedAnswer = 'B';
           console.log('Answer updated from E to B');
-        } 
+        }
         else if (updatedAnswer === 'B' && originalB !== options['B']) {
           console.log('Warning: Answer was B but option B content was replaced with option E');
         }
-        
+
         console.log('Final options:', JSON.stringify(options));
         console.log('Final answer:', updatedAnswer);
       }
-      
+
       return { options, updatedAnswer };
     }
-    
+
     return { options: undefined, updatedAnswer };
   }
 

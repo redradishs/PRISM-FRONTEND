@@ -30,13 +30,21 @@ export class EditAssessmentComponent {
   isEditingTitle: boolean = false;
   originalTitle: string = '';
 
+  // Export functionality
+  showExportModal = false;
+
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
   @HostListener('window:resize')
   onResize() {
     this.isMobile = window.innerWidth < 768;
   }
 
-  constructor(private api: ApiService, private auth: AuthService, private router: Router, private title: TitleService) {
+  constructor(
+    private api: ApiService,
+    private auth: AuthService,
+    private router: Router,
+    private title: TitleService,
+  ) {
     this.title.setTitle('PRISM | Edit');
     const navigation = this.router.getCurrentNavigation();
     if (navigation && navigation.extras.state) {
@@ -44,7 +52,6 @@ export class EditAssessmentComponent {
     } else {
       this.router.navigate(['/instructor/dashboard']);
     }
-
   }
 
   ngOnInit(): void {
@@ -301,5 +308,4 @@ export class EditAssessmentComponent {
   getAssessmentTypeLabel(assessment: any): string {
     return assessment.type || 'Assessment';
   }
-
 }

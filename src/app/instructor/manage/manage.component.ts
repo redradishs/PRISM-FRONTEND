@@ -113,7 +113,7 @@ export class ManageComponent implements OnInit {
 
   private searchSubject = new Subject<string>();
 
-  viewMode: 'grid' | 'list' = 'grid';
+  viewMode: 'grid' | 'list' = 'list';
 
   constructor(
     private api: ApiService,
@@ -123,7 +123,7 @@ export class ManageComponent implements OnInit {
     private titleService: Title
   ) {
     this.titleService.setTitle('PRISM | Manage');
-    
+
     this.searchSubject.pipe(
       debounceTime(300),
       distinctUntilChanged()
@@ -138,11 +138,11 @@ export class ManageComponent implements OnInit {
 
   ngOnInit() {
     this.auth.getCurrentUser().subscribe((user) => {
-      if(user) {
+      if (user) {
         this.userId = user.id;
         this.username = user.name;
         this.profile = user.profilePicture;
-        
+
         // Check for tab parameter
         this.route.queryParams.subscribe(params => {
           const tab = params['tab'];
@@ -151,7 +151,7 @@ export class ManageComponent implements OnInit {
             localStorage.setItem('selectedAssessmentTab', tab);
           } else {
             const savedTab = localStorage.getItem('selectedAssessmentTab');
-            if(savedTab) {
+            if (savedTab) {
               this.selectedStatus = savedTab;
             }
           }
@@ -168,7 +168,7 @@ export class ManageComponent implements OnInit {
   //this function sets the view mode to what is LS, if not it falls to the default list mode
   setInitialViewMode() {
     const savedViewMode = localStorage.getItem('assessmentViewMode');
-    if(savedViewMode === 'grid' || savedViewMode === 'list') {
+    if (savedViewMode === 'grid' || savedViewMode === 'list') {
       this.viewMode = savedViewMode;
     } else if (window.innerWidth <= 640) {
       this.viewMode = 'list';
@@ -184,7 +184,7 @@ export class ManageComponent implements OnInit {
   onSearch(event: any) {
     const query = event.target.value.trim();
     this.searchQuery = query;
-    console.log('Search query:', query, 'Length:', query.length); // Debug log
+    // console.log('Search query:', query, 'Length:', query.length);
     this.searchSubject.next(query);
   }
 
@@ -205,17 +205,15 @@ export class ManageComponent implements OnInit {
       next: (response: any) => {
         console.log('Search response:', response);
         if (response.remarks === 'Success') {
-          // Handle the different response format for search
           this.assessments = response.data.map((assessment: any) => ({
             ...assessment,
-            assignedClasses: [], // Initialize as empty since search response doesn't include classes
-            modeSettings: {}, // Initialize empty mode settings
+            assignedClasses: [], //empty
+            modeSettings: {}, //empty
             questions: assessment.questions || 0,
             type: assessment.type || 'Assessment',
             status: assessment.status || 'ongoing'
           }));
 
-          // Since search doesn't return pagination info, adjust pagination
           this.pagination = {
             currentPage: 1,
             totalPages: 1,
@@ -312,7 +310,7 @@ export class ManageComponent implements OnInit {
   onTabChange(status: string) {
     this.selectedStatus = status;
     localStorage.setItem('selectedAssessmentTab', status);
-    this.pagination.currentPage = 1; 
+    this.pagination.currentPage = 1;
     this.loadAssessments();
   }
 
@@ -387,7 +385,7 @@ export class ManageComponent implements OnInit {
   getAssessmentProgress(classes: AssignedClass[]): number {
     const totalStudents = this.getTotalStudents(classes);
     if (totalStudents === 0) return 0;
-    
+
     const totalSubmitted = classes.reduce((total, c) => total + c.stats.submitted, 0);
     return (totalSubmitted / totalStudents) * 100;
   }
@@ -399,8 +397,8 @@ export class ManageComponent implements OnInit {
   }
 
   gotoResult(assessment: any) {
-    window.scrollTo({top: 0, behavior: 'smooth'});
-    if(assessment.type === 'Assessment' || assessment.type === 'Public Assessment') {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (assessment.type === 'Assessment' || assessment.type === 'Public Assessment') {
       this.router.navigate(['/instructor/result'], {
         state: { assessmentId: assessment.id }
       })
@@ -414,7 +412,7 @@ export class ManageComponent implements OnInit {
   }
 
   createNewAssessment() {
-    this.router.navigate(['/instructor/generate']);
+    this.router.navigate(['/instructor/assign']);
   }
 
   editAssessment(assessment: Assessment) {

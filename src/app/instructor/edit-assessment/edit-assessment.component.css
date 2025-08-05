@@ -23,7 +23,6 @@
     color: #6366f1;
     font-size: 1.5rem;
     background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     filter: drop-shadow(0 1px 1px rgba(99, 102, 241, 0.2));
     transition: transform 0.3s ease;
@@ -1335,6 +1334,28 @@ main.max-w-8xl {
     transform: translateY(-1px);
 }
 
+/* Export Button */
+.export-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.60rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    border-radius: 0.5rem;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.export-btn:hover {
+    background: linear-gradient(135deg, #d97706, #b45309);
+    transform: translateY(-1px);
+}
+
 /* Responsive title editing */
 @media (max-width: 768px) {
     .title-input {
@@ -1351,7 +1372,8 @@ main.max-w-8xl {
     
     .edit-title-btn,
     .save-title-btn,
-    .cancel-title-btn {
+    .cancel-title-btn,
+    .export-btn {
         width: 100%;
         justify-content: center;
         padding: 0.75rem 1rem;
@@ -1366,7 +1388,8 @@ main.max-w-8xl {
     
     .edit-title-btn,
     .save-title-btn,
-    .cancel-title-btn {
+    .cancel-title-btn,
+    .export-btn {
         padding: 0.625rem 1rem;
         font-size: 0.875rem;
     }
@@ -1380,7 +1403,8 @@ main.max-w-8xl {
     
     .edit-title-btn,
     .save-title-btn,
-    .cancel-title-btn {
+    .cancel-title-btn,
+    .export-btn {
         padding: 0.75rem;
         font-size: 0.9375rem;
     }
