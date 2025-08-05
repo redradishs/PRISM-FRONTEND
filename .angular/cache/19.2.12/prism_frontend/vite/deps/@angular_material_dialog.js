@@ -26,7 +26,11 @@ import {
   coerceElement,
   coerceNumberProperty,
   hasModifierKey
-} from "./chunk-R5SFYXNE.js";
+} from "./chunk-RU7Q3WS6.js";
+import {
+  BidiModule,
+  Directionality
+} from "./chunk-X3IAFX7C.js";
 import "./chunk-GMRBXDFH.js";
 import {
   BasePortalOutlet,
@@ -35,10 +39,6 @@ import {
   PortalModule,
   TemplatePortal
 } from "./chunk-FLCGVKEZ.js";
-import {
-  BidiModule,
-  Directionality
-} from "./chunk-X3IAFX7C.js";
 import "./chunk-TN7E7ZMF.js";
 import {
   DOCUMENT

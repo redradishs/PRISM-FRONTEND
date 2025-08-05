@@ -1,0 +1,261 @@
+.print-container {
+  font-family: 'Times New Roman', serif;
+  max-width: 8.5in;
+  margin: 0 auto;
+  padding: 0.5in;
+  background: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Print styles */
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Times New Roman', serif; 
+    font-size: 11pt;
+    line-height: 1.2;
+  }
+
+  .print-container {
+    max-width: none;
+    margin: 0;
+    padding: 0.5in;
+    box-shadow: none;
+    background: none;
+  }
+
+  /* Column layout for questions */
+  .questions-container.columns {
+    column-count: 2;
+    column-gap: 0.3in;
+    column-fill: auto;
+  }
+
+  .question-item {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 0.15in;
+  }
+
+  .question-text,
+  .options,
+  .enumeration-answers {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .question-type-section {
+    break-inside: avoid-page;
+    margin-bottom: 0.2in;
+  }
+
+  .type-header {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .answer-key {
+    break-before: page;
+    page-break-before: always;
+    column-count: 1;
+  }
+
+  .page-break {
+    display: none;
+  }
+}
+
+/* Header styles */
+.header {
+  margin-bottom: 0.3in;
+}
+
+.title {
+  text-align: center;
+  font-size: 16pt;
+  font-weight: bold;
+  color: #2c3e50;
+  margin: 0 0 0.2in 0;
+}
+
+.student-info {
+  margin-bottom: 0.2in;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.1in;
+}
+
+.info-field {
+  flex: 1;
+  margin-right: 0.2in;
+}
+
+.info-field:last-child {
+  margin-right: 0;
+}
+
+.label {
+  font-weight: bold;
+  margin-right: 0.1in;
+}
+
+.line {
+  border-bottom: 1px solid #000;
+  display: inline-block;
+  min-width: 2.5in;
+  padding-bottom: 2px;
+}
+
+.instructions {
+  font-size: 11pt;
+  margin-bottom: 0.15in;
+}
+
+.instructions-label {
+  font-weight: bold;
+  margin-right: 0.1in;
+}
+
+/* Question styles */
+.questions-container {
+  margin-top: 0.2in;
+}
+
+.question-type-section {
+  margin-bottom: 0.25in;
+}
+
+.type-header {
+  font-size: 12pt;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 0.15in;
+  line-height: 1.3;
+}
+
+.questions-list {
+  margin-left: 0;
+}
+
+.question-item {
+  margin-bottom: 0.15in;
+}
+
+.question-text {
+  font-weight: bold;
+  font-size: 10pt;
+  margin-bottom: 0.05in;
+  line-height: 1.3;
+}
+
+.answer-space {
+  margin-right: 0.05in;
+}
+
+.options {
+  margin-left: 0.15in;
+  margin-top: 0.05in;
+}
+
+.option {
+  font-size: 9pt;
+  margin-bottom: 0.02in;
+  line-height: 1.2;
+}
+
+.enumeration-answers {
+  margin-left: 0.15in;
+  margin-top: 0.05in;
+}
+
+.answer-line {
+  font-size: 9pt;
+  margin-bottom: 0.02in;
+}
+
+/* Answer key styles */
+.answer-key {
+  margin-top: 0.5in;
+}
+
+.answer-key-title {
+  text-align: center;
+  font-size: 16pt;
+  font-weight: bold;
+  color: #2c3e50;
+  margin: 0 0 0.3in 0;
+}
+
+.answer-type-section {
+  margin-bottom: 0.25in;
+}
+
+.answer-type-header {
+  font-size: 13pt;
+  font-weight: bold;
+  color: #34495e;
+  margin: 0.2in 0 0.1in 0;
+}
+
+.answer-item {
+  font-size: 10pt;
+  font-weight: bold;
+  color: #27ae60;
+  margin: 0.05in 0 0.05in 0.3in;
+}
+
+@media screen {
+  .print-container {
+    min-height: 11in;
+  }
+  
+  .print-container.column-layout .questions-container.columns {
+    column-count: 2;
+    column-gap: 0.3in;
+    column-fill: balance;
+  }
+  
+  .page-break {
+    height: 1px;
+    background: #ccc;
+    margin: 0.5in 0;
+    position: relative;
+  }
+  
+  .page-break::after {
+    content: "Page Break";
+    position: absolute;
+    left: 50%;
+    top: -0.5em;
+    transform: translateX(-50%);
+    background: white;
+    padding: 0 10px;
+    font-size: 10px;
+    color: #666;
+  }
+}
+
+@media print {
+  h1, h2, h3, .type-header {
+    orphans: 3;
+    widows: 3;
+  }
+  
+  .question-item {
+    orphans: 2;
+    widows: 2;
+  }
+  
+  .answer-key {
+    page-break-before: always;
+  }
+}

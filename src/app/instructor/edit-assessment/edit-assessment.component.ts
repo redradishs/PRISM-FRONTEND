@@ -7,10 +7,12 @@ import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { TitleService } from '../../services/title.service';
+import { ExportService, ExportOptions, AssessmentData } from '../../services/export.service';
+import { ExportModalComponent } from '../../shared/export-modal/export-modal.component';
 
 @Component({
   selector: 'app-edit-assessment',
-  imports: [SidebarComponent, CommonModule, FormsModule],
+  imports: [SidebarComponent, CommonModule, FormsModule, ExportModalComponent],
   templateUrl: './edit-assessment.component.html',
   styleUrl: './edit-assessment.component.css'
 })
@@ -44,6 +46,7 @@ export class EditAssessmentComponent {
     private auth: AuthService,
     private router: Router,
     private title: TitleService,
+    private exportService: ExportService
   ) {
     this.title.setTitle('PRISM | Edit');
     const navigation = this.router.getCurrentNavigation();
@@ -307,5 +310,50 @@ export class EditAssessmentComponent {
 
   getAssessmentTypeLabel(assessment: any): string {
     return assessment.type || 'Assessment';
+  }
+
+  // Export functionality
+  openExportModal(): void {
+    this.showExportModal = true;
+  }
+
+  closeExportModal(): void {
+    this.showExportModal = false;
+  }
+
+  async handleExport(options: ExportOptions): Promise<void> {
+    try {
+      const assessmentData: AssessmentData = {
+        title: this.titleA,
+        questions: this.questions,
+        totalPoints: this.totalPoints,
+        category: this.category
+      };
+
+      console.log(assessmentData)
+
+      await this.exportService.exportExam(assessmentData, options);
+
+      Swal.fire({
+        title: 'Export Successful!',
+        text: `Assessment exported as ${options.format.toUpperCase()} successfully.`,
+        icon: 'success',
+        toast: true,
+        position: 'top-end',
+        timer: 3000,
+        showConfirmButton: false
+      });
+    } catch (error) {
+      console.error('Export error:', error);
+      Swal.fire({
+        title: 'Export Failed!',
+        text: 'There was an error exporting the assessment. Please try again.',
+        icon: 'error',
+        toast: true,
+        position: 'top-end',
+        timer: 3000,
+        showConfirmButton: false
+      });
+    }
   }
 }

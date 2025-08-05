@@ -14,8 +14,13 @@
                                     New Assessment
                                 </button>
                                 <button (click)="updateAssessment()"
-                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2">
                                     Update Assessment
+                                </button>
+                                <button (click)="openExportModal()"
+                                    class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors">
+                                    <i class="fas fa-download mr-1"></i>
+                                    Export
                                 </button>
                             </div>
                             <div *ngIf="!isMobile" class="flex items-center">
@@ -108,6 +113,10 @@
                             <button (click)="startEditingTitle()" class="edit-title-btn" title="Edit Title">
                                 <i class="fas fa-edit"></i>
                                 Edit Title
+                            </button>
+                            <button (click)="openExportModal()" class="export-btn" title="Export Assessment">
+                                <i class="fas fa-download"></i>
+                                Export
                             </button>
                             <button class="rpt-but" (click)="updateAssessment()">
                                 <i class="fas fa-save"></i>
@@ -281,3 +290,8 @@
 
         </div>
     </div>
+
+    <!-- Export Modal -->
+    <app-export-modal [isVisible]="showExportModal" (export)="handleExport($event)" (close)="closeExportModal()">
+    </app-export-modal>
+</div>
