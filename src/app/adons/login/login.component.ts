@@ -143,7 +143,7 @@ export class LoginComponent implements OnInit {
   getPlatformSettings() {
     this.authService.platformWideSettings().subscribe({
       next: (resp: any) => {
-        console.log('Platform Wide Settings:', resp);
+        // console.log('Platform Wide Settings:', resp.message);
         this.platformSettings = resp.data;
         this.isMaintenanceMode = resp.data.maintenanceMode?.enabled || false;
         this.maintenanceMessage = resp.data.maintenanceMode?.message || '';

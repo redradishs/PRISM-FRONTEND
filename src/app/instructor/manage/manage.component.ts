@@ -189,7 +189,6 @@ export class ManageComponent implements OnInit {
   }
 
   performSearch(query: string) {
-    console.log('Performing search for:', query);
     this.isLoading = true;
     const params = {
       page: this.pagination.currentPage,
@@ -203,12 +202,10 @@ export class ManageComponent implements OnInit {
 
     this.api.searchAssessments(this.userId, query, params).subscribe({
       next: (response: any) => {
-        console.log('Search response:', response);
+        // console.log('Search response:', response);
         if (response.remarks === 'Success') {
           this.assessments = response.data.map((assessment: any) => ({
             ...assessment,
-            assignedClasses: [], //empty
-            modeSettings: {}, //empty
             questions: assessment.questions || 0,
             type: assessment.type || 'Assessment',
             status: assessment.status || 'ongoing'
