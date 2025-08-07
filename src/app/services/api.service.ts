@@ -237,6 +237,18 @@ export class ApiService {
     return this.http.post(`${this.apiUrl}/assign/specifics`, data);
   }
 
+  skillScraper(id: string) {
+    return this.http.get(`${this.apiUrl}/students/evaluate/${id}/getData`);
+  }
+
+  skillSearchScrapper(assessmentsWithWrongQuestions: any) {
+    return this.http.post(`${this.aiUrl}/skill-evaluator`, { assessmentsWithWrongQuestions });
+  }
+
+  skillAIsearch(search_queries: any) {
+    return this.http.post(`${this.aiUrl}/search-multiple`, { search_queries });
+  }
+
 
   // Student assessment page
 

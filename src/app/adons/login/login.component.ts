@@ -165,7 +165,7 @@ export class LoginComponent implements OnInit {
 
       }, error: (error: any) => {
         console.error(error);
-        this.errorMessage = 'Failed to fetch platform wide settings';
+        this.errorMessage = 'PRISM server is experiencing technical issues. Please try again later.';
       }
     })
   }

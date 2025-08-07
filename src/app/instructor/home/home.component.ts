@@ -349,7 +349,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
 
   createNewAssessment() {
-    this.router.navigate(['/instructor/generate']);
+    this.router.navigate(['/instructor/manage']);
   }
 
   addStudent() {

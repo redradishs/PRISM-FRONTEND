@@ -475,12 +475,13 @@
                         </div>
 
                         <div class="recommendations-section">
-                            <h2>Recommended Resources</h2>
+                            <h2>Gain deeeper understanding with these resources</h2>
                             <div *ngIf="improvementSkills.length > 0" class="resources-grid">
-                                <div *ngFor="let skill of improvementSkills.slice(0, 2)" class="resource-card">
-                                    <h3>{{skill.skillName}} Improvement</h3>
-                                    <p>Targeted resources and exercises to improve your {{skill.skillName}} skills.</p>
-                                    <a href="#" class="resource-link">Access Resource</a>
+                                <div *ngFor="let skill of recommendationList" class="resource-card">
+                                    <h3>{{skill.title}} Improvement</h3>
+                                    <p> {{skill.description }}.
+                                    </p>
+                                    <a href="{{skill.link}}" class="resource-link">Access Resource</a>
                                 </div>
                             </div>
                             <div *ngIf="improvementSkills.length === 0" class="text-center py-8">

@@ -111,8 +111,8 @@ export class ManageComponent implements OnInit {
   @HostListener('window:resize')
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
 
+  isPaginationLoading: boolean = false;
   private searchSubject = new Subject<string>();
-
   viewMode: 'grid' | 'list' = 'list';
 
   constructor(
@@ -143,7 +143,6 @@ export class ManageComponent implements OnInit {
         this.username = user.name;
         this.profile = user.profilePicture;
 
-        // Check for tab parameter
         this.route.queryParams.subscribe(params => {
           const tab = params['tab'];
           if (tab) {
@@ -232,7 +231,9 @@ export class ManageComponent implements OnInit {
   }
 
   loadAssessments(page: number = 1, append: boolean = false) {
-    this.isLoading = true;
+    if (!append) {
+      this.isLoading = true;
+    }
     const params = {
       page: page,
       limit: this.pagination.itemsPerPage
@@ -282,6 +283,7 @@ export class ManageComponent implements OnInit {
       },
       complete: () => {
         this.isLoading = false;
+        this.isPaginationLoading = false;
       }
     });
   }
@@ -312,6 +314,7 @@ export class ManageComponent implements OnInit {
   }
 
   onPageChange(page: number) {
+    this.isPaginationLoading = true;
     this.pagination.currentPage = page;
     this.loadAssessments(page, true);
   }
@@ -440,12 +443,11 @@ export class ManageComponent implements OnInit {
   }
 
 
-  //this function checks if the user has scrolled at the bottom then adds the loaded content
   @HostListener('window:scroll', [])
   onScroll() {
     const scrollPosition = window.scrollY + window.innerHeight;
     const documentHeight = document.documentElement.scrollHeight;
-    if (scrollPosition >= documentHeight - 100) { // 100px threshold
+    if (scrollPosition >= documentHeight - 100 && !this.isPaginationLoading && !this.isLoading) {
       if (this.pagination.currentPage < this.pagination.totalPages) {
         this.onPageChange(this.pagination.currentPage + 1);
       }

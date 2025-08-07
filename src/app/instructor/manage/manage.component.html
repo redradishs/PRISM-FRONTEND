@@ -11,7 +11,7 @@
                                 <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
                                 <button (click)="createNewAssessment()"
                                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2">
-                                    New Assessment
+                                    Assign Assessment
                                 </button>
                                 <button (click)="addStudent()"
                                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
@@ -64,7 +64,7 @@
                     <div class="publish-container">
                         <button class="publish-button" (click)="createNewAssessment()">
                             <i class="fas fa-plus"></i>
-                            Create Assessment
+                            Assign Assessment
                         </button>
                     </div>
                 </div>
@@ -164,7 +164,7 @@
                     </button>
                 </div>
 
-                <!-- Assessment Grid -->
+                <!-- list and grid view -->
                 <div class="assessment-grid" [class.list-view]="viewMode === 'list'"
                     *ngIf="filteredAssessments.length > 0">
                     <ng-container *ngIf="viewMode === 'list'; else gridView">
@@ -174,7 +174,7 @@
                                'border-public': assessment.type === 'Public Assessment',
                                'border-mastery': assessment.type === 'Mastery'
                              }">
-                            <!-- Icon: only show on desktop -->
+
                             <div class="list-icon-centered" [ngClass]="{
                               'icon-assessment': assessment.type === 'Assessment',
                               'icon-public': assessment.type === 'Public Assessment',
@@ -280,19 +280,19 @@
                             </div>
 
                             <div class="card-content">
-                                <!-- Category for all assessments -->
+                                <!-- category -->
                                 <div class="category-tag">
                                     <i class="fas fa-tag"></i>
                                     <span>{{assessment.category | titlecase}}</span>
                                 </div>
 
-                                <!-- Public Assessment Joining Code -->
+                                <!-- public joining code -->
                                 <div class="joining-code" *ngIf="assessment.type === 'Public Assessment'">
                                     <div class="code-label">Joining Code:</div>
                                     <div class="code-value">{{assessment.modeSettings.joiningCode || 'N/A'}}</div>
                                 </div>
 
-                                <!-- Status specific info -->
+                                <!-- stats info -->
                                 <ng-container [ngSwitch]="assessment.status">
                                     <div *ngSwitchCase="'scheduled'" class="status-box">
                                         <div class="status-box-content">
@@ -366,7 +366,26 @@
                         </div>
                     </ng-template>
                 </div>
+
+                <div *ngIf="isPaginationLoading" class="pagination-loading">
+                    <div class="pagination-spinner">
+                        <div class="spinner"></div>
+                        <span class="loading-text">Loading more assessments...</span>
+                    </div>
+                </div>
+
+
+                <div *ngIf="!isPaginationLoading && pagination.currentPage >= pagination.totalPages"
+                    class="end-of-list">
+                    <div class="end-indicator">
+                        <i class="fas fa-check-circle"></i>
+                        <span>You have reached the end of the list.</span>
+                    </div>
+                </div>
             </div>
+
+
+
         </div>
     </div>
 </div>

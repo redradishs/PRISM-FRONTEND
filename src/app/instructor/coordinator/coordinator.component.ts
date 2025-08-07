@@ -195,7 +195,7 @@ export class CoordinatorComponent {
   }
 
   createNewAssessment() {
-    this.router.navigate(['/instructor/generate']);
+    this.router.navigate(['/instructor/manage']);
   }
 
   addStudent() {

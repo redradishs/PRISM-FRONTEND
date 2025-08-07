@@ -133,8 +133,8 @@ export class StudHistoryComponent {
   @HostListener('window:resize')
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
 
+  isPaginationLoading: boolean = false;
   private searchSubject = new Subject<string>();
-
   viewMode: 'grid' | 'list' = 'list';
 
   constructor(
@@ -187,7 +187,6 @@ export class StudHistoryComponent {
     this.setInitialViewMode();
   }
 
-  //this function sets the view mode to what is LS, if not it falls to the default list mode
   setInitialViewMode() {
     const savedViewMode = localStorage.getItem('assessmentViewMode');
     if (savedViewMode === 'grid' || savedViewMode === 'list') {
@@ -211,7 +210,6 @@ export class StudHistoryComponent {
   }
 
   performSearch(query: string) {
-    console.log('Performing search for:', query);
     this.isLoading = true;
     const params = {
       page: this.pagination.currentPage,
@@ -258,13 +256,14 @@ export class StudHistoryComponent {
   }
 
   loadAssessments(page: number = 1, append: boolean = false) {
-    this.isLoading = true;
+    if (!append) {
+      this.isLoading = true;
+    }
     const params = {
       page: page,
       limit: this.pagination.itemsPerPage
     };
 
-    // If there's a search query of 3 or more characters, use search endpoint
     if (this.searchQuery.length >= 3) {
       this.performSearch(this.searchQuery);
       return;
@@ -308,6 +307,7 @@ export class StudHistoryComponent {
       },
       complete: () => {
         this.isLoading = false;
+        this.isPaginationLoading = false;
       }
     });
   }
@@ -338,6 +338,7 @@ export class StudHistoryComponent {
   }
 
   onPageChange(page: number) {
+    this.isPaginationLoading = true;
     this.pagination.currentPage = page;
     this.loadAssessments(page, true);
   }
@@ -485,11 +486,6 @@ export class StudHistoryComponent {
     // TODO: Implement deletion logic
     console.log('Deleting assessment:', assessment.assessmentId);
   }
-
-  addStudent() {
-    this.router.navigate(['instructor/students']);
-  }
-
   setViewMode(mode: 'grid' | 'list') {
     this.viewMode = mode;
     localStorage.setItem('assessmentViewMode', mode);
@@ -501,7 +497,7 @@ export class StudHistoryComponent {
   onScroll() {
     const scrollPosition = window.scrollY + window.innerHeight;
     const documentHeight = document.documentElement.scrollHeight;
-    if (scrollPosition >= documentHeight - 100) { // 100px threshold
+    if (scrollPosition >= documentHeight - 100 && !this.isPaginationLoading && !this.isLoading) {
       if (this.pagination.currentPage < this.pagination.totalPages) {
         this.onPageChange(this.pagination.currentPage + 1);
       }

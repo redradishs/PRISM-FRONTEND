@@ -87,11 +87,13 @@ export class EvaluateComponent implements OnInit {
   isLoadingSkills: boolean = false;
   isLoading: boolean = true;
   loadingError: string | null = null;
-  
+
   showAssignModal: boolean = false;
   isSubmitting: boolean = false;
   availableAssessments: any[] = [];
-  
+  scrappedSkill: any = {};
+  recommendationList: any[] = [];
+
   startDatePresets: DatePreset[] = [
     {
       label: 'Now',
@@ -115,7 +117,7 @@ export class EvaluateComponent implements OnInit {
     { label: '24hrs', hoursToAdd: 24 },
     { label: '1 week', hoursToAdd: 24 * 7 }
   ];
-  
+
   // Assignment data
   assignmentData: AssignmentData = {
     assessmentId: '',
@@ -134,11 +136,11 @@ export class EvaluateComponent implements OnInit {
     },
     maxAttempts: 1
   };
-  
+
   constructor(private router: Router, private api: ApiService, private auth: AuthService, private title: Title) {
     this.title.setTitle('PRISM | Evaluate');
     const navigation = this.router.getCurrentNavigation();
-    if(navigation?.extras?.state) {
+    if (navigation?.extras?.state) {
       this.studentId = navigation.extras.state['studentId'];
       this.loadAllData();
     } else {
@@ -154,6 +156,7 @@ export class EvaluateComponent implements OnInit {
       this.profile = user.profilePicture;
       this.assignmentData.createdBy = user.id;
       this.loadAvailableAssessments();
+      this.skillScrapper();
     });
   }
 
@@ -172,7 +175,7 @@ export class EvaluateComponent implements OnInit {
           studentData: ApiResponse<StudentData>;
           skills: ApiResponse<SkillSet>;
         };
-        
+
         this.assessments = typedResponse.assessments.data || [];
         this.studentData = typedResponse.studentData.data || {};
         this.skillSet = typedResponse.skills.data?.skillsPerformance || [];
@@ -190,22 +193,22 @@ export class EvaluateComponent implements OnInit {
   filterSkills(): void {
     switch (this.selectedSkillFilter) {
       case 'excellent':
-        this.filteredSkillSet = this.skillSet.filter(skill => 
+        this.filteredSkillSet = this.skillSet.filter(skill =>
           (skill.percentage || 0) >= 76 && (skill.percentage || 0) <= 100
         );
         break;
       case 'good':
-        this.filteredSkillSet = this.skillSet.filter(skill => 
+        this.filteredSkillSet = this.skillSet.filter(skill =>
           (skill.percentage || 0) >= 51 && (skill.percentage || 0) <= 75
         );
         break;
       case 'needs-improvement':
-        this.filteredSkillSet = this.skillSet.filter(skill => 
+        this.filteredSkillSet = this.skillSet.filter(skill =>
           (skill.percentage || 0) >= 1 && (skill.percentage || 0) <= 50
         );
         break;
       case 'no-data':
-        this.filteredSkillSet = this.skillSet.filter(skill => 
+        this.filteredSkillSet = this.skillSet.filter(skill =>
           (skill.percentage || 0) === 0
         );
         break;
@@ -217,42 +220,42 @@ export class EvaluateComponent implements OnInit {
   }
 
   get improvementSkills() {
-    return this.skillSet.filter(skill => 
+    return this.skillSet.filter(skill =>
       (skill.percentage || 0) >= 1 && (skill.percentage || 0) <= 75
-    ).sort((a, b) => (a.percentage || 0) - (b.percentage || 0)); 
+    ).sort((a, b) => (a.percentage || 0) - (b.percentage || 0));
   }
 
-getRelativeTime(dateString: string): string {
-  const dateUtc = new Date(dateString); 
-  
-  const now = new Date();
-  const nowPh = new Date(now.getTime() + (8 * 60 * 60 * 1000)); 
-  
-  // console.log('Now PH:', nowPh.toISOString());
-  // console.log('Date UTC:', dateUtc.toISOString());
+  getRelativeTime(dateString: string): string {
+    const dateUtc = new Date(dateString);
 
-  const diffInSeconds = Math.floor((nowPh.getTime() - dateUtc.getTime()) / 1000);
+    const now = new Date();
+    const nowPh = new Date(now.getTime() + (8 * 60 * 60 * 1000));
 
-  if (diffInSeconds < 0) {
-    return 'Just now'; 
+    // console.log('Now PH:', nowPh.toISOString());
+    // console.log('Date UTC:', dateUtc.toISOString());
+
+    const diffInSeconds = Math.floor((nowPh.getTime() - dateUtc.getTime()) / 1000);
+
+    if (diffInSeconds < 0) {
+      return 'Just now';
+    }
+
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+
+    if (diffInDays > 30) {
+      return dateUtc.toUTCString();
+    } else if (diffInDays > 0) {
+      return diffInDays === 1 ? '1 day ago' : `${diffInDays} days ago`;
+    } else if (diffInHours > 0) {
+      return diffInHours === 1 ? '1 hour ago' : `${diffInHours} hours ago`;
+    } else if (diffInMinutes > 0) {
+      return diffInMinutes === 1 ? '1 minute ago' : `${diffInMinutes} minutes ago`;
+    } else {
+      return 'Just now';
+    }
   }
-
-  const diffInMinutes = Math.floor(diffInSeconds / 60);
-  const diffInHours = Math.floor(diffInMinutes / 60);
-  const diffInDays = Math.floor(diffInHours / 24);
-
-  if (diffInDays > 30) {
-    return dateUtc.toUTCString(); 
-  } else if (diffInDays > 0) {
-    return diffInDays === 1 ? '1 day ago' : `${diffInDays} days ago`;
-  } else if (diffInHours > 0) {
-    return diffInHours === 1 ? '1 hour ago' : `${diffInHours} hours ago`;
-  } else if (diffInMinutes > 0) {
-    return diffInMinutes === 1 ? '1 minute ago' : `${diffInMinutes} minutes ago`;
-  } else {
-    return 'Just now';
-  }
-}
 
 
 
@@ -265,11 +268,11 @@ getRelativeTime(dateString: string): string {
     return name[0].toUpperCase();
   }
 
-  assessmentDetails(i: any){
+  assessmentDetails(i: any) {
     console.log("This is the data:", i)
     this.router.navigate(['/instructor/response'], {
-      state: {studentId: this.studentId, assessmentId: i._id, show: false}
-    }); 
+      state: { studentId: this.studentId, assessmentId: i._id, show: false }
+    });
   }
 
   checkMobile(): void {
@@ -371,12 +374,12 @@ getRelativeTime(dateString: string): string {
     if (this.assignmentData.startDate && this.assignmentData.dueDate) {
       const startTime = new Date(this.assignmentData.startDate).getTime();
       const dueTime = new Date(this.assignmentData.dueDate).getTime();
-      
+
       if (dueTime <= startTime) {
         const start = new Date(this.assignmentData.startDate);
         start.setMinutes(start.getMinutes() + 10);
         this.assignmentData.dueDate = this.formatDate(start);
-        
+
         Swal.fire({
           title: 'Date Adjusted',
           text: 'Due date has been adjusted to be at least 10 minutes after start date.',
@@ -398,25 +401,25 @@ getRelativeTime(dateString: string): string {
   }
 
   canSubmitAssignment(): boolean {
-    const hasRequiredFields = !!(this.assignmentData.assessmentId && 
-                             this.assignmentData.startDate && 
-                             this.assignmentData.dueDate);
-    
-    const hasValidDates = !!(this.assignmentData.startDate && 
-                         this.assignmentData.dueDate &&
-                         new Date(this.assignmentData.dueDate) > new Date(this.assignmentData.startDate));
-    
-    const hasMasteryScore = this.assignmentData.assignmentMode !== 'mastery' || 
-                           !!(this.assignmentData.modeSettings.masteryScore && 
-                            this.assignmentData.modeSettings.masteryScore > 0 &&
-                            this.assignmentData.modeSettings.masteryScore <= this.getSelectedAssessmentPoints());
-    
+    const hasRequiredFields = !!(this.assignmentData.assessmentId &&
+      this.assignmentData.startDate &&
+      this.assignmentData.dueDate);
+
+    const hasValidDates = !!(this.assignmentData.startDate &&
+      this.assignmentData.dueDate &&
+      new Date(this.assignmentData.dueDate) > new Date(this.assignmentData.startDate));
+
+    const hasMasteryScore = this.assignmentData.assignmentMode !== 'mastery' ||
+      !!(this.assignmentData.modeSettings.masteryScore &&
+        this.assignmentData.modeSettings.masteryScore > 0 &&
+        this.assignmentData.modeSettings.masteryScore <= this.getSelectedAssessmentPoints());
+
     return hasRequiredFields && hasValidDates && hasMasteryScore;
   }
 
   applyStartDatePreset(preset: DatePreset) {
     this.assignmentData.startDate = this.formatDate(preset.startDate);
-    
+
     if (this.assignmentData.dueDate) {
       const startDateTime = new Date(this.assignmentData.startDate);
       const newDueDate = new Date(startDateTime);
@@ -427,7 +430,7 @@ getRelativeTime(dateString: string): string {
 
   applyDueDatePreset(preset: { label: string; hoursToAdd: number }) {
     console.log('Applying due date preset:', preset.label, 'hours to add:', preset.hoursToAdd);
-    
+
     if (!this.assignmentData.startDate) {
       const now = new Date();
       const newDueDate = new Date(now.getTime() + preset.hoursToAdd * 60 * 60 * 1000);
@@ -439,6 +442,41 @@ getRelativeTime(dateString: string): string {
       this.assignmentData.dueDate = this.formatDate(newDueDate);
       console.log('Due date set from start date:', this.assignmentData.dueDate);
     }
+  }
+
+  skillScrapper() {
+    this.api.skillScraper(this.studentId).subscribe({
+      next: (resp: any) => {
+        console.log("This is the scrapped skills:", resp);
+        this.scrappedSkill = resp.data;
+        const searchData = this.scrappedSkill.assessmentsWithWrongQuestions;
+        this.generateSearch(searchData);
+      }, error: (error: any) => {
+        console.error('Error scraping skills:', error);
+      }
+    })
+  }
+
+  generateSearch(searchData: any) {
+    console.log('Search data:', searchData);
+    this.api.skillSearchScrapper(searchData).subscribe({
+      next: (resp: any) => {
+        const searchData = resp.search_queries;
+        this.outputRecommendations(searchData)
+      }, error: (error: any) => {
+        console.error('Error searching skills:', error);
+      }
+    })
+  }
+
+  outputRecommendations(searchData: any) {
+    this.api.skillAIsearch(searchData).subscribe({
+      next: (resp: any) => {
+        this.recommendationList = resp.results;
+      }, error: (error: any) => {
+        console.error('Error searching skills:', error);
+      }
+    })
   }
 
   async assignAssessment() {
@@ -455,7 +493,7 @@ getRelativeTime(dateString: string): string {
 
     try {
       const response = await this.api.assignSpecific(this.assignmentData).toPromise();
-      
+
       Swal.fire({
         icon: 'success',
         title: 'Assessment Assigned',
@@ -468,7 +506,7 @@ getRelativeTime(dateString: string): string {
       });
 
       this.closeAssignModal();
-      
+
     } catch (error: any) {
       console.error('Error assigning assessment:', error);
       Swal.fire({

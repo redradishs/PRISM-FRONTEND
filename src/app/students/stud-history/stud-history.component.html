@@ -9,11 +9,11 @@
                         <div class="flex items-center">
                             <div class="hidden md:flex items-center mr-4">
                                 <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
-                                <button [routerLink]="['/students/home']"
+                                <button [routerLink]="['/student/home']"
                                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2">
                                     Home
                                 </button>
-                                <button (click)="addStudent()"
+                                <button [routerLink]="['/student/profile']"
                                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
                                     Profile
                                 </button>
@@ -62,7 +62,7 @@
                     </div>
 
                     <div class="publish-container">
-                        <button class="publish-button" [routerLink]="['/students/classes']">
+                        <button class="publish-button" [routerLink]="['/student/classes']">
                             <i class="fas fa-plus"></i>
                             My Classes
                         </button>
@@ -156,7 +156,7 @@
                         selectedStatus ? 'No ' + selectedStatus + ' assessments available.' :
                         'No assessments found.'}}
                     </p>
-                    <button class="publish-button" [routerLink]="['/students/classes']">
+                    <button class="publish-button" [routerLink]="['/student/classes']">
                         <i class="fas fa-users"></i>
                         Classes
                     </button>
@@ -425,6 +425,21 @@
                             </div>
                         </div>
                     </ng-template>
+                    <div *ngIf="isPaginationLoading" class="pagination-loading">
+                        <div class="pagination-spinner">
+                            <div class="spinner"></div>
+                            <span class="loading-text">Loading more assessments...</span>
+                        </div>
+                    </div>
+
+
+                    <div *ngIf="!isPaginationLoading && pagination.currentPage >= pagination.totalPages"
+                        class="end-of-list">
+                        <div class="end-indicator">
+                            <i class="fas fa-check-circle"></i>
+                            <span>You have reached the end of the list.</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
