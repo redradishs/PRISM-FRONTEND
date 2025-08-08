@@ -200,12 +200,14 @@
                             <span class="badge code">{{c.classCode}}</span>
                             <span class="badge code">{{c.className}}</span>
                         </div>
-                        <h1 class="class-title">{{c.className}}</h1>
-                        <div class="instructor">
-                            <img [src]="c.instructor.profilePicture" alt="{{c.instructor}}" class="instructor-img">
-                            <div>
-                                <span class="instructor-name">{{c.instructor.name}}</span>
-                                <span class="instructor-role">{{c.instructor.role || 'Instructor'}}</span>
+                        <div class="mobile-head">
+                            <h1 class="class-title">{{c.className}}</h1>
+                            <div class="instructor">
+                                <img [src]="c.instructor.profilePicture" alt="{{c.instructor}}" class="instructor-img">
+                                <div>
+                                    <span class="instructor-name">{{c.instructor.name}}</span>
+                                    <span class="instructor-role">{{c.instructor.role || 'Instructor'}}</span>
+                                </div>
                             </div>
                         </div>
                         <div class="performance-card">

@@ -676,7 +676,7 @@
 
 .classes-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1rem;
   margin: 0.50rem auto;
   padding: 0 0.20rem;
@@ -687,7 +687,7 @@
   border-radius: 1.2rem;
   box-shadow: 0 8px 32px rgba(80, 0, 80, 0.10), 0 1.5px 4px rgba(80,0,80,0.04);
   border-top: 5px solid  #8b5cf6;
-  padding: 1rem 1rem 1rem 1rem;
+  padding: 0.9rem 0.9rem 0.9rem 0.9rem;
   margin: 0.50rem 0;
   display: flex;
   flex-direction: column;
@@ -763,13 +763,12 @@
 
 @media (max-width: 1024px) {
   .classes-container {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   }
 }
 
 /* Clean up mobile overrides, use only @media (max-width: 640px) */
 @media (max-width: 640px) {
-
   .main-content {
     padding: 0.80rem 0.40rem;
   }
@@ -777,70 +776,36 @@
     grid-template-columns: 1fr;
     padding: 0;
     max-width: 100%;
+    gap: 0.5rem;
   }
   .card-grid {
-    border-radius: 0.7rem;
+    border-radius: 0.9rem;
     padding: 0.7rem 0.7rem;
-    margin: 0.20rem 0;
-    box-shadow: 0 2px 8px rgba(80,0,80,0.08);
-  }
-  .titlebar {
-    display: flex;
-    gap: 0.2rem;
-    margin-bottom: 0.1rem;
-  }
-  .class-title {
-    font-size: 1rem;
-    margin: 0.2rem 0 0.1rem 0;
-  }
-  .instructor {
+    margin: 0.15rem 0;
+    box-shadow: 0 4px 14px rgba(80,0,80,0.10);
     gap: 0.5rem;
-    margin-bottom: 0.2rem;
   }
-  .performance-card {
-    padding: 0.5rem 0.5rem;
-    border-radius: 0.5rem;
-    gap: 0.1rem;
-    margin-bottom: 0.2rem;
+  /* Hide badges (duplicated info) on mobile */
+  .titlebar { display: none; }
+  .class-title { font-size: 0.98rem; margin: 0 0 0.05rem 0; }
+  .instructor {
+    gap: 0.45rem;
+    margin-bottom: 0.05rem;
   }
+  .instructor-img { width: 32px; height: 32px; }
+  .instructor-role { display: none; }
+  .performance-card { padding: 0.45rem 0.55rem; border-radius: 0.6rem; gap: 0.12rem; margin-bottom: 0.1rem; }
   .performance-label,
   .performance-value {
-    font-size: 0.95rem;
-  }
-  .performance-detail {
-    font-size: 0.8rem;
-  }
-  .updates {
-    padding: 0.4rem 0.5rem;
-    font-size: 0.85rem;
-    border-radius: 0.5rem;
-    margin-bottom: 0.2rem;
-  }
-  .stats {
-    gap: 0.3rem;
-    margin-bottom: 0.2rem;
-  }
-  .stat {
-    padding: 0.3rem 0.5rem;
-    border-radius: 0.3rem;
-    min-width: 40px;
-  }
-  .actions {
-    gap: 0.2rem;
-    margin-top: 0.2rem;
-  }
-  .enter-class {
-    font-size: 0.95rem;
-    padding: 0.4rem 0;
-    border-radius: 0.3rem;
-  }
-  .more {
-    height: 28px;
-    width: 28px;
     font-size: 0.9rem;
-    padding: 0.3rem;
-    border-radius: 50%;
   }
+  .performance-detail { display: none; }
+  .updates { display: none; }
+  /* to be removed if not looking good */
+  .stats { display: none !important; }  
+  .actions { display: flex; gap: 0.2rem; }
+  .enter-class { font-size: 0.85rem; padding: 0.35rem 0; }
+  .more { height: 26px; width: 26px; font-size: 0.85rem; padding: 0.25rem; border-radius: 50%; }
 }
 
 /* BADGES */
@@ -1298,5 +1263,48 @@
     font-size: 0.90rem;
     gap: 0.5rem;
   }
+}
+
+/* Mobile: compress stats cards into a single row */
+@media (max-width: 480px) {
+  .stats-grid { gap: 0.5rem; }
+  .card-gradient { min-height: 96px; }
+  .card-content { padding: 0.55rem 0.7rem; }
+  .card-header { display: block; }
+  .card-info { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+  .card-title-container { margin-bottom: 0; gap: 0.5rem; }
+  .icon-container { width: 2rem; height: 2rem; }
+  .card-title { font-size: 0.95rem; }
+  .class-count { font-size: 1.6rem; margin: 0; }
+  .class-status { display: none; }
+  .decorative-circle, .decorative-circles { display: none; }
+
+  /* Search + Apply: compact single-row mobile layout */
+  .search-card { margin: 0.5rem auto; }
+  .search-card-content { padding: 0.65rem; }
+  .blur-circle { display: none; }
+  .search-input-group { flex-direction: row; gap: 0.4rem; align-items: stretch; }
+  .search-wrapper { flex: 1; min-width: 0; }
+  .search-icon { width: 1rem; height: 1rem; left: 0.75rem; }
+  .search-input { height: 2.25rem; padding-left: 2.5rem; font-size: 0.9rem; }
+  .apply-group { display: flex; align-items: stretch; }
+  .apply-group form { flex-direction: row; }
+  .code-input { width: 6.5rem; height: 2.25rem; font-size: 0.9rem; }
+  .apply-button { height: 2.25rem; padding: 0 0.75rem; font-size: 0.9rem; }
+
+  .mobile-head { display: flex; justify-content: space-between; padding: 0.3rem; align-items: center;}
+  /* Tabs row spacing (fix wrapper class name) */
+  .tabs { padding: 0.3rem; }
+  .tab-switches { padding: 0.25rem; gap: 0.25rem; }
+  .tab-switch { padding: 0.35rem 0.6rem; font-size: 0.75rem; }
+  .views { gap: 0.25rem; }
+  .view-button { padding: 0.35rem; }
+  .view-button svg { width: 1rem; height: 1rem; }
+}
+
+/* Ultra-small devices: stack apply controls under search */
+@media (max-width: 360px) {
+  .search-input-group { flex-direction: column; gap: 0.5rem; }
+  .code-input, .apply-button { width: 100%; }
 }
 

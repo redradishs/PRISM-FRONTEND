@@ -176,7 +176,7 @@ export class StudClassesComponent implements OnInit {
             color: this.getBadgeColor(i)
           };
         });
-        console.log(this.classes);
+        // console.log(this.classes);
       },
       error: (err: any) => {
         console.log(err);
@@ -188,7 +188,7 @@ export class StudClassesComponent implements OnInit {
     this.api.pendingApplications(this.userId, this.page, this.limit).subscribe({
       next: (resp: any) => {
         this.pendingApplications = resp.data.result;
-        console.log(this.pendingApplications);
+        // console.log(this.pendingApplications);
       }, error: (err: any) => {
         console.log(err);
       }
@@ -215,7 +215,7 @@ export class StudClassesComponent implements OnInit {
         }
         this.api.cancelApplication(data).subscribe({
           next: (resp: any) => {
-            console.log(resp);
+            // console.log(resp);
             Swal.fire({
               title: 'Success',
               text: 'Your application has been cancelled',
@@ -270,7 +270,7 @@ export class StudClassesComponent implements OnInit {
     this.api.searchClasses(this.userId, this.searchControl.value || '', 1, 5).subscribe({
       next: (resp: any) => {
         this.classes = resp.data.result;
-        console.log(this.classes);
+        // console.log(this.classes);
       }, error: (err: any) => {
         console.log(err);
       }
@@ -287,7 +287,7 @@ export class StudClassesComponent implements OnInit {
   }
 
   goToClassDetails(classObj: any) {
-    console.log(classObj);
+    // console.log(classObj);
     this.router.navigate(['/student/classes/details'], {
       state: { instructorId: classObj.instructor.id, classCode: classObj.classCode }
     })
@@ -303,7 +303,7 @@ export class StudClassesComponent implements OnInit {
       }
       this.api.joinClass(data).subscribe({
         next: (resp: any) => {
-          console.log(resp);
+          // console.log(resp);
           if (resp.remarks === "Success") {
             this.getStats();
             this.enrolledClasses();

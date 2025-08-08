@@ -62,8 +62,8 @@ export class StudentAssessmentsComponent implements OnInit {
     if (navigation?.extras?.state) {
       this.studentId = navigation.extras.state['studentId']
       this.classCode = navigation.extras.state['classCode']
-      console.log('Student ID:', this.studentId);
-      console.log('Class Code:', this.classCode);
+      // console.log('Student ID:', this.studentId);
+      // console.log('Class Code:', this.classCode);
 
       if (!this.studentId || !this.classCode) {
         this.router.navigate(['/instructor/students']);
@@ -78,7 +78,7 @@ export class StudentAssessmentsComponent implements OnInit {
       this.userId = user.id;
       this.username = user.name;
       this.profile = user.profilePicture;
-      console.log('User ID:', this.userId);
+      // console.log('User ID:', this.userId);
       this.studentData();
       this.completedList();
       this.upcomingList();
@@ -96,7 +96,7 @@ export class StudentAssessmentsComponent implements OnInit {
         status: i.status
       }))
     ]
-    console.log('Assessments:', this.assessments);
+    // console.log('Assessments:', this.assessments);
     this.filterAssessments();
   }
 
@@ -132,7 +132,7 @@ export class StudentAssessmentsComponent implements OnInit {
     this.api.studentStatsData(this.userId, this.classCode, this.studentId).subscribe({
       next: (resp: any) => {
         this.studentStats = resp.data;
-        console.log('Student Stats:', this.studentStats);
+        // console.log('Student Stats:', this.studentStats);
         this.isLoading = false;
       }, error: (error: any) => {
         console.error('Error retrieving student data:', error);
@@ -145,7 +145,7 @@ export class StudentAssessmentsComponent implements OnInit {
       next: (resp: any) => {
         this.completedAssessments = resp.data.completedAssessments;
         this.loadAssessments();
-        console.log('Completed assessments:', this.completedAssessments);
+        // console.log('Completed assessments:', this.completedAssessments);
       }, error: (error: any) => {
         console.error('Error retrieving completed assessments:', error);
       }
@@ -157,7 +157,7 @@ export class StudentAssessmentsComponent implements OnInit {
       next: (resp: any) => {
         this.upcomingAssessments = resp.data;
         this.loadAssessments();
-        console.log('Upcoming assessments:', this.upcomingAssessments);
+        // console.log('Upcoming assessments:', this.upcomingAssessments);
       }, error: (error: any) => {
         console.error('Error retrieving completed assessments:', error);
       }

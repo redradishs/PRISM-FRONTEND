@@ -2389,4 +2389,29 @@
     }
 }
   
+
+.save-final {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  justify-items: center;
+  margin-top: 2rem;
+}
+
+.final-save {
+  /* display: inline-flex; */
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #4c44ed;
+  color: white;
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
   

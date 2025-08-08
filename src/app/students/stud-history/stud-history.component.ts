@@ -161,7 +161,7 @@ export class StudHistoryComponent {
   ngOnInit() {
     this.auth.getCurrentUser().subscribe((user) => {
       if (user) {
-        console.log('User ID:', user.id);
+        // console.log('User ID:', user.id);
         this.userId = user.id;
         this.username = user.name;
         this.profile = user.profilePicture;
@@ -205,7 +205,7 @@ export class StudHistoryComponent {
   onSearch(event: any) {
     const query = event.target.value.trim();
     this.searchQuery = query;
-    console.log('Search query:', query, 'Length:', query.length);
+    // console.log('Search query:', query, 'Length:', query.length);
     this.searchSubject.next(query);
   }
 
@@ -223,9 +223,8 @@ export class StudHistoryComponent {
 
     this.api.searchAssessments(this.userId, query, this.pagination.currentPage, this.pagination.itemsPerPage).subscribe({
       next: (response: any) => {
-        console.log('Search response:', response);
+        // console.log('Search response:', response);
         if (response.remarks === 'Success') {
-          // Handle the different response format for search
           this.assessments = response.data.map((assessment: any) => ({
             ...assessment,
             assignedClasses: [],
@@ -421,7 +420,7 @@ export class StudHistoryComponent {
   }
 
   gotoResult(assessment: any) {
-    console.log('Navigating to result for:', assessment.type);
+    // console.log('Navigating to result for:', assessment.type);
     if (assessment.status === 'completed' && assessment.studentStatus === 'not_started') {
       Swal.fire({
         icon: 'info',
@@ -452,7 +451,7 @@ export class StudHistoryComponent {
       });
     }
     else if (assessment.type === 'Assessment' || assessment.type === 'Public Assessment') {
-      console.log('Navigating to result for:', assessment.id);
+      // console.log('Navigating to result for:', assessment.id);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       this.router.navigate(['/student/assessment/result'], {
         state: { assessmentId: assessment.id }
@@ -478,13 +477,11 @@ export class StudHistoryComponent {
   }
 
   duplicateAssessment(assessment: Assessment) {
-    // TODO: Implement duplication logic
-    console.log('Duplicating assessment:', assessment.assessmentId);
+    // console.log('Duplicating assessment:', assessment.assessmentId);
   }
 
   deleteAssessment(assessment: Assessment) {
-    // TODO: Implement deletion logic
-    console.log('Deleting assessment:', assessment.assessmentId);
+    // console.log('Deleting assessment:', assessment.assessmentId);
   }
   setViewMode(mode: 'grid' | 'list') {
     this.viewMode = mode;

@@ -225,7 +225,7 @@ export class AssessmentComponent {
   ngOnInit(): void {
     this.auth.getCurrentUser().subscribe((user) => {
       if (user) {
-        console.log('User ID:', user.id);
+        // console.log('User ID:', user.id);
         this.userId = user.id;
         this.username = user.name;
         this.assignData.createdBy = user.id;
@@ -287,7 +287,7 @@ export class AssessmentComponent {
     this.api.getSpecifiedClasses(id).subscribe({
       next: (resp: any) => {
         this.classes = resp.data;
-        console.log("These are the classes", this.classes);
+        // console.log("These are the classes", this.classes);
       },
       error: (error) => {
         console.log(error);
@@ -439,7 +439,7 @@ export class AssessmentComponent {
     } else {
       this.activeDropdown = assessmentId;
     }
-    console.log('Active dropdown is now:', this.activeDropdown);
+    // console.log('Active dropdown is now:', this.activeDropdown);
   }
 
   @HostListener('document:click', ['$event'])
@@ -472,13 +472,13 @@ export class AssessmentComponent {
 
   openAssignModal(assessmentId: string) {
     const assessment = this.ownAssessments.find(a => a._id === assessmentId);
-    console.log("Assessment found:", assessment);
-    console.log("All assessments:", this.ownAssessments);
+    // console.log("Assessment found:", assessment);
+    // console.log("All assessments:", this.ownAssessments);
     let totalPoints = 0;
     if (assessment && typeof assessment.totalPoints === 'number') {
       totalPoints = assessment.totalPoints;
     }
-    console.log("Total points:", totalPoints);
+    // console.log("Total points:", totalPoints);
 
     const baseData = {
       assessmentId: assessmentId,
@@ -515,7 +515,7 @@ export class AssessmentComponent {
       };
     }
 
-    console.log("Final assignData:", this.assignData);
+    // console.log("Final assignData:", this.assignData);
     this.showAssignModal = true;
   }
 
@@ -616,7 +616,7 @@ export class AssessmentComponent {
   runUpdates() {
     this.api.getActiveAssessments(this.userId).subscribe({
       next: (resp: any) => {
-        console.log('Active assessments', resp.data);
+        // console.log('Active assessments', resp.data);
       },
       error: (error: any) => {
         console.error('Error getting active assessments', error);

@@ -445,7 +445,7 @@
                                             <span class="answer-label">Correct Answer:</span>
                                             <!-- For string answers -->
                                             <div class="answer-content" *ngIf="!Array.isArray(q.correctAnswer)">
-                                                {{q.correctAnswer}}
+                                                {{q.correctAnswer.charAt(0).toUpperCase() + q.correctAnswer.slice(1)}}
                                             </div>
                                             <!-- For array answers -->
                                             <div class="answer-content"

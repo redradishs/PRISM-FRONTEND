@@ -118,6 +118,11 @@
                             <input id="score" type="number" class="basicform-input" placeholder="75"
                                 [(ngModel)]="assessmentData.passingScore">
                         </div>
+
+                        <div *ngIf="questions.length > 0 && assessmentData.title !== '' && this.getSelectedCount() > 0"
+                            class="save-final">
+                            <button class="final-save" (click)="confirmPublish()">SAVE ASSESSMENT</button>
+                        </div>
                     </div>
 
                     <span class="error-message">{{ basicInfoError }}</span>
@@ -130,6 +135,8 @@
                             administrator.</span>
                     </div>
                 </div>
+
+
                 <!-- Generate Forms Section -->
                 <div *ngIf="step === 1 && enableGeneration" class="genform-container">
                     <div class="genform-header">
@@ -333,6 +340,7 @@
 
                     </div>
                 </div>
+
 
 
 

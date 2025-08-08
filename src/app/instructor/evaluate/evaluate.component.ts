@@ -269,7 +269,7 @@ export class EvaluateComponent implements OnInit {
   }
 
   assessmentDetails(i: any) {
-    console.log("This is the data:", i)
+    // console.log("This is the data:", i)
     this.router.navigate(['/instructor/response'], {
       state: { studentId: this.studentId, assessmentId: i._id, show: false }
     });
@@ -301,7 +301,7 @@ export class EvaluateComponent implements OnInit {
     this.api.getOwnAssessments(this.userId).subscribe({
       next: (resp: any) => {
         this.availableAssessments = resp.data || [];
-        console.log('Available assessments:', this.availableAssessments);
+        // console.log('Available assessments:', this.availableAssessments);
       },
       error: (err) => {
         console.error('Error loading assessments:', err);
@@ -429,25 +429,25 @@ export class EvaluateComponent implements OnInit {
   }
 
   applyDueDatePreset(preset: { label: string; hoursToAdd: number }) {
-    console.log('Applying due date preset:', preset.label, 'hours to add:', preset.hoursToAdd);
+    // console.log('Applying due date preset:', preset.label, 'hours to add:', preset.hoursToAdd);
 
     if (!this.assignmentData.startDate) {
       const now = new Date();
       const newDueDate = new Date(now.getTime() + preset.hoursToAdd * 60 * 60 * 1000);
       this.assignmentData.dueDate = this.formatDate(newDueDate);
-      console.log('Due date set from current time:', this.assignmentData.dueDate);
+      // console.log('Due date set from current time:', this.assignmentData.dueDate);
     } else {
       const startDateTime = new Date(this.assignmentData.startDate);
       const newDueDate = new Date(startDateTime.getTime() + preset.hoursToAdd * 60 * 60 * 1000);
       this.assignmentData.dueDate = this.formatDate(newDueDate);
-      console.log('Due date set from start date:', this.assignmentData.dueDate);
+      // console.log('Due date set from start date:', this.assignmentData.dueDate);
     }
   }
 
   skillScrapper() {
     this.api.skillScraper(this.studentId).subscribe({
       next: (resp: any) => {
-        console.log("This is the scrapped skills:", resp);
+        // console.log("This is the scrapped skills:", resp);
         this.scrappedSkill = resp.data;
         const searchData = this.scrappedSkill.assessmentsWithWrongQuestions;
         this.generateSearch(searchData);
@@ -458,7 +458,7 @@ export class EvaluateComponent implements OnInit {
   }
 
   generateSearch(searchData: any) {
-    console.log('Search data:', searchData);
+    // console.log('Search data:', searchData);
     this.api.skillSearchScrapper(searchData).subscribe({
       next: (resp: any) => {
         const searchData = resp.search_queries;

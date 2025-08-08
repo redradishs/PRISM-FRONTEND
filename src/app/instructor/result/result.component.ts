@@ -135,9 +135,9 @@ export class ResultComponent implements OnInit, OnDestroy {
       ]).finally(() => {
         // this.isLoading = false;
       });
-      console.log('Assessment ID:', this.assessmentId);
+      // console.log('Assessment ID:', this.assessmentId);
     } else {
-      console.log("Could not find the assessment ID");
+      // console.log("Could not find the assessment ID");
       this.router.navigate(['/instructor/assessment']);
     }
 
@@ -158,13 +158,11 @@ export class ResultComponent implements OnInit, OnDestroy {
   private setupScoreStream(): void {
     this.scoreStream = this.api.getScoreStream(this.assessmentId);
 
-    // Handle incoming messages
     this.scoreStream.onmessage = (event) => {
       this.ngZone.run(() => {
         try {
-          //convert to usable json object
           const data = JSON.parse(event.data);
-          console.log('Received update:', data);
+          // console.log('Received update:', data);
           if (data.type === 'connected') {
             console.log('PRISM: Connected to RealTime Updates');
             return;
@@ -175,9 +173,9 @@ export class ResultComponent implements OnInit, OnDestroy {
             if (studentIndex !== -1) {
               const student = this.allStudents[studentIndex];
               if (data.operation === 'insert') {
-                console.log(`${student.name} started the assessment`);
+                // console.log(`${student.name} started the assessment`);
               } else if (data.operation === 'update') {
-                console.log(`${student.name}'s score updated to ${data.student.score}`);
+                // console.log(`${student.name}'s score updated to ${data.student.score}`);
               }
 
               const updatedStudents = [...this.allStudents];
@@ -256,9 +254,9 @@ export class ResultComponent implements OnInit, OnDestroy {
           this.getItemAnalysis(this.assessmentId);
           this.insights = resp.data.insights;
         }
-        console.log('Assessment Title:', this.assessmentTitle);
-        console.log('Class Code:', this.classCode);
-        console.log('Class Overview:', this.classOverview);
+        // console.log('Assessment Title:', this.assessmentTitle);
+        // console.log('Class Code:', this.classCode);
+        // console.log('Class Overview:', this.classOverview);
       },
       error: (error) => {
         console.error('Error getting class overview:', error);
@@ -269,14 +267,14 @@ export class ResultComponent implements OnInit, OnDestroy {
   getItemAnalysis(id: string) {
     this.api.getQuestionAnalysis(this.assessmentId).subscribe({
       next: (resp: any) => {
-        console.log('Question Analysis Response:', resp.data);
+        // console.log('Question Analysis Response:', resp.data);
         this.itemAnalysis = resp.data;
         if (resp.data && resp.data.questions) {
           this.allQuestions = resp.data.questions;
           this.questions = [...this.allQuestions];
           this.questionLength = this.questions.length;
-          console.log('Questions loaded:', this.questions);
-          console.log('Question Length:', this.questionLength);
+          // console.log('Questions loaded:', this.questions);
+          // console.log('Question Length:', this.questionLength);
           this.getStudentPerformance(this.assessmentId);
         }
       },
@@ -291,14 +289,14 @@ export class ResultComponent implements OnInit, OnDestroy {
       next: (resp: any) => {
         this.topPerforming = resp.data.studentPerformance.topPerformers;
         this.leastPerforming = resp.data.studentPerformance.strugglingStudents;
-        console.log('Top Performing Students:', this.topPerforming);
-        console.log('Least Performing Students:', this.leastPerforming);
+        // console.log('Top Performing Students:', this.topPerforming);
+        // console.log('Least Performing Students:', this.leastPerforming);
 
         //////student performance 
         this.scoreDistribution = resp.data.scoreDistribution;
         this.submissionStatus = resp.data.submissionStatus;
         this.completionStatistics = resp.data.submissionStatus;
-        console.log('Class Overview:', this.classOverview);
+        // console.log('Class Overview:', this.classOverview);
         if (this.classOverview.status === 'completed' && this.insights.length === 0) {
           this.prismInsights();
         }
@@ -312,7 +310,7 @@ export class ResultComponent implements OnInit, OnDestroy {
   getClassResult(id: string) {
     this.api.getClassScore(this.assessmentId).subscribe({
       next: (resp: any) => {
-        console.log('Class Result:', resp.data);
+        // console.log('Class Result:', resp.data);
         this.classResult = resp.data;
         this.allStudents = resp.data.results;
         this.filteredStudents = [...this.allStudents];
@@ -369,17 +367,17 @@ export class ResultComponent implements OnInit, OnDestroy {
       );
     }
     this.questionLength = this.questions.length;
-    console.log('Filtered Questions:', this.questions);
-    console.log('Selected Type:', this.selectedQuestionType);
+    // console.log('Filtered Questions:', this.questions);
+    // console.log('Selected Type:', this.selectedQuestionType);
   }
 
 
   prismInsights() {
-    console.log('Binabatong data:', this.itemAnalysis);
+    // console.log('Binabatong data:', this.itemAnalysis);
     const formattedQuestions = this.allQuestions && this.allQuestions.length > 0
       ? '\n\nQuestion Data:\n' + JSON.stringify(this.allQuestions, null, 2)
       : '';
-    console.log('Formatted Questions:', formattedQuestions);
+    // console.log('Formatted Questions:', formattedQuestions);
     const prompt = 'Analyze the following assessment results and provide insights on the students\' performance and any areas of concern or success.' + formattedQuestions;
 
     this.api.analyzeResult(prompt).subscribe({

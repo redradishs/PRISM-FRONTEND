@@ -209,7 +209,7 @@ export class AssignAssessmentComponent implements OnInit {
       next: (resp: any) => {
         this.assessments = resp.data;
         this.loading = false;
-        console.log('Loaded assessments:', this.assessments);
+        // console.log('Loaded assessments:', this.assessments);
       },
       error: (err) => {
         this.error = 'Failed to load assessments';
@@ -225,7 +225,7 @@ export class AssignAssessmentComponent implements OnInit {
       next: (resp: any) => {
         this.classes = resp.data;
         this.loading = false;
-        console.log('Loaded classes:', this.classes);
+        // console.log('Loaded classes:', this.classes);
       },
       error: (err) => {
         this.error = 'Failed to load classes';
@@ -238,7 +238,7 @@ export class AssignAssessmentComponent implements OnInit {
   runUpdates() {
     this.api.getActiveAssessments(this.userId).subscribe({
       next: (resp: any) => {
-        console.log('Active assessments', resp.data);
+        // console.log('Active assessments', resp.data);
       },
       error: (error: any) => {
         console.error('Error getting active assessments', error);
@@ -546,7 +546,7 @@ export class AssignAssessmentComponent implements OnInit {
     }).subscribe({
       next: (response: any) => {
         const paginatedResponse = response as StudentPaginationResponse;
-        console.log('Paginated response:', paginatedResponse);
+        // console.log('Paginated response:', paginatedResponse);
         this.students = paginatedResponse.data.students;
         this.totalStudents = paginatedResponse.data.totalItems;
         this.totalPages = paginatedResponse.data.totalPages;

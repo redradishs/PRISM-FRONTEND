@@ -93,7 +93,7 @@ export class CoordinatorComponent {
         this.totalPages = resp.data.totalPages;
         this.currentPage = resp.data.currentPage;
         this.generatePageNumbers();
-        console.log('Student data:', resp.data);
+        // console.log('Student data:', resp.data);
       },
       error: (error) => {
         console.error(error);

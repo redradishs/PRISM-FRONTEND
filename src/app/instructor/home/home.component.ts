@@ -290,7 +290,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   viewAll(tab: string) {
-    console.log('Viewing all', tab);
+    // console.log('Viewing all', tab);
     this.router.navigate(['/instructor/manage'], { queryParams: { tab: tab } });
   }
 
@@ -322,7 +322,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.api.getOngoingDisputes(this.userId).subscribe({
       next: (resp: any) => {
         this.onGoingDisputes = resp.data;
-        console.log('Ongoing disputes:', this.onGoingDisputes);
+        // console.log('Ongoing disputes:', this.onGoingDisputes);
       }, error: (error) => {
         console.error('Error getting ongoing disputes:', error);
       }
@@ -339,7 +339,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.router.navigate(['/instructor/result'], {
         state: { assessmentId: ass.id }
       });
-      console.log('Going to result', ass.id);
+      // console.log('Going to result', ass.id);
     } else {
       this.router.navigate(['instructor/result/mastery'], {
         state: { assessmentId: ass.id }
@@ -453,7 +453,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   reviewReport(report: any) {
-    console.log('Reviewing report:', report);
+    // console.log('Reviewing report:', report);
     this.router.navigate(['/instructor/response'], {
       state: { studentId: report.studentId, assessmentId: report.assessmentId }
     });
@@ -461,7 +461,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   resolveReport(report: any) {
     if (confirm(`Mark this report from ${report.studentName} as resolved?`)) {
-      console.log('Resolving report:', report);
+      // console.log('Resolving report:', report);
       const index = this.onGoingDisputes.findIndex(d => d.id === report.id);
       if (index !== -1) {
         this.onGoingDisputes[index].status = 'Resolved';
@@ -662,7 +662,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       const dataIndex = event.active[0].index;
       if (this.charts && this.charts.length > dataIndex) {
         const selectedClass = this.charts[dataIndex];
-        console.log('Chart clicked:', selectedClass);
+        // console.log('Chart clicked:', selectedClass);
         this.navigateToClass(selectedClass.classCode);
       }
     }

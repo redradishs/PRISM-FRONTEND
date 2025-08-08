@@ -119,7 +119,7 @@ export class StudeAssessmentresultComponent implements OnInit {
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state) {
       this.assignedAssessmentId = navigation.extras.state['assessmentId'];
-      console.log('Assigned Assessment ID:', this.assignedAssessmentId);
+      // console.log('Assigned Assessment ID:', this.assignedAssessmentId);
     } else {
       console.error('No assigned assessment ID found in the router state.');
       this.router.navigate(['/student/dashboard']);
@@ -133,11 +133,11 @@ export class StudeAssessmentresultComponent implements OnInit {
       this.userId = user.id;
       this.username = user.name;
       this.profile = user.profilePicture;
-      console.log('Username:', this.username);
+      // console.log('Username:', this.username);
       this.enableStudentFeedback = user.enableStudentFeedback;
       this.getResult();
       this.getPerformancePerQuestion();
-      console.log('User ID:', this.userId);
+      // console.log('User ID:', this.userId);
     });
   }
 
@@ -181,7 +181,7 @@ export class StudeAssessmentresultComponent implements OnInit {
       next: (resp: any) => {
         if (resp.remarks === 'Success') {
           this.questionType = resp.data;
-          console.log('Performance per question:', this.questionType);
+          // console.log('Performance per question:', this.questionType);
         }
       },
       error: (error) => {
@@ -206,8 +206,8 @@ export class StudeAssessmentresultComponent implements OnInit {
 
           }
 
-          console.log('Analysis:', this.analysis);
-          console.log('Question overview:', resp.data);
+          // console.log('Analysis:', this.analysis);
+          // console.log('Question overview:', resp.data);
         }
       },
       error: (error) => {
@@ -311,7 +311,7 @@ export class StudeAssessmentresultComponent implements OnInit {
         }
         this.api.recordStartTime(data).subscribe({
           next: (resp: any) => {
-            console.log('Successfully recorded start time', resp);
+            // console.log('Successfully recorded start time', resp);
             if (this.result.mode !== 'mastery') {
               this.router.navigate(['student/assessment/take/normal'], {
                 state: { assessmentId: this.assignedAssessmentId }
@@ -389,10 +389,10 @@ export class StudeAssessmentresultComponent implements OnInit {
     const data = {
       questions: this.analysis
     }
-    console.log('This is the result of this assessment', this.analysis)
+    // console.log('This is the result of this assessment', this.analysis)
     this.ai.analyzeStudent(data).subscribe({
       next: (resp: any) => {
-        console.log('Successfully analyzed the assessment', resp);
+        // console.log('Successfully analyzed the assessment', resp);
         this.insights = resp.feedback;
         if (resp.search_queries) {
           this.search = resp.search_queries[0];
@@ -411,7 +411,7 @@ export class StudeAssessmentresultComponent implements OnInit {
     }
     this.ai.recommendedMaterials(data).subscribe({
       next: (resp: any) => {
-        console.log('Successfully searched for materials', resp);
+        // console.log('Successfully searched for materials', resp);
         this.searchResults = resp.results.slice(0, 4);
       },
       error: (error) => {
@@ -492,7 +492,7 @@ export class StudeAssessmentresultComponent implements OnInit {
 
     this.api.submitGradeDispute(reportData).subscribe({
       next: (response) => {
-        console.log('Successfully submitted grade dispute:', response);
+        // console.log('Successfully submitted grade dispute:', response);
         this.isSubmittingReport = false;
         this.closeReportModal();
         Swal.fire({

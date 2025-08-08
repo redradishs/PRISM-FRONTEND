@@ -44,9 +44,9 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
       this.studentId = navigation.extras.state['studentId'];
       this.assignedAssessmentId = navigation.extras.state['assessmentId'];
       this.show = navigation.extras.state['show'] !== false;
-      console.log('Show:', this.show);
-      console.log('Student ID:', this.studentId);
-      console.log('Assessment ID:', this.assignedAssessmentId);
+      // console.log('Show:', this.show);
+      // console.log('Student ID:', this.studentId);
+      // console.log('Assessment ID:', this.assignedAssessmentId);
       this.assessmentData();
       this.qandAs();
     }
@@ -57,7 +57,7 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
       this.userId = user.id;
       this.username = user.name;
       this.profile = user.profilePicture;
-      console.log('User ID:', this.userId);
+      // console.log('User ID:', this.userId);
     });
   }
 
@@ -82,8 +82,8 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
       next: (resp: any) => {
         this.assessmentDetails = resp.data;
         this.totalPoints = resp.data.assessment.totalPoints;
-        console.log('Assessment Attempts Length:', this.assessmentDetails.student.attemptsHistory.length);
-        console.log('Assessment data:', this.assessmentDetails);
+        // console.log('Assessment Attempts Length:', this.assessmentDetails.student.attemptsHistory.length);
+        // console.log('Assessment data:', this.assessmentDetails);
       }, error: (error) => {
         console.error('Error fetching assessment data:', error);
       }
@@ -94,7 +94,7 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
     this.api.getDetailedAnswers(this.assignedAssessmentId, this.studentId).subscribe({
       next: (resp: any) => {
         this.qna = resp.data;
-        console.log('Assessment data:', this.qna);
+        // console.log('Assessment data:', this.qna);
         this.isLoading = false;
       }, error: (error) => {
         console.error('Error fetching assessment data:', error);
@@ -125,7 +125,7 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
 
 
   openGradeModal(question: any): void {
-    console.log('Opening grade modal for:', question);
+    // console.log('Opening grade modal for:', question);
   }
 
   startGrading(question: any): void {

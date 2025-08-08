@@ -684,32 +684,20 @@ export class FinalGenerateAssessmentComponent {
           text: `${assessmentData.title} has been successfully created!`,
           icon: 'success',
           confirmButtonColor: '#6366f1',
+          showDenyButton: true,
+          denyButtonText: 'Assign',
+          denyButtonColor: '#10b981',
           customClass: {
-            confirmButton: 'swal2-confirm'
+            confirmButton: 'swal2-confirm',
+            denyButton: 'swal2-deny',
           }
-        }).then(() => {
-          this.assessmentData = {
-            title: '',
-            category: '',
-            passingScore: '70',
-          };
-
-          this.aiGeneration = {
-            topic: '',
-            difficulty: 'medium',
-            questionCount: '5',
-            instructions: '',
-          };
-
-          this.questions = [];
-          this.selectedTypes = [];
-          this.extractedText = '';
-          this.selectedFileName = '';
-          this.showUploadSection = false;
-          this.generated = false;
-          this.errorMessage = null;
-          this.basicInfoError = null;
-          this.nextId = 1;
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.resetForm();
+          } else if (result.isDenied) {
+            this.router.navigate(['/instructor/assign']);
+            this.resetForm();
+          }
         });
       },
       error: (error: any) => {
@@ -1145,5 +1133,30 @@ export class FinalGenerateAssessmentComponent {
       default:
         return type;
     }
+  }
+
+  private resetForm(): void {
+    this.assessmentData = {
+      title: '',
+      category: '',
+      passingScore: '70',
+    };
+
+    this.aiGeneration = {
+      topic: '',
+      difficulty: 'medium',
+      questionCount: '5',
+      instructions: '',
+    };
+
+    this.questions = [];
+    this.selectedTypes = [];
+    this.extractedText = '';
+    this.selectedFileName = '';
+    this.showUploadSection = false;
+    this.generated = false;
+    this.errorMessage = null;
+    this.basicInfoError = null;
+    this.nextId = 1;
   }
 }
