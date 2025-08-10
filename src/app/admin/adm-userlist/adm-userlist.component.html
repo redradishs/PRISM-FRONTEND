@@ -419,12 +419,27 @@
                         <label for="newPassword" class="block text-sm font-medium text-gray-700 mb-2">New
                             Password</label>
                         <div class="relative">
-                            <input type="password" id="newPassword" [(ngModel)]="newPassword" class="block w-full px-4 py-3 text-sm rounded-xl border-2 border-gray-200
+                            <input [type]="showPassword ? 'text' : 'password'" id="newPassword"
+                                [(ngModel)]="newPassword" class="block w-full px-4 py-3 pr-20 text-sm rounded-xl border-2 border-gray-200
                                        placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 
                                        focus:ring-blue-200 transition-all duration-200"
                                 placeholder="Enter new password" minlength="6">
-                            <div class="absolute inset-y-0 right-3 flex items-center">
+                            <div class="absolute inset-y-0 right-3 flex items-center space-x-2">
+                                <button type="button" (click)="togglePasswordVisibility()"
+                                    class="text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
+                                    [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+                                    <i class="fas" [class.fa-eye]="!showPassword"
+                                        [class.fa-eye-slash]="showPassword"></i>
+                                </button>
                                 <i class="fas fa-key text-gray-400"></i>
+                            </div>
+                        </div>
+                        <!-- Password strength indicator (optional) -->
+                        <div *ngIf="newPassword" class="mt-2">
+                            <div class="text-xs text-gray-600">
+                                Password length: {{newPassword.length}} characters
+                                <span *ngIf="newPassword.length < 6" class="text-red-500">(minimum 6 required)</span>
+                                <span *ngIf="newPassword.length >= 6" class="text-green-500">✓</span>
                             </div>
                         </div>
                     </div>

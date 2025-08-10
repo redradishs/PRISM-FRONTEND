@@ -30,6 +30,7 @@ export class AdmUserlistComponent {
   showBanUserModal: boolean = false;
   selectedUser: any = null;
   newPassword: string = '';
+  showPassword: boolean = false;
   selectedBanDuration: number = 60;
   banReason: string = 'Malicious Activity Detected';
 
@@ -310,20 +311,6 @@ export class AdmUserlistComponent {
     });
   }
 
-  resetPassword(userData: any) {
-    const data = {
-      newPassword: 'new-password'
-    }
-    this.api.resetUserPassword(userData.id, data).subscribe({
-      next: (resp: any) => {
-        console.log('Password reset successfully', resp.data);
-        this.getList();
-      }, error: (e: any) => {
-        console.error('Error resetting password', e);
-      }
-    })
-  }
-
   ngOnDestroy() {
     if (this.searchTimeout) {
       clearTimeout(this.searchTimeout);
@@ -340,6 +327,7 @@ export class AdmUserlistComponent {
     this.showResetPasswordModal = false;
     this.selectedUser = null;
     this.newPassword = '';
+    this.showPassword = false;
   }
 
   confirmResetPassword() {
@@ -360,15 +348,18 @@ export class AdmUserlistComponent {
           };
           this.api.resetUserPassword(this.selectedUser._id, data).subscribe({
             next: (resp: any) => {
-              console.log('Password reset successfully', resp.data);
-              this.getList();
-              this.closeResetPasswordModal();
               Swal.fire({
                 title: 'Password Reset!',
-                text: `Password has been reset for ${this.selectedUser.name}`,
+                text: `${this.selectedUser.name} password has been changed!`,
                 icon: 'success',
-                confirmButtonColor: '#6366f1'
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end',
+                timer: 2000,
+                timerProgressBar: true,
               });
+              this.getList();
+              this.closeResetPasswordModal();
             },
             error: (e: any) => {
               console.error('Error resetting password', e);
@@ -422,15 +413,19 @@ export class AdmUserlistComponent {
           this.api.banUser(this.selectedUser._id, data).subscribe({
             next: (resp: any) => {
               console.log('User banned successfully', resp.data);
-              this.getList();
-              this.getData();
-              this.closeBanUserModal();
               Swal.fire({
                 title: 'User Banned!',
                 text: `${this.selectedUser.name} has been banned for ${durationText}`,
                 icon: 'success',
-                confirmButtonColor: '#dc2626'
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end',
+                timer: 2000,
+                timerProgressBar: true,
               });
+              this.getList();
+              this.getData();
+              this.closeBanUserModal();
             },
             error: (error: any) => {
               console.error('Error banning user', error);
@@ -455,6 +450,10 @@ export class AdmUserlistComponent {
       case 43200: return '1 Month';
       default: return `${duration} minutes`;
     }
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
   }
 
 

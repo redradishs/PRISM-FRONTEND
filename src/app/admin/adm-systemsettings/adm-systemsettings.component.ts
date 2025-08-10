@@ -255,7 +255,17 @@ export class AdmSystemsettingsComponent {
     this.api.updateSystemSettings(settingsData).subscribe({
       next: (resp: any) => {
         this.isLoading = false;
-        Swal.fire('Success!', 'Settings updated successfully.', 'success');
+        Swal.fire({
+          title: 'Settings saved!',
+          text: 'System settings have been updated successfully.',
+          icon: 'success',
+          showConfirmButton: false,
+          toast: true,
+          position: 'top-end',
+          timer: 2000,
+          timerProgressBar: true
+
+        })
       },
       error: (error: any) => {
         this.isLoading = false;
