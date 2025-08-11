@@ -196,6 +196,34 @@ export class ApiService {
     return this.http.post(`${this.apiUrl}/class/addstudent/${id}/${classCode}`, data);
   }
 
+  archiveClass(classCode: string, data: any) {
+    return this.http.put(`${this.apiUrl}/class/archive/${classCode}`, data);
+  }
+
+  //archive page
+
+  unarchiveClass(classCode: string, data: any) {
+    return this.http.put(`${this.apiUrl}/class/unarchive/${classCode}`, data);
+  }
+
+  getArchiveClasses(instructorId: string, params: PaginationParams = {}) {
+    const defaultParams: PaginationParams = {
+      page: 1,
+      limit: 10
+    };
+    const queryParams = { ...defaultParams, ...params };
+
+    let httpParams = new HttpParams();
+    if (queryParams.page) httpParams = httpParams.set('page', queryParams.page.toString());
+    if (queryParams.limit) httpParams = httpParams.set('limit', queryParams.limit.toString());
+
+    return this.http.post(`${this.apiUrl}/class/archiveClasses`, { instructorId }, { params: httpParams });
+  }
+
+  archivesData(data: any) {
+    return this.http.post(`${this.apiUrl}/class/archiveData`, data);
+  }
+
   //coordinator page
 
   studentData(instructorId: string, params: PaginationParams = {}) {

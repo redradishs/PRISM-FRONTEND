@@ -13,7 +13,7 @@
                                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2">
                                     Create a Class
                                 </button>
-                                <button (click)="toggleAssignAssessmentModal()"
+                                <button *ngIf="isThereClasses" (click)="toggleAssignAssessmentModal()"
                                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
                                     Assign Assessment
                                 </button>
@@ -80,16 +80,68 @@
                                 <i class="fas fa-plus demo-icon"></i>
                                 Create Class
                             </button>
-                            <button class="demo-button-secondary" (click)="toggleAssignAssessmentModal()">
-                                <i class="fas fa-file-alt demo-icon"></i>
-                                Assign Assessment
+                            <button *ngIf="isThereClasses" class="demo-button-secondary" (click)="archiveClass()">
+                                <i class="fas fa-box-archive demo-icon"></i>
+                                Archive Class
                             </button>
                         </div>
                     </div>
                 </header>
 
-                <!-- Class Selector Section with Demo Styling -->
-                <div class="demo-selector-section">
+                <div *ngIf="!isThereClasses" class="stylish-empty-state">
+                    <div class="empty-state-container">
+                        <div class="empty-state-icon-wrapper">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                            </div>
+                            <div class="floating-elements">
+                                <div class="floating-element floating-element-1">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                                <div class="floating-element floating-element-2">
+                                    <i class="fas fa-book-open"></i>
+                                </div>
+                                <div class="floating-element floating-element-3">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="empty-state-content">
+                            <h3 class="empty-state-title">No Classes Found</h3>
+                            <p class="empty-state-description">
+                                Ready to start teaching? Create your first class and let the system to its job for you!
+                            </p>
+
+                            <div class="empty-state-stats">
+                                <div class="empty-stat-card">
+                                    <i class="fas fa-plus-circle"></i>
+                                    <span>Create Classes</span>
+                                </div>
+                                <div class="empty-stat-card">
+                                    <i class="fas fa-user-plus"></i>
+                                    <span>Add Students</span>
+                                </div>
+                                <div class="empty-stat-card">
+                                    <i class="fas fa-clipboard-check"></i>
+                                    <span>Track Progress</span>
+                                </div>
+                                <div class="empty-stat-card">
+                                    <i class="fas fa-file-export"></i>
+                                    <span>Export in one click</span>
+                                </div>
+                            </div>
+
+                            <button class="empty-state-action-btn" (click)="toggleCreateClassModal()">
+                                <i class="fas fa-plus"></i>
+                                <span>Create Your First Class</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="isThereClasses" class="demo-selector-section">
                     <div class="demo-selector-container">
                         <div class="demo-select-wrapper">
                             <select [(ngModel)]="selectedClass" (ngModelChange)="onClassSelect()"
@@ -125,7 +177,7 @@
                     </div>
                 </div>
 
-                <div class="demo-stats-grid">
+                <div *ngIf="isThereClasses" class="demo-stats-grid">
                     <div class="demo-stat-card">
                         <div class="demo-stat-content">
                             <div class="demo-stat-info">
@@ -168,7 +220,7 @@
 
 
 
-                <div class="demo-card">
+                <div *ngIf="isThereClasses" class="demo-card">
                     <div class="demo-card-content">
                         <div class="student-toolbar">
                             <h2 class="section-title">CLASS {{selectedClass?.className || 'Select a class'}}
@@ -280,7 +332,7 @@
                     </div>
                 </div>
 
-                <div class="demo-card">
+                <div *ngIf="isThereClasses" class="demo-card">
                     <div class="demo-card-content">
                         <div class="student-toolbar">
                             <h2 class="section-title">Assigned Assessments</h2>
@@ -294,7 +346,7 @@
                                     </div>
                                 </div>
                                 <button class="demo-action-button-primary" (click)="toggleAssignAssessmentModal()">
-                                    <i class="fas fa-user-plus"></i>
+                                    <i class="fas fa-file-alt"></i>
                                     Assign Assessment
                                 </button>
                             </div>

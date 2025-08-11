@@ -1102,3 +1102,16 @@ input:checked + .slider:before {
     margin: 0;
     font-size: 14px;
 }
+
+.per-head {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    gap: 0.50rem;
+}
+
+.per-head span{
+    color: gray;
+    font-style: italic;
+    font-size: 0.80rem;
+}

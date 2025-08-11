@@ -120,6 +120,7 @@ export class StudentsComponent implements OnInit {
   error: string | null = null;
   admittedCount: number = 0;
   pendingCount: number = 0;
+  isThereClasses: boolean = true;
 
   private searchTimeout: any;
   private readonly DEBOUNCE_TIME = 300;
@@ -254,7 +255,7 @@ export class StudentsComponent implements OnInit {
     this.isLoading = true;
     this.api.ownedClasses(this.userId).subscribe({
       next: (resp: any) => {
-        this.classes = resp.data;
+        this.classes = resp.data || [];
         this.isLoading = false;
 
         if (this.classes && this.classes.length > 0) {
@@ -269,17 +270,39 @@ export class StudentsComponent implements OnInit {
             this.selectedClass = this.classes[0];
           }
           this.onClassSelect();
+        } else {
+          this.selectedClass = null;
+          this.isThereClasses = false;
+          this.handleEmptyClass();
         }
       },
       error: (err) => {
         this.error = err.message;
         this.isLoading = false;
+        this.classes = [];
+        this.selectedClass = null;
+      }
+    })
+  }
+
+  private handleEmptyClass() {
+    Swal.fire({
+      title: 'No classes found',
+      text: 'You haven\'t created any classes yet. Would you like to create your first class?',
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonText: 'Create class',
+      cancelButtonText: 'Later'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.toggleCreateClassModal();
       }
     })
   }
 
   getStudentList(page: number = 1) {
     if (!this.selectedClass) {
+      console.log('No available classes')
       return;
     }
 
@@ -997,6 +1020,48 @@ export class StudentsComponent implements OnInit {
             });
           }
         });
+      }
+    });
+  }
+
+  archiveClass() {
+    const data = {
+      instructorId: this.userId,
+    }
+    Swal.fire({
+      title: 'Archive Class?',
+      text: `Are you sure you want to archive "${this.selectedClass.className}"?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3b82f6',
+      cancelButtonColor: '#d1d5db',
+      confirmButtonText: 'Yes, archive',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.api.archiveClass(this.selectedClass.classCode, data).subscribe({
+          next: (resp: any) => {
+            Swal.fire({
+              title: 'Class Archived!',
+              text: 'Class has been archived successfully.',
+              icon: 'success',
+              showConfirmButton: false,
+              toast: true,
+              position: 'top-end',
+              timer: 2000,
+              timerProgressBar: true,
+            })
+            this.getClasses();
+          }, error: (error) => {
+            console.error('Failed to archive class:', error);
+            Swal.fire({
+              title: 'Error!',
+              text: 'Failed to archive class. Please try again.',
+              icon: 'error',
+              confirmButtonColor: '#3b82f6'
+            });
+          }
+        })
       }
     });
   }

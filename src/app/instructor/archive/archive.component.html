@@ -1,0 +1,259 @@
+<div class="bg-gray-50 min-h-screen w-full overflow-x-hidden">
+    <div class="flex w-full">
+        <app-sidebar></app-sidebar>
+        <div class="flex-1 ml-0 md:ml-20 w-full">
+            <header class="bg-white shadow-sm fixed top-0 right-0 w-full md:w-[calc(100%-80px)] z-40">
+                <div class="w-full px-4 md:px-6 py-3 md:py-4">
+                    <div class="flex items-center justify-between">
+                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">Archive</h1>
+                        <div class="flex items-center">
+                            <div class="hidden md:flex items-center mr-4">
+                                <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
+                                <button
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2">
+                                    New Assessment
+                                </button>
+                                <button
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
+                                    Add Student
+                                </button>
+                            </div>
+                            <div *ngIf="!isMobile" class="flex items-center">
+                                <div class="relative mr-3">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profile" [src]="profile" alt="Profile"
+                                            class="w-full h-full object-cover">
+                                        <span *ngIf="!profile" class="text-base md:text-lg font-medium text-gray-600">
+                                            {{username.charAt(0) || 'A'}}
+                                        </span>
+                                    </div>
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    </div>
+                                </div>
+                                <div class="text-left">
+                                    <div class="text-sm font-medium text-gray-900">{{username}}</div>
+                                    <div class="text-xs text-gray-500">Instructor</div>
+                                </div>
+                            </div>
+                            <button *ngIf="isMobile" (click)="toggleSidebar()"
+                                class="p-2 rounded-md hover:bg-gray-100 transition-colors">
+                                <i class="fas fa-bars w-5 h-5 text-gray-600"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="h-[65px] md:h-[68px] w-full"></div>
+
+            <div *ngIf="isLoading"
+                class="flex items-center justify-center min-h-[calc(100vh-68px)] bg-white transition-colors duration-900">
+                <div class="text-center animate-fade-in">
+                    <div class="relative w-16 h-16 mx-auto">
+                        <div
+                            class="absolute inset-0 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin">
+                        </div>
+                        <div class="absolute inset-2 rounded-full border-4 border-indigo-300 border-b-transparent animate-spin"
+                            style="animation-direction: reverse;">
+                        </div>
+                    </div>
+                    <p class="mt-5 text-gray-600 text-lg font-medium animate-pulse">
+                        Loading instructor data...
+                    </p>
+                </div>
+            </div>
+
+            <main class="p-2 md:p-4 w-full">
+
+                <div class="stats-grid">
+                    <!-- Total Classes Card -->
+                    <div (click)="setActiveTab('classes')" class="card">
+                        <div class="card-gradient">
+                            <div class="card-overlay"></div>
+                            <div class="card-content">
+                                <div class="card-header">
+                                    <div class="card-info">
+                                        <div class="card-title-container">
+                                            <div class="icon-container">
+                                                <svg class="graduation-icon" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2">
+                                                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                                                    <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
+                                                </svg>
+                                            </div>
+                                            <h3 class="card-title">Archived Classes</h3>
+                                        </div>
+                                        <p class="class-count">{{totalClasses}}</p>
+                                        <p class="class-status">Currently enrolled</p>
+                                    </div>
+                                    <div class="decorative-circle">
+                                        <div class="circle-inner">
+                                            <div class="circle-core"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pending Applications Card -->
+                    <div (click)="setActiveTab('assessments')" class="card">
+                        <div class="card-gradient card-gradient-fuchsia">
+                            <div class="card-overlay"></div>
+                            <div class="card-content">
+                                <div class="card-header">
+                                    <div class="card-info">
+                                        <div class="card-title-container">
+                                            <div class="icon-container">
+                                                <svg class="clock-icon" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2">
+                                                    <circle cx="12" cy="12" r="10" />
+                                                    <path d="M12 6v6l4 2" />
+                                                </svg>
+                                            </div>
+                                            <h3 class="card-title">Archived Assessments</h3>
+                                        </div>
+                                        <p class="class-count">{{pendingApplication}}</p>
+                                        <p class="class-status status-fuchsia">Awaiting approval</p>
+                                    </div>
+                                    <div class="decorative-circles">
+                                        <div class="circle-large"></div>
+                                        <div class="circle-medium"></div>
+                                        <div class="circle-small"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search and Apply Section -->
+                <div class="search-card">
+                    <div class="search-card-content">
+                        <div class="blur-circle blur-circle-purple"></div>
+                        <div class="blur-circle blur-circle-fuchsia"></div>
+                        <div class="search-container">
+                            <div class="search-input-group">
+                                <div class="search-wrapper">
+                                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <circle cx="11" cy="11" r="8" />
+                                        <path d="M21 21l-4.35-4.35" />
+                                    </svg>
+                                    <input type="text" placeholder="Search classes..." class="search-input"
+                                        [formControl]="searchControl">
+                                </div>
+                                <div class="apply-group">
+                                    <form [formGroup]="joinClassForm">
+                                        <input type="text" placeholder="Enter class code" class="code-input"
+                                            formControlName="classCode">
+                                        <button class="apply-button">Apply</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-message">
+                    <h1 *ngIf="activeTab === 'classes'">Archived Classes</h1>
+                    <span *ngIf="activeTab === 'classes'">Classes you have archived from the past.</span>
+                    <h1 *ngIf="activeTab === 'assessments'">Archived Assessments</h1>
+                    <span *ngIf="activeTab === 'assessments'">Assessments you have archived from the past.</span>
+                </div>
+
+                <section *ngIf="activeTab === 'classes'" class="archived-classes">
+                    <div class="class-list-table">
+                        <div class="class-list-header">
+                            <div>Class Code</div>
+                            <div>Class Name</div>
+                            <div>Archived Date</div>
+                            <div>Students</div>
+                            <div>Assessments</div>
+                            <div>Actions</div>
+                        </div>
+                        <div class="class-list-row" *ngFor="let class of classes; let i = index">
+                            <div class="class-code-cell">
+                                <span class="class-code-bar" [ngStyle]="{'background': getBadgeColor(i)}"></span>
+                                <span class="class-code-badge"
+                                    [ngStyle]="{'color': getBadgeColor(i), 'borderColor': getBadgeColor(i)}">
+                                    {{ class.classCode }}
+                                </span>
+                            </div>
+                            <div class="class-name-cell">{{ class.className }}</div>
+                            <div class="archived-date-cell">{{ class.archivedAt | date:'MMM d, yyyy h:mm a' }}</div>
+                            <div class="students-count-cell">
+                                <span class="count-badge">{{ class.totalStudents }}</span>
+                            </div>
+                            <div class="assessments-count-cell">
+                                <span class="count-badge">{{ class.assignedAssessments }}</span>
+                            </div>
+                            <div class="actions-cell">
+                                <button class="unarchive-btn" (click)="unarchiveClass(class)">
+                                    <i class="fas fa-box-open"></i>
+                                    Unarchive
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div *ngIf="classes.length === 0" class="no-archived-classes">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-archive"></i>
+                        </div>
+                        <h3>No Archived Classes</h3>
+                        <p>You haven't archived any classes yet.</p>
+                    </div>
+                </section>
+
+                <section *ngIf="activeTab === 'assessments'" class="pending-applications">
+                    <div class="class-list-table">
+                        <div class="class-list-header">
+                            <div>Class Code</div>
+                            <div>Class Name</div>
+                            <div>Instructor</div>
+                            <div>Applied Date</div>
+                            <div class="status-cell">Status</div>
+                            <div>Actions</div>
+                        </div>
+                        <div class="class-list-row" *ngFor="let p of pendingApplications; let i = index">
+                            <div class="class-code-cell">
+                                <span class="class-code-bar" [ngStyle]="{'background': getBadgeColor(i)}"></span>
+                                <span class="class-code-badge"
+                                    [ngStyle]="{'color': getBadgeColor(i), 'borderColor': getBadgeColor(i)}">{{
+                                    p.classCode }}</span>
+                            </div>
+                            <div class="class-name-cell">{{ p.className }}</div>
+                            <div class="instructor-cell">
+                                <img [src]="p.instructor.profilePicture" alt="{{p.instructor.name}}"
+                                    class="instructor-avatar" />
+                                <div>
+                                    <div class="instructor-name">{{ p.instructor.name }}</div>
+                                    <div class="instructor-role">{{ p.instructor.role || 'Instructor' }}</div>
+                                </div>
+                            </div>
+                            <div class="applied-date-cell">{{ p.appliedDate | date:'MMM d, yyyy hh:mm a':'UTC' }}</div>
+                            <div class="status-cell"> <span class="celd">
+                                    {{ p.status | uppercase }}
+                                </span></div>
+                            <div class="actions-cell">
+                                <button class="exit-btn">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div *ngIf="pendingApplications === undefined" class="no-applications">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h1>You have no pending applications at the moment.</h1>
+                    </div>
+                </section>
+
+
+
+            </main>
+
+        </div>
+    </div>
+</div>

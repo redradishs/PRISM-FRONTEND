@@ -15,6 +15,7 @@ import { AssignAssessmentComponent } from './instructor/assign-assessment/assign
 import { FinalGenerateAssessmentComponent } from './instructor/final-generate-assessment/final-generate-assessment.component';
 import { EditAssessmentComponent } from './instructor/edit-assessment/edit-assessment.component';
 import { StudentAttemptComponent } from './instructor/student-attempt/student-attempt.component';
+import { ArchiveComponent } from './instructor/archive/archive.component';
 
 export const INSTRUCTOR_ROUTES: Routes = [
     { path: 'dashboard', component: HomeComponent },
@@ -32,5 +33,7 @@ export const INSTRUCTOR_ROUTES: Routes = [
     { path: 'students/assessments', component: StudentAssessmentsComponent },
     { path: 'edit', component: EditAssessmentComponent },
     { path: 'manage', component: ManageComponent },
-    { path: 'response/attempts', component: StudentAttemptComponent }
+    { path: 'response/attempts', component: StudentAttemptComponent },
+    { path: 'archives', component: ArchiveComponent },
+
 ]; 

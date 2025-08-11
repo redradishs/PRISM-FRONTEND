@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
@@ -83,7 +83,7 @@ interface LoginHistoryData {
 
 @Component({
   selector: 'app-profile-inst',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, SidebarComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, SidebarComponent, RouterLink],
   templateUrl: './profile-inst.component.html',
   styleUrls: ['./profile-inst.component.css']
 })

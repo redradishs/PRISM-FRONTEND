@@ -236,7 +236,11 @@
                                         </div>
 
                                         <div class="performance-summary">
-                                            <h4>Teaching Summary</h4>
+                                            <div class="per-head">
+                                                <h4>Teaching Summary</h4>
+                                                <span>(includes the archived data)</span>
+                                            </div>
+
                                             <div class="stats-grid">
                                                 <div class="stat-card">
                                                     <div class="stat-value">{{teachingSummary.classCounts}}</div>
@@ -254,7 +258,9 @@
                                         </div>
                                     </div>
                                     <div class="card-footer">
-                                        <button class="view-button">Manage Teaching Schedule</button>
+                                        <button class="view-button" [routerLink]="['/instructor/archives']">Manage
+                                            Archive
+                                            Data</button>
                                     </div>
                                 </div>
                             </div>
