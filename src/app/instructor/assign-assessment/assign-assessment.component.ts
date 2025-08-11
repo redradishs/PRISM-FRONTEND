@@ -53,7 +53,7 @@ interface StudentPaginationResponse {
   };
 }
 
-type AssignmentType = 'classes' | 'individual';
+type AssignmentType = 'classes' | 'individual' | 'public';
 
 interface AssignmentData {
   assessmentId: string;
@@ -277,6 +277,14 @@ export class AssignAssessmentComponent implements OnInit {
       this.selectedMode = 'public';
       this.attemptsAllowed = 1;
       this.showResults = 'completed';
+      this.generateJoiningCode();
+    }
+    if (type === 'public') {
+      this.selectedMode = 'public';
+      this.attemptsAllowed = 1;
+      this.showResults = 'completed';
+      this.generateJoiningCode();
+      this.setAssessmentMode('public')
     }
   }
 
@@ -377,7 +385,8 @@ export class AssignAssessmentComponent implements OnInit {
       this.setStep(2);
     } else if (this.currentStep === 2 &&
       ((this.assignmentType === 'classes' && this.selectedClasses.size > 0) ||
-        (this.assignmentType === 'individual' && this.selectedStudents.size > 0))) {
+        (this.assignmentType === 'individual' && this.selectedStudents.size > 0) ||
+        this.assignmentType === 'public')) {
       this.setStep(3);
     } else if (this.currentStep === 3) {
       this.setStep(4);
@@ -861,10 +870,11 @@ export class AssignAssessmentComponent implements OnInit {
         return this.selectedAssessments.size > 0;
       case 2:
         return (this.assignmentType === 'classes' && this.selectedClasses.size > 0) ||
-          (this.assignmentType === 'individual' && this.selectedStudents.size > 0);
+          (this.assignmentType === 'individual' && this.selectedStudents.size > 0)
+          || this.assignmentType === 'public'
       case 3:
         const validDates = !!(this.startDate && this.dueDate);
-        const validTimeLimit = this.timeLimit >= 1;
+        const validTimeLimit = this.timeLimit >= 0; // allow 0 for no time limit
         // const validAttempts = this.attemptsAllowed >= 1;
         let validAttempts = false;
         if (this.selectedMode === 'mastery') {
@@ -872,7 +882,11 @@ export class AssignAssessmentComponent implements OnInit {
         } else {
           validAttempts = this.attemptsAllowed >= 1 && this.attemptsAllowed <= 5;
         }
-        if (this.assignmentType === 'individual') {
+        if (this.assignmentType === 'individual' || this.assignmentType === 'public') {
+          if (this.assignmentType === 'public' && this.selectedMode === 'public') {
+            const result = validDates && validTimeLimit && validAttempts && this.joiningCode.length > 0;
+            return result;
+          }
           return validDates && validTimeLimit && validAttempts
         }
 
@@ -880,7 +894,8 @@ export class AssignAssessmentComponent implements OnInit {
         if (this.selectedMode === 'mastery') {
           modeValidation = this.masteryScore >= 1 && this.masteryScore <= this.selectedAssessmentPoints;
         } else if (this.selectedMode === 'assessment') {
-          modeValidation = this.timeLimit >= 5;
+          // allow 0 (no limit) or at least 5 minutes for assessment mode
+          modeValidation = this.timeLimit === 0 || this.timeLimit >= 5;
         } else if (this.selectedMode === 'public') {
           modeValidation = this.joiningCode.length > 0;
         }

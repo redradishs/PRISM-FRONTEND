@@ -212,7 +212,7 @@
                                     <div class="progress" [style.width.%]="calculateProgress(ass)"></div>
                                 </div>
                                 <div class="assessment-info">
-                                    <p class="due-date">Due: {{ass.dueDate | date: 'MMM d, y h:mm a':'UTC'}}</p>
+                                    <p class="due-date">Start: {{ass.startDate | date: 'MMM d, y h:mm a':'UTC'}}</p>
                                     <p class="progress-text" *ngIf="ass.type !== 'Public Assessment'">Progress:
                                         {{calculateProgress(ass) | number:'1.0-0'}}%</p>
                                     <p class="progress-text" *ngIf="ass.type === 'Public Assessment'">Public Assessment

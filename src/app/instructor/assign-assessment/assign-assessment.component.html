@@ -271,6 +271,18 @@
                                         <p class="option-description">Select specific students to assign</p>
                                     </div>
                                 </div>
+
+                                <div class="option-card" [class.selected]="assignmentType === 'public'"
+                                    (click)="setAssignmentType('public')">
+                                    <div class="option-icon">
+                                        <i class="fas fa-globe"></i>
+                                    </div>
+                                    <div class="option-content">
+                                        <h3 class="option-title">Assign to Public</h3>
+                                        <p class="option-description">Create a public assessment with a join code that
+                                            anyone can access</p>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Class View -->
@@ -891,6 +903,7 @@
                         <button class="nav-btn btn-next" [disabled]="!canProceed()" (click)="onNext(); scrollToTop()">
                             <span *ngIf="currentStep === 4 && assignmentType === 'individual'">Assign to Students</span>
                             <span *ngIf="currentStep === 4 && assignmentType === 'classes'">Classes</span>
+                            <span *ngIf="currentStep === 4 && assignmentType === 'public'">Assign Public</span>
                             <span *ngIf="currentStep < 4">Next</span>
                             <i class="fas fa-arrow-right ml-2"></i>
                         </button>
