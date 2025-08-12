@@ -157,7 +157,7 @@ export class StudentsComponent implements OnInit {
   assignmentDetails = {
     startDate: '',
     dueDate: '',
-    timeLimit: 60, // default 60 minutes
+    timeLimit: 60,
     instructions: '',
     randomizeQuestions: false,
     showResults: false
@@ -624,6 +624,7 @@ export class StudentsComponent implements OnInit {
       next: (resp: any) => {
         this.getClasses();
         this.toggleCreateClassModal();
+        this.isThereClasses = true;
         this.isLoading = false;
       },
       error: (err) => {

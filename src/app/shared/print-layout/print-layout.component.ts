@@ -2,39 +2,39 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export interface PrintQuestion {
-    _id?: string;
-    type: string;
-    questionText: string;
-    options?: string[];
-    correctAnswer: string | string[];
-    points: number;
+  _id?: string;
+  type: string;
+  questionText: string;
+  options?: string[];
+  correctAnswer: string | string[];
+  points: number;
 }
 
 export interface PrintAssessmentData {
-    title: string;
-    questions: PrintQuestion[];
-    totalPoints: number;
-    category: string;
+  title: string;
+  questions: PrintQuestion[];
+  totalPoints: number;
+  category: string;
 }
 
 export interface PrintOptions {
-    segregateByType: boolean;
-    includeAnswerKey: boolean;
-    useColumnLayout: boolean;
-    studentInfo: {
-        name: string;
-        yearCourseBlock: string;
-        date: string;
-        score: string;
-    };
-    generalInstructions: string;
+  segregateByType: boolean;
+  includeAnswerKey: boolean;
+  useColumnLayout: boolean;
+  studentInfo: {
+    name: string;
+    yearCourseBlock: string;
+    date: string;
+    score: string;
+  };
+  generalInstructions: string;
 }
 
 @Component({
-    selector: 'app-print-layout',
-    standalone: true,
-    imports: [CommonModule],
-    template: `
+  selector: 'app-print-layout',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
     <div class="print-container" [class.column-layout]="options.useColumnLayout">
       <!-- Header Section -->
       <div class="header">
@@ -42,24 +42,26 @@ export interface PrintOptions {
         
         <!-- Student Information -->
         <div class="student-info">
-          <div class="info-row">
-            <div class="info-field">
-              <span class="label">Name:</span>
-              <span class="line">________________________________</span>
+          <div class="info-columns">
+            <div class="info-column">
+              <div class="info-field">
+                <span class="label">Name:</span>
+                <span class="line"></span>
+              </div>
+              <div class="info-field">
+                <span class="label">Year, Course & Block:</span>
+                <span class="line"></span>
+              </div>
             </div>
-            <div class="info-field">
-              <span class="label">Date:</span>
-              <span class="line">________________________________</span>
-            </div>
-          </div>
-          <div class="info-row">
-            <div class="info-field">
-              <span class="label">Year, Course & Block:</span>
-              <span class="line">________________________________</span>
-            </div>
-            <div class="info-field">
-              <span class="label">Score:</span>
-              <span class="line">________________________________</span>
+            <div class="info-column">
+              <div class="info-field">
+                <span class="label">Date:</span>
+                <span class="line"></span>
+              </div>
+              <div class="info-field">
+                <span class="label">Score:</span>
+                <span class="line"></span>
+              </div>
             </div>
           </div>
         </div>
@@ -154,92 +156,92 @@ export interface PrintOptions {
       </div>
     </div>
   `,
-    styleUrls: ['./print-layout.component.css']
+  styleUrls: ['./print-layout.component.css']
 })
 export class PrintLayoutComponent {
-    @Input() data!: PrintAssessmentData;
-    @Input() options!: PrintOptions;
+  @Input() data!: PrintAssessmentData;
+  @Input() options!: PrintOptions;
 
-    get questionsByType() {
-        const grouped = this.groupQuestionsByType(this.data.questions);
-        return Object.keys(grouped).map(type => ({
-            type,
-            questions: grouped[type]
-        }));
-    }
+  get questionsByType() {
+    const grouped = this.groupQuestionsByType(this.data.questions);
+    return Object.keys(grouped).map(type => ({
+      type,
+      questions: grouped[type]
+    }));
+  }
 
-    groupQuestionsByType(questions: PrintQuestion[]): { [key: string]: PrintQuestion[] } {
-        return questions.reduce((groups, question) => {
-            const type = question.type;
-            if (!groups[type]) {
-                groups[type] = [];
-            }
-            groups[type].push(question);
-            return groups;
-        }, {} as { [key: string]: PrintQuestion[] });
-    }
+  groupQuestionsByType(questions: PrintQuestion[]): { [key: string]: PrintQuestion[] } {
+    return questions.reduce((groups, question) => {
+      const type = question.type;
+      if (!groups[type]) {
+        groups[type] = [];
+      }
+      groups[type].push(question);
+      return groups;
+    }, {} as { [key: string]: PrintQuestion[] });
+  }
 
-    getFriendlyTypeName(type: string): string {
-        return type.split('-').map(word =>
-            word.charAt(0).toUpperCase() + word.slice(1)
-        ).join(' ');
-    }
+  getFriendlyTypeName(type: string): string {
+    return type.split('-').map(word =>
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+  }
 
-    getRomanNumeral(num: number): string {
-        const romanNumerals = [
-            { value: 1000, symbol: 'M' }, { value: 900, symbol: 'CM' }, { value: 500, symbol: 'D' },
-            { value: 400, symbol: 'CD' }, { value: 100, symbol: 'C' }, { value: 90, symbol: 'XC' },
-            { value: 50, symbol: 'L' }, { value: 40, symbol: 'XL' }, { value: 10, symbol: 'X' },
-            { value: 9, symbol: 'IX' }, { value: 5, symbol: 'V' }, { value: 4, symbol: 'IV' },
-            { value: 1, symbol: 'I' }
-        ];
-        let result = '';
-        for (const { value, symbol } of romanNumerals) {
-            while (num >= value) {
-                result += symbol;
-                num -= value;
-            }
-        }
-        return result;
+  getRomanNumeral(num: number): string {
+    const romanNumerals = [
+      { value: 1000, symbol: 'M' }, { value: 900, symbol: 'CM' }, { value: 500, symbol: 'D' },
+      { value: 400, symbol: 'CD' }, { value: 100, symbol: 'C' }, { value: 90, symbol: 'XC' },
+      { value: 50, symbol: 'L' }, { value: 40, symbol: 'XL' }, { value: 10, symbol: 'X' },
+      { value: 9, symbol: 'IX' }, { value: 5, symbol: 'V' }, { value: 4, symbol: 'IV' },
+      { value: 1, symbol: 'I' }
+    ];
+    let result = '';
+    for (const { value, symbol } of romanNumerals) {
+      while (num >= value) {
+        result += symbol;
+        num -= value;
+      }
     }
+    return result;
+  }
 
-    getTypeInstructions(type: string): string {
-        switch (type.toLowerCase()) {
-            case 'multiple-choice':
-                return 'Choose the letter of the correct answer. Write your answer on the space provided.';
-            case 'true-false':
-                return 'Write T for True or F for False for each statement. Write your answer on the space provided.';
-            case 'enumeration':
-                return 'List all possible answers for each question. Write your answers on the spaces provided.';
-            case 'identification':
-                return 'Identify what is being asked in each question. Write your answer on the space provided.';
-            case 'essay':
-                return 'Answer each question in complete sentences and paragraphs. Write your answers on the spaces provided.';
-            default:
-                return 'Answer each question according to the instructions provided. Write your answers on the spaces provided.';
-        }
+  getTypeInstructions(type: string): string {
+    switch (type.toLowerCase()) {
+      case 'multiple-choice':
+        return 'Choose the letter of the correct answer. Write your answer on the space provided.';
+      case 'true-false':
+        return 'Write T for True or F for False for each statement. Write your answer on the space provided.';
+      case 'enumeration':
+        return 'List all possible answers for each question. Write your answers on the spaces provided.';
+      case 'identification':
+        return 'Identify what is being asked in each question. Write your answer on the space provided.';
+      case 'essay':
+        return 'Answer each question in complete sentences and paragraphs. Write your answers on the spaces provided.';
+      default:
+        return 'Answer each question according to the instructions provided. Write your answers on the spaces provided.';
     }
+  }
 
-    cleanQuestionText(question: PrintQuestion): string {
-        let questionText = question.questionText;
-        if (question.type === 'true-false') {
-            questionText = questionText.replace(/^(True\s+or\s+False\s*:\s*)/i, '');
-        }
-        return questionText;
+  cleanQuestionText(question: PrintQuestion): string {
+    let questionText = question.questionText;
+    if (question.type === 'true-false') {
+      questionText = questionText.replace(/^(True\s+or\s+False\s*:\s*)/i, '');
     }
+    return questionText;
+  }
 
-    getOptionLetter(index: number): string {
-        return String.fromCharCode(65 + index);
-    }
+  getOptionLetter(index: number): string {
+    return String.fromCharCode(65 + index);
+  }
 
-    getEnumerationLines(question: PrintQuestion): any[] {
-        const answerCount = Array.isArray(question.correctAnswer) ? question.correctAnswer.length : 3;
-        return Array(answerCount).fill(null);
-    }
+  getEnumerationLines(question: PrintQuestion): any[] {
+    const answerCount = Array.isArray(question.correctAnswer) ? question.correctAnswer.length : 3;
+    return Array(answerCount).fill(null);
+  }
 
-    getAnswerText(question: PrintQuestion): string {
-        return Array.isArray(question.correctAnswer)
-            ? question.correctAnswer.join(', ')
-            : question.correctAnswer;
-    }
+  getAnswerText(question: PrintQuestion): string {
+    return Array.isArray(question.correctAnswer)
+      ? question.correctAnswer.join(', ')
+      : question.correctAnswer;
+  }
 } 

@@ -23,7 +23,8 @@ export class ArchiveComponent {
   userId: string = '';
   username: string = '';
   profile: string = '';
-  isMobile = window.innerWidth < 768; isLoading: boolean = false; //dfg to change @ViewChild(SidebarComponent) sidebar!:
+  isMobile = window.innerWidth < 768;
+  isLoading: boolean = false;
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
   @HostListener('window:resize') onResize() {
     this.isMobile = window.innerWidth < 768;
@@ -80,7 +81,7 @@ export class ArchiveComponent {
       this.username = user.name;
       this.profile = user.profilePicture;
       this.getStats();
-      this.getArchivedClasses(); // Get archived classes
+      this.getArchivedClasses();
       this.pendingApplicationList();
     })
     const savedView = localStorage.getItem('classView');
@@ -200,13 +201,17 @@ export class ArchiveComponent {
   getArchivedClasses() {
     this.inst.getArchiveClasses(this.userId, { page: this.page, limit: this.limit }).subscribe({
       next: (resp: any) => {
-        this.classes = resp.data.data.map((c: any, i: number) => ({
-          ...c,
-          color: this.getBadgeColor(i)
-        }));
-        this.totalPages = resp.data.total;
-        this.hasNextPage = resp.data.hasNext;
-        this.hasPreviousPage = resp.data.hasPrev;
+        if (resp.data.length === 0) {
+          this.classes = [];
+        } else {
+          this.classes = resp.data.data.map((c: any, i: number) => ({
+            ...c,
+            color: this.getBadgeColor(i)
+          }));
+          this.totalPages = resp.data.total;
+          this.hasNextPage = resp.data.hasNext;
+          this.hasPreviousPage = resp.data.hasPrev;
+        }
       },
       error: (err: any) => {
         console.log('Error fetching archived classes:', err);

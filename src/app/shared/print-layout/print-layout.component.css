@@ -88,19 +88,24 @@
   margin-bottom: 0.2in;
 }
 
-.info-row {
+.info-columns {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 0.1in;
+  gap: 0.3in;
+}
+
+.info-column {
+  flex: 1;
 }
 
 .info-field {
-  flex: 1;
-  margin-right: 0.2in;
+  margin-bottom: 0.1in;
+  display: flex;
+  align-items: baseline;
 }
 
 .info-field:last-child {
-  margin-right: 0;
+  margin-bottom: 0;
 }
 
 .label {
@@ -110,9 +115,10 @@
 
 .line {
   border-bottom: 1px solid #000;
-  display: inline-block;
-  min-width: 2.5in;
+  flex: 1;
+  margin-left: 0.1in;
   padding-bottom: 2px;
+  min-height: 1em;
 }
 
 .instructions {

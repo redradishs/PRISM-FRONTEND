@@ -122,6 +122,39 @@
 
                             <!-- Assessment Selection Area -->
                             <div class="assessment-selection-container">
+
+                                <div *ngIf="assessments.length === 0" class="empty-state">
+                                    <h3 class="empty-state-title">No Assessment Found</h3>
+                                    <p class="empty-state-description">
+                                        Ready to assign assessment? Create your first assessment and assign it with your
+                                        own settings!
+                                    </p>
+
+                                    <div class="empty-state-stats">
+                                        <div class="empty-stat-card">
+                                            <i class="fas fa-plus-circle"></i>
+                                            <span>Create Assessment</span>
+                                        </div>
+                                        <div class="empty-stat-card">
+                                            <i class="fas fa-user-plus"></i>
+                                            <span>Assign it to Students</span>
+                                        </div>
+                                        <div class="empty-stat-card">
+                                            <i class="fas fa-clipboard-check"></i>
+                                            <span>Track Progress</span>
+                                        </div>
+                                        <div class="empty-stat-card">
+                                            <i class="fas fa-file-export"></i>
+                                            <span>Export in one click</span>
+                                        </div>
+                                    </div>
+
+                                    <button class="empty-state-action-btn"
+                                        [routerLink]="['/instructor/createAssessment']">
+                                        <i class=" fas fa-plus"></i>
+                                        <span>Create Your First Assessment</span>
+                                    </button>
+                                </div>
                                 <!-- Assessment Grid -->
                                 <div class="assessment-grid">
                                     <ng-container *ngFor="let assessment of displayedAssessments">
@@ -129,7 +162,7 @@
                                             class="assessment-card"
                                             [class.selected]="isAssessmentSelected(assessment._id)"
                                             (click)="toggleAssessmentSelection(assessment._id)">
-                                            <!-- Checkbox -->
+
                                             <div class="assessment-checkbox">
                                                 <input type="checkbox" [checked]="isAssessmentSelected(assessment._id)"
                                                     (click)="$event.stopPropagation()">
@@ -215,7 +248,6 @@
                                     </ng-container>
                                 </div>
 
-                                <!-- Clear Selection Button (when assessment selected) -->
                                 <div *ngIf="selectedAssessments.size > 0" class="clear-assessment-container">
                                     <button (click)="clearAssessmentSelection()" class="clear-assessment-button">
                                         <i class="fas fa-times-circle"></i>
@@ -223,7 +255,6 @@
                                     </button>
                                 </div>
 
-                                <!-- Show More Button (only when no assessment selected) -->
                                 <div *ngIf="remainingCount > 0 && selectedAssessments.size === 0"
                                     class="show-more-container">
                                     <button (click)="toggleShowAll()" class="show-more-button">
