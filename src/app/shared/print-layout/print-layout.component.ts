@@ -21,6 +21,11 @@ export interface PrintOptions {
   segregateByType: boolean;
   includeAnswerKey: boolean;
   useColumnLayout: boolean;
+  courseTitle: string;
+  assessmentType: string;
+  assessmentNumber: string;
+  term: string;
+  academicYear: string;
   studentInfo: {
     name: string;
     yearCourseBlock: string;
@@ -38,7 +43,25 @@ export interface PrintOptions {
     <div class="print-container" [class.column-layout]="options.useColumnLayout">
       <!-- Header Section -->
       <div class="header">
-        <h1 class="title">{{ data.title }}</h1>
+        <div class="left-image">
+          <img src="/ccslogo.webp" class="imgl" alt="ccslogo">
+        </div>
+
+        <div class="centerdata">
+          <p *ngIf="options.courseTitle">{{ options.courseTitle }}</p>
+          <p>{{ data.title }}</p>
+          <p *ngIf="options.assessmentType">{{ options.assessmentType }} {{ options.assessmentNumber }}</p>
+          <p *ngIf="options.term || options.academicYear">
+            <span *ngIf="options.term">{{ options.term }}</span>
+            <span *ngIf="options.term && options.academicYear"> - </span>
+            <span *ngIf="options.academicYear">{{ options.academicYear }}</span>
+          </p>
+        </div>
+
+        <div class="right-image">
+          <img src="/gclogo.webp" class="imgl" alt="gclogo">
+        </div>
+      </div>
         
         <!-- Student Information -->
         <div class="student-info">
@@ -71,7 +94,6 @@ export interface PrintOptions {
           <span class="instructions-label">General Instructions:</span>
           {{ options.generalInstructions }}
         </div>
-      </div>
 
       <!-- Questions Section -->
       <div class="questions-container" [class.columns]="options.useColumnLayout">

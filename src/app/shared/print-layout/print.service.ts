@@ -53,7 +53,7 @@ export class PrintService {
 
   private generatePrintHTML(data: PrintAssessmentData, options: PrintOptions): string {
     const printContent = this.generatePrintContent(data, options);
-    const cssContent = this.getPrintCSS();
+    const cssContent = this.getSharedCSS();
 
     return `
       <!DOCTYPE html>
@@ -80,7 +80,27 @@ export class PrintService {
     // Header Section
     html += `
       <div class="header">
-        <h1 class="title">${data.title}</h1>
+        <div class="left-image">
+          <img src="/ccslogo.webp" class="imgl" alt="ccslogo">
+        </div>
+
+        <div class="centerdata">
+          ${options.courseTitle ? `<p>${options.courseTitle}</p>` : ''}
+          <p>${data.title}</p>
+          ${options.assessmentType ? `<p>${options.assessmentType} ${options.assessmentNumber || ''}</p>` : ''}
+          ${(options.term || options.academicYear) ? `
+            <p>
+              ${options.term || ''}${options.term && options.academicYear ? ' - ' : ''}${options.academicYear || ''}
+            </p>
+          ` : ''}
+        </div>
+
+        <div class="right-image">
+          <img src="/gclogo.webp" class="imgl" alt="gclogo">
+        </div>
+      </div>
+      
+      <div class="header-spacer"></div>
         
         <div class="student-info">
           <div class="info-columns">
@@ -233,13 +253,12 @@ export class PrintService {
     return html;
   }
 
-  private getPrintCSS(): string {
+  private getSharedCSS(): string {
     return `
 .print-container {
   font-family: 'Times New Roman', serif;
   max-width: 8.5in;
   margin: 0 auto;
-  padding: 0.5in;
   background: white;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
@@ -262,7 +281,6 @@ export class PrintService {
   .print-container {
     max-width: none;
     margin: 0;
-    padding: 0.5in;
     box-shadow: none;
     background: none;
   }
@@ -288,7 +306,6 @@ export class PrintService {
   }
 
   .question-type-section {
-    break-inside: avoid-page;
     margin-bottom: 0.2in;
   }
 
@@ -310,7 +327,44 @@ export class PrintService {
 
 /* Header styles */
 .header {
-  margin-bottom: 0.3in;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.left-image, .right-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+
+.imgl {
+  width: 120px;
+  height: 120px;
+}
+
+.centerdata {
+  text-align: center;
+  flex: 1;
+}
+
+.centerdata p:first-child {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: rgb(0, 0, 0);
+}
+
+.centerdata p:nth-child(2) {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: rgb(0, 0, 0);
+}
+
+.centerdata p:nth-child(3),
+.centerdata p:nth-child(4) {
+  font-size: 1rem;
+  color: #333;
 }
 
 .title {
@@ -321,8 +375,17 @@ export class PrintService {
   margin: 0 0 0.2in 0;
 }
 
+// THIS IS THE MARGIN QUESTIONS (TOP RIGHT BOTTOM LEFT)
 .student-info {
-  margin-bottom: 0.2in;
+  margin: 0 0.1in 0.5in 0.1in;
+}
+
+.instructions {
+  margin: 0.2in 0.1in 0.2in 0.1in;
+}
+
+.questions-container {
+  margin: 0 0.1in 0.2in 0.1in;
 }
 
 .info-columns {
@@ -359,8 +422,7 @@ export class PrintService {
 }
 
 .instructions {
-  font-size: 11pt;
-  margin-bottom: 0.15in;
+  font-size: 14pt;
 }
 
 .instructions-label {

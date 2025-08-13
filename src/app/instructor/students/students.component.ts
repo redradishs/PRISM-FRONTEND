@@ -285,18 +285,30 @@ export class StudentsComponent implements OnInit {
     })
   }
 
+  // private handleEmptyClass() {
+  //   Swal.fire({
+  //     title: 'No classes found',
+  //     text: 'You haven\'t created any classes yet. Would you like to create your first class?',
+  //     icon: 'info',
+  //     showCancelButton: true,
+  //     confirmButtonText: 'Create class',
+  //     cancelButtonText: 'Later'
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       this.toggleCreateClassModal();
+  //     }
+  //   })
+  // }
+
   private handleEmptyClass() {
     Swal.fire({
-      title: 'No classes found',
-      text: 'You haven\'t created any classes yet. Would you like to create your first class?',
+      title: 'No Classes Found',
       icon: 'info',
-      showCancelButton: true,
-      confirmButtonText: 'Create class',
-      cancelButtonText: 'Later'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.toggleCreateClassModal();
-      }
+      showConfirmButton: false,
+      toast: true,
+      timer: 2000,
+      position: 'top-end',
+      timerProgressBar: true
     })
   }
 

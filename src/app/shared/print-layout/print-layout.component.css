@@ -30,6 +30,64 @@
     background: none;
   }
 
+  /* Print-specific header styles */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 0.5in 0.2in 0.5in;
+    padding-top: 0.3in;
+  }
+
+  .student-info {
+    margin: 0 0.5in 0.2in 0.5in;
+  }
+
+  .instructions {
+    margin: 0 0.5in 0.2in 0.5in;
+  }
+
+  .questions-container {
+    margin: 0 0.5in 0 0.5in;
+  }
+
+  .left-image, .right-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+  }
+
+  .imgl {
+    width: 120px;
+    height: 120px;
+    margin: 0 1rem;
+  }
+
+  .centerdata {
+    text-align: center;
+    flex: 1;
+  }
+
+  .centerdata p:first-child {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: rgb(0, 0, 0);
+  }
+
+  .centerdata p:nth-child(2) {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: rgb(0, 0, 0);
+    margin: 0.1rem 0;
+  }
+
+  .centerdata p:nth-child(3),
+  .centerdata p:nth-child(4) {
+    font-size: 1rem;
+    color: #333;
+  }
+
   /* Column layout for questions */
   .questions-container.columns {
     column-count: 2;
@@ -51,7 +109,6 @@
   }
 
   .question-type-section {
-    break-inside: avoid-page;
     margin-bottom: 0.2in;
   }
 
@@ -73,7 +130,48 @@
 
 /* Header styles */
 .header {
-  margin-bottom: 0.3in;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: red;
+  flex: 1;
+}
+
+.left-image, .right-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+
+.imgl {
+  width: 120px;
+  height: 120px;
+  margin: 0 1rem;
+}
+
+.centerdata {
+  text-align: center;
+  flex: 1;
+}
+
+.centerdata p:first-child {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: rgb(0, 0, 0);
+}
+
+.centerdata p:nth-child(2) {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: rgb(0, 0, 0);
+  margin: 0.1rem 0;
+}
+
+.centerdata p:nth-child(3),
+.centerdata p:nth-child(4) {
+  font-size: 1rem;
+  color: #333;
 }
 
 .title {
@@ -85,7 +183,15 @@
 }
 
 .student-info {
-  margin-bottom: 0.2in;
+  margin: 0 0.5in 0.2in 0.5in;
+}
+
+.instructions {
+  margin: 0 0.5in 0.2in 0.5in;
+}
+
+.questions-container {
+  margin: 0 0.5in 0 0.5in;
 }
 
 .info-columns {

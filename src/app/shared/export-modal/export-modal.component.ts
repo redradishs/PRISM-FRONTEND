@@ -4,15 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { ExportOptions } from '../../services/export.service';
 
 @Component({
-    selector: 'app-export-modal',
-    standalone: true,
-    imports: [CommonModule, FormsModule],
-    template: `
+  selector: 'app-export-modal',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  template: `
     <div *ngIf="isVisible" class="export-modal-overlay">
       <div class="export-modal">
         <div class="modal-header">
           <h3 class="modal-title">
-            <i class="fas fa-file-export mr-2 text-blue-500"></i>
+            <i class="fas fa-file-export"></i>
             Export Assessment
           </h3>
           <button (click)="closeModal()" class="close-btn" title="Close">
@@ -22,128 +22,148 @@ import { ExportOptions } from '../../services/export.service';
 
         <div class="modal-body">
           <!-- Export Format Selection -->
-          <div class="form-section">
-            <label class="section-label">
-              <i class="fas fa-file-alt mr-2"></i>
+          <div class="section">
+            <label class="section-title">
+              <i class="fas fa-download"></i>
               Export Format
             </label>
-            <div class="format-options">
-              <label class="format-option">
-                <input 
-                  type="radio" 
-                  name="format" 
-                  value="pdf" 
-                  [(ngModel)]="exportOptions.format"
-                  class="radio-input">
-                <div class="format-content">
-                  <div class="format-header">
-                    <i class="fas fa-file-pdf text-red-500 mr-2"></i>
-                    <span class="format-title">PDF Export</span>
-                  </div>
-                  <span class="format-description">Generate a downloadable PDF file using pdfMake</span>
-                </div>
+            <div class="format-grid">
+              <label class="format-card" [class.active]="exportOptions.format === 'print'">
+                <input type="radio" name="format" value="print" [(ngModel)]="exportOptions.format">
+                <div class="format-icon print"><i class="fas fa-print"></i></div>
+                <span>Print</span>
               </label>
-              <label class="format-option">
-                <input 
-                  type="radio" 
-                  name="format" 
-                  value="print" 
-                  [(ngModel)]="exportOptions.format"
-                  class="radio-input">
-                <div class="format-content">
-                  <div class="format-header">
-                    <i class="fas fa-print text-green-500 mr-2"></i>
-                    <span class="format-title">Print Layout</span>
-                  </div>
-                  <span class="format-description">Open browser print dialog with perfect column layout</span>
-                </div>
+              <label class="format-card" [class.active]="exportOptions.format === 'word'">
+                <input type="radio" name="format" value="word" [(ngModel)]="exportOptions.format">
+                <div class="format-icon word"><i class="fas fa-file-word"></i></div>
+                <span>Word</span>
               </label>
             </div>
           </div>
-          <!-- Student Information -->
-          <div class="form-section">
-            <label class="section-label">
-              <i class="fas fa-user-graduate mr-2"></i>
-              Student Information Fields
-            </label>
-            <p class="info-text">These fields will appear as blank lines in the exported PDF for students to fill in manually.</p>
-          </div>
-
-          <!-- General Instructions -->
-          <div class="form-section">
-            <label class="section-label">
-              <i class="fas fa-list-ul mr-2"></i>
-              General Instructions
-            </label>
-            <textarea 
-              [(ngModel)]="exportOptions.generalInstructions"
-              placeholder="Enter general instructions for the exam (e.g., Read each question carefully, Choose the best answer, etc.)"
-              class="form-textarea"
-              rows="4"></textarea>
+          <!-- Assessment Header Customization -->
+          <div class="section" *ngIf="exportOptions.format !== 'word'">
+            <div class="toggle-header">
+              <label class="section-title">
+                <i class="fas fa-heading"></i>
+                Assessment Header
+              </label>
+              <label class="toggle-switch">
+                <input type="checkbox" [(ngModel)]="customizeHeader">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            
+            <div *ngIf="customizeHeader" class="header-fields">
+              <div class="field-row">
+                <div class="field-group full">
+                  <label>Course Title</label>
+                  <input type="text" [(ngModel)]="exportOptions.courseTitle" placeholder="e.g., Information Assurance" class="input-field">
+                </div>
+              </div>
+              
+              <div class="field-row">
+                <div class="field-group">
+                  <label>Assessment Type</label>
+                  <select [(ngModel)]="exportOptions.assessmentType" class="input-field">
+                    <option value="">Select type...</option>
+                    <option value="MIDTERM">MIDTERM</option>
+                    <option value="FINAL EXAM">FINAL EXAM</option>
+                    <option value="QUIZ">QUIZ</option>
+                    <option value="ASSESSMENT">ASSESSMENT</option>
+                    <option value="LONG QUIZ">LONG QUIZ</option>
+                    <option value="SHORT QUIZ">SHORT QUIZ</option>
+                  </select>
+                </div>
+                <div class="field-group" *ngIf="showAssessmentNumber()">
+                  <label>Number</label>
+                  <input type="text" [(ngModel)]="exportOptions.assessmentNumber" placeholder="1, 2, I, II" class="input-field">
+                </div>
+              </div>
+              
+              <div class="field-row">
+                <div class="field-group">
+                  <label>Term</label>
+                  <select [(ngModel)]="exportOptions.term" class="input-field">
+                    <option value="">Select term...</option>
+                    <option value="MIDYEAR">MIDYEAR</option>
+                    <option value="1ST SEMESTER">1ST SEMESTER</option>
+                    <option value="2ND SEMESTER">2ND SEMESTER</option>
+                    <option value="SUMMER">SUMMER</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Academic Year</label>
+                  <select [(ngModel)]="exportOptions.academicYear" class="input-field">
+                    <option value="S.Y. 2025-2026">S.Y. 2025-2026</option>
+                    <option value="S.Y. 2026-2027">S.Y. 2026-2027</option>
+                    <option value="S.Y. 2027-2028">S.Y. 2027-2028</option>
+                    <option value="S.Y. 2028-2029">S.Y. 2028-2029</option>
+                    <option value="S.Y. 2029-2030">S.Y. 2029-2030</option>
+                  </select>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Export Options -->
-          <div class="form-section">
-            <label class="section-label">
-              <i class="fas fa-cogs mr-2"></i>
-              Export Options
+          <div class="section">
+            <label class="section-title">
+              <i class="fas fa-cogs"></i>
+              Options
             </label>
-            <div class="checkbox-group">
-              <label class="checkbox-item">
-                <div class="checkbox-header">
-                  <input 
-                    type="checkbox" 
-                    [(ngModel)]="exportOptions.segregateByType"
-                    class="checkbox-input">
-                  <span class="checkbox-label">Group questions by type (Multiple Choice, True/False, etc.)</span>
+            <div class="options-grid">
+              <label class="option-card">
+                <input type="checkbox" [(ngModel)]="exportOptions.segregateByType">
+                <div class="option-content">
+                  <i class="fas fa-layer-group"></i>
+                  <span>Group by Type</span>
                 </div>
-                <span class="checkbox-description">Organizes questions into sections with Roman numerals</span>
               </label>
-              <label class="checkbox-item">
-                <div class="checkbox-header">
-                  <input 
-                    type="checkbox" 
-                    [(ngModel)]="exportOptions.includeAnswerKey"
-                    class="checkbox-input">
-                  <span class="checkbox-label">Include answer key on separate page</span>
+              <label class="option-card">
+                <input type="checkbox" [(ngModel)]="exportOptions.includeAnswerKey">
+                <div class="option-content">
+                  <i class="fas fa-key"></i>
+                  <span>Answer Key</span>
                 </div>
-                <span class="checkbox-description">Creates a dedicated answer key page at the end</span>
               </label>
-              <label class="checkbox-item">
-                <div class="checkbox-header">
-                  <input 
-                    type="checkbox" 
-                    [(ngModel)]="exportOptions.useColumnLayout"
-                    class="checkbox-input">
-                  <span class="checkbox-label">Use 2-column layout for compact display</span>
+              <label class="option-card" *ngIf="exportOptions.format !== 'word'">
+                <input type="checkbox" [(ngModel)]="exportOptions.useColumnLayout">
+                <div class="option-content">
+                  <i class="fas fa-columns"></i>
+                  <span>Two Columns</span>
                 </div>
-                <span class="checkbox-description">Fits more questions per page (except for True/False which auto-columns when 6+)</span>
               </label>
             </div>
+          </div>
+
+          <!-- Instructions -->
+          <div class="section">
+            <label class="section-title">
+              <i class="fas fa-edit"></i>
+              Instructions
+            </label>
+            <textarea 
+              [(ngModel)]="exportOptions.generalInstructions"
+              placeholder="Enter exam instructions..."
+              class="instructions-field"
+              rows="3"></textarea>
           </div>
         </div>
 
         <div class="modal-footer">
-          <button (click)="closeModal()" class="btn btn-secondary">
-            <i class="fas fa-times mr-2"></i>
+          <button (click)="closeModal()" class="btn-secondary">
             Cancel
           </button>
-          <button (click)="confirmExport()" class="btn btn-primary" [disabled]="isExporting">
-            <i class="fas fa-file-pdf mr-2" *ngIf="!isExporting && exportOptions.format === 'pdf'"></i>
-            <i class="fas fa-print mr-2" *ngIf="!isExporting && exportOptions.format === 'print'"></i>
-            <i class="fas fa-spinner fa-spin mr-2" *ngIf="isExporting"></i>
-            <span *ngIf="isExporting">
-              {{ exportOptions.format === 'pdf' ? 'Generating PDF...' : 'Opening Print Preview...' }}
-            </span>
-            <span *ngIf="!isExporting">
-              {{ exportOptions.format === 'pdf' ? 'Export to PDF' : 'Open Print Preview' }}
-            </span>
+          <button (click)="confirmExport()" class="btn-primary" [disabled]="isExporting">
+            <i class="fas fa-spinner fa-spin" *ngIf="isExporting"></i>
+            <i class="fas fa-download" *ngIf="!isExporting"></i>
+            {{ isExporting ? 'Exporting...' : 'Export' }}
           </button>
         </div>
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     .export-modal-overlay {
       position: fixed;
       top: 0;
@@ -160,10 +180,10 @@ import { ExportOptions } from '../../services/export.service';
 
     .export-modal {
       background: white;
-      border-radius: 12px;
+      border-radius: 16px;
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
       width: 100%;
-      max-width: 600px;
+      max-width: 700px;
       max-height: 85vh;
       overflow: hidden;
       display: flex;
@@ -176,23 +196,24 @@ import { ExportOptions } from '../../services/export.service';
       justify-content: space-between;
       padding: 20px 24px;
       border-bottom: 1px solid #e5e7eb;
-      background: #f9fafb;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
     }
 
     .modal-title {
       font-size: 18px;
       font-weight: 600;
-      color: #111827;
       margin: 0;
       display: flex;
       align-items: center;
+      gap: 8px;
     }
 
     .close-btn {
-      background: none;
+      background: rgba(255, 255, 255, 0.1);
       border: none;
       font-size: 16px;
-      color: #6b7280;
+      color: white;
       cursor: pointer;
       padding: 8px;
       border-radius: 6px;
@@ -200,319 +221,338 @@ import { ExportOptions } from '../../services/export.service';
     }
 
     .close-btn:hover {
-      background: #e5e7eb;
-      color: #374151;
+      background: rgba(255, 255, 255, 0.2);
     }
 
     .modal-body {
-      padding: 24px;
+      padding: 20px;
       overflow-y: auto;
       flex: 1;
     }
 
-    .form-section {
-      margin-bottom: 24px;
+    /* New Compact Styles */
+    .section {
+      margin-bottom: 16px;
     }
 
-    .section-label {
+    .section-title {
       display: flex;
       align-items: center;
+      gap: 8px;
       font-size: 14px;
       font-weight: 600;
       color: #374151;
       margin-bottom: 12px;
     }
 
-    .section-label i {
-      color: #6366f1;
+    .section-title i {
+      color: #667eea;
     }
 
-    .text-red-500 {
-      color: #ef4444 !important;
+    /* Format Grid */
+    .format-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
     }
 
-    .text-blue-500 {
-      color: #3b82f6 !important;
-    }
-
-    .text-green-500 {
-      color: #10b981 !important;
-    }
-
-    .format-options {
+    .format-card {
+      position: relative;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-    }
-
-    .format-option {
-      cursor: pointer;
-      padding: 16px;
+      align-items: center;
+      padding: 18px 12px;
       border: 2px solid #e5e7eb;
-      border-radius: 8px;
+      border-radius: 10px;
+      cursor: pointer;
       transition: all 0.2s;
       background: #fafafa;
+    }
+
+    .format-card input {
+      display: none;
+    }
+
+    .format-card.active {
+      border-color: #667eea;
+      background: #f0f4ff;
+    }
+
+    .format-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
       display: flex;
-      align-items: flex-start;
-      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 8px;
+      color: white;
+      font-size: 20px;
     }
 
-    .format-option:hover {
-      border-color: #d1d5db;
-      background: #f9fafb;
+    .format-icon.print { background: #38a169; }
+    .format-icon.word { background: #2b6cb0; }
+
+    .format-card span {
+      font-size: 14px;
+      font-weight: 600;
+      color: #4a5568;
     }
 
-    .format-option:has(input:checked) {
-      border-color: #3b82f6;
-      background: #eff6ff;
+    /* Toggle Header */
+    .toggle-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
     }
 
-    .radio-input {
-      margin-top: 2px;
-      width: 18px;
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #cbd5e0;
+      transition: 0.3s;
+      border-radius: 24px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
       height: 18px;
-      accent-color: #3b82f6;
-      flex-shrink: 0;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
     }
 
-    .format-content {
+    .toggle-switch input:checked + .toggle-slider {
+      background-color: #667eea;
+    }
+
+    .toggle-switch input:checked + .toggle-slider:before {
+      transform: translateX(20px);
+    }
+
+    /* Header Fields */
+    .header-fields {
+      margin-top: 12px;
+    }
+
+    .field-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .field-group {
       flex: 1;
     }
 
-    .format-header {
-      display: flex;
-      align-items: center;
+    .field-group.full {
+      flex: 1 1 100%;
+    }
+
+    .field-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: #4a5568;
       margin-bottom: 4px;
     }
 
-    .format-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: #374151;
-    }
-
-    .format-option:has(input:checked) .format-title {
-      color: #3b82f6;
-    }
-
-    .format-description {
-      font-size: 12px;
-      color: #6b7280;
-      line-height: 1.4;
-    }
-
-    .format-option:has(input:checked) .format-description {
-      color: #1e40af;
-    }
-
-    .student-info-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    @media (max-width: 640px) {
-      .student-info-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .form-group label {
-      font-size: 12px;
-      font-weight: 500;
-      color: #374151;
-      margin-bottom: 6px;
-    }
-
-    .form-input, .form-textarea {
-      padding: 12px 16px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      font-size: 14px;
-      transition: all 0.2s;
-      background: white;
-    }
-
-    .form-input:focus, .form-textarea:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-
-    .form-textarea {
-      resize: vertical;
-      min-height: 100px;
-      font-family: inherit;
+    .input-field {
       width: 100%;
-      box-sizing: border-box;
+      padding: 8px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.2s;
     }
 
-    .checkbox-group {
+    .input-field:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    /* Options Grid */
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 8px;
+    }
+
+    .option-card {
       display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .checkbox-item {
-      cursor: pointer;
-      padding: 16px;
-      border: 1px solid #e5e7eb;
+      align-items: center;
+      padding: 12px 10px;
+      border: 2px solid #e5e7eb;
       border-radius: 8px;
+      cursor: pointer;
       transition: all 0.2s;
       background: #fafafa;
     }
 
-    .checkbox-item:hover {
-      border-color: #d1d5db;
-      background: #f9fafb;
+    .option-card input {
+      display: none;
     }
 
-    .checkbox-header {
+    .option-card input:checked + .option-content {
+      color: #667eea;
+    }
+
+    .option-card:has(input:checked) {
+      border-color: #667eea;
+      background: #f0f4ff;
+    }
+
+    .option-content {
       display: flex;
       align-items: center;
-      margin-bottom: 6px;
-    }
-
-    .checkbox-input {
-      margin-right: 12px;
-      width: 18px;
-      height: 18px;
-      accent-color: #3b82f6;
-      flex-shrink: 0;
-    }
-
-    .checkbox-label {
+      gap: 8px;
       font-size: 14px;
-      font-weight: 500;
-      color: #374151;
-      flex: 1;
-    }
-
-    .checkbox-item input:checked + .checkbox-label {
-      color: #3b82f6;
       font-weight: 600;
     }
 
-    .checkbox-description {
-      font-size: 12px;
-      color: #6b7280;
-      margin-left: 30px;
-      font-style: italic;
-      line-height: 1.4;
+    .option-content i {
+      font-size: 16px;
     }
 
-    /* Modern browsers with :has() support */
-    .checkbox-item:has(input:checked) .checkbox-description {
-      color: #1e40af;
-    }
-
-    /* Fallback for older browsers */
-    .checkbox-item input:checked ~ .checkbox-description {
-      color: #1e40af;
-    }
-
-    .info-text {
-      font-size: 13px;
-      color: #6b7280;
-      margin: 0;
+    /* Instructions Field */
+    .instructions-field {
+      width: 100%;
       padding: 12px;
-      background: #f0f9ff;
-      border: 1px solid #e0f2fe;
+      border: 1px solid #d1d5db;
       border-radius: 6px;
-      border-left: 4px solid #0ea5e9;
+      font-size: 14px;
+      resize: vertical;
+      font-family: inherit;
     }
 
+    .instructions-field:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    /* Modal Footer */
     .modal-footer {
       display: flex;
       justify-content: flex-end;
       gap: 12px;
-      padding: 20px 24px;
+      padding: 16px 20px;
       border-top: 1px solid #e5e7eb;
-      background: #f9fafb;
+      background: #fafafa;
     }
 
-    .btn {
+    .btn-secondary {
       padding: 10px 20px;
+      border: 1px solid #d1d5db;
       border-radius: 6px;
+      background: white;
+      color: #4a5568;
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.2s;
-      border: 1px solid transparent;
-      display: flex;
-      align-items: center;
     }
 
-    .btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .btn-secondary {
-      background: white;
-      color: #374151;
-      border-color: #d1d5db;
-    }
-
-    .btn-secondary:hover:not(:disabled) {
-      background: #f9fafb;
-      border-color: #9ca3af;
+    .btn-secondary:hover {
+      background: #f7fafc;
+      border-color: #a0aec0;
     }
 
     .btn-primary {
-      background: #3b82f6;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .btn-primary:hover:not(:disabled) {
-      background: #2563eb;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
     }
 
-    .mr-2 {
-      margin-right: 8px;
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
     }
   `]
 })
 export class ExportModalComponent {
-    @Input() isVisible = false;
-    @Output() export = new EventEmitter<ExportOptions>();
-    @Output() close = new EventEmitter<void>();
+  @Input() isVisible = false;
+  @Output() export = new EventEmitter<ExportOptions>();
+  @Output() close = new EventEmitter<void>();
 
-    isExporting = false;
+  isExporting = false;
+  customizeHeader = false;
 
-    exportOptions: ExportOptions = {
-        format: 'pdf',
-        segregateByType: false,
-        includeAnswerKey: false,
-        useColumnLayout: false,
-        studentInfo: {
-            name: '',
-            yearCourseBlock: '',
-            date: '',
-            score: ''
-        },
-        generalInstructions: 'Read each question carefully and choose the best answer. Write your answers clearly and legibly.'
-    };
+  exportOptions: ExportOptions = {
+    format: 'print',
+    segregateByType: false,
+    includeAnswerKey: false,
+    useColumnLayout: false,
+    courseTitle: '',
+    assessmentType: '',
+    assessmentNumber: '',
+    term: '',
+    academicYear: 'S.Y. 2025-2026',
+    studentInfo: {
+      name: '',
+      yearCourseBlock: '',
+      date: '',
+      score: ''
+    },
+    generalInstructions: 'Read each question carefully and choose the best answer. Write your answers clearly and legibly.'
+  };
 
-    closeModal(): void {
-        this.close.emit();
+  closeModal(): void {
+    this.close.emit();
+  }
+
+  showAssessmentNumber(): boolean {
+    const type = this.exportOptions.assessmentType.toLowerCase();
+    return type.includes('quiz') || type.includes('assessment');
+  }
+
+  async confirmExport(): Promise<void> {
+    this.isExporting = true;
+    try {
+      this.export.emit({ ...this.exportOptions });
+    } finally {
+      setTimeout(() => {
+        this.isExporting = false;
+        this.closeModal();
+      }, 1000);
     }
-
-    async confirmExport(): Promise<void> {
-        this.isExporting = true;
-        try {
-            this.export.emit({ ...this.exportOptions });
-        } finally {
-            // Reset after a short delay to show the export feedback
-            setTimeout(() => {
-                this.isExporting = false;
-                this.closeModal();
-            }, 1000);
-        }
-    }
+  }
 }
