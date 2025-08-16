@@ -395,7 +395,7 @@ export class StudeAssessmentresultComponent implements OnInit {
         // console.log('Successfully analyzed the assessment', resp);
         this.insights = resp.feedback;
         if (resp.search_queries) {
-          this.search = resp.search_queries[0];
+          this.search = resp.search_queries;
           this.searchMaterials();
         }
       },
@@ -407,17 +407,32 @@ export class StudeAssessmentresultComponent implements OnInit {
 
   searchMaterials() {
     const data = {
-      query: this.search
+      search_queries: this.search
     }
-    this.ai.recommendedMaterials(data).subscribe({
+    this.ai.recommendedMaterialsPlus(data).subscribe({
       next: (resp: any) => {
         // console.log('Successfully searched for materials', resp);
-        this.searchResults = resp.results.slice(0, 4);
+        // this.searchResults = resp.results
+        this.materialsValidator(resp.results)
       },
       error: (error) => {
         console.error('Error searching for materials:', error);
       }
     })
+  }
+
+  materialsValidator(results: any) {
+    const data = {
+      results: results
+    }
+    this.ai.materialsValidator(data).subscribe({
+      next: (resp: any) => {
+        this.searchResults = resp.results
+      }, error: (error: any) => {
+        console.error('Error searching for materials:', error);
+      }
+    })
+
   }
 
   openResource(url: string) {

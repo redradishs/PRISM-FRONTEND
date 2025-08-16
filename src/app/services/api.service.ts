@@ -80,6 +80,14 @@ export class ApiService {
     return this.http.post(`${this.aiUrl}/search`, data);
   }
 
+  recommendedMaterialsPlus(data: any) {
+    return this.http.post(`${this.aiUrl}/search-multiple`, data)
+  }
+
+  materialsValidator(data: any) {
+    return this.http.post(`${this.aiUrl}/materials-validator`, data)
+  }
+
 
   //normal api calls here, starts with dashboard
 

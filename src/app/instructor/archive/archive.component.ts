@@ -42,11 +42,6 @@ export class ArchiveComponent {
   searchControl = new FormControl('');
   showJoinClassModal = false;
 
-
-
-
-
-
   activeTab = 'classes';
   searchQuery = '';
   classCode = '';
@@ -62,8 +57,8 @@ export class ArchiveComponent {
     '#6366f1', // blue
     '#10b981', // green
     '#f59e42', // orange
-    '#f43f5e', // pink/red (optional, for more variety)
-    '#06b6d4', // cyan (optional)
+    '#f43f5e', // pink/red 
+    '#06b6d4', // cyan 
   ];
 
   constructor(private auth: AuthService, private api: StudentService, private titleService: Title, private fb: FormBuilder, private router: Router,

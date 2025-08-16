@@ -230,27 +230,25 @@ export class FinalGenerateAssessmentComponent {
       return typeMapping[type as keyof typeof typeMapping];
     }).filter(type => type);
 
-    // Prepare data for the new API
+    // prepare data
     const requestData: any = {
       topic: this.aiGeneration.topic,
       numberOfQuestions: Number(this.aiGeneration.questionCount),
       questionTypes: questionTypes,
       difficulty: this.aiGeneration.difficulty
     };
-
-    // Add optional context if document was uploaded
     if (this.extractedText && this.extractedText.trim() !== '') {
       requestData.context = this.extractedText;
     }
-
-    // Add optional additional instructions
     if (this.aiGeneration.instructions && this.aiGeneration.instructions.trim() !== '') {
       requestData.additionalInstructions = this.aiGeneration.instructions;
     }
 
-    console.log('Sending request data:', requestData);
+    // console.log('Sending request data:', requestData);
+    this.generateQuestionsWithRetry(requestData, 5);
+  }
 
-    //temporary fix, another api for bulk generation to avoid slow and api 500 shitdown
+  private generateQuestionsWithRetry(requestData: any, maxRetries: number, currentAttempt: number = 1): void {
     const questionCount = Number(this.aiGeneration.questionCount);
     const apiCall = questionCount > 20
       ? this.api.bulkfinalGenerateAssessment(requestData)
@@ -259,42 +257,25 @@ export class FinalGenerateAssessmentComponent {
     apiCall.subscribe({
       next: (response: any) => {
         try {
-          console.log('API Response:', response);
-
+          console.log(`API Response (Attempt ${currentAttempt}):`, response);
           if (response.success && response.data && response.data.questions && Array.isArray(response.data.questions)) {
             this.handleGeneratedQuestions(response.data);
             this.generated = true;
-            Swal.fire({
-              title: 'Questions Generated',
-              text: 'Questions generated successfully',
-              icon: 'success',
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 2000,
-              timerProgressBar: true,
-              background: '#fff',
-              iconColor: '#3b82f6'
-            });
+            this.showSuccessMessage();
           } else if (response.questions && Array.isArray(response.questions)) {
-            // Fallback for old response format
             this.handleGeneratedQuestions(response);
             this.generated = true;
-            Swal.fire({
-              title: 'Questions Generated',
-              text: 'Questions generated successfully',
-              icon: 'success',
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 2000,
-              timerProgressBar: true,
-              background: '#fff',
-              iconColor: '#3b82f6'
-            });
+            this.showSuccessMessage();
+          } else if (response.success === false && response.error && currentAttempt < maxRetries) {
+            console.log(`Attempt ${currentAttempt} failed, retrying... (${maxRetries - currentAttempt} attempts left)`);
+            this.showRetryMessage(currentAttempt, maxRetries);
+            setTimeout(() => {
+              this.generateQuestionsWithRetry(requestData, maxRetries, currentAttempt + 1);
+            }, 2000);
+            return;
           } else {
             console.error('Invalid response structure:', response);
-            this.errorMessage = 'Invalid response format from AI';
+            this.errorMessage = response.error || 'Invalid response format from AI';
           }
         } catch (error) {
           console.error('Error parsing AI response:', error);
@@ -303,10 +284,50 @@ export class FinalGenerateAssessmentComponent {
         this.isGenerating = false;
       },
       error: (error) => {
-        console.error('Error generating questions:', error);
-        this.errorMessage = 'Failed to generate questions';
-        this.isGenerating = false;
+        console.error(`Error generating questions (Attempt ${currentAttempt}):`, error);
+
+        if (currentAttempt < maxRetries) {
+          console.log(`Attempt ${currentAttempt} failed, retrying... (${maxRetries - currentAttempt} attempts left)`);
+          this.showRetryMessage(currentAttempt, maxRetries);
+          setTimeout(() => {
+            this.generateQuestionsWithRetry(requestData, maxRetries, currentAttempt + 1);
+          }, 5000);
+          return;
+        } else {
+          this.errorMessage = 'Failed to generate questions after multiple attempts. Please try again later.';
+          this.isGenerating = false;
+        }
       }
+    });
+  }
+
+  private showSuccessMessage(): void {
+    Swal.fire({
+      title: 'Questions Generated',
+      text: 'Questions generated successfully',
+      icon: 'success',
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+      background: '#fff',
+      iconColor: '#3b82f6'
+    });
+  }
+
+  private showRetryMessage(currentAttempt: number, maxRetries: number): void {
+    Swal.fire({
+      title: 'Retrying...',
+      text: `Attempt ${currentAttempt} of ${maxRetries} failed. Retrying in 5 seconds...`,
+      icon: 'info',
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+      background: '#fff',
+      iconColor: '#3b82f6'
     });
   }
 
