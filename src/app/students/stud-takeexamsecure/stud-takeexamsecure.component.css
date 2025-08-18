@@ -149,6 +149,7 @@
     height: 24rem;
     border-radius: 9999px;
     z-index: 0;
+    pointer-events: none;
 }
 
 .decorative-circle-top {
@@ -163,6 +164,13 @@
     left: 0;
     background: linear-gradient(to top right, rgba(250, 232, 255, 0.4), rgba(238, 242, 255, 0.4));
     transform: translate(-50%, 50%);
+}
+/* should be above decorations */
+.short-answer-input,
+.enumeration-input {
+    position: relative;
+    z-index: 2;
+    background-color: #ffffff;
 }
 
 /* Question type badge */

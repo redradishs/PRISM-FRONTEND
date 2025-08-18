@@ -223,6 +223,17 @@
                         </div>
                     </div>
 
+                    <div *ngIf="!isFinalized" class="scoreChangeNotice">
+                        <div class="change-notice-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-info-circle icon-primary"></i>
+                                Score Change Notice
+                            </h3>
+                            <p class="section-subtitle">Assessment has been detected to have Non Object Based Questions.
+                                Your answers are being checked, do not refresh this page yet.</p>
+                        </div>
+                    </div>
+
                     <!-- Performance Overview Section -->
                     <section class="performance-section">
                         <div class="performance-grid">
@@ -472,6 +483,25 @@
                                         </div>
 
                                         <div *ngIf="question.type === 'true-false'">
+                                            <div class="answer-header">
+                                                <i class="fas fa-user"></i>
+                                                <h4>Your Answer</h4>
+                                            </div>
+                                            <div class="answer-content" [class.incorrect]="!question.isCorrect"
+                                                [class.correct]="question.isCorrect">
+                                                {{formatAnswer(question.studentAnswer)}}
+                                            </div>
+
+                                            <div *ngIf="!question.isCorrect" class="answer-header correct mt-4">
+                                                <i class="fas fa-check-circle"></i>
+                                                <h4>Correct Answer</h4>
+                                            </div>
+                                            <div *ngIf="!question.isCorrect" class="answer-content correct">
+                                                {{formatAnswer(question.correctAnswer)}}
+                                            </div>
+                                        </div>
+
+                                        <div *ngIf="question.type === 'short-answer'">
                                             <div class="answer-header">
                                                 <i class="fas fa-user"></i>
                                                 <h4>Your Answer</h4>

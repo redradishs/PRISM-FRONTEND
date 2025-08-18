@@ -79,6 +79,14 @@ export class StudentService {
     return this.http.post(`${this.apiUrl}/dispute/file`, data);
   }
 
+  getObjectBased(data: any) {
+    return this.http.post(`${this.apiUrl}/assessment/objectBased`, data);
+  }
+
+  aiRectification(data: any) {
+    return this.http.post(`${this.apiUrl}/assessment/pAIr`, data);
+  }
+
   //Student History Page
 
   totalAssessments(studentId: String) {

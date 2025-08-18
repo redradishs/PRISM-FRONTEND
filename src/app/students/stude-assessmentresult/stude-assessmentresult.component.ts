@@ -93,6 +93,8 @@ export class StudeAssessmentresultComponent implements OnInit {
   search: any;
   searchResults: any;
 
+  isFinalized: boolean = true;
+
   // Report Assessment Form State
   showReportModal = false;
   reportRequest: ReportRequest = {
@@ -180,8 +182,13 @@ export class StudeAssessmentresultComponent implements OnInit {
     this.api.getPerformanceData(this.userId, this.assignedAssessmentId).subscribe({
       next: (resp: any) => {
         if (resp.remarks === 'Success') {
-          this.questionType = resp.data;
-          // console.log('Performance per question:', this.questionType);
+          this.questionType = resp.data.breakdown;
+          console.log('Performance per question:', this.questionType);
+          if (resp.data.hasNonObject === true && resp.data.hasBeenFinalized === false) {
+            console.log('Detected and not finalized, checking.');
+            this.getObjectBasedQuestions();
+            this.isFinalized = false;
+          }
         }
       },
       error: (error) => {
@@ -202,8 +209,6 @@ export class StudeAssessmentresultComponent implements OnInit {
             if (this.enableStudentFeedback) {
               this.getAssessmentInsights();
             }
-
-
           }
 
           // console.log('Analysis:', this.analysis);
@@ -212,6 +217,50 @@ export class StudeAssessmentresultComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error fetching question overview:', error);
+      }
+    })
+  }
+
+  getObjectBasedQuestions() {
+    const data = {
+      assignedAssessmentId: this.assignedAssessmentId,
+      studentId: this.userId
+    }
+    this.api.getObjectBased(data).subscribe({
+      next: (resp: any) => {
+        // console.log('Object Based Questions:', resp);
+        this.submitNonObjectBased(resp.data);
+      }, error: (error: any) => {
+        console.error('Error fetching object based questions:', error);
+      }
+    })
+  }
+
+  submitNonObjectBased(data: any) {
+    this.ai.nonObjectChecking(data).subscribe({
+      next: (resp: any) => {
+        // console.log('Non-Object Based Results:', resp);
+        this.processAIRectification(resp.results);
+
+      }, error: (error: any) => {
+        console.error('Error submitting non-object based results:', error);
+      }
+    })
+  }
+
+  processAIRectification(changes: any) {
+    const data = {
+      studentId: this.userId,
+      assignedAssessmentId: this.assignedAssessmentId,
+      aiRectifications: changes
+    }
+    this.api.aiRectification(data).subscribe({
+      next: (resp: any) => {
+        this.getResult();
+        this.getPerformancePerQuestion();
+        this.isFinalized = true;
+      }, error: (error: any) => {
+        console.error('Error processing AI rectification:', error);
       }
     })
   }

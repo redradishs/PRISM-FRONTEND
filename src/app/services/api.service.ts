@@ -88,6 +88,9 @@ export class ApiService {
     return this.http.post(`${this.aiUrl}/materials-validator`, data)
   }
 
+  nonObjectChecking(data: any) {
+    return this.http.post(`${this.aiUrl}/finalize`, { data });
+  }
 
   //normal api calls here, starts with dashboard
 
