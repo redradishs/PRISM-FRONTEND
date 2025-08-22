@@ -25,7 +25,6 @@ export class ApiService {
   // aiUrl = 'http://localhost:3000';
 
   aiFinal = 'https://prism-ai-worker.asherjamesmayson.workers.dev/api'
-
   rtUrl = 'https://prismapi2.onrender.com/rt';
   apiUrl = 'https://prismapi2.onrender.com/instructor';
   aiUrl = 'https://redprismai.vercel.app';
@@ -62,11 +61,7 @@ export class ApiService {
   }
 
   // Generate performance evaluation
-  analyzeResult(content: string) {
-    const data: AIPromptRequest = {
-      role: 'system',
-      content: content,
-    };
+  analyzeResult(data: any) {
     return this.http.post(`${this.aiUrl}/analytics`, data);
   }
 

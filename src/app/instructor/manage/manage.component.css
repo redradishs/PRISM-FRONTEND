@@ -140,6 +140,7 @@
       flex-direction: column;
       gap: 1rem;
       align-items: flex-start;
+      margin-bottom: 0.5rem;
     }
   
     .publish-container {
@@ -149,7 +150,7 @@
     .publish-button {
       width: 100%;
       justify-content: center;
-      padding: 0.875rem;
+      padding: 0.65rem;
     }
   }
 
@@ -277,11 +278,11 @@
     .filter-container {
         padding: 1rem;
         gap: 12px;
+        margin-bottom: 16px;
     }
 
     .filter-options {
-        flex-direction: column;
-        width: 100%;
+        display: none;
     }
 
     .filter-item {
@@ -295,11 +296,16 @@
 
     .search-input {
         padding: 8px 12px 8px 36px;
+        font-size: 0.9rem;
     }
 
     .main-container {
     margin: 0 auto;
-    padding: 0.80rem 0.40rem;
+    padding: 0.75rem 0.5rem;
+    }
+
+    .status-tabs {
+        margin-bottom: 16px;
     }
 }
 
@@ -1244,48 +1250,186 @@
 /* Mobile: hide desktop header, show mobile header, hide icon */
 @media (max-width: 640px) {
   .list-header-main { display: none !important; }
-  .list-header-mobile { display: flex !important; }
-  .list-icon-centered { display: none !important; }
-}
-
-@media (max-width: 640px) {
-
-    .view-toggle {
-        display: none;
-    }
-  .meta-details-row {
-    display: flex;
+  .list-header-mobile { 
+    display: flex !important; 
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 8px;
     flex-wrap: wrap;
-    gap: 10px 16px;
-    align-items: center;
+    gap: 8px;
+  }
+  .list-icon-centered { display: none !important; }
+
+  .category-tag-row { display: none !important; }
+  .card-description { display: none !important; }
+  
+  .meta-details-row {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 6px 8px;
+    margin-top: 6px;
+  }
+
+  /* Compact score display */
+  .score-display {
+    padding: 0.15rem 0.5rem;
+    font-size: 0.8rem;
+  }
+  
+  .score-value {
+    font-size: 0.9rem;
+  }
+  
+  /* Mobile-optimized status labels - very compact */
+  .completed-date-label,
+  .status-label {
+    display: none !important; /* Hide in list-side since now shown in mobile header */
+  }
+  
+  /* Compact button styling */
+  .list-side .btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    width: 100%;
     margin-top: 4px;
   }
-  .category-tag {
-    background: #ede9fe;
-    color: #7c3aed;
-    font-weight: 600;
-    border-radius: 6px;
-    padding: 4px 12px;
-    font-size: 0.97rem;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-right: 8px;
+  
+  /* More compact card layout */
+  .assessment-list-card {
+    padding: 10px 12px;
+    gap: 8px;
   }
-  .detail-text {
-    background: none;
-    color: #4b5563;
-    font-size: 0.97rem;
-    font-weight: 500;
-    padding: 0;
-    border-radius: 0;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-  .detail-icon {
-    color: #a1a1aa;
+  
+  /* Smaller title on mobile */
+  .list-title {
     font-size: 1rem;
+    line-height: 1.2;
+    margin-bottom: 2px;
+    font-weight: 600;
+  }
+  
+  /* Smaller badges for mobile */
+  .list-header-mobile .badge {
+    padding: 0.15rem 0.4rem;
+    font-size: 0.7rem;
+  }
+  
+  /* Hide badge icons to save space */
+  .list-header-mobile .badge-icon {
+    display: none;
+  }
+  
+  /* Mobile status info in upper right - compact styling */
+  .mobile-status-info {
+    font-size: 0.65rem !important;
+    color: #6b7280 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 2px !important;
+    white-space: nowrap;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  
+  .mobile-status-info i {
+    font-size: 0.65rem !important;
+    color: #9ca3af !important;
+  }
+  
+  /* Mobile score display in header */
+  .mobile-score {
+    padding: 0.2rem 0.6rem !important;
+    font-size: 0.85rem !important;
+    background: #f8fafc !important;
+    border-radius: 8px !important;
+    margin: 0 !important;
+  }
+  
+  .mobile-score .score-value {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+  }
+  
+  /* Compact list meta section */
+  .list-meta {
+    margin-top: 4px;
+  }
+  
+  /* Make meta details more compact on mobile */
+  .meta-details-row span {
+    padding: 3px 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+  
+  /* Show first 3 essential meta details on mobile: Questions, Time/Class, Submissions */
+  .meta-details-row span:nth-child(n+5) {
+    display: none;
+  }
+  
+  /* Simplify list side section on mobile - very compact */
+  .list-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+    min-width: auto;
+  }
+  
+  /* Remove any default margin that might cause empty space */
+  .list-side > * {
+    margin: 0;
+  }
+  
+  /* More compact card layout - stack vertically on mobile */
+  .assessment-list-card {
+    padding: 10px 12px;
+    gap: 8px;
+    flex-direction: column !important;
+  }
+  
+  /* Stack main content and side content vertically on mobile */
+  .list-main {
+    width: 100%;
+  }
+  
+  .list-side {
+    width: 100%;
+    align-items: stretch;
+    margin-top: 6px;
+  }
+  
+  /* Ensure compact mobile experience */
+  .assessment-list-card:hover {
+    transform: none; /* Disable hover transform on mobile */
+  }
+ /* Simplify list side section on mobile - very compact */
+  .list-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+    min-width: auto;
+  }
+  
+  /* Ensure score display is compact and only shows when needed */
+  .list-side .score-display {
+    margin-bottom: 0;
+  }
+  
+  /* Remove any default margin that might cause empty space */
+  .list-side > * {
+    margin: 0;
+  }
+  
+  /* Ensure compact mobile experience */
+  .assessment-list-card:hover {
+    transform: none; /* Disable hover transform on mobile */
+  }
+  
+  /* Hide view toggle on mobile */
+  .view-toggle {
+    display: none;
   }
 }
 

@@ -668,6 +668,10 @@
                                             <p class="text-sm text-gray-500">{{top.score}}/{{questionLength}}</p>
                                         </div>
                                     </div>
+                                    <div *ngIf="topPerforming.length === 0"
+                                        class="flex justify-center align-center text-gray-600 italic bg-gray-100 p-2">
+                                        <p>Data is insufficient.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -681,7 +685,7 @@
                             </div>
                             <div class="card-body p-6">
                                 <div class="space-y-4">
-                                    <div *ngFor="let strug of topPerforming" class="performer-card">
+                                    <div *ngFor="let strug of leastPerforming" class="performer-card">
                                         <div class="avatar">
                                             <img *ngIf="strug.profile" [src]="strug.profile" [alt]="strug.name"
                                                 class="w-full h-full object-cover">
@@ -704,6 +708,10 @@
                                             </p>
                                             <p class="text-sm text-gray-500">{{strug.score}}/{{questionLength}}</p>
                                         </div>
+                                    </div>
+                                    <div *ngIf="leastPerforming.length === 0"
+                                        class="flex justify-center align-center text-gray-600 italic bg-gray-100 p-2">
+                                        <p>Data is insufficient.</p>
                                     </div>
                                 </div>
                             </div>

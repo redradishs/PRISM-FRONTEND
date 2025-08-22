@@ -89,14 +89,13 @@
                                 <span class="span-questions">10 Questions</span>
                                 |
                                 <span class="span-points">{{totalPoints}} Total Points</span>
-                                |
-                                <span class="span-category">{{category}}</span>
+                                <p class="category-separator">|</p>
+                                <span class="span-category mobile-hide">{{category}}</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="rpt-but-cont">
-                        <!-- Title Editing Controls -->
                         <div *ngIf="isEditingTitle" class="title-action-buttons">
                             <button (click)="saveTitle()" class="save-title-btn" title="Save Title">
                                 <i class="fas fa-check"></i>
@@ -108,7 +107,6 @@
                             </button>
                         </div>
 
-                        <!-- Main Action Buttons -->
                         <div *ngIf="!isEditingTitle" class="main-action-buttons">
                             <button (click)="startEditingTitle()" class="edit-title-btn" title="Edit Title">
                                 <i class="fas fa-edit"></i>
@@ -206,6 +204,16 @@
                                             </div>
                                         </div>
 
+
+                                        <!-- ShortAnswer Edit -->
+                                        <div *ngIf="question.type === 'short-answer'" class="short-answer-edit">
+                                            <label class="form-label">Correct Answer:</label>
+                                            <div class="short-answer">
+                                                <input type="text" [(ngModel)]="question.correctAnswer"
+                                                    placeholder="Please enter your short-answer answer.">
+                                            </div>
+                                        </div>
+
                                         <!-- Enumeration Edit -->
                                         <div *ngIf="question.type === 'enumeration'" class="enumeration-edit">
                                             <label class="form-label">Correct Answers:</label>
@@ -270,6 +278,16 @@
                                     </div>
 
                                     <div *ngIf="question.type === 'true-false'">
+                                        <div *ngIf="!question.isCorrect" class="answer-header correct mt-4">
+                                            <i class="fas fa-check-circle"></i>
+                                            <h4>Correct Answer</h4>
+                                        </div>
+                                        <div *ngIf="!question.isCorrect" class="answer-content correct">
+                                            {{formatAnswer(question.correctAnswer)}}
+                                        </div>
+                                    </div>
+
+                                    <div *ngIf="question.type === 'short-answer'">
                                         <div *ngIf="!question.isCorrect" class="answer-header correct mt-4">
                                             <i class="fas fa-check-circle"></i>
                                             <h4>Correct Answer</h4>

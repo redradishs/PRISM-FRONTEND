@@ -228,14 +228,36 @@ export class PrintService {
           <span class="answer-space">${answerSpace}</span>${questionNumber}. ${cleanText}
         </div>
     `;
-
-    // Multiple Choice Options
+    // mc with grid layout 
     if (question.type === 'multiple-choice' && question.options) {
-      html += `<div class="options">`;
-      question.options.forEach((option, optIndex) => {
-        const letter = String.fromCharCode(65 + optIndex);
-        html += `<div class="option">${letter}. ${option}</div>`;
-      });
+      html += `<div class="options-grid">`;
+
+      const maxRows = Math.ceil(question.options.length / 2);
+
+      for (let row = 0; row < maxRows; row++) {
+        html += `<div class="option-row">`;
+
+        // left side half
+        const leftIndex = row < 2 ? row : row + 2;
+        if (leftIndex < question.options.length) {
+          const leftLetter = String.fromCharCode(65 + leftIndex);
+          html += `<div class="option-left">${leftLetter}. ${question.options[leftIndex]}</div>`;
+        } else {
+          html += `<div class="option-left"></div>`;
+        }
+
+        // right side other half
+        const rightIndex = row < 2 ? row + 2 : row + 4;
+        if (rightIndex < question.options.length) {
+          const rightLetter = String.fromCharCode(65 + rightIndex);
+          html += `<div class="option-right">${rightLetter}. ${question.options[rightIndex]}</div>`;
+        } else {
+          html += `<div class="option-right"></div>`;
+        }
+
+        html += `</div>`;
+      }
+
       html += `</div>`;
     }
 
@@ -246,6 +268,13 @@ export class PrintService {
       for (let i = 1; i <= answerCount; i++) {
         html += `<div class="answer-line">${i}. ________________________</div>`;
       }
+      html += `</div>`;
+    }
+
+    // Short Answer
+    if (question.type === 'short-answer') {
+      html += `<div class="short-answer-space">`;
+      html += `<div class="answer-line">Answer: ________________________________________</div>`;
       html += `</div>`;
     }
 
@@ -285,11 +314,26 @@ export class PrintService {
     background: none;
   }
 
-  /* Column layout for questions */
+  /* Column layout for questions - only when explicitly using columns */
   .questions-container.columns {
     column-count: 2;
     column-gap: 0.3in;
     column-fill: auto;
+  }
+
+  .questions-container.columns .options-grid {
+    display: block;
+  }
+
+  .questions-container.columns .option-row {
+    display: block;
+  }
+
+  .questions-container.columns .option-left,
+  .questions-container.columns .option-right {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.02in;
   }
 
   .question-item {
@@ -299,7 +343,7 @@ export class PrintService {
   }
 
   .question-text,
-  .options,
+  .options-grid,
   .enumeration-answers {
     break-inside: avoid;
     page-break-inside: avoid;
@@ -364,7 +408,7 @@ export class PrintService {
 .centerdata p:nth-child(3),
 .centerdata p:nth-child(4) {
   font-size: 1rem;
-  color: #333;
+  color: black;
 }
 
 .title {
@@ -375,13 +419,13 @@ export class PrintService {
   margin: 0 0 0.2in 0;
 }
 
-// THIS IS THE MARGIN QUESTIONS (TOP RIGHT BOTTOM LEFT)
+/* THIS IS THE MARGIN QUESTIONS (TOP RIGHT BOTTOM LEFT) */
 .student-info {
-  margin: 0 0.1in 0.5in 0.1in;
+  margin: 0 0.1in 0.2in 0.1in;
 }
 
 .instructions {
-  margin: 0.2in 0.1in 0.2in 0.1in;
+  margin: 0.1in 0.1in 0.2in 0.1in;
 }
 
 .questions-container {
@@ -440,7 +484,7 @@ export class PrintService {
 }
 
 .type-header {
-  font-size: 12pt;
+  font-size: 11pt;
   font-weight: bold;
   color: #2c3e50;
   margin-bottom: 0.15in;
@@ -452,20 +496,52 @@ export class PrintService {
 }
 
 .question-item {
-  margin-bottom: 0.15in;
+  margin-bottom: 0.2in;
+  width: 100%; /* Full width for non-column mode */
 }
 
 .question-text {
   font-weight: bold;
   font-size: 10pt;
-  margin-bottom: 0.05in;
+  margin-bottom: 0.08in;
   line-height: 1.3;
+  width: 100%;
 }
 
 .answer-space {
   margin-right: 0.05in;
 }
 
+/* mc grid layout */
+.options-grid {
+  margin-left: 0.15in;
+  margin-top: 0.08in;
+  width: 100%;
+}
+
+.option-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.05in;
+  width: 100%;
+}
+
+.option-left, .option-right {
+  font-size: 9pt;
+  line-height: 1.2;
+  width: 48%; /* Nearly half width with gap */
+  flex-shrink: 0;
+}
+
+.option-left {
+  text-align: left;
+}
+
+.option-right {
+  text-align: left;
+}
+
+/* OLD: Keep for backward compatibility or column mode */
 .options {
   margin-left: 0.15in;
   margin-top: 0.05in;
@@ -482,9 +558,16 @@ export class PrintService {
   margin-top: 0.05in;
 }
 
+.short-answer-space {
+  margin-left: 0.15in;
+  margin-top: 0.05in;
+}
+
+/* enum and short answer */
 .answer-line {
   font-size: 9pt;
-  margin-bottom: 0.02in;
+  margin-bottom: 0.20in;
+  margin-top: 0.10in;
 }
 
 /* Answer key styles */
@@ -527,6 +610,24 @@ export class PrintService {
     column-count: 2;
     column-gap: 0.3in;
     column-fill: balance;
+  }
+  
+  /* screen view */
+  .options-grid {
+    margin-left: 0.15in;
+    margin-top: 0.08in;
+    width: 100%;
+  }
+  
+  .option-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.05in;
+    width: 100%;
+  }
+  
+  .option-left, .option-right {
+    width: 48%;
   }
   
   .page-break {

@@ -63,7 +63,7 @@ export class ResultComponent implements OnInit, OnDestroy {
     lowestScore: 0
   };
   username: string = '';
-  itemAnalysis: any[] = [];
+  itemAnalysis: any;
   topPerforming: Student[] = [];
   leastPerforming: Student[] = [];
 
@@ -373,14 +373,12 @@ export class ResultComponent implements OnInit, OnDestroy {
 
 
   prismInsights() {
-    // console.log('Binabatong data:', this.itemAnalysis);
-    const formattedQuestions = this.allQuestions && this.allQuestions.length > 0
-      ? '\n\nQuestion Data:\n' + JSON.stringify(this.allQuestions, null, 2)
-      : '';
-    // console.log('Formatted Questions:', formattedQuestions);
-    const prompt = 'Analyze the following assessment results and provide insights on the students\' performance and any areas of concern or success.' + formattedQuestions;
-
-    this.api.analyzeResult(prompt).subscribe({
+    const data = {
+      totalStudents: this.itemAnalysis.totalStudents,
+      submittedCount: this.itemAnalysis.submittedCount,
+      questions: this.questions
+    }
+    this.api.analyzeResult(data).subscribe({
       next: (resp: any) => {
         console.log('Prism Insights:', resp.analysis);
         this.insights = resp.analysis || [
