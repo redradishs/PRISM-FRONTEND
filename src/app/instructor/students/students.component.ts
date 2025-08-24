@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { saveAs } from 'file-saver';
 import * as ExcelJS from 'exceljs';
+import * as QRCode from 'qrcode';
 
 
 interface Student {
@@ -209,6 +210,8 @@ export class StudentsComponent implements OnInit {
 
   selectedAssessmentsForExport: any[] = [];
   showExportModal: boolean = false;
+  showJoiningCodeModal: boolean = false;
+  qrCodeDataUrl: string = '';
 
   private lastNamePrefixes = [
     'De', 'Del', 'Dela', 'De la', 'De los', 'San', 'Santa', 'Sta.'
@@ -937,6 +940,63 @@ export class StudentsComponent implements OnInit {
         });
       });
     }
+  }
+
+  async showJoiningCodeDetails() {
+    if (this.selectedClass?.classCode) {
+      this.showJoiningCodeModal = true;
+      await this.generateQRCode();
+    }
+  }
+
+  toggleJoiningCodeModal() {
+    this.showJoiningCodeModal = !this.showJoiningCodeModal;
+    if (!this.showJoiningCodeModal) {
+      this.qrCodeDataUrl = '';
+    }
+  }
+
+  async generateQRCode() {
+    try {
+      if (this.selectedClass?.classCode) {
+        const joiningLink = `${window.location.origin}/join/class/${this.selectedClass.classCode}`;
+
+        this.qrCodeDataUrl = await QRCode.toDataURL(joiningLink, {
+          width: 256,
+          margin: 2,
+          color: {
+            dark: '#1f2937',
+            light: '#ffffff'
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error generating QR code:', error);
+    }
+  }
+
+  copyJoiningLink() {
+    if (this.selectedClass?.classCode) {
+      const joiningLink = `${window.location.origin}/join/class/${this.selectedClass.classCode}`;
+      navigator.clipboard.writeText(joiningLink).then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Link Copied!',
+          text: 'Joining link copied to clipboard',
+          timer: 2000,
+          showConfirmButton: false,
+          toast: true,
+          position: 'top-end'
+        });
+      });
+    }
+  }
+
+  getJoiningLink(): string {
+    if (this.selectedClass?.classCode) {
+      return `${window.location.origin}/join/class/${this.selectedClass.classCode}`;
+    }
+    return '';
   }
 
   saveClassSettings() {

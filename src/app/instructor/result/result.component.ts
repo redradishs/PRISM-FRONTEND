@@ -9,6 +9,8 @@ import { Title } from '@angular/platform-browser';
 import Swal from 'sweetalert2';
 import { saveAs } from 'file-saver';
 import * as ExcelJS from 'exceljs';
+import * as QRCode from 'qrcode';
+
 
 interface Student {
   id: number;
@@ -110,6 +112,11 @@ export class ResultComponent implements OnInit, OnDestroy {
     }
   ];
   expandedIndex: number | null = null;
+  showJoiningCodeModal: boolean = false;
+  qrCodeDataUrl: string = '';
+
+
+
   private lastNamePrefixes = [
     'De', 'Del', 'Dela', 'De la', 'De los', 'San', 'Santa', 'Sta.'
   ];
@@ -799,4 +806,93 @@ export class ResultComponent implements OnInit, OnDestroy {
     if (score >= 60) return 'Satisfactory';
     return 'Needs Improvement';
   }
+
+  copyJoiningCode() {
+    if (this.classOverview.joiningCode) {
+      navigator.clipboard.writeText(this.classOverview.joiningCode).then(() => {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: 'Joining code copied!',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true
+        });
+      }).catch(err => {
+        console.error('Failed to copy joining code: ', err);
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'error',
+          title: 'Failed to copy joining code',
+          showConfirmButton: false,
+          timer: 2000
+        });
+      });
+    }
+  }
+
+  async showJoiningCodeDetails() {
+    if (this.classOverview.joiningCode) {
+      this.showJoiningCodeModal = true;
+      await this.generateQRCode();
+    }
+  }
+
+  toggleJoiningCodeModal() {
+    this.showJoiningCodeModal = !this.showJoiningCodeModal;
+    if (!this.showJoiningCodeModal && !this.classOverview) {
+      this.qrCodeDataUrl = '';
+    }
+  }
+
+  getJoiningLink() {
+    const url = `${window.location.origin}/join/public/${this.classOverview.joiningCode}`;
+    return url;
+  }
+
+  async generateQRCode() {
+    try {
+      if (this.classOverview.mode === 'public') {
+        const joiningLink = `${window.location.origin}/join/public/${this.classOverview.joiningCode}`;
+
+        this.qrCodeDataUrl = await QRCode.toDataURL(joiningLink, {
+          width: 256,
+          margin: 2,
+          color: {
+            dark: '#1f2937',
+            light: '#ffffff'
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error generating QR code:', error);
+    }
+  }
+
+  copyJoiningLink() {
+    navigator.clipboard.writeText(this.getJoiningLink()).then(() => {
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Joining link copied!',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true
+      });
+    }).catch(err => {
+      console.error('Failed to copy joining link: ', err);
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'error',
+        title: 'Failed to copy joining link',
+        showConfirmButton: false,
+        timer: 2000
+      });
+    });
+  }
+
 }

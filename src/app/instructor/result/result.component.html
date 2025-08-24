@@ -155,9 +155,21 @@
                     <!-- Class Overview Card -->
                     <div class="overview-card">
                         <div class="overview-header">
-                            <i class="fas fa-users"></i>
-                            <h2 *ngIf="classOverview.mode === 'public'">Public Overview</h2>
-                            <h2 *ngIf="classOverview.mode !== 'public'">Class Overview</h2>
+                            <div class="overview-header-left">
+                                <i class="fas fa-users"></i>
+                                <h2 *ngIf="classOverview.mode === 'public'">Public Overview</h2>
+                                <h2 *ngIf="classOverview.mode !== 'public'">Class Overview</h2>
+                            </div>
+
+                            <!-- Joining Code Display for Public Assessments -->
+                            <div class="overview-header-right"
+                                *ngIf="classOverview.mode === 'public' && classOverview.joiningCode"
+                                (click)="showJoiningCodeDetails()">
+                                <div class="join-display">
+                                    <span class="join-label">Joining Code:</span>
+                                    <span class="join-value">{{ classOverview.joiningCode }}</span>
+                                </div>
+                            </div>
                         </div>
                         <div class="overview-grid">
                             <div class="overview-stat">
@@ -715,6 +727,88 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Joining Code Modal -->
+    <div class="modal-overlay cs-backdrop-blur" *ngIf="showJoiningCodeModal" (click)="toggleJoiningCodeModal()">
+        <div class="modal-content joining-code-modal" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <div class="header-contentt">
+                    <h2>Join Public Assessment</h2>
+                    <p class="modal-subtitle">PUBLIC ASSESSMENT</p>
+                </div>
+                <button class="close-button" (click)="toggleJoiningCodeModal()" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="top-row-container">
+                    <!-- Joining Code Section -->
+                    <div class="joining-code-section">
+                        <div class="joining-code-header">
+                            <i class="fas fa-key joining-code-icon"></i>
+                            <h3>JOINING CODE</h3>
+                        </div>
+
+                        <div class="joining-code-display">
+                            <span class="code-text">{{classOverview.joiningCode}}</span>
+                            <button class="copy-code-btn" (click)="copyJoiningCode()">
+                                <i class="fas fa-copy"></i>
+                                Copy Code
+                            </button>
+                        </div>
+
+                        <p class="text-gray-100">-----</p>
+
+
+                    </div>
+
+                    <!-- QR Code Section -->
+                    <div class="qr-code-section" *ngIf="qrCodeDataUrl">
+                        <div class="qr-code-header">
+                            <i class="fas fa-qrcode qr-icon"></i>
+                            <h3>QR CODE</h3>
+                        </div>
+
+                        <div class="qr-code-container">
+                            <img [src]="qrCodeDataUrl" alt="QR Code for joining class" class="qr-code-image">
+                            <p class="qr-code-description">Students can scan this QR code to join the Public Assessment.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Row: Joining Link Full Width -->
+                <div class="joining-link-section">
+                    <div class="joining-link-header">
+                        <i class="fas fa-link link-icon"></i>
+                        <h3>JOINING LINK</h3>
+                    </div>
+
+                    <div class="joining-link-display">
+                        <input type="text" [value]="getJoiningLink()" readonly class="link-input">
+                        <button class="copy-link-btn" (click)="copyJoiningLink()">
+                            <i class="fas fa-copy"></i>
+                            Copy Link
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Information Section -->
+                <div class="info-section">
+                    <div class="info-content">
+                        <i class="fas fa-info-circle info-icon"></i>
+                        <div class="info-text">
+                            <h4>Your Assessment is now LIVE</h4>
+                            <p>Share this code or QR code with your students to let them join your hosted Public
+                                Assessment. Students can
+                                use
+                                either the code directly or scan the QR code for quick access.</p>
                         </div>
                     </div>
                 </div>
