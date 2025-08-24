@@ -1,0 +1,95 @@
+<div class="page-background">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+</div>
+
+<div class="contmain" *ngIf="found">
+    <div class="header-title">
+        <i class="fa-solid fa-graduation-cap"></i>
+        <h1>Public Class</h1>
+        <p>Access your Class Assessments and Profile</p>
+    </div>
+
+    <div class="mother-box">
+        <div class="category">
+            <span>{{classDetails?.allowJoining ? 'Accepts Students' : 'Not Accepting'}}</span>
+            <span>{{classDetails?.autoAdmission ? 'Auto Admit' : 'Not Auto Admit'}}</span>
+        </div>
+
+        <div class="title">
+            <h1>{{classDetails?.className}} - {{classDetails?.classCode}} </h1>
+            <div class="profile">
+                <img [src]="classDetails?.instructor.profilePicture" alt="Profile Pic">
+                <div class="profile-det">
+                    <p>{{classDetails?.instructor?.name}}</p>
+                    <span>{{classDetails?.instructor.email}}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="details">
+            <div class="box">
+                <i class="fas fa-users"></i>
+                <h4>{{classDetails?.totalStudents}}/50</h4>
+                <span>Students</span>
+            </div>
+
+            <div class="box">
+                <i class="fas fa-clock"></i>
+                <h4>{{classDetails?.totalOfOngoingAssessments}}</h4>
+                <span>Active</span>
+            </div>
+
+            <div class="box">
+                <i class="fa-solid fa-check"></i>
+                <h4>{{classDetails?.totalOfCompletedAssessments}}</h4>
+                <span>Completed</span>
+            </div>
+
+            <div class="box">
+                <i class="fas fa-chart-line"></i>
+                <h4>{{classDetails?.totalAssessments}}</h4>
+                <span>Total Assessments</span>
+            </div>
+        </div>
+
+        <div class="sched">
+            <h1>Assessment Overview</h1>
+            <div class="sched-ss">
+                <div class="sched-separator">
+                    <h2>Completed:</h2>
+                    <span>{{classDetails?.totalOfCompletedAssessments}}</span>
+                </div>
+                <div class="sched-separator">
+                    <h2>Active: </h2>
+                    <span>{{classDetails?.totalOfOngoingAssessments}}</span>
+                </div>
+            </div>
+            <div class="sched-ss">
+                <div class="sched-separator">
+                    <h2>Scheduled: </h2>
+                    <span>{{classDetails?.totalOfScheduledAssessments}}</span>
+                </div>
+                <div class="sched-separator">
+                    <h2>Total: </h2>
+                    <span>{{classDetails?.totalAssessments}}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="community-performance">
+            <div>
+                <h2>Class Current Performance</h2>
+                <p style="margin: 0; color: #16a34a; font-size: 0.875rem;">Overall</p>
+            </div>
+            <div class="score">70%</div>
+        </div>
+    </div>
+
+    <button class="join-btn" [disabled]="!isAccepting" (click)="joinClass()">JOIN CLASS</button>
+
+    <div class="extag">
+        <p>By joining this class you must abide by the platform and institutional policy.</p>
+        <p>Excellence • Character • Service</p>
+    </div>
+</div>

@@ -30,7 +30,8 @@ export class TitleService {
       '/forgot-password': 'Reset Password - PRISM Assessment Platform | Gordon College CCS',
       '/instructor': 'Instructor Dashboard - PRISM Assessment Platform | Gordon College CCS',
       '/student': 'Student Dashboard - PRISM Assessment Platform | Gordon College CCS',
-      '/admin': 'PRISM | Admin'
+      '/admin': 'PRISM | Admin',
+      '/join': 'PRISM | Join'
     };
 
     for (const [routePath, routeTitle] of Object.entries(titleMap)) {

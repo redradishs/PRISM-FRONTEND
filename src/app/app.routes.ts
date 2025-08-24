@@ -6,6 +6,8 @@ import { authGuard } from './auth.guard';
 import { routeNotFoundGuard } from './route-not-found.guard';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { CompleteProfileComponent } from './adons/complete-profile/complete-profile.component';
+import { JoinAssessmentComponent } from './adons/join-assessment/join-assessment.component';
+import { JoinClassComponent } from './adons/join-class/join-class.component';
 
 export const routes: Routes = [
   {
@@ -57,7 +59,28 @@ export const routes: Routes = [
       }
     }
   },
-
+  {
+    path: 'join/public/:code',
+    component: JoinAssessmentComponent,
+    data: {
+      seo: {
+        title: 'PRISM | Join Assessment',
+        description: 'Join Public Assessments and get instant results and feedback',
+        keywords: 'PRISM JOIN, Gordon College CCS, PRISM GC, PRISM Student, PRISM Gordon College Join, PRISM'
+      }
+    }
+  },
+  {
+    path: 'join/class/:code',
+    component: JoinClassComponent,
+    data: {
+      seo: {
+        title: 'PRISM | Join Class',
+        description: 'Join Classrooms and access assessment tools',
+        keywords: 'PRISM JOIN, Gordon College CCS, PRISM GC, PRISM Student, PRISM Gordon College Join, PRISM'
+      }
+    }
+  },
   {
     path: 'instructor',
     canActivate: [authGuard],

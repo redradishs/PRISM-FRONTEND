@@ -20,14 +20,14 @@ interface PaginationParams {
   providedIn: 'root',
 })
 export class ApiService {
-  // apiUrl = 'http://localhost:8000/instructor';
   // rtUrl = 'http://localhost:8000/rt';
   // aiUrl = 'http://localhost:3000';
+  // apiUrl = 'http://localhost:8000/instructor';
 
   aiFinal = 'https://prism-ai-worker.asherjamesmayson.workers.dev/api'
+  aiUrl = 'https://redprismai.vercel.app';
   rtUrl = 'https://prismapi2.onrender.com/rt';
   apiUrl = 'https://prismapi2.onrender.com/instructor';
-  aiUrl = 'https://redprismai.vercel.app';
 
 
 

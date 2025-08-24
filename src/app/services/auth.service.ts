@@ -28,9 +28,11 @@ interface ProfileChanges {
 export class AuthService {
   // private baseUrl = 'http://localhost:8000/user';
   // private prism_set = 'http://localhost:8000/settings';
+  // private prism_public = 'http://localhost:8000/public';
   // private baseUrl = 'https://prismcdn.onrender.com/user';
   private baseUrl = 'https://prismapi2.onrender.com/user';
   private prism_set = 'https://prismapi2.onrender.com/settings';
+  private prism_public = 'https://prismapi2.onrender.com/public';
   private tokenKey = 'jwt';
   private currentUserSubject: BehaviorSubject<any> = new BehaviorSubject<any>(
     null
@@ -163,6 +165,10 @@ export class AuthService {
     return this.getUserRole() === 'admin';
   }
 
+  isUserSignedIn(): boolean {
+    return this.isAuthenticated();
+  }
+
   verifyEmail(userId: string, code: string): Observable<any> {
     return this.http
       .post<any>(`${this.baseUrl}/verify-email`, { userId, code })
@@ -208,5 +214,16 @@ export class AuthService {
   loginHistory(userId: string) {
     return this.http.get(`${this.baseUrl}/loginHistory/${userId}`);
   }
+
+  //PUBLIC JOIN ENDPOINTS
+
+  getPublicAssessmentData(data: any) {
+    return this.http.post(`${this.prism_public}/assessment`, data);
+  }
+
+  getPublicClassData(data: any) {
+    return this.http.post(`${this.prism_public}/class`, data);
+  }
+
 
 }
