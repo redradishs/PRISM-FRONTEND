@@ -6,6 +6,7 @@ import { AuthService } from '../../services/auth.service';
 import { StudentService } from '../../services/student.service';
 import { IntegrityMonitoringService } from '../../services/integrity-monitoring.service';
 import { Subscription } from 'rxjs';
+import Swal from 'sweetalert2';
 
 interface Question {
   _id: string;
@@ -314,6 +315,25 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
       },
       error: (err: any) => {
         console.log('Error submitting answer:', err);
+        if (err.error.data.hasEnded === true) {
+          console.log('reached');
+          Swal.fire({
+            title: 'Assessment has ended',
+            text: 'Assessment has already ended, you can no longer access this page.',
+            icon: 'error',
+            timer: 2000,
+            showConfirmButton: false,
+            timerProgressBar: true
+          }).then(() => {
+            this.router.navigate(['/student/assessment/result'], {
+              state: {
+                assessmentId: this.assignedAssessmentId
+              }
+            });
+          })
+
+        }
+
       }
     })
   }
