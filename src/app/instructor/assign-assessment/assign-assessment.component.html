@@ -393,7 +393,6 @@
                             <!-- Individual Students View -->
                             <div *ngIf="assignmentType === 'individual'" class="recipients-container">
                                 <div class="student-section">
-                                    <!-- Search box -->
                                     <div class="search-box">
                                         <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -405,9 +404,7 @@
                                             class="search-input" [class.searching]="isSearching">
                                     </div>
 
-                                    <!-- Table section with loading overlay -->
                                     <div class="table-container">
-                                        <!-- Loading overlay -->
                                         <div *ngIf="isSearchLoading" class="loading-overlay">
                                             <div class="spinner"></div>
                                             <span>Searching students...</span>
@@ -518,7 +515,7 @@
                                 <p class="text-sm text-gray-600 mb-4">Choose how students will interact with this
                                     assessment</p>
 
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div class="mode-card" [class.selected]="selectedMode === 'assessment'"
                                         (click)="setAssessmentMode('assessment')">
                                         <div class="mode-icon">
@@ -545,7 +542,7 @@
                                         </p>
                                     </div>
 
-                                    <div class="mode-card" [class.selected]="selectedMode === 'public'"
+                                    <!-- <div class="mode-card" [class.selected]="selectedMode === 'public'"
                                         (click)="setAssessmentMode('public')">
                                         <div class="mode-icon">
                                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -555,7 +552,7 @@
                                         </div>
                                         <h4 class="mode-title">Public</h4>
                                         <p class="mode-description">Open access assessment available to all students</p>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                             <div *ngIf="assignmentType === 'individual'"

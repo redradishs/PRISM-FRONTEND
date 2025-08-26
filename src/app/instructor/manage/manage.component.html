@@ -399,7 +399,7 @@
                 </div>
 
 
-                <div *ngIf="!isPaginationLoading && pagination.currentPage >= pagination.totalPages"
+                <div *ngIf="!isPaginationLoading && pagination.currentPage >= pagination.totalPages && filteredAssessments.length !== 0"
                     class="end-of-list">
                     <div class="end-indicator">
                         <i class="fas fa-check-circle"></i>

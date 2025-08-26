@@ -1294,13 +1294,11 @@
     margin-top: 4px;
   }
   
-  /* More compact card layout */
   .assessment-list-card {
     padding: 10px 12px;
     gap: 8px;
   }
   
-  /* Smaller title on mobile */
   .list-title {
     font-size: 1rem;
     line-height: 1.2;
@@ -1308,18 +1306,15 @@
     font-weight: 600;
   }
   
-  /* Smaller badges for mobile */
   .list-header-mobile .badge {
     padding: 0.15rem 0.4rem;
     font-size: 0.7rem;
   }
   
-  /* Hide badge icons to save space */
   .list-header-mobile .badge-icon {
     display: none;
   }
   
-  /* Mobile status info in upper right - compact styling */
   .mobile-status-info {
     font-size: 0.65rem !important;
     color: #6b7280 !important;
