@@ -49,7 +49,7 @@ export interface PrintOptions {
 
         <div class="centerdata">
           <p *ngIf="options.courseTitle">{{ options.courseTitle }}</p>
-          <p>{{ data.title }}</p>
+          <!-- <p>{{ data.title }}</p> -->
           <p *ngIf="options.assessmentType">{{ options.assessmentType }} {{ options.assessmentNumber }}</p>
           <p *ngIf="options.term || options.academicYear">
             <span *ngIf="options.term">{{ options.term }}</span>
@@ -186,10 +186,18 @@ export class PrintLayoutComponent {
 
   get questionsByType() {
     const grouped = this.groupQuestionsByType(this.data.questions);
-    return Object.keys(grouped).map(type => ({
-      type,
-      questions: grouped[type]
-    }));
+    const typeOrder = ['multiple-choice', 'true-false', 'enumeration', 'short-answer'];
+    // return Object.keys(grouped).map(type => ({
+    //   type,
+    //   questions: grouped[type]
+    // }));
+
+    return typeOrder
+      .filter(type => grouped[type] && grouped[type].length > 0)
+      .map(type => ({
+        type,
+        questions: grouped[type]
+      }));
   }
 
   groupQuestionsByType(questions: PrintQuestion[]): { [key: string]: PrintQuestion[] } {
@@ -235,6 +243,8 @@ export class PrintLayoutComponent {
         return 'Write T for True or F for False for each statement. Write your answer on the space provided.';
       case 'enumeration':
         return 'List all possible answers for each question. Write your answers on the spaces provided.';
+      case 'short-answer':
+        return 'Answer each question briefly and clearly. Write your answer on the space provided.';
       case 'identification':
         return 'Identify what is being asked in each question. Write your answer on the space provided.';
       case 'essay':

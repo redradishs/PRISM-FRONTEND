@@ -22,6 +22,7 @@ export class JoinAssessmentComponent implements OnInit {
   role: string = '';
   userId: string = '';
   found: boolean = true;
+  isLoading: boolean = true;
 
 
   constructor(private api: AuthService, private studentAPI: StudentService, private title: TitleService, private router: Router, private route: ActivatedRoute) {
@@ -59,6 +60,7 @@ export class JoinAssessmentComponent implements OnInit {
         if (resp.remarks === 'Success') {
           console.log(resp);
           this.assessmentDetails = resp.data;
+          this.isLoading = false;
           if (resp.data.status === 'completed') {
             this.canJoin = false;
             this.showCompletedMessage();

@@ -23,6 +23,7 @@ export class JoinClassComponent implements OnInit {
   userId: string = '';
   isAccepting: boolean = true;
   found: boolean = true;
+  isLoading: boolean = true;
 
 
   constructor(private api: AuthService, private studentAPI: StudentService, private title: TitleService, private router: Router, private route: ActivatedRoute) {
@@ -57,6 +58,7 @@ export class JoinClassComponent implements OnInit {
         // console.log('Class Details:', resp);
         this.classDetails = resp.data;
         this.isAccepting = resp.data.allowJoining;
+        this.isLoading = false;
         if (!this.isAccepting) {
           this.showNotAccepting();
         }

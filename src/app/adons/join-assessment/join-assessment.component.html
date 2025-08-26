@@ -3,7 +3,23 @@
     <div class="blob blob-2"></div>
 </div>
 
-<div class="contmain" *ngIf="found">
+<div *ngIf="isLoading"
+    class="flex items-center justify-center min-h-[calc(100vh-68px)] bg-white transition-colors duration-900">
+    <div class="text-center animate-fade-in">
+        <div class="relative w-16 h-16 mx-auto">
+            <div class="absolute inset-0 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin">
+            </div>
+            <div class="absolute inset-2 rounded-full border-4 border-indigo-300 border-b-transparent animate-spin"
+                style="animation-direction: reverse;">
+            </div>
+        </div>
+        <p class="mt-5 text-gray-600 text-lg font-medium animate-pulse">
+            Loading Assessment data...
+        </p>
+    </div>
+</div>
+
+<div class="contmain" *ngIf="found && !isLoading">
     <div class="header-title">
         <i class="fas fa-file-alt"></i>
         <h1>Public Assessment</h1>

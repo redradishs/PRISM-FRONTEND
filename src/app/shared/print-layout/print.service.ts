@@ -74,6 +74,7 @@ export class PrintService {
 
   private generatePrintContent(data: PrintAssessmentData, options: PrintOptions): string {
     const questionsByType = this.groupQuestionsByType(data.questions);
+    const sortedTypes = this.getSortedQuestionTypes(questionsByType);
 
     let html = `<div class="print-container ${options.useColumnLayout ? 'column-layout' : ''}">`;
 
@@ -143,7 +144,7 @@ export class PrintService {
     html += `<div class="questions-container ${options.useColumnLayout ? 'columns' : ''}">`;
 
     if (options.segregateByType) {
-      Object.keys(questionsByType).forEach((type, typeIndex) => {
+      sortedTypes.forEach((type, typeIndex) => {
         const typeQuestions = questionsByType[type];
         const friendlyTypeName = this.getFriendlyTypeName(type);
         const instructions = this.getTypeInstructions(type);
@@ -183,7 +184,7 @@ export class PrintService {
       `;
 
       if (options.segregateByType) {
-        Object.keys(questionsByType).forEach((type, typeIndex) => {
+        sortedTypes.forEach((type, typeIndex) => {
           const typeQuestions = questionsByType[type];
           html += `
             <div class="answer-type-section">
@@ -216,6 +217,11 @@ export class PrintService {
     html += `</div>`;
 
     return html;
+  }
+
+  private getSortedQuestionTypes(questionsByType: { [key: string]: PrintAssessmentData['questions'] }): string[] {
+    const typeOrder = ['multiple-choice', 'true-false', 'enumeration', 'short-answer'];
+    return typeOrder.filter(type => questionsByType[type] && questionsByType[type].length > 0);
   }
 
   private generateQuestionHTML(question: PrintAssessmentData['questions'][0], questionNumber: number): string {
