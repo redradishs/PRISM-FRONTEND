@@ -26,8 +26,12 @@ export class ApiService {
 
   aiFinal = 'https://prism-ai-worker.asherjamesmayson.workers.dev/api'
   aiUrl = 'https://redprismai.vercel.app';
-  rtUrl = 'https://prismapi2.onrender.com/rt';
-  apiUrl = 'https://prismapi2.onrender.com/instructor';
+  // rtUrl = 'https://prismapi2.onrender.com/rt';
+  // apiUrl = 'https://prismapi2.onrender.com/instructor';
+
+  // Google Cloud Console
+  rtUrl = 'https://api.prismgcccs.live/rt';
+  apiUrl = 'https://api.prismgcccs.live/instructor';
 
 
 
