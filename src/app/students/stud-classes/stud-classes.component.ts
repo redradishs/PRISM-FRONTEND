@@ -6,6 +6,7 @@ import { Router, RouterLink } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { AuthService } from '../../services/auth.service';
 import { StudentService } from '../../services/student.service';
+import { TutorialService } from '../../services/tutorial.service';
 import Swal from 'sweetalert2';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
@@ -83,7 +84,14 @@ export class StudClassesComponent implements OnInit {
     '#06b6d4', // cyan (optional)
   ];
 
-  constructor(private auth: AuthService, private api: StudentService, private titleService: Title, private fb: FormBuilder, private router: Router) {
+  constructor(
+    private auth: AuthService,
+    private api: StudentService,
+    private titleService: Title,
+    private fb: FormBuilder,
+    private router: Router,
+    private tutorialService: TutorialService
+  ) {
     this.titleService.setTitle('PRISM | Classes');
     this.joinClassForm = this.fb.group({
       classCode: ['', Validators.required]

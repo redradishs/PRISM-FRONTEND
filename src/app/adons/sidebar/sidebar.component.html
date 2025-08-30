@@ -23,7 +23,8 @@
 
         <div class="flex-1 w-full px-4">
             <button *ngFor="let item of navItems" [routerLink]="item.route" [class]="getNavItemClasses(item.route)"
-                routerLinkActive="bg-violet-200 text-white" #rla="routerLinkActive">
+                [attr.data-tour]="getTourAttribute(item.id)" routerLinkActive="bg-violet-200 text-white"
+                #rla="routerLinkActive">
                 <i [class]="item.icon + ' w-6 h-6 text-white transition-colors duration-200'"></i>
                 <span *ngIf="isExpanded" class="text-sm ml-3 text-white">{{item.label}}</span>
                 <div *ngIf="!isExpanded && !isMobile"

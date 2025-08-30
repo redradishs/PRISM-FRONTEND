@@ -10,6 +10,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { StudentService } from '../../services/student.service';
 import Swal from 'sweetalert2';
+import { TutorialService } from '../../services/tutorial.service';
 
 interface ClassStats {
   inProgress: number;
@@ -142,7 +143,8 @@ export class StudHistoryComponent {
     private auth: AuthService,
     private router: Router,
     private route: ActivatedRoute,
-    private titleService: Title
+    private titleService: Title,
+    private ts: TutorialService
   ) {
     this.titleService.setTitle('PRISM | Manage');
 
@@ -159,6 +161,11 @@ export class StudHistoryComponent {
   }
 
   ngOnInit() {
+    setTimeout(() => {
+      if (this.ts.isTutorialInProgress()) {
+        this.ts.continueTutorial();
+      }
+    }, 500);
     this.auth.getCurrentUser().subscribe((user) => {
       if (user) {
         // console.log('User ID:', user.id);

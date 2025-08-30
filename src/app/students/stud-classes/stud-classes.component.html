@@ -56,7 +56,7 @@
 
             <main class="main-content">
 
-                <div class="stats-grid">
+                <div class="stats-grid" data-tour="classes-welcome">
                     <!-- Total Classes Card -->
                     <div (click)="setActiveTab('enrolled')" class="card">
                         <div class="card-gradient">
@@ -124,7 +124,7 @@
 
 
                 <!-- Search and Apply Section -->
-                <div class="search-card">
+                <div class="search-card" data-tour="class-search">
                     <div class="search-card-content">
                         <div class="blur-circle blur-circle-purple"></div>
                         <div class="blur-circle blur-circle-fuchsia"></div>
@@ -152,7 +152,7 @@
                 </div>
 
 
-                <section class="tabs">
+                <section class="tabs" data-tour="class-tabs">
                     <div class="tab-switches">
                         <button class="tab-switch" [class.active]="activeTab === 'enrolled'"
                             (click)="setActiveTab('enrolled')">
@@ -193,7 +193,8 @@
                 </div>
 
 
-                <section *ngIf="activeTab === 'enrolled' && viewMode === 'grid'" class="classes-container">
+                <section *ngIf="activeTab === 'enrolled' && viewMode === 'grid'" class="classes-container"
+                    data-tour="class-list">
 
                     <div (click)="goToClassDetails(c)" *ngFor="let c of classes" class="card-grid">
                         <div class="titlebar">

@@ -1,2 +1,280 @@
 @import "tailwindcss";
 @plugin "flowbite/plugin";
+
+/* Intro.js Tutorial Styles */
+@import 'intro.js/introjs.css';
+
+/* Custom Tutorial Styles */
+.introjs-overlay {
+  background: transparent !important;
+  opacity: 0 !important;
+}
+
+.introjs-helperLayer {
+  background: transparent !important;
+  border: 2px solid #ff3232 !important;
+  box-shadow: 0 0 20px rgba(25, 118, 210, 0.3) !important;
+  border-radius: 6px !important;
+}
+
+.introjs-tooltip-header {
+  display: none;
+}
+
+.introjs-tooltip {
+  border-radius: 8px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  max-width: 350px !important;
+  min-width: 300px !important;
+  padding: 16px !important;
+}
+
+/* Simplified Tutorial Header */
+.tutorial-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 12px !important;
+  padding-bottom: 8px !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+.step-counter {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #1976D2 !important;
+  background: #e3f2fd !important;
+  padding: 4px 8px !important;
+  border-radius: 12px !important;
+}
+
+.tutorial-skip-btn {
+  background: none !important;
+  border: none !important;
+  color: #6b7280 !important;
+  font-size: 11px !important;
+  text-decoration: underline !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  transition: color 0.2s !important;
+}
+
+.tutorial-skip-btn:hover {
+  color: #374151 !important;
+}
+
+.tutorial-content {
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  color: #374151 !important;
+}
+
+.introjs-tooltiptext {
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  color: #374151 !important;
+  margin-bottom: 16px !important;
+  padding: 0 !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+.introjs-tooltip-title {
+  font-weight: 600 !important;
+  color: #1976D2 !important;
+  margin-bottom: 12px !important;
+  font-size: 16px !important;
+}
+
+.introjs-tooltipbuttons {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  margin-top: 16px !important;
+  padding-top: 16px !important;
+  border-top: 1px solid #e5e7eb !important;
+}
+
+.introjs-button {
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+  padding: 10px 16px !important;
+  font-size: 13px !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  white-space: nowrap !important;
+  min-width: auto !important;
+}
+
+.introjs-nextbutton {
+  background: linear-gradient(135deg, #1976D2, #42A5F5) !important;
+  color: white !important;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3) !important;
+  order: 2 !important;
+}
+
+.introjs-nextbutton:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.4) !important;
+}
+
+.introjs-prevbutton {
+  background: #f8f9fa !important;
+  color: #495057 !important;
+  border: 1px solid #dee2e6 !important;
+  order: 1 !important;
+}
+
+.introjs-prevbutton:hover {
+  background: #e9ecef !important;
+}
+
+.introjs-progressbar {
+  background: linear-gradient(135deg, #1976D2, #42A5F5) !important;
+  border-radius: 2px !important;
+  height: 4px !important;
+}
+
+.introjs-progress {
+  background: rgba(25, 118, 210, 0.15) !important;
+  border-radius: 2px !important;
+  height: 4px !important;
+  margin: 12px 0 !important;
+}
+
+.introjs-bullets {
+  text-align: center !important;
+  margin: 12px 0 8px 0 !important;
+}
+
+.introjs-bullets ul {
+  margin: 0 !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  gap: 6px !important;
+}
+
+.introjs-bullets ul li {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.introjs-bullets ul li a {
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  background: rgba(25, 118, 210, 0.3) !important;
+  border: none !important;
+  display: block !important;
+}
+
+.introjs-bullets ul li a.active {
+  background: #1976D2 !important;
+}
+
+.introjs-highlight {
+  box-shadow: 0 0 0 4px rgba(0, 240, 144, 0.753) !important;
+  border-radius: 4px !important;
+}
+
+/* Dark overlay customization */
+.introjs-overlay {
+  background: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .introjs-tooltip {
+    max-width: calc(100vw - 30px) !important;
+    min-width: 280px !important;
+    margin: 15px !important;
+    padding: 20px 16px 16px 16px !important;
+    position: fixed !important;
+    left: 15px !important;
+    right: 15px !important;
+    width: auto !important;
+    transform: none !important;
+  }
+  
+  .introjs-tooltiptext {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    margin-bottom: 16px !important;
+    padding-right: 60px !important; /* Space for skip button */
+  }
+  
+  .introjs-tooltip-title {
+    font-size: 16px !important;
+    margin-bottom: 12px !important;
+    padding-right: 60px !important; /* Space for skip button */
+  }
+  
+  .introjs-tooltipbuttons {
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+    margin-top: 16px !important;
+    padding-top: 16px !important;
+  }
+  
+  .introjs-button {
+    flex: 1 !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    padding: 12px 8px !important;
+    font-size: 13px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  
+  .introjs-nextbutton {
+    order: 2 !important;
+  }
+  
+  .introjs-prevbutton {
+    order: 1 !important;
+  }
+
+  .introjs-progress {
+    margin: 8px 0 12px 0 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .introjs-tooltip {
+    max-width: calc(100vw - 16px) !important;
+    margin: 8px !important;
+    left: 8px !important;
+    right: 8px !important;
+    padding: 16px 12px 12px 12px !important;
+  }
+  
+  .introjs-tooltiptext {
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+    padding-right: 50px !important;
+  }
+  
+  .introjs-tooltip-title {
+    font-size: 15px !important;
+    padding-right: 50px !important;
+  }
+
+  .introjs-button {
+    padding: 10px 6px !important;
+    font-size: 12px !important;
+  }
+  .introjs-tooltipbuttons {
+    gap: 8px !important;
+    margin-top: 12px !important;
+    padding-top: 12px !important;
+  }
+}

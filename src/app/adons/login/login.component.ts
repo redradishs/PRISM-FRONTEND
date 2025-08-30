@@ -32,12 +32,10 @@ export class LoginComponent implements OnInit {
   email: string = '';
   password: string = '';
   name: string = '';
-  role: string = '';
   showPasswword = false;
   pendingVerificationUserId: string = '';
   showConfirmPassword = false;
-  isCoordinator: string = '';
-  coordinatedProgram: string = '';
+
 
   activeTab: string = 'login';
 
@@ -50,7 +48,7 @@ export class LoginComponent implements OnInit {
   enableUserRegistration: boolean = false;
   enableInstructorRegistration: boolean = false;
   requireEmailVerification: boolean = true;
-  defaultUserRole: string = 'student';
+
 
   canInstallPwa: boolean = false;
   pwaInstallLoading: boolean = false;
@@ -92,7 +90,6 @@ export class LoginComponent implements OnInit {
       password: ['', [Validators.required, Validators.minLength(5)]],
       confirmPassword: ['', Validators.required],
       name: ['', Validators.required],
-      role: ['', Validators.required],
       agreeToTerms: [false, Validators.requiredTrue],
     });
     const jwt = localStorage.getItem('jwt');
@@ -122,9 +119,6 @@ export class LoginComponent implements OnInit {
       email: ['', [Validators.required]],
       password: ['', Validators.required],
       confirmPassword: ['', Validators.required],
-      role: ['', Validators.required],
-      isCoordinator: ['no'],
-      coordinatedProgram: ['bsit'],
       agreeToTerms: [false, Validators.requiredTrue]
     });
   }
@@ -157,9 +151,7 @@ export class LoginComponent implements OnInit {
         this.enableInstructorRegistration = resp.data.enableInstructorRegistration ?? true;
         this.requireEmailVerification = resp.data.requireEmailVerification ?? true;
 
-        if (this.defaultUserRole) {
-          this.signupForm.patchValue({ role: this.defaultUserRole });
-        }
+
 
         // if (this.isMaintenanceMode) {
         //   this.showMaintenanceAlert();
@@ -482,22 +474,14 @@ export class LoginComponent implements OnInit {
     this.password = formValues.password;
     this.confirmPassword = formValues.confirmPassword;
     this.name = formValues.name;
-    this.role = formValues.role;
-    this.isCoordinator = formValues.isCoordinator;
-    this.coordinatedProgram = formValues.coordinatedProgram;
 
     if (this.password === this.confirmPassword) {
 
       const data: any = {
         email: this.getFullEmail(this.email),
         password: this.password,
-        name: this.name,
-        role: this.role,
-        isCoordinator: formValues.isCoordinator
+        name: this.name
       };
-      if (formValues.isCoordinator === 'yes') {
-        data.coordinatedProgram = formValues.coordinatedProgram;
-      }
 
       // console.log('Signup payload:', data);
 
@@ -539,7 +523,6 @@ export class LoginComponent implements OnInit {
           this.password = '';
           this.confirmPassword = '';
           this.name = '';
-          this.role = '';
           this.signupForm.reset();
         },
         error: (error) => {
@@ -565,18 +548,7 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  onRoleChange(event: any) {
-    const role = event.target.value;
-    if (role === 'instructor') {
-      this.signupForm.get('isCoordinator')?.enable();
-      this.signupForm.get('coordinatedProgram')?.enable();
-    } else {
-      this.signupForm.get('isCoordinator')?.disable();
-      this.signupForm.get('isCoordinator')?.setValue('no');
-      this.signupForm.get('coordinatedProgram')?.disable();
-      this.signupForm.get('coordinatedProgram')?.setValue('');
-    }
-  }
+
 
   private passwordMatchValidator(g: FormGroup) {
     return g.get('password')?.value === g.get('confirmPassword')?.value

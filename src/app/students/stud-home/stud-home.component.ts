@@ -11,6 +11,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { PortalModule } from '@angular/cdk/portal';
+import { TutorialPromptComponent } from '../../shared/components/tutorial-prompt/tutorial-prompt.component';
+import { TutorialService } from '../../services/tutorial.service';
 
 @Component({
   selector: 'app-stud-home',
@@ -23,7 +25,8 @@ import { PortalModule } from '@angular/cdk/portal';
     ReactiveFormsModule,
     MatDialogModule,
     OverlayModule,
-    PortalModule
+    PortalModule,
+    TutorialPromptComponent
   ],
   templateUrl: './stud-home.component.html',
   styleUrl: './stud-home.component.css'
@@ -59,7 +62,8 @@ export class StudHomeComponent implements OnInit {
     private titleService: Title,
     private router: Router,
     private fb: FormBuilder,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private tutorialService: TutorialService
   ) {
     this.titleService.setTitle('PRISM | Dashboard');
     this.joinClassForm = this.fb.group({
@@ -78,6 +82,11 @@ export class StudHomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    setTimeout(() => {
+      if (this.tutorialService.isTutorialInProgress()) {
+        this.tutorialService.continueTutorial();
+      }
+    }, 500);
     this.auth.getCurrentUser().subscribe({
       next: (resp: any) => {
         this.userId = resp.id;
@@ -398,5 +407,4 @@ export class StudHomeComponent implements OnInit {
       this.sidebar.toggleSidebar();
     }
   }
-
 }

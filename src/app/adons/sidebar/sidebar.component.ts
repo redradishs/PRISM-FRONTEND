@@ -158,4 +158,33 @@ export class SidebarComponent {
   isActive(route: string): boolean {
     return this.router.url === route;
   }
+
+  // Add this new method for tutorial data attributes
+  getTourAttribute(itemId: string): string | null {
+    const userRole = this.auth.getUserRole();
+    if (!userRole) return null;
+
+    const tourMap: Record<string, Record<string, string>> = {
+      student: {
+        'classes': 'nav-classes',
+        'history': 'nav-history',
+        'profile': 'nav-profile'
+      },
+      instructor: {
+        'students': 'nav-students',
+        'manage': 'nav-manage',
+        'assessment': 'nav-assign',
+        'Create': 'nav-create',
+        'coordinator': 'nav-coordinator',
+        'profile': 'nav-profile'
+      },
+      admin: {
+        'users': 'nav-users',
+        'settings': 'nav-settings',
+        'profile': 'nav-profile'
+      }
+    };
+
+    return tourMap[userRole]?.[itemId] || null;
+  }
 }

@@ -6,6 +6,7 @@ import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import Swal from 'sweetalert2';
+import { TutorialService } from '../../services/tutorial.service';
 
 interface StudentProfile {
   _id: string;
@@ -177,12 +178,18 @@ export class ProfileComponent implements OnInit, OnDestroy {
   };
 
 
-  constructor(private api: ApiService, private auth: AuthService, private router: Router) {
+  constructor(private api: ApiService, private auth: AuthService, private router: Router, private ts: TutorialService) {
   }
 
   ngOnInit(): void {
     this.checkMobile();
     window.addEventListener('resize', () => this.checkMobile());
+
+    setTimeout(() => {
+      if (this.ts.isTutorialInProgress()) {
+        this.ts.continueTutorial();
+      }
+    }, 500);
 
     this.auth.getCurrentUser().subscribe({
       next: (user) => {
@@ -503,5 +510,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+  }
+
+  startTutorial(): void {
+    this.ts.tutorialInitialize();
   }
 }

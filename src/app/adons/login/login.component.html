@@ -153,39 +153,7 @@
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="role">Role</label>
-                    <select name="role" class="form-input" formControlName="role" (change)="onRoleChange($event)"
-                        required
-                        [ngClass]="{'invalid': loginForm.get('role')?.touched && loginForm.get('role')?.invalid}">
-                        <option value="" disabled selected>Select a role</option>
-                        <option value="student" *ngIf="enableUserRegistration">Student</option>
-                        <option value="instructor" *ngIf="enableInstructorRegistration">Instructor</option>
-                    </select>
-                </div>
 
-                <div class="form-group" *ngIf="signupForm.get('role')?.value === 'instructor'">
-                    <label for="isCoordinator">Are you a coordinator?</label>
-                    <select name="isCoordinator" class="form-input" formControlName="isCoordinator" required
-                        [ngClass]="{'invalid': loginForm.get('isCoordinator')?.touched && loginForm.get('isCoordinator')?.invalid}">
-                        <option value="no">No, not at this time</option>
-                        <option value="yes">Yes, I am a coordinator</option>
-                    </select>
-                    <p class="helper-text" *ngIf="signupForm.get('isCoordinator')?.value === 'yes'">
-                        Your coordinator status will be verified by the admin.
-                    </p>
-                </div>
-
-                <div class="form-group" *ngIf="signupForm.get('isCoordinator')?.value === 'yes'">
-                    <label for="coordinatedProgram">Coordinator of what Program?</label>
-                    <select name="coordinatedProgram" class="form-input" formControlName="coordinatedProgram" required
-                        [ngClass]="{'invalid': signupForm.get('coordinatedProgram')?.touched && signupForm.get('coordinatedProgram')?.invalid}">
-                        <option value="bsit">BSIT</option>
-                        <option value="bscs">BSCS</option>
-                        <option value="bsemc">BSEMC</option>
-                        <option value="act">ACT</option>
-                    </select>
-                </div>
 
                 <div class="termsandcond" style="margin-top: 8px;">
                     <label class="remember-me" style="align-items:flex-start; gap:8px;">

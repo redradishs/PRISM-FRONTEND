@@ -51,7 +51,7 @@
             <div class="main-container">
                 <!-- Header -->
                 <div class="genggengg">
-                    <div class="oknato-header">
+                    <div class="oknato-header" data-tour="history-welcome">
                         <div class="oknato-icon-wrapper">
                             <i class="fas fa-layer-group oknato-icon"></i>
                         </div>
@@ -109,7 +109,7 @@
                 </div>
 
                 <!-- Status Tabs -->
-                <div class="status-tabs">
+                <div class="status-tabs" data-tour="history-filters">
                     <button [class.active]="selectedStatus === ''" (click)="onTabChange('')" class="tab-trigger">
                         <i class="fas fa-layer-group tab-icon"></i>
                         <span class="tab-text">All</span>
@@ -164,7 +164,7 @@
 
                 <!-- Assessment Grid -->
                 <div class="assessment-grid" [class.list-view]="viewMode === 'list'"
-                    *ngIf="filteredAssessments.length > 0">
+                    *ngIf="filteredAssessments.length > 0" data-tour="assessment-history">
                     <ng-container *ngIf="viewMode === 'list'; else gridView">
                         <div (click)="gotoResult(assessment)" *ngFor="let assessment of filteredAssessments"
                             class="assessment-list-card animate-card" [ngClass]="{

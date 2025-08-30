@@ -35,7 +35,7 @@ export class CompleteProfileComponent implements OnInit {
   userEmail = "juan.delacruz@gordoncollege.edu.ph";
   userId: string = '';
   newUser = false;
-  signupCode: string = '';
+
 
   // Program data
   programs: Program[] = [
@@ -61,8 +61,7 @@ export class CompleteProfileComponent implements OnInit {
       block: [''],
       yearLevel: [''],
       isCoordinator: [false],
-      coordinatedProgram: [''],
-      signupCode: ['']
+      coordinatedProgram: ['']
     });
   }
 
@@ -77,12 +76,14 @@ export class CompleteProfileComponent implements OnInit {
     }
 
     this.auth.getCurrentUser().subscribe((user: any) => {
-      console.log(user);
+      // console.log(user);
       this.userName = user.name;
       this.userId = user.id;
       this.newUser = user.newUser;
       if (!this.newUser) {
         this.router.navigate(['/dashboard']);
+      } else {
+        // this.detectRole();
       }
     })
 
@@ -105,30 +106,10 @@ export class CompleteProfileComponent implements OnInit {
     });
   }
 
-  selectRole(role: 'student' | 'instructor') {
-    this.selectedRole = role;
-    this.resetFormRole();
-    setTimeout(() => {
-      this.currentStep = 2;
-      this.updateUIForStep();
-    }, 200);
-  }
 
-  resetFormRole() {
-    this.profileForm.patchValue({
-      course: '',
-      block: '',
-      yearLevel: '',
-      isCoordinator: false,
-      coordinatedProgram: '',
-      signupCode: ''
-    });
-
-    this.clearAllValidators();
-  }
 
   clearAllValidators() {
-    const controls = ['course', 'block', 'yearLevel', 'coordinatedProgram', 'signupCode']
+    const controls = ['course', 'block', 'yearLevel', 'coordinatedProgram']
     controls.forEach(controlName => {
       const control = this.profileForm.get(controlName);
       control?.clearValidators();
@@ -142,12 +123,8 @@ export class CompleteProfileComponent implements OnInit {
         this.profileForm.get('course')?.setValidators([Validators.required]);
         this.profileForm.get('block')?.setValidators([Validators.required]);
         this.profileForm.get('yearLevel')?.setValidators([Validators.required]);
-
-        this.profileForm.get('signupCode')?.clearValidators();
         this.profileForm.get('coordinatedProgram')?.clearValidators();
       } else if (this.selectedRole === 'instructor') {
-        this.profileForm.get('signupCode')?.setValidators([Validators.required]);
-
         this.profileForm.get('course')?.clearValidators();
         this.profileForm.get('block')?.clearValidators();
         this.profileForm.get('yearLevel')?.clearValidators();
@@ -168,8 +145,14 @@ export class CompleteProfileComponent implements OnInit {
   goBack() {
     this.currentStep = 1;
     this.selectedRole = null;
-
-    this.resetFormRole();
+  }
+  async detectRole() {
+    const userRole = this.auth.getUserRole();
+    if (userRole === 'student' || userRole === 'instructor') {
+      this.selectedRole = userRole;
+      this.currentStep = 2;
+      this.updateUIForStep();
+    }
   }
 
   onCoordinatorChange(event: Event) {
@@ -202,24 +185,23 @@ export class CompleteProfileComponent implements OnInit {
     }
 
     this.isSubmitting = true;
-    console.log("Submitting Form Data:", this.profileForm.value);
+    // console.log("Submitting Form Data:", this.profileForm.value);
 
     const data = {
       userId: this.userId,
-      role: this.selectedRole,
       program: this.profileForm.get('course')?.value,
       block: this.profileForm.get('block')?.value,
       yearLevel: this.profileForm.get('yearLevel')?.value,
       isCoordinator: this.isCoordinator,
-      coordinatedProgram: this.isCoordinator === 'yes' ? this.profileForm.get('coordinatedProgram')?.value : null,
-      signupCode: this.profileForm.get('signupCode')?.value
+      coordinatedProgram: this.isCoordinator === 'yes' ? this.profileForm.get('coordinatedProgram')?.value : null
     }
 
     this.auth.completeProfile(data).subscribe({
       next: (resp: any) => {
-        console.log(resp);
+        // console.log(resp);
         this.auth.setToken(resp.data.jwt);
         this.auth.getCurrentUser().subscribe((user: any) => {
+          localStorage.setItem("showTutorial", 'true');
           if (user.role === "student") {
             this.router.navigate(['/student/dashboard']);
           } else {
@@ -229,7 +211,7 @@ export class CompleteProfileComponent implements OnInit {
       },
       error: (err: any) => {
         console.error('Profile completion error:', err);
-        console.log(err)
+        // console.log(err)
         this.isSubmitting = false;
         Swal.fire({
           icon: 'error',
@@ -249,7 +231,6 @@ export class CompleteProfileComponent implements OnInit {
         this.profileForm.get(field)?.markAsTouched();
       });
     } else if (this.selectedRole === 'instructor') {
-      this.profileForm.get('signupCode')?.markAsTouched();
       if (this.profileForm.get('isCoordinator')?.value) {
         this.profileForm.get('coordinatedProgram')?.markAsTouched();
       }

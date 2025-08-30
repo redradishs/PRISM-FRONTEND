@@ -5,7 +5,8 @@
             <header class="bg-white shadow-sm fixed top-0 right-0 w-full md:w-[calc(100%-80px)] z-40">
                 <div class="w-full px-4 md:px-6 py-3 md:py-4">
                     <div class="flex items-center justify-between">
-                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">Profile</h1>
+                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900"
+                            data-tour="profile-welcome">Profile</h1>
                         <div class="flex items-center">
                             <div class="hidden md:flex items-center mr-4">
                                 <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
@@ -18,6 +19,11 @@
                                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors"
                                     (click)="goHome()">
                                     Home
+                                </button>
+                                <button (click)="startTutorial()"
+                                    class="px-4 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-md transition-colors">
+                                    <i class="fas fa-question-circle mr-1"></i>
+                                    Tutorial
                                 </button>
                             </div>
                             <div *ngIf="!isMobile" class="flex items-center">
@@ -86,7 +92,7 @@
                                 </div>
                             </div>
 
-                            <div class="profile-details">
+                            <div class="profile-details" data-tour="profile-info">
                                 <div class="name-role">
                                     <h2>{{profile.name}}</h2>
                                     <div class="email">
@@ -130,7 +136,7 @@
 
                 <!-- Tabs -->
                 <div class="tabs-container">
-                    <div class="tabs-header">
+                    <div class="tabs-header" data-tour="profile-settings">
                         <button class="tab-button" [ngClass]="{'active': activeTab === 'personal'}"
                             (click)="setActiveTab('personal')">
                             <i class="fas fa-user"></i>

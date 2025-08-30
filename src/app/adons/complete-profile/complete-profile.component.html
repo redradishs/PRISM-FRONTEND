@@ -17,48 +17,31 @@
                     </div>
                     <h1 class="step-title">Complete Your Profile</h1>
                     <p class="step-subtitle">Hi <span id="userNameDisplay">{{userName}}</span>!</p>
-                    <p class="step-description">Choose your role to get started</p>
+                    <p class="step-description">Welcome to PRISM! Please complete the form to continue using the
+                        plaform.</p>
+
                 </div>
 
-                <div class="role-options">
-                    <div class="role-card" id="roleStudent" (click)="selectRole('student')">
-                        <div class="role-card-icon-bg student-bg">
-                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                                <path d="M6 12v5c0 1.66 4 3 6 3s6-1.34 6-3v-5" />
-                            </svg>
-                        </div>
-                        <div class="role-card-info">
-                            <h3 class="role-card-title">Student</h3>
-                            <p class="role-card-description">Take assessments and track progress</p>
-                        </div>
-                        <svg class="icon role-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                            <polyline points="12 5 19 12 12 19"></polyline>
+                <div class="role-card" (click)="detectRole()">
+                    <div class="role-card-icon-bg instructor-bg">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
                         </svg>
                     </div>
-
-                    <div class="role-card" id="roleInstructor" (click)="selectRole('instructor')">
-                        <div class="role-card-icon-bg instructor-bg">
-                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                            </svg>
-                        </div>
-                        <div class="role-card-info">
-                            <h3 class="role-card-title">Instructor</h3>
-                            <p class="role-card-description">Create and manage assessments</p>
-                        </div>
-                        <svg class="icon role-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                            <polyline points="12 5 19 12 12 19"></polyline>
-                        </svg>
+                    <div class="role-card-info">
+                        <h3 class="role-card-title">Continue to Profile</h3>
+                        <p class="role-card-description">Click to proceed with completing your profile details.</p>
                     </div>
+                    <svg class="icon role-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
                 </div>
+
+
             </div>
 
             <div id="step2" class="step" [class.active]="currentStep === 2">
@@ -119,7 +102,7 @@
                                     class="form-checkbox" (change)="onCoordinatorChange($event)">
                                 <label for="coordinatorCheckbox" class="checkbox-label-group">
                                     <span class="checkbox-label-title">Program Coordinator</span>
-                                    <span class="checkbox-label-description">Additional administrative privileges</span>
+                                    <span class="checkbox-label-description">Additional coordinator privileges</span>
                                 </label>
                             </div>
                         </div>
@@ -145,13 +128,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="signupCodeInput" class="form-label">Signup Code</label>
-                            <p class="form-label-description">To prevent unverified instructors from accessing the
-                                platform, please enter the signup code provided by the Platform Administrator.</p>
-                            <input type="text" id="signupCodeInput" formControlName="signupCode" class="form-input"
-                                placeholder="Enter your signup code" required>
-                        </div>
+
 
 
                     </div>
