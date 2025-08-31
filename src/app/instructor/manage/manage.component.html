@@ -50,7 +50,7 @@
 
             <div class="main-container">
                 <!-- Header -->
-                <div class="genggengg">
+                <div class="genggengg" data-tour="instructor-manage-welcome">
                     <div class="oknato-header">
                         <div class="oknato-icon-wrapper">
                             <i class="fas fa-layer-group oknato-icon"></i>
@@ -72,7 +72,7 @@
 
 
                 <!-- Search and Filters -->
-                <div class="filter-container">
+                <div class="filter-container" data-tour="instructor-manage-search">
                     <div class="search-container">
                         <i class="fas fa-search search-icon"></i>
                         <input type="text" class="search-input" placeholder="Search by title, description, or class..."
@@ -111,7 +111,7 @@
                 </div>
 
                 <!-- Status Tabs -->
-                <div class="status-tabs">
+                <div class="status-tabs" data-tour="instructor-manage-filter">
                     <button [class.active]="selectedStatus === ''" (click)="onTabChange('')" class="tab-trigger">
                         <i class="fas fa-layer-group tab-icon"></i>
                         <span class="tab-text">All</span>

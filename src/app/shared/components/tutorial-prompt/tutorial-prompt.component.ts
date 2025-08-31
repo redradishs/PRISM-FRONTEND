@@ -434,7 +434,7 @@ export class TutorialPromptComponent implements OnInit {
         return [
           { icon: 'fas fa-users', text: 'Manage students and classes' },
           { icon: 'fas fa-plus-circle', text: 'Create AI-powered assessments' },
-          { icon: 'fas fa-analytics', text: 'Analyze student performance' }
+          { icon: 'fas fa-award', text: 'Assign your Assessments' }
         ];
       case 'admin':
         return [

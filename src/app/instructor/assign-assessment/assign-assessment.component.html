@@ -38,7 +38,7 @@
             <div class="h-[65px] md:h-[68px] w-full"></div>
 
             <div class="page-content">
-                <div class="genggengg">
+                <div class="genggengg" data-tour="instructor-assign-welcome">
                     <div class="oknato-header">
                         <div class="oknato-icon-wrapper">
                             <i class="fas fa-check-square oknato-icon"></i>
@@ -69,20 +69,24 @@
 
                 <div *ngIf="!loading && !error">
                     <!-- Stepper -->
-                    <div class="steps-container" id="page-top">
-                        <div class="step" [class.active]="currentStep === 1" [class.completed]="currentStep > 1">
+                    <div class="steps-container" id="page-top" data-tour="instructor-assign-steps">
+                        <div class="step" [class.active]="currentStep === 1" [class.completed]="currentStep > 1"
+                            data-tour="instructor-assign-step1">
                             <div class="step-number">1</div>
                             <span class="step-label">Select Assessment</span>
                         </div>
-                        <div class="step" [class.active]="currentStep === 2" [class.completed]="currentStep > 2">
+                        <div class="step" [class.active]="currentStep === 2" [class.completed]="currentStep > 2"
+                            data-tour="instructor-assign-step2">
                             <div class="step-number">2</div>
                             <span class="step-label">Choose Recipients</span>
                         </div>
-                        <div class="step" [class.active]="currentStep === 3" [class.completed]="currentStep > 3">
+                        <div class="step" [class.active]="currentStep === 3" [class.completed]="currentStep > 3"
+                            data-tour="instructor-assign-step3">
                             <div class="step-number">3</div>
                             <span class="step-label">Configure Settings</span>
                         </div>
-                        <div class="step" [class.active]="currentStep === 4" [class.completed]="currentStep > 4">
+                        <div class="step" [class.active]="currentStep === 4" [class.completed]="currentStep > 4"
+                            data-tour="instructor-assign-step4">
                             <div class="step-number">4</div>
                             <span class="step-label">Review & Confirm</span>
                         </div>

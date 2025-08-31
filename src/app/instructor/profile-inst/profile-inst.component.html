@@ -17,6 +17,12 @@
                                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
                                     Teaching Overview
                                 </button>
+                                <button (click)="startTutorial()"
+                                    class="px-4 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-md transition-colors"
+                                    data-tour="intructor-profile-restart">
+                                    <i class="fas fa-question-circle mr-1"></i>
+                                    Tutorial
+                                </button>
                             </div>
                             <div *ngIf="!isMobile" class="flex items-center">
                                 <div class="relative mr-3">
@@ -72,7 +78,7 @@
                     <div class="profile-header">
                         <div class="header-background"></div>
                         <div class="profile-card">
-                            <div class="profile-info">
+                            <div class="profile-info" data-tour="instructor-profile-info">
                                 <div class="avatar-container">
                                     <div class="avatar">
                                         <ng-container *ngIf="profilePicture; else initialsAvatar">
@@ -128,7 +134,7 @@
 
                     <!-- Personal Information Tab -->
                     <div class="tabs-container">
-                        <div class="tabs-header">
+                        <div class="tabs-header" data-tour="intructor-profile-tabs">
                             <button class="tab-button" [ngClass]="{'active': activeTab === 'personal'}"
                                 (click)="setActiveTab('personal')">
                                 <i class="fas fa-user"></i>
@@ -257,7 +263,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card-footer">
+                                    <div class="card-footer" data-tour="intructor-profile-archive">
                                         <button class="view-button" [routerLink]="['/instructor/archives']">Manage
                                             Archive
                                             Data</button>

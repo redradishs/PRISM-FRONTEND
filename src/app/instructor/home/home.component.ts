@@ -8,6 +8,8 @@ import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { AfterViewInit } from '@angular/core';
+import { TutorialService } from '../../services/tutorial.service';
+import { TutorialPromptComponent } from '../../shared/components/tutorial-prompt/tutorial-prompt.component';
 
 interface AssessmentProgress {
   id: string;
@@ -50,7 +52,8 @@ interface AssessmentProgress {
     BaseChartDirective,
     SidebarComponent,
     SidebarComponent,
-    RouterLink
+    RouterLink,
+    TutorialPromptComponent
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
@@ -85,7 +88,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.resizeCharts();
   }
 
-  constructor(private api: ApiService, private auth: AuthService, private router: Router, private titleService: Title) {
+  constructor(private api: ApiService, private auth: AuthService, private router: Router, private titleService: Title, private tutorialService: TutorialService) {
     this.titleService.setTitle('PRISM | Home');
   }
 
@@ -105,6 +108,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
         console.log('No user found');
       }
     })
+    setTimeout(() => {
+      if (this.tutorialService.isTutorialInProgress()) {
+        this.tutorialService.continueTutorial();
+      }
+    }, 500);
   }
 
   ngAfterViewInit() {

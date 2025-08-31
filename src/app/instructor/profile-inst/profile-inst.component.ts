@@ -6,6 +6,7 @@ import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import Swal from 'sweetalert2';
+import { TutorialService } from '../../services/tutorial.service';
 
 interface InstructorProfile {
   id: string;
@@ -170,7 +171,7 @@ export class ProfileInstComponent implements OnInit {
     { id: '3', name: 'BSIT 3C', students: 45, avgScore: 88, completionRate: 90 },
   ];
 
-  constructor(private api: ApiService, private auth: AuthService, private router: Router) { }
+  constructor(private api: ApiService, private auth: AuthService, private router: Router, private tutorialService: TutorialService) { }
 
   ngOnInit(): void {
     this.checkMobile();
@@ -521,5 +522,9 @@ export class ProfileInstComponent implements OnInit {
       .map(word => word.charAt(0))
       .join('')
       .toUpperCase();
+  }
+
+  startTutorial(): void {
+    this.tutorialService.tutorialInitialize();
   }
 }

@@ -51,7 +51,7 @@
 
             <div class="katamat-container">
 
-                <div class="genggengg" id="start">
+                <div class="genggengg" id="start" data-tour="instructor-create-welcome">
                     <div class="oknato-header">
                         <div class="oknato-icon-wrapper">
                             <i class="fas fa-book-open oknato-icon"></i>
@@ -138,7 +138,7 @@
 
 
                 <!-- Generate Forms Section -->
-                <div *ngIf="step === 1 && enableGeneration" class="genform-container">
+                <div *ngIf="step === 1 && enableGeneration" class="genform-container" data-tour="instructor-create-ai">
                     <div class="genform-header">
                         <div class="genform-title-group">
                             <div class="genform-title-wrapper">
@@ -154,14 +154,14 @@
 
                     <div class="genform-content">
 
-                        <div class="genform-field">
+                        <div class="genform-field" data-tour="instructor-create-topic">
                             <label for="topic">Topic</label>
                             <textarea id="topic" placeholder="Enter your topic or learning objectives"
                                 class="genform-textarea" [(ngModel)]="aiGeneration.topic"></textarea>
                         </div>
 
                         <!-- Difficulty and Questions Count -->
-                        <div class="genform-row">
+                        <div class="genform-row" data-tour="instructor-create-difficulty">
                             <div class="genform-field">
                                 <label for="difficulty">Difficulty</label>
                                 <select id="difficulty" class="genform-select" [(ngModel)]="aiGeneration.difficulty">
@@ -178,7 +178,7 @@
                         </div>
 
                         <!-- Question Types -->
-                        <div class="genform-field">
+                        <div class="genform-field" data-tour="instructor-create-qtypes">
                             <label>Question Types</label>
                             <div class="genform-checkbox-grid">
                                 <!-- Multiple Choice -->
@@ -233,14 +233,14 @@
                         </div>
 
                         <!-- Additional Instructions -->
-                        <div class="genform-field">
+                        <div class="genform-field" data-tour="instructor-create-addinst">
                             <label for="instructions">Additional Instructions</label>
                             <textarea id="instructions"
                                 placeholder="Enter any specific instructions or context for the AI"
                                 class="genform-textarea" [(ngModel)]="aiGeneration.instructions"></textarea>
                         </div>
 
-                        <div>
+                        <div data-tour="instructor-create-upload">
                             <div *ngIf="!isGenerating && !showUploadSection" class="shower"
                                 (click)="toggleUploadSection()">
                                 <span>UPLOAD A DOCUMENT</span>
@@ -323,7 +323,7 @@
 
                         <div class="genform-actions">
                             <button class="genform-generate-btn" (click)="generateQuestions()"
-                                [disabled]="isGenerating">
+                                data-tour="instructor-create-generate" [disabled]="isGenerating">
                                 <i class="fas fa-sparkles"></i>
                                 <span *ngIf="!isGenerating">Generate Questions</span>
                                 <span *ngIf="isGenerating">Generating...</span>
@@ -363,7 +363,8 @@
                             Save
                         </button>
 
-                        <button class="inix-add-button" (click)="showAddDialog = true">
+                        <button class="inix-add-button" (click)="showAddDialog = true"
+                            data-tour="instructor-create-manually">
                             <i class="fas fa-plus"></i>
                             Add Question
                         </button>

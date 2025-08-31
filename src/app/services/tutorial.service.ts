@@ -281,9 +281,175 @@ export class TutorialService {
             instructor: [
                 {
                     element: '[data-tour="dashboard-welcome"]',
-                    intro: 'Welcome to your PRISM Instructor Dashboard!',
+                    intro: 'Welcome to your PRISM Instructor Dashboard! This is your central hub for student assessments.',
+                    position: 'top' as const
+                },
+                {
+                    element: '[data-tour="instructor-action-buts"]',
+                    intro: 'Use these buttons for quick actions! Create Assessments or View your Classes Instantly!',
                     position: 'bottom' as const
-                }
+                },
+                {
+                    element: '[data-tour="instructor-stats"]',
+                    intro: 'These tabs are your account statistics, you may also click these cards to view them.',
+                    position: 'bottom' as const
+                },
+                {
+                    element: '[data-tour="instructor-ongoing"]',
+                    intro: 'This section shows your Ongoing Assessments, you may click them to go to the result page.',
+                    position: 'top' as const
+                },
+                {
+                    element: '[data-tour="instructor-scheduled"]',
+                    intro: 'And this section shows your Scheduled Assessments, you may also click them to go to the result page.',
+                    position: 'top' as const
+                },
+                {
+                    element: '[data-tour="nav-students"]',
+                    intro: 'This is where you navigate to go to your Classes section.',
+                    position: 'right' as const,
+                    navigateTo: '/instructor/students'
+                },
+                {
+                    element: '[data-tour="instructor-classes-welcome"]',
+                    intro: 'You can create and manage your classes here, add students, view their assessments, and assign assessments directly to your Class!',
+                    position: 'bottom' as const
+                },
+                {
+                    element: '[data-tour="nav-create"]',
+                    intro: 'This is where you navigate to create your Assessment.',
+                    position: 'right' as const,
+                    navigateTo: '/instructor/createAssessment'
+                },
+                {
+                    element: '[data-tour="instructor-create-welcome"]',
+                    intro: 'Inside this page you get to create your Assessment Manually or with the help of AI.',
+                    position: 'bottom' as const
+                },
+                {
+                    element: '[data-tour="instructor-create-manually"]',
+                    intro: 'This is what you click for Manual Creation, a modal will pop-up for the question templates you want to add.',
+                    position: 'bottom' as const
+                },
+                {
+                    element: '[data-tour="instructor-create-ai"]',
+                    intro: 'This is the section that you use for AI Creation',
+                    position: 'top' as const
+                },
+                {
+                    element: '[data-tour="instructor-create-topic"]',
+                    intro: 'Just input your desired topic',
+                    position: 'bottom' as const
+                },
+                {
+                    element: '[data-tour="instructor-create-difficulty"]',
+                    intro: 'Difficulty level and Questions to be generated',
+                    position: 'bottom' as const
+                },
+                {
+                    element: '[data-tour="instructor-create-qtypes"]',
+                    intro: 'Your questions types.',
+                    position: 'bottom' as const
+                },
+                {
+                    element: '[data-tour="instructor-create-addinst"]',
+                    intro: 'Added Instructions for futher precision, ex. Focus only on variables, Do not include OOP Questions.',
+                    position: 'bottom' as const
+                },
+                {
+                    element: '[data-tour="instructor-create-upload"]',
+                    intro: 'For a more precise AI Creation, you may upload your Lessons or Materials here.',
+                    position: 'bottom' as const
+                },
+                {
+                    element: '[data-tour="instructor-create-generate"]',
+                    intro: 'Then you click this button to generate your request, and wait for your request to be processed.',
+                    position: 'bottom' as const
+                },
+                {
+                    element: '[data-tour="nav-assign"]',
+                    intro: 'This is where you navigate to Assign Assessments you have Created.',
+                    position: 'right' as const,
+                    navigateTo: '/instructor/assign'
+                },
+                {
+                    element: '[data-tour="instructor-assign-welcome"]',
+                    intro: 'Inside this page you get to assign any of the assessment you created.',
+                    position: 'bottom' as const
+                },
+                {
+                    element: '[data-tour="instructor-assign-steps"]',
+                    intro: 'When Assigning an Assessment you get to have 4 total steps, let me tour you each step.',
+                    position: 'bottom' as const
+                },
+                {
+                    element: '[data-tour="instructor-assign-step1"]',
+                    intro: 'Step 1: Select Assessment, you may select the Assessment you want to assign.',
+                    position: 'bottom' as const
+                },
+                {
+                    element: '[data-tour="instructor-assign-step2"]',
+                    intro: 'Step 2: Choose your recepient, wether it will be a Class, Individual Student, or Publicly.',
+                    position: 'bottom' as const
+                },
+                {
+                    element: '[data-tour="instructor-assign-step3"]',
+                    intro: 'Step 3: Configure Settings, for Automation and Added security you may customize the settings of your assessment. Ex. Attempts, Time Limit, Start and End Time.',
+                    position: 'bottom' as const
+                },
+                {
+                    element: '[data-tour="instructor-assign-step4"]',
+                    intro: 'Step 4: Review and Confirm your Assignments, you may click the Assign button to confirm the assignment.',
+                    position: 'bottom' as const
+                },
+                {
+                    element: '[data-tour="nav-manage"]',
+                    intro: 'This is where you navigate to see all of your assigned assessments.',
+                    position: 'right' as const,
+                    navigateTo: '/instructor/manage'
+                },
+                {
+                    element: '[data-tour="instructor-manage-welcome"]',
+                    intro: 'Inside this page, you get to track all of your Assessments.',
+                    position: 'bottom' as const
+                },
+                {
+                    element: '[data-tour="instructor-manage-search"]',
+                    intro: 'You may search for you assessment for easy access.',
+                    position: 'bottom' as const
+                },
+                {
+                    element: '[data-tour="instructor-manage-filter"]',
+                    intro: 'Filter your assessment according to their status.',
+                    position: 'bottom' as const
+                },
+                {
+                    element: '[data-tour="nav-profile"]',
+                    intro: 'This is where you navigate to customize your Profile and Preferences.',
+                    position: 'right' as const,
+                    navigateTo: '/instructor/profile'
+                },
+                {
+                    element: '[data-tour="instructor-profile-info"]',
+                    intro: 'This is where your Name, Email, and Role is displayed.',
+                    position: 'bottom' as const
+                },
+                {
+                    element: '[data-tour="intructor-profile-tabs"]',
+                    intro: 'These tabs allow you to go to certain tabs according to what you like and how you want it.',
+                    position: 'bottom' as const
+                },
+                {
+                    element: '[data-tour="intructor-profile-archive"]',
+                    intro: 'Before this tutorial ends, you may access your Archive Data here.',
+                    position: 'bottom' as const
+                },
+                {
+                    element: '[data-tour="intructor-profile-restart"]',
+                    intro: 'You may always click this Replay tutorial if you ever get lost.',
+                    position: 'bottom' as const
+                },
+
             ],
             admin: [
                 {
