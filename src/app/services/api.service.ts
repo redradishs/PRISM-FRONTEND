@@ -25,11 +25,12 @@ export class ApiService {
   // apiUrl = 'http://localhost:8000/instructor';
 
   aiFinal = 'https://prism-ai-worker.asherjamesmayson.workers.dev/api'
-  aiUrl = 'https://redprismai.vercel.app';
+  // aiUrl = 'https://redprismai.vercel.app';
   // rtUrl = 'https://prismapi2.onrender.com/rt';
   // apiUrl = 'https://prismapi2.onrender.com/instructor';
 
   // Google Cloud Console
+  aiUrl = 'https://ai.prismgcccs.live';
   rtUrl = 'https://api.prismgcccs.live/rt';
   apiUrl = 'https://api.prismgcccs.live/instructor';
 

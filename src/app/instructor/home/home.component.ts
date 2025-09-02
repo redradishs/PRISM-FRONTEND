@@ -44,13 +44,13 @@ interface AssessmentProgress {
 }
 
 
+
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
     CommonModule,
     BaseChartDirective,
-    SidebarComponent,
     SidebarComponent,
     RouterLink,
     TutorialPromptComponent
@@ -133,18 +133,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
   getTotalStudents(userId: string) {
     this.api.getInstructorTotalStudents(this.userId).subscribe((resp: any) => {
       try {
-        if (resp.data != null || 0) {
-          this.totalStudents = resp.data;
-        } else {
-          this.totalStudents = 0;
-        }
-
+        this.totalStudents = resp.data || 0;
       } catch (error) {
         console.error('Error getting total students:', error);
+        this.totalStudents = 0;
       }
     })
   }
-
   getActiveAssessments(userId: string) {
     this.api.getActiveAssessments(this.userId).subscribe((resp: any) => {
       try {
@@ -476,14 +471,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
       }
     }
   }
-
-  avatarUrl = 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/5-iAyPUASJXmi0DniNhzXGrxUx6gklaG.png';
-
-  assessments = [
-    { block: 'BSIT BLOCK A', subject: 'NETWORKING 2: 7 OSI LAYER', progress: 85 },
-    { block: 'BSIT BLOCK B', subject: 'NETWORKING 2: 7 OSI LAYER', progress: 65 },
-    { block: 'BSIT BLOCK D', subject: 'NETWORKING 2: 7 OSI LAYER', progress: 95 }
-  ];
 
   // Bar Chart Configuration
   barChartData: ChartConfiguration<'bar'>['data'] = {

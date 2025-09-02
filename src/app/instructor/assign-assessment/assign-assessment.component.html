@@ -107,14 +107,11 @@
 
                         <div class="review-content">
                             <!-- Assessment Search and Filter -->
-                            <div class="search-container">
+                            <div class="search-filter-bar">
                                 <div class="search-wrapper">
                                     <input type="text" [(ngModel)]="searchQuery" placeholder="Search assessments..."
                                         class="search-input">
-                                    <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                    </svg>
+                                    <i class="fas fa-search search-icon"></i>
                                 </div>
                                 <select [(ngModel)]="dateFilter" class="filter-select">
                                     <option value="all">All Time</option>
@@ -125,148 +122,109 @@
                             </div>
 
                             <!-- Assessment Selection Area -->
-                            <div class="assessment-selection-container">
+                            <!-- Assessment Selection -->
+                            <div class="assessment-selector">
+                                <!-- Empty State -->
+                                <div *ngIf="assessments.length === 0" class="empty-state-modern">
+                                    <div class="empty-icon">
+                                        <i class="fas fa-clipboard-list"></i>
+                                    </div>
+                                    <h3>No Assessments Found</h3>
+                                    <p>Create your first assessment to get started with assignments.</p>
+                                    <button class="create-btn" [routerLink]="['/instructor/createAssessment']">
+                                        <i class="fas fa-plus"></i>
+                                        Create Assessment
+                                    </button>
+                                </div>
 
-                                <div *ngIf="assessments.length === 0" class="empty-state">
-                                    <h3 class="empty-state-title">No Assessment Found</h3>
-                                    <p class="empty-state-description">
-                                        Ready to assign assessment? Create your first assessment and assign it with your
-                                        own settings!
-                                    </p>
+                                <!-- Assessment Selection Grid -->
+                                <div *ngIf="assessments.length > 0" class="assessment-grid-modern">
+                                    <!-- Selection Instructions -->
+                                    <div class="selection-instructions" *ngIf="selectedAssessments.size === 0">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span>Select one assessment to assign to your students</span>
+                                    </div>
 
-                                    <div class="empty-state-stats">
-                                        <div class="empty-stat-card">
-                                            <i class="fas fa-plus-circle"></i>
-                                            <span>Create Assessment</span>
+                                    <!-- Selected Assessment Display -->
+                                    <div *ngIf="selectedAssessments.size > 0" class="selected-assessment-banner">
+                                        <div class="banner-content">
+                                            <i class="fas fa-check-circle"></i>
+                                            <span>Assessment selected for assignment</span>
                                         </div>
-                                        <div class="empty-stat-card">
-                                            <i class="fas fa-user-plus"></i>
-                                            <span>Assign it to Students</span>
-                                        </div>
-                                        <div class="empty-stat-card">
-                                            <i class="fas fa-clipboard-check"></i>
-                                            <span>Track Progress</span>
-                                        </div>
-                                        <div class="empty-stat-card">
-                                            <i class="fas fa-file-export"></i>
-                                            <span>Export in one click</span>
+                                        <button class="change-selection-btn" (click)="clearAssessmentSelection()">
+                                            <i class="fas fa-edit"></i>
+                                            Change Selection
+                                        </button>
+                                    </div>
+
+                                    <!-- Assessment Cards -->
+                                    <div class="assessment-cards-container">
+                                        <div *ngFor="let assessment of displayedAssessments; let i = index"
+                                            class="assessment-card-modern"
+                                            [class.selected]="isAssessmentSelected(assessment._id)"
+                                            [class.hidden]="selectedAssessments.size > 0 && !isAssessmentSelected(assessment._id)"
+                                            (click)="toggleAssessmentSelection(assessment._id)">
+
+                                            <!-- Selection Radio -->
+                                            <div class="selection-radio">
+                                                <input type="radio" [id]="'assessment-radio-' + i"
+                                                    name="selectedAssessment"
+                                                    [checked]="isAssessmentSelected(assessment._id)"
+                                                    (change)="toggleAssessmentSelection(assessment._id)">
+                                                <label [for]="'assessment-radio-' + i" class="radio-label"></label>
+                                            </div>
+
+                                            <!-- Card Content -->
+                                            <div class="card-content">
+                                                <div class="card-header">
+                                                    <h3 class="card-title">{{assessment.title}}</h3>
+                                                    <div class="card-date">{{assessment.createdAt | date:'MMM dd,
+                                                        yyyy'}}</div>
+                                                </div>
+
+                                                <div class="card-stats">
+                                                    <div class="stat">
+                                                        <i class="fas fa-question-circle"></i>
+                                                        <span>{{assessment.totalQuestions}} Questions</span>
+                                                    </div>
+                                                    <div class="stat">
+                                                        <i class="fas fa-star"></i>
+                                                        <span>{{assessment.totalPoints}} Points</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="card-category" *ngIf="assessment.category">
+                                                    <i class="fas fa-tag"></i>
+                                                    <span>{{assessment.category}}</span>
+                                                </div>
+
+                                                <div class="card-question-types" *ngIf="assessment.questionTypes">
+                                                    <div class="question-type"
+                                                        *ngFor="let type of getQuestionTypes(assessment.questionTypes)"
+                                                        [class]="type.type.split(' ')[0].toLowerCase()">
+                                                        {{type.type | titlecase}}: {{type.count}}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Preview Button -->
+                                            <button class="preview-btn"
+                                                (click)="viewAssessment(assessment._id); $event.stopPropagation()"
+                                                title="Preview Assessment">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
                                         </div>
                                     </div>
 
-                                    <button class="empty-state-action-btn"
-                                        [routerLink]="['/instructor/createAssessment']">
-                                        <i class=" fas fa-plus"></i>
-                                        <span>Create Your First Assessment</span>
-                                    </button>
-                                </div>
-                                <!-- Assessment Grid -->
-                                <div class="assessment-grid">
-                                    <ng-container *ngFor="let assessment of displayedAssessments">
-                                        <div *ngIf="selectedAssessments.size === 0 || isAssessmentSelected(assessment._id)"
-                                            class="assessment-card"
-                                            [class.selected]="isAssessmentSelected(assessment._id)"
-                                            (click)="toggleAssessmentSelection(assessment._id)">
-
-                                            <div class="assessment-checkbox">
-                                                <input type="checkbox" [checked]="isAssessmentSelected(assessment._id)"
-                                                    (click)="$event.stopPropagation()">
-                                            </div>
-
-                                            <!-- Content -->
-                                            <div class="assessment-content">
-                                                <h3 class="assessment-title">{{assessment.title}}</h3>
-
-                                                <!-- Info Grid -->
-                                                <div class="assessment-info">
-                                                    <div class="info-row">
-                                                        <div class="info-item">
-                                                            <i class="fas fa-file-alt info-icon"></i>
-                                                            <span class="info-value">{{assessment.totalQuestions}}
-                                                                Questions</span>
-                                                        </div>
-                                                        <div class="info-item">
-                                                            <i class="fas fa-star info-icon"></i>
-                                                            <span class="info-value">{{assessment.totalPoints}}
-                                                                Points</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="info-row">
-                                                        <div class="info-item">
-                                                            <i class="fas fa-calendar info-icon"></i>
-                                                            <span class="info-value">{{assessment.createdAt |
-                                                                date:'mediumDate'}}</span>
-                                                        </div>
-                                                        <div class="info-item category-container">
-                                                            <i class="fas fa-tag info-icon"></i>
-                                                            <div class="category-wrapper">
-                                                                <ng-container
-                                                                    *ngIf="assessment.category; else noCategory">
-                                                                    <div class="category-pills">
-                                                                        <ng-container
-                                                                            *ngIf="assessment.category.includes(',')">
-                                                                            <!-- Multiple categories -->
-                                                                            <span
-                                                                                *ngFor="let cat of assessment.category.split(',')"
-                                                                                class="category-pill">
-                                                                                {{cat.trim() | uppercase}}
-                                                                            </span>
-                                                                        </ng-container>
-                                                                        <ng-container
-                                                                            *ngIf="!assessment.category.includes(',')">
-                                                                            <!-- Single category -->
-                                                                            <span
-                                                                                class="category-pill">{{assessment.category
-                                                                                | uppercase}}</span>
-                                                                        </ng-container>
-                                                                    </div>
-                                                                </ng-container>
-                                                                <ng-template #noCategory>
-                                                                    <span class="category-pill no-category">NO
-                                                                        CATEGORY</span>
-                                                                </ng-template>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Question Types -->
-                                                <div class="question-types" *ngIf="assessment.questionTypes">
-                                                    <span
-                                                        *ngFor="let type of getQuestionTypes(assessment.questionTypes)"
-                                                        class="type-tag"
-                                                        [ngClass]="type.type.split(' ')[0].toLowerCase()">
-                                                        {{type.type | titlecase}}: {{type.count}}
-                                                    </span>
-                                                </div>
-
-                                                <!-- View Assessment Button -->
-                                                <div class="assessment-actions">
-                                                    <button class="view-assessment-btn"
-                                                        (click)="viewAssessment(assessment._id); $event.stopPropagation()">
-                                                        <i class="fas fa-eye"></i>
-                                                        View Assessment
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </ng-container>
-                                </div>
-
-                                <div *ngIf="selectedAssessments.size > 0" class="clear-assessment-container">
-                                    <button (click)="clearAssessmentSelection()" class="clear-assessment-button">
-                                        <i class="fas fa-times-circle"></i>
-                                        <span>Clear Assessment Selection</span>
-                                    </button>
-                                </div>
-
-                                <div *ngIf="remainingCount > 0 && selectedAssessments.size === 0"
-                                    class="show-more-container">
-                                    <button (click)="toggleShowAll()" class="show-more-button">
-                                        <span *ngIf="!showingAll">Show {{remainingCount}} More</span>
-                                        <span *ngIf="showingAll">Show Less</span>
-                                        <i class="fas" [class.fa-chevron-down]="!showingAll"
-                                            [class.fa-chevron-up]="showingAll"></i>
-                                    </button>
+                                    <!-- Load More -->
+                                    <div class="load-more-section"
+                                        *ngIf="remainingCount > 0 && selectedAssessments.size === 0">
+                                        <button class="load-more-btn" (click)="toggleShowAll()">
+                                            <span *ngIf="!showingAll">Show {{remainingCount}} More Assessments</span>
+                                            <span *ngIf="showingAll">Show Less</span>
+                                            <i class="fas fa-chevron-down" [class.rotate]="showingAll"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

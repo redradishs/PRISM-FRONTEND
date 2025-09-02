@@ -1,6 +1,4 @@
 import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -197,7 +195,6 @@ export class FinalGenerateAssessmentComponent {
         this.editingQuestionId = null;
       }
     });
-
   }
 
   generateQuestions(): void {
@@ -740,15 +737,12 @@ export class FinalGenerateAssessmentComponent {
   async onFileSelected(event: any) {
     const file = event.target.files[0];
     if (!file) return;
-    this.onFileSelected(file);
     this.errorMessage = '';
     this.extractedText = '';
     this.selectedFileName = file.name;
-
-    console.log('File selected:', file);
-    console.log('File type:', file.type);
-    console.log('File name:', file.name);
-
+    // console.log('File selected:', file);
+    // console.log('File type:', file.type);
+    // console.log('File name:', file.name);
     try {
       if (file.type === 'application/pdf') {
         await this.extractPdfText(file);
@@ -791,7 +785,7 @@ export class FinalGenerateAssessmentComponent {
       }
 
       this.extractedText = text;
-      console.log('Extracted text:', this.extractedText);
+      // console.log('Extracted text:', this.extractedText);
     } catch (error: any) {
       console.error('PDF extraction error:', error);
       throw new Error(
@@ -810,7 +804,7 @@ export class FinalGenerateAssessmentComponent {
       }
 
       this.extractedText = result.value;
-      console.log('Extracted text:', this.extractedText);
+      // console.log('Extracted text:', this.extractedText);
     } catch (error: any) {
       console.error('DOCX extraction error:', error);
       throw new Error(
