@@ -423,7 +423,7 @@ export class AssignAssessmentComponent implements OnInit {
     this.selectedMode = mode;
 
     if (mode === 'mastery') {
-      this.attemptsAllowed = 3;
+      this.attemptsAllowed = 50;
       this.showResults = 'immediate';
       this.randomizeQuestions = false;
       this.masteryScore = Math.min(90, this.selectedAssessmentPoints);
@@ -674,7 +674,7 @@ export class AssignAssessmentComponent implements OnInit {
     }
 
     if (this.selectedMode === 'mastery') {
-      if (this.attemptsAllowed < 1 || this.attemptsAllowed > 20) {
+      if (this.attemptsAllowed < 1 || this.attemptsAllowed > 50) {
         return 'Mastery mode must be between 1 and 20 attempts only.';
       }
     } else {
@@ -878,7 +878,7 @@ export class AssignAssessmentComponent implements OnInit {
         // const validAttempts = this.attemptsAllowed >= 1;
         let validAttempts = false;
         if (this.selectedMode === 'mastery') {
-          validAttempts = this.attemptsAllowed >= 1 && this.attemptsAllowed <= 20;
+          validAttempts = this.attemptsAllowed >= 1 && this.attemptsAllowed <= 50;
         } else {
           validAttempts = this.attemptsAllowed >= 1 && this.attemptsAllowed <= 5;
         }

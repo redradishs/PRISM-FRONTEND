@@ -72,13 +72,14 @@
                         <div class="header-content">
                             <div class="header-icon">
                                 <svg class="icon" viewBox="0 0 24 24" width="24" height="24">
-                                    <path d="M6 9l6-6 6 6M6 15l6 6 6-6" />
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                                 </svg>
                             </div>
                             <div class="header-text">
                                 <h1 class="header-title">{{resultData?.assessment.title}}</h1>
                                 <div class="header-badges">
-                                    <span class="badge pink">Mastery</span>
+                                    <span class="badge pink">Mastery Challenge</span>
                                     <span class="badge green">{{resultData.assessment.status | titlecase}}</span>
                                 </div>
                                 <p class="header-description">Master challenge for Class
@@ -92,7 +93,7 @@
                                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                                 </svg>
-                                Edit
+                                <span class="button-text">Edit</span>
                             </button>
                             <button class="button">
                                 <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
@@ -100,77 +101,65 @@
                                         d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
                                     <circle cx="12" cy="12" r="3" />
                                 </svg>
-                                Settings
+                                <span class="button-text">Settings</span>
                             </button>
                             <button class="button primary">
                                 <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
                                     <path d="M3 3v18h18M18 17V9M12 17V5M6 17v-3" />
                                 </svg>
-                                View Results
+                                <span class="button-text">Results</span>
                             </button>
                         </div>
                     </div>
 
                     <div *ngIf="resultData" class="stats-grid">
                         <div class="stat-card">
-                            <div class="stat-content">
-                                <div class="stat-icon pink">
-                                    <svg class="icon" viewBox="0 0 24 24" width="24" height="24">
-                                        <path d="M22 2 L12 20 L2 2" />
-                                    </svg>
-                                </div>
+                            <div class="stat-icon pink">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="stat-info">
                                 <div class="stat-value">{{resultData?.statistics.masteryRate}}%</div>
                                 <p class="stat-label">Mastery Rate</p>
                             </div>
                         </div>
 
                         <div class="stat-card">
-                            <div class="stat-content">
-                                <div class="stat-icon indigo">
-                                    <svg class="icon" viewBox="0 0 24 24" width="24" height="24">
-                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                        <circle cx="9" cy="7" r="4" />
-                                    </svg>
-                                </div>
+                            <div class="stat-icon indigo">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-info">
                                 <div class="stat-value">{{resultData?.statistics.totalStudents}}</div>
-                                <p class="stat-label">Students</p>
+                                <p class="stat-label">Total Students</p>
                             </div>
                         </div>
 
                         <div class="stat-card">
-                            <div class="stat-content">
-                                <div class="stat-icon purple">
-                                    <svg class="icon" viewBox="0 0 24 24" width="24" height="24">
-                                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                                    </svg>
-                                </div>
+                            <div class="stat-icon purple">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="stat-info">
                                 <div class="stat-value">{{resultData?.statistics.masteryScore}}</div>
-                                <p class="stat-label">Mastery Score</p>
+                                <p class="stat-label">Average Score</p>
                             </div>
                         </div>
 
                         <div class="stat-card">
-                            <div class="stat-content">
-                                <div class="stat-icon green">
-                                    <svg class="icon" viewBox="0 0 24 24" width="24" height="24">
-                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                                        <line x1="16" y1="2" x2="16" y2="6" />
-                                        <line x1="8" y1="2" x2="8" y2="6" />
-                                        <line x1="3" y1="10" x2="21" y2="10" />
-                                    </svg>
-                                </div>
-                                <div class="stat-value-small">{{resultData?.assessment.startDate | date: 'MMMM dd, yyyy
-                                    hh:mm a':'UTC'}}</div>
-                                <p class="stat-label">Started on</p>
+                            <div class="stat-icon green">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-value-small">{{resultData?.assessment.startDate | date: 'MMM dd,
+                                    yyyy':'UTC'}}</div>
+                                <p class="stat-label">Assessment Date</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="card">
                         <div class="card-header">
-                            <h2 class="card-title">Student Progress</h2>
-                            <p class="card-description">Track student progress through mastery levels</p>
+                            <h2 class="card-title">Student Performance Overview</h2>
+                            <p class="card-description">Comprehensive view of student progress and mastery levels across
+                                all attempts</p>
                         </div>
                         <div class="card-content">
                             <div class="student-list">
@@ -178,50 +167,121 @@
                                     <div class="student-info">Student</div>
                                     <div class="student-progress">Progress</div>
                                     <div class="student-attempts">Attempts</div>
-                                    <div class="student-last-attempt">Last Attempt</div>
+                                    <div class="student-last-attempt">Last Activity</div>
                                     <div class="student-status">Status</div>
-                                    <div class="student-actions">Details</div>
+                                    <div class="student-actions">Actions</div>
                                 </div>
 
-                                <div (click)="gotoResult(s)" class="student-item"
-                                    *ngFor="let s of resultData?.studentsProgress">
-                                    <div class="student-info">
-                                        <img *ngIf="s.student.profilePicture !== null" [src]="s.student.profilePicture"
-                                            [alt]="s.student.name" class="student-avatar">
-                                        <img *ngIf="s.student.profilePicture === null"
-                                            src="
-                                            https://api.dicebear.com/9.x/bottts-neutral/svg?seed=PrismUserViolet&colors=purple,lavender,indigo&backgroundColor=E0BBE4,D1C4E9&backgroundType=gradientLinear&radius=50&size=256"
-                                            alt="Michael Chen" class="student-avatar">
-                                        <div class="student-name">{{s.student.name}}</div>
-                                    </div>
-                                    <div class="student-progress">
-                                        <div class="progress-container">
-                                            <div class="progress-bar">
-                                                <div class="progress-value" [style.width.%]="s.masteryPercentage"></div>
+                                <!-- Desktop and Mobile Responsive Student Items -->
+                                <ng-container *ngFor="let s of resultData?.studentsProgress">
+                                    <!-- Desktop Layout (1024px+) -->
+                                    <div (click)="gotoResult(s)" class="student-item desktop-layout">
+                                        <div class="student-info">
+                                            <img *ngIf="s.student.profilePicture !== null"
+                                                [src]="s.student.profilePicture" [alt]="s.student.name"
+                                                class="student-avatar">
+                                            <img *ngIf="s.student.profilePicture === null"
+                                                src="https://api.dicebear.com/9.x/bottts-neutral/svg?seed=PrismUserViolet&colors=purple,lavender,indigo&backgroundColor=E0BBE4,D1C4E9&backgroundType=gradientLinear&radius=50&size=256"
+                                                [alt]="s.student.name" class="student-avatar">
+                                            <div class="student-name">{{s.student.name}}</div>
+                                        </div>
+                                        <div class="student-progress">
+                                            <div class="progress-container">
+                                                <div class="progress-bar">
+                                                    <div class="progress-value" [style.width.%]="s.masteryPercentage">
+                                                    </div>
+                                                </div>
+                                                <span class="progress-text">{{s.masteryPercentage}}%</span>
                                             </div>
-                                            <span class="progress-text">{{s.masteryPercentage}}%</span>
+                                        </div>
+                                        <div class="student-attempts">{{s.attemptCount}}</div>
+                                        <div class="student-last-attempt">{{getRelativeTime(s.lastAttempt?.submittedAt)
+                                            || 'Never'}}</div>
+                                        <div class="student-status">
+                                            <span class="badge" [ngClass]="{
+                                                    'green': s.status === 'mastered',
+                                                    'amber': s.status === 'in_progress', 
+                                                    'gray': s.status === 'not_started'
+                                                  }">
+                                                {{s.status === 'in_progress' ? 'In Progress' :
+                                                s.status === 'not_started' ? 'Not Started' :
+                                                s.status | titlecase}}
+                                            </span>
+                                        </div>
+                                        <div class="student-actions">
+                                            <a class="link-button">
+                                                <svg class="icon" viewBox="0 0 24 24" width="14" height="14">
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                                    <circle cx="12" cy="12" r="3" />
+                                                </svg>
+                                                View Details
+                                            </a>
                                         </div>
                                     </div>
-                                    <div class="student-attempts">{{s.attemptCount}}</div>
-                                    <div class="student-last-attempt">{{getRelativeTime(s.lastAttempt?.submittedAt) ||
-                                        'Never'}}</div>
-                                    <div class="student-status">
-                                        <span class="badge" [ngClass]="{
-                                                'green': s.status === 'mastered',
-                                                'amber': s.status === 'in_progress', 
-                                                'gray': s.status === 'not_started'
-                                              }">
-                                            {{s.status === 'in_progress' ? 'In Progress' :
-                                            s.status === 'not_started' ? 'Not Started' :
-                                            s.status | titlecase}}
-                                        </span>
-                                    </div>
-                                    <div class="student-actions">
-                                        <a class="link-button">View Details</a>
-                                    </div>
-                                </div>
 
+                                    <!-- Mobile Layout (below 1024px) -->
+                                    <div (click)="gotoResult(s)" class="student-item mobile-layout">
+                                        <div class="student-mobile-header">
+                                            <img *ngIf="s.student.profilePicture !== null"
+                                                [src]="s.student.profilePicture" [alt]="s.student.name"
+                                                class="student-avatar">
+                                            <img *ngIf="s.student.profilePicture === null"
+                                                src="https://api.dicebear.com/9.x/bottts-neutral/svg?seed=PrismUserViolet&colors=purple,lavender,indigo&backgroundColor=E0BBE4,D1C4E9&backgroundType=gradientLinear&radius=50&size=256"
+                                                [alt]="s.student.name" class="student-avatar">
+                                            <div class="student-mobile-info">
+                                                <div class="student-name">{{s.student.name}}</div>
+                                                <div class="student-mobile-badge">
+                                                    <span class="badge" [ngClass]="{
+                                                            'green': s.status === 'mastered',
+                                                            'amber': s.status === 'in_progress', 
+                                                            'gray': s.status === 'not_started'
+                                                          }">
+                                                        {{s.status === 'in_progress' ? 'In Progress' :
+                                                        s.status === 'not_started' ? 'Not Started' :
+                                                        s.status | titlecase}}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
 
+                                        <div class="student-mobile-content">
+                                            <div class="student-mobile-row">
+                                                <span class="student-mobile-label">Progress</span>
+                                                <div class="student-mobile-progress">
+                                                    <div class="progress-container">
+                                                        <div class="progress-bar">
+                                                            <div class="progress-value"
+                                                                [style.width.%]="s.masteryPercentage"></div>
+                                                        </div>
+                                                    </div>
+                                                    <span class="progress-text">{{s.masteryPercentage}}%</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="student-mobile-row">
+                                                <span class="student-mobile-label">Attempts</span>
+                                                <span class="student-mobile-value">{{s.attemptCount}}</span>
+                                            </div>
+
+                                            <div class="student-mobile-row">
+                                                <span class="student-mobile-label">Last Activity</span>
+                                                <span
+                                                    class="student-mobile-value">{{getRelativeTime(s.lastAttempt?.submittedAt)
+                                                    || 'Never'}}</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="student-mobile-actions">
+                                            <a class="link-button">
+                                                <svg class="icon" viewBox="0 0 24 24" width="14" height="14">
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                                    <circle cx="12" cy="12" r="3" />
+                                                </svg>
+                                                View Detailed Report
+                                            </a>
+                                        </div>
+                                    </div>
+                                </ng-container>
                             </div>
                         </div>
                     </div>

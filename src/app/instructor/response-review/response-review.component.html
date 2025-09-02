@@ -242,7 +242,8 @@
                         </div>
 
                         <!-- Attempts History -->
-                        <div *ngIf="assessmentDetails.student.attemptsHistory.length > 1" class="attempts-history-box">
+                        <div *ngIf="assessmentDetails.student?.attemptsHistory?.length > 1"
+                            class="attempts-history-box">
                             <div class="attempts-header">
                                 <h3 class="attempts-title">
                                     <i class="fas fa-history"></i>
@@ -253,7 +254,7 @@
                             <div class="attempts-content"
                                 *ngIf="assessmentDetails.student?.attempts && assessmentDetails.student?.attempts > 0; else noAttempts">
                                 <div class="attempts-list">
-                                    <div *ngFor="let attempt of assessmentDetails.student.attemptsHistory; let i = index"
+                                    <div *ngFor="let attempt of assessmentDetails?.student?.attemptsHistory; let i = index"
                                         class="attempt-item" [class.current-attempt]="i === 0"
                                         (click)="viewAttempt(attempt, i + 1)">
                                         <div class="attempt-number">

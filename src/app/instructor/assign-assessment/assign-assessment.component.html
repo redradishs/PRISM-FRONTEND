@@ -72,26 +72,38 @@
                     <div class="steps-container" id="page-top" data-tour="instructor-assign-steps">
                         <div class="step" [class.active]="currentStep === 1" [class.completed]="currentStep > 1"
                             data-tour="instructor-assign-step1">
-                            <div class="step-number">1</div>
+                            <div class="step-number">
+                                <i *ngIf="currentStep > 1" class="fas fa-check"></i>
+                                <span *ngIf="currentStep <= 1">1</span>
+                            </div>
                             <span class="step-label">Select Assessment</span>
                         </div>
+                        <div class="step-line"></div>
                         <div class="step" [class.active]="currentStep === 2" [class.completed]="currentStep > 2"
                             data-tour="instructor-assign-step2">
-                            <div class="step-number">2</div>
+                            <div class="step-number">
+                                <i *ngIf="currentStep > 2" class="fas fa-check"></i>
+                                <span *ngIf="currentStep <= 2">2</span>
+                            </div>
                             <span class="step-label">Choose Recipients</span>
                         </div>
+                        <div class="step-line"></div>
                         <div class="step" [class.active]="currentStep === 3" [class.completed]="currentStep > 3"
                             data-tour="instructor-assign-step3">
-                            <div class="step-number">3</div>
+                            <div class="step-number">
+                                <i *ngIf="currentStep > 3" class="fas fa-check"></i>
+                                <span *ngIf="currentStep <= 3">3</span>
+                            </div>
                             <span class="step-label">Configure Settings</span>
                         </div>
+                        <div class="step-line"></div>
                         <div class="step" [class.active]="currentStep === 4" [class.completed]="currentStep > 4"
                             data-tour="instructor-assign-step4">
-                            <div class="step-number">4</div>
+                            <div class="step-number">
+                                <i *ngIf="currentStep > 4" class="fas fa-check"></i>
+                                <span *ngIf="currentStep <= 4">4</span>
+                            </div>
                             <span class="step-label">Review & Confirm</span>
-                        </div>
-                        <div class="step-line">
-                            <div class="step-line-progress" [style.width]="((currentStep - 1) / 3 * 100) + '%'"></div>
                         </div>
                     </div>
 
@@ -122,7 +134,6 @@
                             </div>
 
                             <!-- Assessment Selection Area -->
-                            <!-- Assessment Selection -->
                             <div class="assessment-selector">
                                 <!-- Empty State -->
                                 <div *ngIf="assessments.length === 0" class="empty-state-modern">
@@ -465,266 +476,383 @@
                             <i class="fas fa-cog review-header-icon"></i>
                             <div>
                                 <h2>Configure Settings</h2>
-                                <p>Set up assessment parameters</p>
+                                <p>Set up assessment settings.</p>
                             </div>
                         </div>
 
                         <div class="review-content">
                             <!-- Assessment Mode Selection -->
-                            <div *ngIf="assignmentType === 'classes'"
-                                class="bg-white rounded-lg p-2 md:p-6 shadow-sm mb-6">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Assessment Mode</h3>
-                                <p class="text-sm text-gray-600 mb-4">Choose how students will interact with this
-                                    assessment</p>
+                            <div *ngIf="assignmentType === 'classes'" class="settings-section mode-selection-section">
+                                <div class="section-header-enhanced">
+                                    <div class="section-icon">
+                                        <i class="fas fa-users-cog"></i>
+                                    </div>
+                                    <div class="section-text">
+                                        <h3>Assessment Mode</h3>
+                                        <p>Choose how students will interact with this assessment</p>
+                                    </div>
+                                </div>
 
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div class="mode-card" [class.selected]="selectedMode === 'assessment'"
+                                <div class="mode-cards-container">
+                                    <div class="mode-card-enhanced" [class.selected]="selectedMode === 'assessment'"
                                         (click)="setAssessmentMode('assessment')">
-                                        <div class="mode-icon">
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                            </svg>
+                                        <div class="mode-card-header">
+                                            <div class="mode-icon-enhanced">
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                                </svg>
+                                            </div>
+                                            <div class="mode-selection-indicator">
+                                                <i class="fas fa-check"></i>
+                                            </div>
                                         </div>
-                                        <h4 class="mode-title">Assessment</h4>
-                                        <p class="mode-description">Standard assessment with customizable settings and
-                                            scoring</p>
+                                        <div class="mode-card-content">
+                                            <h4 class="mode-title-enhanced">Standard Assessment</h4>
+                                            <p class="mode-description-enhanced">Traditional assessment format with
+                                                customizable settings and comprehensive scoring options</p>
+                                        </div>
                                     </div>
 
-                                    <div class="mode-card" [class.selected]="selectedMode === 'mastery'"
+                                    <div class="mode-card-enhanced" [class.selected]="selectedMode === 'mastery'"
                                         (click)="setAssessmentMode('mastery')">
-                                        <div class="mode-icon">
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                                            </svg>
+                                        <div class="mode-card-header">
+                                            <div class="mode-icon-enhanced mastery-icon">
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                                                </svg>
+                                            </div>
+                                            <div class="mode-selection-indicator">
+                                                <i class="fas fa-check"></i>
+                                            </div>
                                         </div>
-                                        <h4 class="mode-title">Mastery Mode</h4>
-                                        <p class="mode-description">Progressive learning with mastery-based advancement
-                                        </p>
+                                        <div class="mode-card-content">
+                                            <h4 class="mode-title-enhanced">Mastery Learning</h4>
+                                            <p class="mode-description-enhanced">Progressive learning approach where
+                                                students must achieve mastery before advancing</p>
+                                        </div>
                                     </div>
-
-                                    <!-- <div class="mode-card" [class.selected]="selectedMode === 'public'"
-                                        (click)="setAssessmentMode('public')">
-                                        <div class="mode-icon">
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                                            </svg>
-                                        </div>
-                                        <h4 class="mode-title">Public</h4>
-                                        <p class="mode-description">Open access assessment available to all students</p>
-                                    </div> -->
                                 </div>
                             </div>
+
                             <div *ngIf="assignmentType === 'individual'"
-                                class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                                <div class="flex items-center">
-                                    <i class="fas fa-info-circle text-blue-500 mr-3"></i>
-                                    <div>
-                                        <h4 class="text-sm font-medium text-blue-900">Individual Assignment Mode</h4>
-                                        <p class="text-sm text-blue-700 mt-1">This assessment will be assigned directly
-                                            to selected students in standard assessment mode.</p>
+                                class="settings-section individual-mode-notice">
+                                <div class="notice-content">
+                                    <div class="notice-icon">
+                                        <i class="fas fa-info-circle"></i>
+                                    </div>
+                                    <div class="notice-text">
+                                        <h4>Individual Assignment Mode</h4>
+                                        <p>This assessment will be assigned directly to selected students in standard
+                                            assessment mode with personalized settings.</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <!-- Due Date & Time -->
-                                <div class="bg-white rounded-lg p-6 shadow-sm">
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Schedule</h3>
-                                    <p class="text-sm text-gray-600 mb-4">Set when the assessment starts and ends</p>
+                            <!-- Configuration Cards Grid -->
+                            <div class="configuration-grid">
+                                <!-- Schedule Settings -->
+                                <div class="config-card">
+                                    <div class="config-card-header">
+                                        <div class="config-icon schedule-icon">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </div>
+                                        <div class="config-header-text">
+                                            <h3>Schedule & Timing</h3>
+                                            <p>Set when the assessment is available</p>
+                                        </div>
+                                    </div>
 
-                                    <div class="space-y-4">
+                                    <div class="config-card-content">
                                         <!-- Start Date -->
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Start Date &
-                                                Time</label>
-                                            <div class="date-presets mb-2">
+                                        <div class="form-group-enhanced">
+                                            <label class="form-label-enhanced">
+                                                <i class="fas fa-play-circle"></i>
+                                                Start Date & Time
+                                            </label>
+                                            <div class="date-presets-enhanced">
                                                 <button *ngFor="let preset of startDatePresets"
                                                     (click)="applyStartDatePreset(preset)" type="button"
-                                                    class="preset-button">
+                                                    class="preset-button-enhanced">
                                                     {{preset.label}}
                                                 </button>
                                             </div>
-                                            <input type="datetime-local" [(ngModel)]="startDate"
-                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                [min]="getCurrentDateTime()" (change)="validateDates()">
+                                            <div class="datetime-input-wrapper">
+                                                <input type="datetime-local" [(ngModel)]="startDate"
+                                                    class="datetime-input-enhanced" [min]="getCurrentDateTime()"
+                                                    (change)="validateDates()">
+                                                <i class="fas fa-calendar-check input-icon"></i>
+                                            </div>
                                         </div>
 
                                         <!-- Due Date -->
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Due Date &
-                                                Time</label>
-                                            <div class="date-presets mb-2">
+                                        <div class="form-group-enhanced">
+                                            <label class="form-label-enhanced">
+                                                <i class="fas fa-flag-checkered"></i>
+                                                Due Date & Time
+                                            </label>
+                                            <div class="date-presets-enhanced">
                                                 <button *ngFor="let preset of dueDatePresets"
                                                     (click)="applyDueDatePreset(preset)" type="button"
-                                                    class="preset-button">
+                                                    class="preset-button-enhanced">
                                                     {{preset.label}}
                                                 </button>
                                             </div>
-                                            <input type="datetime-local" [(ngModel)]="dueDate"
-                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                [min]="getMinDueDate()" (change)="validateDates()">
+                                            <div class="datetime-input-wrapper">
+                                                <input type="datetime-local" [(ngModel)]="dueDate"
+                                                    class="datetime-input-enhanced" [min]="getMinDueDate()"
+                                                    (change)="validateDates()">
+                                                <i class="fas fa-calendar-times input-icon"></i>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Results & Scoring -->
-                                <div class="bg-white rounded-lg p-6 shadow-sm">
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Results & Scoring</h3>
-                                    <p class="text-sm text-gray-600 mb-4">Configure how results are shown to students
-                                    </p>
+                                <div class="config-card">
+                                    <div class="config-card-header">
+                                        <div class="config-icon results-icon">
+                                            <i class="fas fa-chart-line"></i>
+                                        </div>
+                                        <div class="config-header-text">
+                                            <h3>Results & Scoring</h3>
+                                            <p>Configure scoring and result visibility</p>
+                                        </div>
+                                    </div>
 
-                                    <div class="space-y-4">
-                                        <!-- Show Results -->
-                                        <div *ngIf="selectedMode !== 'mastery'">
-                                            <label class="block text-sm font-medium text-gray-700 mb-2">Show
-                                                Results</label>
-                                            <div class="space-y-2">
-                                                <div class="flex items-center">
+                                    <div class="config-card-content">
+                                        <!-- Show Results for non-mastery mode -->
+                                        <div *ngIf="selectedMode !== 'mastery'" class="form-group-enhanced">
+                                            <label class="form-label-enhanced">
+                                                <i class="fas fa-eye"></i>
+                                                Result Visibility
+                                            </label>
+                                            <div class="radio-group-enhanced">
+                                                <div class="radio-option-enhanced">
                                                     <input type="radio" [(ngModel)]="showResults" value="immediate"
-                                                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
-                                                    <label class="ml-2 text-sm text-gray-700">Immediately after
-                                                        submission of the Student.</label>
+                                                        id="immediate-results" class="radio-input-enhanced">
+                                                    <label for="immediate-results" class="radio-label-enhanced">
+                                                        <div class="radio-indicator"></div>
+                                                        <div class="radio-text">
+                                                            <span class="radio-title">Immediate Results</span>
+                                                            <span class="radio-description">Show results right after
+                                                                student submission</span>
+                                                        </div>
+                                                    </label>
                                                 </div>
-                                                <div class="flex items-center">
+                                                <div class="radio-option-enhanced">
                                                     <input type="radio" [(ngModel)]="showResults" value="completed"
-                                                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
-                                                    <label class="ml-2 text-sm text-gray-700">After Completion of the
-                                                        entire Assessment.</label>
+                                                        id="completed-results" class="radio-input-enhanced">
+                                                    <label for="completed-results" class="radio-label-enhanced">
+                                                        <div class="radio-indicator"></div>
+                                                        <div class="radio-text">
+                                                            <span class="radio-title">After Assessment Completion</span>
+                                                            <span class="radio-description">Show results after all
+                                                                students complete</span>
+                                                        </div>
+                                                    </label>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <!-- Mastery Score Input -->
-                                        <div *ngIf="selectedMode === 'mastery'" class="mastery-score-container">
-                                            <label class="form-label">Mastery Score Required</label>
-                                            <div class="score-input-wrapper">
+                                        <!-- Mastery Score for mastery mode -->
+                                        <div *ngIf="selectedMode === 'mastery'" class="mastery-score-section">
+                                            <label class="form-label-enhanced">
+                                                <i class="fas fa-trophy"></i>
+                                                Mastery Score Required
+                                            </label>
+                                            <div class="mastery-score-input-wrapper">
                                                 <input type="number" [(ngModel)]="masteryScore"
                                                     (input)="validateMasteryScore()" [min]="1"
-                                                    [max]="selectedAssessmentPoints" class="form-control" required>
-                                                <div class="total-points-indicator">
-                                                    <span>/ {{selectedAssessmentPoints}} points</span>
+                                                    [max]="selectedAssessmentPoints" class="mastery-score-input"
+                                                    required>
+                                                <div class="score-divider">/</div>
+                                                <div class="total-points-display">
+                                                    <span>{{selectedAssessmentPoints}}</span>
+                                                    <small>points</small>
                                                 </div>
                                             </div>
-                                            <div class="score-hint">
-                                                <i class="fas fa-info-circle"></i>
-                                                <span>Score required to achieve mastery (cannot exceed total
-                                                    points)</span>
+                                            <div class="mastery-score-hint">
+                                                <i class="fas fa-lightbulb"></i>
+                                                <span>Students must reach the score set to be considered
+                                                    Mastered.</span>
                                             </div>
                                         </div>
 
                                         <!-- Attempts -->
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Number of
-                                                Attempts Allowed</label>
-                                            <input type="number" [(ngModel)]="attemptsAllowed" [min]="1"
-                                                [max]="selectedMode === 'mastery' ? 10 : 5"
-                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                            <p class="mt-1 text-sm text-gray-500">
-                                                {{selectedMode === 'mastery'
-                                                ? 'Maximum 20 attempts for mastery mode'
-                                                : 'Maximum 5 attempts allowed'}}
-                                            </p>
+                                        <div class="form-group-enhanced">
+                                            <label class="form-label-enhanced">
+                                                <i class="fas fa-redo"></i>
+                                                Allowed Attempts
+                                            </label>
+                                            <div class="number-input-wrapper">
+                                                <input type="number" [(ngModel)]="attemptsAllowed" [min]="1"
+                                                    [max]="selectedMode === 'mastery' ? 10 : 5"
+                                                    class="number-input-enhanced">
+                                                <div class="input-hint">
+                                                    {{selectedMode === 'mastery'
+                                                    ? 'Set for 999 attempts for mastery learning'
+                                                    : 'Max 5 attempts for standard assessment'}}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Time Settings -->
-                                <div class="bg-white rounded-lg p-6 shadow-sm">
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Time Settings</h3>
-                                    <p class="text-sm text-gray-600 mb-4">Configure time-related parameters</p>
+                                <!-- Time Controls -->
+                                <div class="config-card">
+                                    <div class="config-card-header">
+                                        <div class="config-icon time-icon">
+                                            <i class="fas fa-stopwatch"></i>
+                                        </div>
+                                        <div class="config-header-text">
+                                            <h3>Time Controls</h3>
+                                            <p>Set time limits and restrictions</p>
+                                        </div>
+                                    </div>
 
-                                    <div class="space-y-4">
+                                    <div class="config-card-content">
                                         <!-- Overall Time Limit -->
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Overall Time
-                                                Limit (minutes)</label>
-                                            <input type="number" [(ngModel)]="timeLimit" min="0"
-                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                            <p class="mt-1 text-sm text-gray-500">Set to 0 for no time limit</p>
+                                        <div class="form-group-enhanced">
+                                            <label class="form-label-enhanced">
+                                                <i class="fas fa-clock"></i>
+                                                Overall Time Limit
+                                            </label>
+                                            <div class="time-input-wrapper">
+                                                <input type="number" [(ngModel)]="timeLimit" min="0"
+                                                    class="time-input-enhanced" placeholder="0">
+                                                <div class="time-unit">minutes</div>
+                                            </div>
+                                            <div class="input-hint">
+                                                <i class="fas fa-info-circle"></i>
+                                                Set to 0 for unlimited time
+                                            </div>
                                         </div>
 
                                         <!-- Per Question Time Limit -->
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Time Limit per
-                                                Question (seconds)</label>
-                                            <input type="number" [(ngModel)]="timeLimitPerQuestion" min="0"
-                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                            <p class="mt-1 text-sm text-gray-500">Set to 0 to disable per-question time
-                                                limit</p>
+                                        <div class="form-group-enhanced">
+                                            <label class="form-label-enhanced">
+                                                <i class="fas fa-hourglass-half"></i>
+                                                Time per Question
+                                            </label>
+                                            <div class="time-input-wrapper">
+                                                <input type="number" [(ngModel)]="timeLimitPerQuestion" min="0"
+                                                    class="time-input-enhanced" placeholder="0">
+                                                <div class="time-unit">seconds</div>
+                                            </div>
+                                            <div class="input-hint">
+                                                <i class="fas fa-info-circle"></i>
+                                                Set to 0 to disable per-question limits
+                                            </div>
                                         </div>
-
-
                                     </div>
                                 </div>
 
-                                <!-- Public Mode Settings or Additional Instructions based on mode -->
-                                <div *ngIf="selectedMode === 'public'" class="bg-white rounded-lg p-6 shadow-sm">
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Public Access</h3>
-                                    <p class="text-sm text-gray-600 mb-4">Settings for public assessment access</p>
+                                <!-- Additional Settings -->
+                                <div class="config-card full-width" *ngIf="selectedMode !== 'public'">
+                                    <div class="config-card-header">
+                                        <div class="config-icon settings-icon">
+                                            <i class="fas fa-sliders-h"></i>
+                                        </div>
+                                        <div class="config-header-text">
+                                            <h3>Additional Settings</h3>
+                                            <p>Extra configuration options</p>
+                                        </div>
+                                    </div>
 
-                                    <div class="space-y-4">
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Joining
-                                                Code</label>
-                                            <div class="flex items-center space-x-2">
+                                    <div class="config-card-content">
+                                        <!-- Special Instructions -->
+                                        <div class="form-group-enhanced">
+                                            <label class="form-label-enhanced">
+                                                <i class="fas fa-comment-alt"></i>
+                                                Special Instructions
+                                                <span class="optional-badge">Optional</span>
+                                            </label>
+                                            <div class="textarea-wrapper">
+                                                <textarea [(ngModel)]="specialInstructions" rows="4"
+                                                    placeholder="Add any special instructions or notes for students. The note will be visible in the Student Confirmation Page."
+                                                    class="textarea-enhanced"></textarea>
+                                                <div class="textarea-footer">
+                                                    <span class="character-count">{{(specialInstructions &&
+                                                        specialInstructions.length) || 0}}/500</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Question Randomization -->
+                                        <div class="checkbox-group-enhanced">
+                                            <div class="checkbox-option-enhanced">
+                                                <input type="checkbox" [(ngModel)]="randomizeQuestions"
+                                                    id="randomize-questions" class="checkbox-input-enhanced">
+                                                <label for="randomize-questions" class="checkbox-label-enhanced">
+                                                    <div class="checkbox-indicator">
+                                                        <i class="fas fa-check"></i>
+                                                    </div>
+                                                    <div class="checkbox-text">
+                                                        <span class="checkbox-title">Randomize Questions</span>
+                                                        <span class="checkbox-description">Questions will appear in
+                                                            different order for each student</span>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Public Mode Settings -->
+                                <div *ngIf="selectedMode === 'public'" class="config-card full-width">
+                                    <div class="config-card-header">
+                                        <div class="config-icon public-icon">
+                                            <i class="fas fa-globe"></i>
+                                        </div>
+                                        <div class="config-header-text">
+                                            <h3>Public Access Settings</h3>
+                                            <p>Configure public assessment access</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="config-card-content">
+                                        <div class="form-group-enhanced">
+                                            <label class="form-label-enhanced">
+                                                <i class="fas fa-key"></i>
+                                                Joining Code
+                                            </label>
+                                            <div class="joining-code-wrapper">
                                                 <input type="text" [value]="joiningCode" readonly
-                                                    class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md">
+                                                    class="joining-code-input">
                                                 <button type="button" (click)="generateJoiningCode()"
-                                                    class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-md">
+                                                    class="regenerate-code-btn">
                                                     <i class="fas fa-sync-alt"></i>
+                                                    Regenerate
                                                 </button>
                                             </div>
-                                            <p class="mt-1 text-sm text-gray-500">Share this code with students to join
-                                                the assessment</p>
+                                            <div class="input-hint">
+                                                <i class="fas fa-share-alt"></i>
+                                                Share this code with students to join the assessment
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
 
-                                <div *ngIf="selectedMode !== 'public'" class="bg-white rounded-lg p-6 shadow-sm">
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Additional Instructions</h3>
-                                    <p class="text-sm text-gray-600 mb-4">Provide any special instructions for students
-                                    </p>
-
-                                    <div class="space-y-4">
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Special
-                                                Instructions (Optional)</label>
-                                            <textarea [(ngModel)]="specialInstructions" rows="4"
-                                                placeholder="Add any special instructions for students..."
-                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
-                                        </div>
-                                    </div>
-
-                                    <!-- Question Randomization -->
-                                    <div class="flex items-start">
-                                        <div class="flex items-center h-5">
-                                            <input type="checkbox" [(ngModel)]="randomizeQuestions" class="checkbox">
-                                        </div>
-                                        <div class="ml-3">
-                                            <label class="text-sm font-medium text-gray-700">Randomize Questions</label>
-                                            <p class="text-sm text-gray-500">Questions will appear in random order for
-                                                each student</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Additional Instructions when in public mode -->
-                                <div *ngIf="selectedMode === 'public'"
-                                    class="bg-white rounded-lg p-6 shadow-sm md:col-span-2">
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Additional Instructions</h3>
-                                    <p class="text-sm text-gray-600 mb-4">Provide any special instructions for students
-                                    </p>
-
-                                    <div class="space-y-4">
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Special
-                                                Instructions (Optional)</label>
-                                            <textarea [(ngModel)]="specialInstructions" rows="4"
-                                                placeholder="Add any special instructions for students..."
-                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+                                        <!-- Special Instructions for Public Mode -->
+                                        <div class="form-group-enhanced">
+                                            <label class="form-label-enhanced">
+                                                <i class="fas fa-comment-alt"></i>
+                                                Public Instructions
+                                                <span class="optional-badge">Optional</span>
+                                            </label>
+                                            <div class="textarea-wrapper">
+                                                <textarea [(ngModel)]="specialInstructions" rows="4"
+                                                    placeholder="Add instructions that will be visible to all students joining this assessment..."
+                                                    class="textarea-enhanced"></textarea>
+                                                <div class="textarea-footer">
+                                                    <span class="character-count">{{(specialInstructions &&
+                                                        specialInstructions.length) || 0}}/500</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
