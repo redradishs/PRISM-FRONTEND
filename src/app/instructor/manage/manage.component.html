@@ -206,11 +206,11 @@
                                             </span>
                                             <span *ngIf="assessment.status === 'scheduled'" class="mobile-status-info">
                                                 <i class="far fa-calendar"></i>
-                                                Scheduled: {{assessment.startDate | date:'MMM d, y, h:mm a':'UTC'}}
+                                                Scheduled: {{assessment.startDate | date:'MMM d, y, h:mm a':'PHT'}}
                                             </span>
                                             <span *ngIf="assessment.status === 'ongoing'" class="mobile-status-info">
                                                 <i class="fas fa-clock"></i>
-                                                Due {{assessment.dueDate | date:'MMM d, y, h:mm a':'UTC'}}
+                                                Due {{assessment.dueDate | date:'MMM d, y, h:mm a':'PHT'}}
                                             </span>
                                         </div>
                                         <!-- Bottom row: Badges -->
@@ -266,11 +266,11 @@
                                 </span>
                                 <span *ngIf="assessment.status === 'scheduled'" class="status-label">
                                     <i class="far fa-calendar"></i>
-                                    Scheduled: {{assessment.startDate | date:'MMM d, y, h:mm a':'UTC'}}
+                                    Scheduled: {{assessment.startDate | date:'MMM d, y, h:mm a':'PHT'}}
                                 </span>
                                 <span *ngIf="assessment.status === 'ongoing'" class="status-label">
                                     <i class="fas fa-clock"></i>
-                                    Due {{assessment.dueDate | date:'MMM d, y, h:mm a':'UTC'}}
+                                    Due {{assessment.dueDate | date:'MMM d, y, h:mm a':'PHT'}}
                                 </span>
                                 <button class="btn btn-primary" (click)="viewAssessmentDetails(assessment)">
                                     {{ assessment.status === 'completed' ? 'View Results' : 'Configure Assessment' }}

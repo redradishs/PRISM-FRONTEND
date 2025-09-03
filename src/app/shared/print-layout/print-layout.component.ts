@@ -44,7 +44,7 @@ export interface PrintOptions {
       <!-- Header Section -->
       <div class="header">
         <div class="left-image">
-          <img src="/ccslogo.webp" class="imgl" alt="ccslogo">
+          <img src="/gclogo.webp" class="imgl" alt="ccslogo">
         </div>
 
         <div class="centerdata">
@@ -59,7 +59,7 @@ export interface PrintOptions {
         </div>
 
         <div class="right-image">
-          <img src="/gclogo.webp" class="imgl" alt="gclogo">
+          <img src="/ccslogo.webp" class="imgl" alt="gclogo">
         </div>
       </div>
         

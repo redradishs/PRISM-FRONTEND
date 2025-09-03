@@ -51,6 +51,16 @@ export class PrintService {
     }
   }
 
+  // <p>${data.title}</p>
+
+  // removed ccs style since title has been removed 
+  // .centerdata p: nth-child(2) {
+  // font - weight: bold;
+  // font - size: 1.2rem;
+  // color: rgb(0, 0, 0);
+
+
+
   private generatePrintHTML(data: PrintAssessmentData, options: PrintOptions): string {
     const printContent = this.generatePrintContent(data, options);
     const cssContent = this.getSharedCSS();
@@ -82,12 +92,11 @@ export class PrintService {
     html += `
       <div class="header">
         <div class="left-image">
-          <img src="/ccslogo.webp" class="imgl" alt="ccslogo">
+          <img src="/gclogo.webp" class="imgl" alt="ccslogo">
         </div>
 
         <div class="centerdata">
           ${options.courseTitle ? `<p>${options.courseTitle}</p>` : ''}
-          <p>${data.title}</p>
           ${options.assessmentType ? `<p>${options.assessmentType} ${options.assessmentNumber || ''}</p>` : ''}
           ${(options.term || options.academicYear) ? `
             <p>
@@ -97,7 +106,7 @@ export class PrintService {
         </div>
 
         <div class="right-image">
-          <img src="/gclogo.webp" class="imgl" alt="gclogo">
+          <img src="/ccslogo.webp" class="imgl" alt="gclogo">
         </div>
       </div>
       
@@ -396,7 +405,14 @@ export class PrintService {
 
 .centerdata {
   text-align: center;
+  gap: 3rem;
   flex: 1;
+}
+
+.centerdata p {
+  margin: 0 0 0.1in 0;
+  padding: 0;
+  line-height: 1.2;
 }
 
 .centerdata p:first-child {
@@ -405,14 +421,8 @@ export class PrintService {
   color: rgb(0, 0, 0);
 }
 
-.centerdata p:nth-child(2) {
-  font-weight: bold;
-  font-size: 1.2rem;
-  color: rgb(0, 0, 0);
-}
-
-.centerdata p:nth-child(3),
-.centerdata p:nth-child(4) {
+.centerdata p:nth-child(2),
+.centerdata p:nth-child(3) {
   font-size: 1rem;
   color: black;
 }

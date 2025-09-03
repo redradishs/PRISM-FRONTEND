@@ -508,7 +508,8 @@ export class ResultComponent implements OnInit, OnDestroy {
       if (result.isConfirmed) {
         const data = {
           instructorId: this.userId,
-          assignedAssessmentId: this.assessmentId
+          assignedAssessmentId: this.assessmentId,
+          endDate: new Date().toISOString()
         }
         this.api.endNow(data).subscribe({
           next: (resp: any) => {
@@ -547,9 +548,12 @@ export class ResultComponent implements OnInit, OnDestroy {
       cancelButtonColor: '#6b7280',
     }).then((result) => {
       if (result.isConfirmed) {
+        const currentDT = new Date();
+        const extended = new Date(currentDT.getTime() + 60 * 60 * 1000)
         const data = {
           instructorId: this.userId,
-          assignedAssessmentId: this.assessmentId
+          assignedAssessmentId: this.assessmentId,
+          endDate: extended.toISOString()
         }
         this.api.extendNow(data).subscribe({
           next: (resp: any) => {
@@ -700,9 +704,15 @@ export class ResultComponent implements OnInit, OnDestroy {
     worksheet.mergeCells('A1', 'F1');
     const titleCell = worksheet.getCell('A1');
     titleCell.value = `${this.assessmentTitle.toUpperCase()} - ASSESSMENT RESULTS`;
-    titleCell.font = { size: 20, bold: true, color: { argb: '1F2937' } };
-    titleCell.alignment = { horizontal: 'center' };
-    titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F3F4F6' } };
+    titleCell.font = { size: 22, bold: true, color: { argb: 'FFFFFF' } };
+    titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
+    titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '6366f1' } };
+    titleCell.border = {
+      top: { style: 'thick', color: { argb: '4f46e5' } },
+      left: { style: 'thick', color: { argb: '4f46e5' } },
+      bottom: { style: 'thick', color: { argb: '4f46e5' } },
+      right: { style: 'thick', color: { argb: '4f46e5' } }
+    };
 
     // Summary Section
     worksheet.addRow([]);
@@ -751,13 +761,31 @@ export class ResultComponent implements OnInit, OnDestroy {
       const scorePercentage = (score / totalItems) * 100;
 
       let style = { fontColor: '000000', bgColor: 'FFFFFF' };
-      if (scorePercentage >= 90) {
+      if (scorePercentage >= 85) {
         style = { fontColor: '166534', bgColor: 'DCFCE7' };
-      } else if (scorePercentage >= 75) {
+      } else if (scorePercentage >= 70) {
         style = { fontColor: '854D0E', bgColor: 'FEF9C3' };
-      } else {
-        style = { fontColor: '991B1B', bgColor: 'FEE2E2' };
+      } else if (scorePercentage >= 60) {
+        style = { fontColor: '4338CA', bgColor: 'E0E7FF' };
       }
+      else {
+        style = { fontColor: 'BE185D', bgColor: 'FCE7F3' };
+      }
+
+
+      const violationCount = student.violationCount || 0;
+      if (violationCount <= 0) {
+        row.getCell(5).font = { bold: true, color: { argb: '166534' }, size: 11 };
+        row.getCell(5).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F0FDF4' } };
+      } else if (violationCount <= 3) {
+        row.getCell(5).font = { bold: true, color: { argb: 'B45309' }, size: 11 };
+        row.getCell(5).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFBEB' } };
+      } else {
+        row.getCell(5).font = { bold: true, color: { argb: 'B91C1C' }, size: 11 };
+        row.getCell(5).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FEF2F2' } };
+      }
+
+
       row.getCell(3).font = {
         bold: true,
         size: 11,
