@@ -57,6 +57,7 @@ type AssignmentType = 'classes' | 'individual' | 'public';
 
 interface AssignmentData {
   assessmentId: string;
+  customTitle: string;
   startDate: string;
   dueDate: string;
   timeLimit: number;
@@ -102,6 +103,7 @@ export class AssignAssessmentComponent implements OnInit {
   attemptsAllowed: number = 1;
   randomizeQuestions: boolean = false;
   specialInstructions: string = '';
+  customTitle: string = '';
 
   // Mastery mode settings
   masteryScore: number = 90;
@@ -623,6 +625,7 @@ export class AssignAssessmentComponent implements OnInit {
   private getAssignmentData(): AssignmentData {
     const assignmentData: AssignmentData = {
       assessmentId: Array.from(this.selectedAssessments)[0],
+      customTitle: this.customTitle,
       startDate: this.startDate,
       dueDate: this.dueDate,
       timeLimit: this.timeLimit,
@@ -641,7 +644,7 @@ export class AssignAssessmentComponent implements OnInit {
       }
     };
 
-    console.log(assignmentData.classCodes);
+    // console.log(assignmentData.classCodes);
     if (this.selectedMode === 'mastery') {
       assignmentData.modeSettings.masteryScore = this.masteryScore;
     } else if (this.selectedMode === 'public') {
@@ -720,7 +723,7 @@ export class AssignAssessmentComponent implements OnInit {
       });
 
       const assignmentData = this.getAssignmentData();
-      console.log('Assignment Data:', assignmentData);
+      // console.log('Assignment Data:', assignmentData);
 
       // public mode can send without classCodes
       if (this.selectedMode === 'public') {

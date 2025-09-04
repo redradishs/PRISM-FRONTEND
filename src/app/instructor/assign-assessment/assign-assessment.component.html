@@ -352,7 +352,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <!-- Selection Summary for Classes - Moved below list -->
                                 <div class="selection-summary mt-4" *ngIf="selectedClasses.size > 0">
                                     <div class="summary-text">
@@ -556,7 +555,49 @@
 
                             <!-- Configuration Cards Grid -->
                             <div class="configuration-grid">
-                                <!-- Schedule Settings -->
+                                <!-- custom ttl -->
+                                <div class="config-card full-width">
+                                    <div class="config-card-header">
+                                        <div class="config-icon title-icon">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                        <div class="config-header-text">
+                                            <h3>Assessment Title</h3>
+                                            <p>Customize the title for this assignment (optional)</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="config-card-content">
+                                        <div class="form-group-enhanced">
+                                            <label class="form-label-enhanced">
+                                                <i class="fas fa-heading"></i>
+                                                Customize Title
+                                                <span class="optional-badge">Optional</span>
+                                            </label>
+                                            <div class="title-input-wrapper">
+                                                <input type="text" [(ngModel)]="customTitle"
+                                                    class="title-input-enhanced"
+                                                    placeholder="Enter your desired Custom Title Ex. Comprog Quiz #2 or leave blank to use the Orinigal Title"
+                                                    maxlength="50">
+                                                <div class="character-count">
+                                                    <span [class.warning]="(customTitle.length || 0) > 80">
+                                                        {{customTitle.length || 0}}/50
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="input-hint">
+                                                <i class="fas fa-lightbulb"></i>
+                                                <span>Leave blank to use the original assessment title:
+                                                    <strong *ngIf="filteredAssessments.length > 0">
+                                                        "{{filteredAssessments[0].title}}"
+                                                    </strong>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- sched settings -->
                                 <div class="config-card">
                                     <div class="config-card-header">
                                         <div class="config-icon schedule-icon">
@@ -881,7 +922,16 @@
                                 <div *ngIf="filteredAssessments.length > 0" class="review-grid">
                                     <div class="review-item">
                                         <span class="review-item-label">Title</span>
-                                        <span class="review-item-value">{{filteredAssessments[0].title}}</span>
+                                        <span class="review-item-value">
+                                            <span *ngIf="customTitle && customTitle.trim(); else originalTitle"
+                                                class="custom-title">
+                                                {{customTitle.trim()}}
+                                                <small class="text-gray-500">(Custom)</small>
+                                            </span>
+                                            <ng-template #originalTitle>
+                                                {{filteredAssessments[0].title}}
+                                            </ng-template>
+                                        </span>
                                     </div>
                                     <div class="review-item">
                                         <span class="review-item-label">Questions</span>
