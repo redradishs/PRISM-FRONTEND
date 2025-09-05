@@ -7,10 +7,11 @@ import { AuthService } from '../../services/auth.service';
 import { Title } from '@angular/platform-browser';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import Swal from 'sweetalert2';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-coordinator',
-  imports: [SidebarComponent, CommonModule],
+  imports: [SidebarComponent, CommonModule, FormsModule],
   templateUrl: './coordinator.component.html',
   styleUrl: './coordinator.component.css'
 })
@@ -23,6 +24,8 @@ export class CoordinatorComponent {
   profile: string = '';
   students: any[] = [];
   isLoading: boolean = true;
+  coordinatedProgram: string = '';
+  selectedYearLevel: string = 'all'
 
   // Pagination variables
   currentPage: number = 1;
@@ -52,8 +55,9 @@ export class CoordinatorComponent {
       this.userId = user.id;
       this.username = user.name || '';
       this.profile = user.profilePicture;
-      this.getData(this.userId);
+      this.coordinatedProgram = user.coordinatedProgram;
       this.getStats();
+      this.getData(this.userId, this.coordinatedProgram);
     })
   }
 
@@ -82,8 +86,10 @@ export class CoordinatorComponent {
     }
   }
 
-  getData(id: string) {
-    this.api.studentData(this.userId, {
+  getData(id: string, coordinatedProgram: string) {
+    this.isLoading = true;
+    const yearLevel = this.selectedYearLevel === 'all' ? undefined : parseInt(this.selectedYearLevel);
+    this.api.studentData(this.userId, this.coordinatedProgram, yearLevel, {
       page: this.currentPage,
       limit: this.itemsPerPage
     }).subscribe({
@@ -93,16 +99,45 @@ export class CoordinatorComponent {
         this.totalPages = resp.data.totalPages;
         this.currentPage = resp.data.currentPage;
         this.generatePageNumbers();
+        this.isLoading = false;
         // console.log('Student data:', resp.data);
       },
       error: (error) => {
         console.error(error);
+        this.isLoading = false;
       }
     })
   }
 
+  onYearLevelChange(event: any): void {
+    this.selectedYearLevel = event.target.value;
+    this.applyFilters();
+  }
+
+  applyFilters(): void {
+    this.currentPage = 1;
+    this.getData(this.userId, this.selectedYearLevel);
+  }
+
+  resetPage() {
+    this.currentPage = 1;
+    this.selectedYearLevel = 'all'
+    this.getData(this.userId, this.selectedYearLevel);
+  }
+
+  getYearLevelText(selectedYearLevel: any) {
+    const yearMap: Record<string, string> = {
+      '1': '1st Year',
+      '2': '2nd Year',
+      '3': '3rd Year',
+      '4': '4th Year',
+    }
+    const yearText = yearMap[selectedYearLevel]
+    return `No ${yearText} Students found`;
+  }
+
   getStats() {
-    this.api.coordinatorStats(this.userId).subscribe({
+    this.api.coordinatorStats(this.userId, this.coordinatedProgram).subscribe({
       next: (resp: any) => {
         this.totalStudents = resp.data.totalStudents;
         this.activeStudents = resp.data.verifiedStudents;
@@ -118,7 +153,7 @@ export class CoordinatorComponent {
   }
 
   searchStudent(searchQuery: string) {
-    this.api.coordinatorSearch(this.userId, searchQuery).subscribe({
+    this.api.coordinatorSearch(this.userId, this.coordinatedProgram, searchQuery).subscribe({
       next: (resp: any) => {
         this.students = resp.data.students;
         this.totalItems = resp.data.totalItems || this.students.length;
@@ -134,7 +169,7 @@ export class CoordinatorComponent {
 
   defaultview() {
     this.searchQuery = '';
-    this.getData(this.userId);
+    this.getData(this.userId, this.coordinatedProgram);
   }
 
 
@@ -182,7 +217,7 @@ export class CoordinatorComponent {
   goToPage(page: number) {
     if (page !== this.currentPage && page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
-      this.getData(this.userId);
+      this.getData(this.userId, this.coordinatedProgram);
     }
   }
 

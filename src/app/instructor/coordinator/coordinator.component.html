@@ -98,7 +98,7 @@
                             </svg>
                             Total Students
                         </div>
-                        <div class="stat-content">
+                        <div class="stat-content" (click)="resetPage()">
                             <div class="stat-value">{{totalStudents}}</div>
                             <div class="stat-change up">
                                 <svg class="icon" viewBox="0 0 24 24" width="14" height="14">
@@ -176,24 +176,12 @@
                             (input)="onSearchChange($event)" [value]="searchQuery">
                     </div>
                     <div class="filters-container">
-                        <select class="select">
-                            <option value="all">All Programs</option>
-                            <option value="bsit">BS Information Technology</option>
-                            <option value="bscs">BS Computer Science</option>
-                            <option value="bsis">BS Information Systems</option>
-                        </select>
-                        <select class="select">
+                        <select class="select" [(ngModel)]="selectedYearLevel" (change)="onYearLevelChange($event)">
                             <option value="all">All Years</option>
-                            <option value="1st">1st Year</option>
-                            <option value="2nd">2nd Year</option>
-                            <option value="3rd">3rd Year</option>
-                            <option value="4th">4th Year</option>
-                        </select>
-                        <select class="select">
-                            <option value="all">All Status</option>
-                            <option value="active">Active</option>
-                            <option value="at-risk">At Risk</option>
-                            <option value="inactive">Inactive</option>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
                         </select>
                     </div>
                 </div>
@@ -249,8 +237,57 @@
                                         <span *ngIf="!s.isVerified" class="status-badge unverified">Unverified</span>
                                     </td>
                                 </tr>
+
+
                             </tbody>
                         </table>
+                        <div *ngIf="isLoading"
+                            class="flex items-center justify-center min-h-[calc(100vh-68px)] bg-white transition-colors duration-900">
+                            <div class="text-center animate-fade-in">
+                                <div class="relative w-16 h-16 mx-auto">
+                                    <div
+                                        class="absolute inset-0 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin">
+                                    </div>
+                                    <div class="absolute inset-2 rounded-full border-4 border-indigo-300 border-b-transparent animate-spin"
+                                        style="animation-direction: reverse;">
+                                    </div>
+                                </div>
+                                <p class="mt-5 text-gray-600 text-lg font-medium animate-pulse">
+                                    Loading instructor data...
+                                </p>
+                            </div>
+                        </div>
+                        <div *ngIf="students.length === 0" class="empty-state-container">
+                            <div class="empty-state-content">
+                                <div class="empty-state-icon">
+                                    <div class="icon-wrapper">
+                                        <i class="fas fa-users-slash"></i>
+                                    </div>
+                                    <div class="icon-decoration">
+                                        <div class="decoration-dot dot-1"></div>
+                                        <div class="decoration-dot dot-2"></div>
+                                        <div class="decoration-dot dot-3"></div>
+                                    </div>
+                                </div>
+
+                                <div class="empty-state-text">
+                                    <h3 class="empty-title">No Students Found</h3>
+                                    <p class="empty-description">
+                                        <span *ngIf="searchQuery">
+                                            No students match your search for
+                                            "<strong>{{searchQuery}}</strong>".
+                                        </span>
+                                        <span *ngIf="!searchQuery && selectedYearLevel !== 'all'">
+                                            {{getYearLevelText(selectedYearLevel)}}.
+                                        </span>
+                                        <span *ngIf="!searchQuery && selectedYearLevel === 'all'">
+                                            There are no students registered in your coordinated program yet.
+                                        </span>
+                                    </p>
+                                </div>
+
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Pagination -->

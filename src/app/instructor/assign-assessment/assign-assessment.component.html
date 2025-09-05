@@ -626,8 +626,13 @@
                                             <div class="datetime-input-wrapper">
                                                 <input type="datetime-local" [(ngModel)]="startDate"
                                                     class="datetime-input-enhanced" [min]="getCurrentDateTime()"
+                                                    [class.validation-error]="isStartDateInvalid()"
                                                     (change)="validateDates()">
                                                 <i class="fas fa-calendar-check input-icon"></i>
+                                            </div>
+                                            <div *ngIf="isStartDateInvalid()" class="validation-message">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                Start Date is Required!
                                             </div>
                                         </div>
 
@@ -647,8 +652,13 @@
                                             <div class="datetime-input-wrapper">
                                                 <input type="datetime-local" [(ngModel)]="dueDate"
                                                     class="datetime-input-enhanced" [min]="getMinDueDate()"
+                                                    [class.validation-error]="isDueDateInvalid()"
                                                     (change)="validateDates()">
                                                 <i class="fas fa-calendar-times input-icon"></i>
+                                            </div>
+                                            <div *ngIf="isDueDateInvalid()" class="validation-message">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                Due Date is Required!
                                             </div>
                                         </div>
                                     </div>
@@ -734,13 +744,23 @@
                                             <div class="number-input-wrapper">
                                                 <input type="number" [(ngModel)]="attemptsAllowed" [min]="1"
                                                     [max]="selectedMode === 'mastery' ? 10 : 5"
+                                                    [class.validation-error]="isAttemptsInvalid()"
                                                     class="number-input-enhanced">
-                                                <div class="input-hint">
+                                                <div class="input-hint" *ngIf="!isAttemptsInvalid()">
                                                     {{selectedMode === 'mastery'
-                                                    ? 'Set for 999 attempts for mastery learning'
+                                                    ? 'Set for 50 attempts for mastery learning'
                                                     : 'Max 5 attempts for standard assessment'}}
                                                 </div>
                                             </div>
+
+                                            <div *ngIf="isAttemptsInvalid()" class="validation-message">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                <span> {{selectedMode === 'mastery' ? 'Attempts must only be within 1 -
+                                                    50'
+                                                    : 'Attempts must only be within 1 - 5'
+                                                    }}</span>
+                                            </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -766,12 +786,17 @@
                                             </label>
                                             <div class="time-input-wrapper">
                                                 <input type="number" [(ngModel)]="timeLimit" min="0"
+                                                    [class.validation-error]="isTimeLimitInvalid()"
                                                     class="time-input-enhanced" placeholder="0">
                                                 <div class="time-unit">minutes</div>
                                             </div>
                                             <div class="input-hint">
                                                 <i class="fas fa-info-circle"></i>
                                                 Set to 0 for unlimited time
+                                            </div>
+                                            <div *ngIf="isTimeLimitInvalid()" class="validation-message">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                Time limit cannot be negative
                                             </div>
                                         </div>
 
@@ -783,12 +808,17 @@
                                             </label>
                                             <div class="time-input-wrapper">
                                                 <input type="number" [(ngModel)]="timeLimitPerQuestion" min="0"
+                                                    [class.validation-error]="isTimeLimitPerQuestionInvalid()"
                                                     class="time-input-enhanced" placeholder="0">
                                                 <div class="time-unit">seconds</div>
                                             </div>
                                             <div class="input-hint">
                                                 <i class="fas fa-info-circle"></i>
                                                 Set to 0 to disable per-question limits
+                                            </div>
+                                            <div *ngIf="isTimeLimitPerQuestionInvalid()" class="validation-message">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                Time limit is unreasonable, must be between 10 - 180 seconds
                                             </div>
                                         </div>
                                     </div>
@@ -851,9 +881,13 @@
                                         <div class="config-icon public-icon">
                                             <i class="fas fa-globe"></i>
                                         </div>
-                                        <div class="config-header-text">
+                                        <div *ngIf="assignmentType === 'public'" class="config-header-text">
                                             <h3>Public Access Settings</h3>
                                             <p>Configure public assessment access</p>
+                                        </div>
+                                        <div *ngIf="assignmentType === 'individual'" class="config-header-text">
+                                            <h3>Individual Access Settings</h3>
+                                            <p>Configure Invididual assessment access</p>
                                         </div>
                                     </div>
 
@@ -872,9 +906,14 @@
                                                     Regenerate
                                                 </button>
                                             </div>
-                                            <div class="input-hint">
+                                            <div class="input-hint" *ngIf="assignmentType === 'public'">
                                                 <i class="fas fa-share-alt"></i>
                                                 Share this code with students to join the assessment
+                                            </div>
+                                            <div class="input-hint" *ngIf="assignmentType === 'individual'">
+                                                <i class="fas fa-share-alt"></i>
+                                                With individual Joining mode and link is still on by default, but the
+                                                assessment has pre participants.
                                             </div>
                                         </div>
 

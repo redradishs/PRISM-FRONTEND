@@ -670,6 +670,15 @@ export class AssignAssessmentComponent implements OnInit {
       return 'Time limit must be at least 1 minute.';
     }
 
+    if (this.timeLimitPerQuestion > 0) {
+      if (this.timeLimitPerQuestion < 10) {
+        return 'Time Limit per Question is Unreasonable must be at least 10'
+      }
+      if (this.timeLimitPerQuestion > 180) {
+        return 'Time Limit per Question cannot exceed 3 minutes'
+      }
+    }
+
     if (this.selectedMode === 'mastery') {
       if (this.masteryScore < 1 || this.masteryScore > 100) {
         return 'Mastery score must be between 1 and 100.';
@@ -700,6 +709,31 @@ export class AssignAssessmentComponent implements OnInit {
 
     return null;
   }
+
+  isStartDateInvalid(): boolean {
+    return !this.startDate || this.startDate === '';
+  }
+  isDueDateInvalid(): boolean {
+    return !this.dueDate || this.dueDate === '';
+  }
+
+  isTimeLimitInvalid(): boolean {
+    return this.timeLimit < 0;
+  }
+
+  isAttemptsInvalid(): boolean {
+    if (this.selectedMode === 'mastery') {
+      return this.attemptsAllowed < 1 || this.attemptsAllowed > 50;
+    } else {
+      return this.attemptsAllowed < 1 || this.attemptsAllowed > 5;
+    }
+  }
+
+  isTimeLimitPerQuestionInvalid(): boolean {
+    if (this.timeLimitPerQuestion === 0) return false;
+    return this.timeLimitPerQuestion < 10 || this.timeLimitPerQuestion > 180;
+  }
+
 
   async saveAssignment() {
     const validationError = this.validateAssignmentData();

@@ -73,7 +73,7 @@
                     <div class="demo-header-container" data-tour="instructor-classes-welcome">
                         <div class="demo-header-text">
                             <h1 class="demo-title">Class Management</h1>
-                            <p class="demo-subtitle">Manage your classes and student enrollments</p>
+                            <p class="demo-subtitle">Manage your classes and view your Student's Assessments</p>
                         </div>
                         <div class="demo-button-container">
                             <button class="demo-button-secondary" (click)="toggleCreateClassModal()">
@@ -447,7 +447,7 @@
                 <label class="toggle-label">
                     <span class="toggle-text">Auto Admission</span>
                     <div class="toggle-switch">
-                        <input type="checkbox" [(ngModel)]="autoAdmission" (change)="toggleAutoAdmission()">
+                        <input type="checkbox" [(ngModel)]="autoAdmission">
                         <span class="toggle-slider"></span>
                     </div>
                 </label>
@@ -532,9 +532,17 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="classCode">Class Code</label>
-                    <input type="text" id="classCode" name="classCode" [(ngModel)]="newClass.classCode" required
-                        placeholder="Enter class code (e.g. CS101)" class="form-input">
+                    <label for="classCode">Joining Code</label>
+                    <div class="input-with-button-wrapper">
+                        <input type="text" id="classCode" name="classCode" [(ngModel)]="newClass.classCode" required
+                            placeholder="Enter joining code (e.g. BSIT4A) or click the Dice to Generate"
+                            class="form-input with-button" maxlength="6" minlength="6"
+                            [class.validation-error]="isClassCodeInvalid()">
+                        <button type="button" class="input-button" title="Generate randmized 6 chars code"
+                            (click)="generateCode()">
+                            <i class="fas fa-dice"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Year and Block on same line -->

@@ -237,7 +237,7 @@ export class ApiService {
 
   //coordinator page
 
-  studentData(instructorId: string, params: PaginationParams = {}) {
+  studentData(instructorId: string, coordinatedProgram: string, yearLevel?: any, params: PaginationParams = {}) {
     const defaultParams: PaginationParams = {
       page: 1,
       limit: 20,
@@ -245,18 +245,19 @@ export class ApiService {
       sortOrder: 'asc'
     };
     const queryParams = { ...defaultParams, ...params };
+    const yearLevelPath = yearLevel !== undefined ? `/${yearLevel}` : '';
 
-    return this.http.get(`${this.apiUrl}/students/coordinator/all/${instructorId}/getData`, {
+    return this.http.get(`${this.apiUrl}/students/coordinator/all/${instructorId}/${coordinatedProgram}${yearLevelPath}/getData`, {
       params: queryParams as any
     });
   }
 
-  coordinatorStats(instructorId: string) {
-    return this.http.get(`${this.apiUrl}/students/coordinator/stats/${instructorId}/getData`);
+  coordinatorStats(instructorId: string, coordinatedProgram: string) {
+    return this.http.get(`${this.apiUrl}/students/coordinator/stats/${instructorId}/${coordinatedProgram}/getData`);
   }
 
-  coordinatorSearch(id: string, searchQuery: string) {
-    return this.http.get(`${this.apiUrl}/students/coordinator/search/${id}/searchData?searchQuery=${searchQuery}`);
+  coordinatorSearch(id: string, coordinatedProgram: string, searchQuery: string) {
+    return this.http.get(`${this.apiUrl}/students/coordinator/search/${id}/${coordinatedProgram}/searchData?searchQuery=${searchQuery}`);
   }
 
   //evaluate the student

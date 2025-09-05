@@ -147,7 +147,7 @@ export class StudentsComponent implements OnInit {
   newClass = {
     className: '',
     classCode: '',
-    autoAdmission: false,
+    autoAdmission: true,
     description: '',
     year: '',
     block: '',
@@ -550,10 +550,6 @@ export class StudentsComponent implements OnInit {
     this.statsClass();
   }
 
-  toggleAutoAdmission() {
-    console.log('Auto admission:', this.autoAdmission);
-  }
-
   getCompletionPercentage(completion: string): number {
     if (!completion) return 0;
 
@@ -605,7 +601,7 @@ export class StudentsComponent implements OnInit {
       this.newClass = {
         className: '',
         classCode: '',
-        autoAdmission: false,
+        autoAdmission: true,
         description: '',
         year: '',
         block: '',
@@ -650,6 +646,19 @@ export class StudentsComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  generateCode() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    let result = '';
+    for (let i = 0; i < 6; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    this.newClass.classCode = result;
+  }
+
+  isClassCodeInvalid(): boolean {
+    return !this.newClass.classCode || this.newClass.classCode.length !== 6;
   }
 
   addStudents() {
