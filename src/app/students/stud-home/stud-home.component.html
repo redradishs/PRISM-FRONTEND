@@ -201,7 +201,7 @@
                                     </div>
                                 </div>
 
-                                <a routerLink="/student/history" class="view-all">
+                                <a routerLink="/student/history" class="view-all" [queryParams]="{tab: 'ongoing'}">
                                     View All Assessments
                                     <i class="fas fa-chevron-right"></i>
                                 </a>
@@ -279,6 +279,11 @@
                                             <span>Due: {{assessment.endDate | date:'MMM d, y h:mm a'}}</span>
                                         </div>
                                     </div>
+                                    <a *ngIf="upcomingAssessments.length >= 5" routerLink="/student/history"
+                                        [queryParams]="{tab: 'scheduled'}" class="view-all">
+                                        View All Upcoming
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
                                 </div>
                                 <div *ngSwitchCase="'completed'" class="space-y-4">
                                     <p *ngIf="completedAssessments.length === 0" class="text-center text-gray-500">No
@@ -333,6 +338,11 @@
                                             <span>Ended: {{assessment.endDate | date:'MMM d, y h:mm a':'PHT'}}</span>
                                         </div>
                                     </div>
+                                    <a *ngIf="completedAssessments.length >= 5" routerLink="/student/history"
+                                        [queryParams]="{tab: 'completed'}" class="view-all">
+                                        View All Completed
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
                                 </div>
                             </div>
                         </div>

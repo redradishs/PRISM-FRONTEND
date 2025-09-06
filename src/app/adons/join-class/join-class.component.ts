@@ -39,7 +39,7 @@ export class JoinClassComponent implements OnInit {
     if (this.authenticated) {
       this.api.getCurrentUser().subscribe({
         next: (user: any) => {
-          console.log('User:', user);
+          // console.log('User:', user);
           this.userId = user.id;
           this.role = user.role;
         }, error: (err: any) => {

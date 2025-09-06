@@ -65,7 +65,7 @@ export class StudConfirmationComponent {
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state) {
       this.assignedAssessmentId = navigation.extras.state['assessmentId'];
-      console.log('I received this id', this.assignedAssessmentId);
+      // console.log('I received this id', this.assignedAssessmentId);
     }
   }
 
@@ -134,8 +134,8 @@ export class StudConfirmationComponent {
     };
     this.api.recordStartTime(data).subscribe({
       next: (resp: any) => {
-        console.log('Successfully recorded start time', resp);
-        console.log('assessment mode: ', this.confirmationData.typeAss);
+        // console.log('Successfully recorded start time', resp);
+        // console.log('assessment mode: ', this.confirmationData.typeAss);
         if (
           this.confirmationData.typeAss === 'assessment' ||
           this.confirmationData.typeAss === 'public'

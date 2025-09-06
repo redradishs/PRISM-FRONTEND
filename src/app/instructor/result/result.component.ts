@@ -114,9 +114,6 @@ export class ResultComponent implements OnInit, OnDestroy {
   expandedIndex: number | null = null;
   showJoiningCodeModal: boolean = false;
   qrCodeDataUrl: string = '';
-
-
-
   private lastNamePrefixes = [
     'De', 'Del', 'Dela', 'De la', 'De los', 'San', 'Santa', 'Sta.'
   ];
@@ -254,7 +251,7 @@ export class ResultComponent implements OnInit, OnDestroy {
           this.className = resp.data.classes[0].className;
           this.classCode = resp.data.classes[0].classCode;
         }
-        if (resp.data.status !== 'completed') {
+        if (resp.data.status === 'ongoing') {
           this.setupScoreStream();
         }
         if (resp.data.status === 'completed') {
@@ -521,6 +518,7 @@ export class ResultComponent implements OnInit, OnDestroy {
               showConfirmButton: false
             });
             this.getResultOverview(this.assessmentId);
+            this.toggleShowSettings();
           },
           error: (error) => {
             Swal.fire({
@@ -565,6 +563,7 @@ export class ResultComponent implements OnInit, OnDestroy {
               showConfirmButton: false
             });
             this.getResultOverview(this.assessmentId);
+            this.toggleShowSettings();
           },
           error: (error) => {
             Swal.fire({
@@ -606,6 +605,9 @@ export class ResultComponent implements OnInit, OnDestroy {
               showConfirmButton: false
             });
             this.getResultOverview(this.assessmentId);
+            this.getClassResult(this.assessmentId)
+            this.toggleShowSettings();
+
           },
           error: (error) => {
             Swal.fire({
@@ -619,6 +621,20 @@ export class ResultComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  refreshData(): void {
+    this.getResultOverview(this.assessmentId),
+      this.getClassResult(this.assessmentId)
+
+    Swal.fire({
+      title: 'Refresh Success',
+      text: 'You have Successfully Refresh the page please do not SPAM as the page refreshes Realtime.',
+      icon: 'success',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true
+    })
   }
 
   getProgressWidth(score: number): string {

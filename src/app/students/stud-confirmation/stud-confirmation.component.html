@@ -96,6 +96,12 @@
                                     <h3>{{confirmationData.title}}</h3>
                                 </div>
 
+                                <div *ngIf="confirmationData?.instructions"
+                                    class="div-inst full-width divider-instructions">
+                                    <p>Instructions</p>
+                                    <h3>{{confirmationData.instructions || 'Unknown Instructions'}}</h3>
+                                </div>
+
                                 <div class="flex-row">
                                     <div class="divider">
                                         <p>Type</p>
@@ -147,6 +153,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="body-right">
                             <h2><i class="fa-solid fa-user"></i> Student Information</h2>
 

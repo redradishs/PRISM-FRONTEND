@@ -488,6 +488,7 @@
     border-radius: 0.5rem;
     border: 1px solid #e2e8f0;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
 }
 
 .join-label {
@@ -616,24 +617,164 @@
     }
 }
 
-/* Student List Card */
+
 .card.md\:mt-1 {
     margin-top: 2rem;
     margin-bottom: 2rem;
 }
 
-/* Performance Analytics Section */
+
 .space-y-4 {
     margin-top: 1rem;
     margin-bottom: 1rem;
 }
 
-/* Grid Layout for Analytics Cards */
+
 .grid.gap-4.md\:grid-cols-2 {
     display: grid;
     gap: 1rem;
     margin-bottom: 2rem;
 }
+
+/* Empty State Sec */
+.empty-state-row {
+  border: none !important;
+}
+
+.empty-state-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.empty-state-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  color: white;
+  font-size: 32px;
+  margin-bottom: 8px;
+  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.25);
+}
+
+.empty-state-text {
+  text-align: center;
+  max-width: 400px;
+}
+
+.empty-state-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+}
+
+.empty-state-description {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.empty-state-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.empty-state-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+}
+
+.empty-state-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
+}
+
+.empty-state-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+}
+
+.empty-state-button.secondary {
+  background: linear-gradient(135deg, #ec4899 0%, #a855f7 100%);
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.25);
+}
+
+.empty-state-button.secondary:hover {
+  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.35);
+}
+
+.empty-state-button i {
+  font-size: 14px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .empty-state-content {
+    padding: 16px;
+    gap: 12px;
+  }
+  
+  .empty-state-icon {
+    width: 64px;
+    height: 64px;
+    font-size: 24px;
+  }
+  
+  .empty-state-title {
+    font-size: 18px;
+  }
+  
+  .empty-state-description {
+    font-size: 13px;
+  }
+  
+  .empty-state-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .empty-state-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 
 /* Card Base Styles */
 .card {
@@ -1396,34 +1537,6 @@
     background-color: #ef4444;
   }
   
-  .empty-state {
-    text-align: center;
-    padding: 3rem 1rem;
-    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-    border-radius: 0.5rem;
-    border: 1px dashed #e5e7eb;
-  }
-  
-  .empty-state-icon {
-    font-size: 2.5rem;
-    color: #6366f1;
-    margin-bottom: 1rem;
-    opacity: 0.5;
-  }
-  
-  .empty-state-title {
-    font-size: 1.125rem;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-  }
-  
-  .empty-state-description {
-    color: #6b7280;
-    font-size: 0.875rem;
-    max-width: 20rem;
-    margin: 0 auto;
-  }
-
   
 /* Responsive Styles */
 @media (max-width: 640px) {

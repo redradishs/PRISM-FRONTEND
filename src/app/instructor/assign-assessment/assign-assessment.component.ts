@@ -524,6 +524,29 @@ export class AssignAssessmentComponent implements OnInit {
     return null;
   }
 
+  computeAllotedTime(): string {
+    if (!this.startDate && !this.dueDate) {
+      return '';
+    }
+    const start = new Date(this.startDate);
+    const end = new Date(this.dueDate);
+    let difference = end.getTime() - start.getTime();
+    const msInDay = 1000 * 60 * 60 * 24;
+    const msInHour = 1000 * 60 * 60;
+
+    const days = Math.floor(difference / msInDay);
+    const hours = Math.floor((difference % msInDay) / msInHour);
+    const minutes = Math.floor((difference % msInHour) / (1000 * 60));
+
+    const timeParts = [];
+    if (days > 0) timeParts.push(`${days} day${days > 1 ? 's' : ''}`);
+    if (hours > 0) timeParts.push(`${hours} hour${hours > 1 ? 's' : ''}`);
+    if (minutes > 0) timeParts.push(`${minutes} minute${minutes > 1 ? 's' : ''}`);
+
+
+    return `When the Assessment starts the Students have ${timeParts.join(', ')} to enter the assessment page.`
+  }
+
 
   validateMasteryScore() {
     if (this.selectedAssessmentPoints > 0 && this.masteryScore > this.selectedAssessmentPoints) {

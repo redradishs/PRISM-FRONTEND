@@ -29,7 +29,7 @@ export class JoinAssessmentComponent implements OnInit {
     this.title.setTitle('Join Assessment');
     this.joiningCode = this.route.snapshot.params['code'];
 
-    console.log('Joining Code:', this.joiningCode);
+    // console.log('Joining Code:', this.joiningCode);
   }
 
   ngOnInit(): void {
@@ -42,7 +42,7 @@ export class JoinAssessmentComponent implements OnInit {
         next: (resp: any) => {
           this.userId = resp.id;
           this.role = resp.role;
-          console.log('User ID:', this.userId);
+          // console.log('User ID:', this.userId);
         },
         error: (error: any) => {
           console.error(error);
@@ -58,7 +58,7 @@ export class JoinAssessmentComponent implements OnInit {
     this.api.getPublicAssessmentData(data).subscribe({
       next: (resp: any) => {
         if (resp.remarks === 'Success') {
-          console.log(resp);
+          // console.log(resp);
           this.assessmentDetails = resp.data;
           this.isLoading = false;
           if (resp.data.status === 'completed') {
@@ -93,7 +93,7 @@ export class JoinAssessmentComponent implements OnInit {
     const studentId = this.userId;
     this.studentAPI.joinPublicAssessment(this.joiningCode, studentId).subscribe({
       next: (resp: any) => {
-        console.log(resp);
+        // console.log(resp);
         Swal.fire({
           title: 'Success!',
           text: 'You have successfully joined the assessment.',

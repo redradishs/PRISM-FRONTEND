@@ -130,7 +130,7 @@
                 <div class="assessments" data-tour="instructor-ongoing">
                     <div class="assessments-header">
                         <h1>Ongoing Assessments ({{totalOngoingAssessments}})</h1>
-                        <button (click)="viewAll('ongoing')" class="view-all" *ngIf="totalOngoingAssessments > 5">View
+                        <button (click)="viewAll('ongoing')" class="view-all" *ngIf="totalOngoingAssessments >= 5">View
                             {{remainingOngoingAssessments}} more <i class="fas fa-chevron-right"></i></button>
                     </div>
                     <div *ngIf="totalOngoingAssessments === 0" class="empty-state">
@@ -179,7 +179,7 @@
                     <div class="assessments-header">
                         <h1>Scheduled Assessments ({{totalScheduledAssessments}})</h1>
                         <button (click)="viewAll('scheduled')" class="view-all"
-                            *ngIf="totalScheduledAssessments > 5">View
+                            *ngIf="totalScheduledAssessments >= 5">View
                             {{remainingScheduledAssessments}} more <i class="fas fa-chevron-right"></i></button>
                     </div>
                     <div *ngIf="totalScheduledAssessments === 0" class="empty-state">

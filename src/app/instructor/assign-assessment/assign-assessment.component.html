@@ -661,6 +661,17 @@
                                                 Due Date is Required!
                                             </div>
                                         </div>
+
+                                        <div class="allotted-time-display" *ngIf="computeAllotedTime()">
+                                            <div class="time-info-card">
+                                                <div class="time-icon">
+                                                    <i class="fas fa-clock"></i>
+                                                </div>
+                                                <div class="time-text">
+                                                    <p class="time-description">{{computeAllotedTime()}}</p>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 

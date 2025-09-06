@@ -165,7 +165,7 @@
                             <div class="overview-header-right"
                                 *ngIf="classOverview.mode === 'public' && classOverview.joiningCode"
                                 (click)="showJoiningCodeDetails()">
-                                <div class="join-display">
+                                <div class="join-display" title="Click this to view your QR and Joining Link">
                                     <span class="join-label">Joining Code:</span>
                                     <span class="join-value">{{ classOverview.joiningCode }}</span>
                                 </div>
@@ -328,6 +328,44 @@
                                             </div>
                                         </td>
                                     </tr>
+                                    <!-- EMPTY STATE  -->
+                                    <tr *ngIf="!filteredStudents || filteredStudents.length === 0"
+                                        class="empty-state-row">
+                                        <td colspan="5" class="px-6 py-16 text-center bg-white">
+                                            <div class="empty-state-content">
+                                                <div class="empty-state-icon">
+                                                    <i class="fas fa-user-graduate"></i>
+                                                </div>
+                                                <div class="empty-state-text">
+                                                    <h3 class="empty-state-title">No Students Found</h3>
+                                                    <p class="empty-state-description"
+                                                        *ngIf="searchTerm || selectedStatus !== 'all'">
+                                                        No students match your current filters. Try adjusting your
+                                                        search or filter criteria.
+                                                    </p>
+                                                    <p class="empty-state-description"
+                                                        *ngIf="!searchTerm && selectedStatus === 'all'">
+                                                        No students have been assigned to this assessment yet. Students
+                                                        will appear here once they join or are assigned to the
+                                                        assessment.
+                                                    </p>
+                                                </div>
+                                                <div class="empty-state-actions"
+                                                    *ngIf="!searchTerm && selectedStatus === 'all'">
+                                                    <button class="empty-state-button" (click)="refreshData()">
+                                                        <i class="fas fa-sync-alt"></i>
+                                                        Refresh Data
+                                                    </button>
+                                                    <button *ngIf="classOverview?.mode === 'public'"
+                                                        class="empty-state-button secondary"
+                                                        (click)="showJoiningCodeDetails()">
+                                                        <i class="fas fa-share-alt"></i>
+                                                        Share Joining Code
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -475,7 +513,8 @@
 
                 <div *ngIf="classOverview.status !== 'completed'" class="information">
                     <div class="text-center">
-                        <h3>Assessment in Progress</h3>
+                        <h3>{{classOverview.status === 'ongoing' ? 'Assessment in Progress' : 'Assessment Scheduled'}}
+                        </h3>
                         <p>
                             The detailed statistics and analytics for this assessment will be available once all
                             students have completed their submissions.
