@@ -637,6 +637,12 @@ export class ResultComponent implements OnInit, OnDestroy {
     })
   }
 
+  gotoSettings() {
+    this.router.navigate(['/instructor/result/settings'], {
+      state: { assessmentId: this.assessmentId }
+    })
+  }
+
   getProgressWidth(score: number): string {
     return `${score}%`;
   }

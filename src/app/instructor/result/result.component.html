@@ -137,8 +137,12 @@
                 <div class="grid gap-6 md:grid-cols-2 section">
                     <div class="insights-card">
                         <div class="insights-header">
-                            <i class="fas fa-star"></i>
-                            <h2>PRISM - INSIGHTS</h2>
+                            <div class="icf">
+                                <i class="fas fa-star"></i>
+                                <h2>PRISM - INSIGHTS</h2>
+                            </div>
+                            <i class="fas fa-gear" title="Click me to update the Assessment Settings"
+                                (click)="gotoSettings()"></i>
                         </div>
                         <ul class="insights-list">
                             <li *ngFor="let insight of insights; let i = index" [class.expanded]="expandedIndex === i"

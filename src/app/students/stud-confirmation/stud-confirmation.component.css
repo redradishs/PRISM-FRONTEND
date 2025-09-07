@@ -675,9 +675,6 @@ header {
     border-left: 4px solid #6366f1; 
 }
 
-.divider:nth-child() .divider:first-child {
-    border-left: 4px solid #f59e0b; 
-}
 
 .divider:nth-child(2) .divider:last-child {
     border-left: 4px solid #10b981; 

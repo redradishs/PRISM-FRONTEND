@@ -479,6 +479,16 @@ export class ApiService {
     return this.http.post(`${this.apiUrl}/assessment/update`, data);
   }
 
+  //assignedAssessment settings page
+
+  getAssessmentDetails(id: string) {
+    return this.http.get(`${this.apiUrl}/assessment/configuration/${id}`)
+  }
+
+  updateAssessmentDetails(data: any) {
+    return this.http.put(`${this.apiUrl}/assessment/update/config`, data)
+  }
+
 
 
 }

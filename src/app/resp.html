@@ -78,10 +78,9 @@
 userId: string = '';
 username: string = '';
 profile: string = '';
-isMobile = window.innerWidth < 768; isLoading: boolean=false; //dfg to change @ViewChild(SidebarComponent) sidebar!:
-    SidebarComponent; @HostListener('window:resize') onResize() { this.isMobile=window.innerWidth < 768; }
-    constructor(private auth: AuthService, private api: AdminService) { } ngOnInit(): void {
-    this.auth.getCurrentUser().subscribe(user=> {
+isMobile = window.innerWidth < 768; isLoading: boolean=false; @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
+    @HostListener('window:resize') onResize() { this.isMobile=window.innerWidth < 768; } constructor(private auth:
+    AuthService, private api: ApiService) { } ngOnInit(): void { this.auth.getCurrentUser().subscribe(user=> {
     this.userId = user.id,
     this.username = user.name,
     this.profile = user.profilePicture
@@ -96,7 +95,4 @@ isMobile = window.innerWidth < 768; isLoading: boolean=false; //dfg to change @V
     if (this.sidebar) {
     this.sidebar.toggleSidebar();
     }
-    }
-
-
     }

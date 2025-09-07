@@ -1,0 +1,377 @@
+<div class="bg-gray-50 min-h-screen w-full overflow-x-hidden">
+    <div class="flex w-full">
+        <app-sidebar></app-sidebar>
+        <div class="flex-1 ml-0 md:ml-20 w-full">
+            <header class="bg-white shadow-sm fixed top-0 right-0 w-full md:w-[calc(100%-80px)] z-40">
+                <div class="w-full px-4 md:px-6 py-3 md:py-4">
+                    <div class="flex items-center justify-between">
+                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">Assessment Settings</h1>
+                        <div class="flex items-center">
+                            <div class="hidden md:flex items-center mr-4">
+                                <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
+                                <button
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2">
+                                    New Assessment
+                                </button>
+                                <button
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
+                                    Save Changes
+                                </button>
+                            </div>
+                            <div *ngIf="!isMobile" class="flex items-center">
+                                <div class="relative mr-3">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profile" [src]="profile" alt="Profile"
+                                            class="w-full h-full object-cover">
+                                        <span *ngIf="!profile" class="text-base md:text-lg font-medium text-gray-600">
+                                            {{username.charAt(0) || 'A'}}
+                                        </span>
+                                    </div>
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    </div>
+                                </div>
+                                <div class="text-left">
+                                    <div class="text-sm font-medium text-gray-900">{{username}}</div>
+                                    <div class="text-xs text-gray-500">Instructor</div>
+                                </div>
+                            </div>
+                            <button *ngIf="isMobile" (click)="toggleSidebar()"
+                                class="p-2 rounded-md hover:bg-gray-100 transition-colors">
+                                <i class="fas fa-bars w-5 h-5 text-gray-600"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="h-[65px] md:h-[68px] w-full"></div>
+
+            <div *ngIf="isLoading"
+                class="flex items-center justify-center min-h-[calc(100vh-68px)] bg-white transition-colors duration-900">
+                <div class="text-center animate-fade-in">
+                    <div class="relative w-16 h-16 mx-auto">
+                        <div
+                            class="absolute inset-0 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin">
+                        </div>
+                        <div class="absolute inset-2 rounded-full border-4 border-indigo-300 border-b-transparent animate-spin"
+                            style="animation-direction: reverse;">
+                        </div>
+                    </div>
+                    <p class="mt-5 text-gray-600 text-lg font-medium animate-pulse">
+                        Loading instructor data...
+                    </p>
+                </div>
+            </div>
+
+            <main class="p-2 md:p-4 w-full">
+                <!-- Assessment Settings Content -->
+                <div class="settings-container">
+                    <div class="review-header">
+                        <i class="fas fa-cog review-header-icon"></i>
+                        <div>
+                            <h2>Assessment Settings</h2>
+                            <p>Update the settings of the assessment you have assigned.</p>
+                        </div>
+                    </div>
+
+                    <div class="review-content">
+
+                        <!-- Configuration Cards Grid -->
+                        <div class="configuration-grid">
+                            <!-- Assessment Title -->
+                            <div class="config-card full-width">
+                                <div class="config-card-header">
+                                    <div class="config-icon title-icon">
+                                        <i class="fas fa-edit"></i>
+                                    </div>
+                                    <div class="config-header-text">
+                                        <h3>Assessment Title</h3>
+                                        <p>Customize the title for this assignment</p>
+                                    </div>
+                                </div>
+
+                                <div class="config-card-content">
+                                    <div class="form-group-enhanced">
+                                        <label class="form-label-enhanced">
+                                            <i class="fas fa-heading"></i>
+                                            Assessment Title
+                                        </label>
+                                        <div class="title-input-wrapper">
+                                            <input type="text" class="title-input-enhanced"
+                                                placeholder="Enter assessment title" (ngModelChange)="onFormChange()"
+                                                value="Introduction to Programming Quiz" maxlength="100"
+                                                [(ngModel)]="customTitle">
+                                            <div class="character-count">
+                                                <span>{{this.customTitle.length}}/100</span>
+                                            </div>
+                                        </div>
+                                        <div class="input-hint">
+                                            <i class="fas fa-lightbulb"></i>
+                                            <span>This title will be visible to students</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Schedule Settings -->
+                            <div class="config-card">
+                                <div class="config-card-header">
+                                    <div class="config-icon schedule-icon">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </div>
+                                    <div class="config-header-text">
+                                        <h3>Schedule & Timing</h3>
+                                        <p>Set when the assessment is available</p>
+                                    </div>
+                                </div>
+
+                                <div class="config-card-content">
+                                    <!-- Start Date -->
+                                    <div class="form-group-enhanced">
+                                        <label class="form-label-enhanced">
+                                            <i class="fas fa-play-circle"></i>
+                                            Start Date & Time
+                                        </label>
+                                        <div class="date-presets-enhanced">
+                                            <button *ngFor="let preset of startDatePresets" type="button"
+                                                (click)="applyStartDatePreset(preset)"
+                                                class="preset-button-enhanced">{{preset.label}}</button>
+                                        </div>
+                                        <div class="datetime-input-wrapper">
+                                            <input type="datetime-local" class="datetime-input-enhanced"
+                                                [(ngModel)]="startDate" [min]="getCurrentDateTime()"
+                                                value="2025-09-07T09:00" (ngModelChange)="onFormChange()">
+                                            <i class="fas fa-calendar-check input-icon"></i>
+                                        </div>
+                                    </div>
+
+                                    <!-- Due Date -->
+                                    <div class="form-group-enhanced">
+                                        <label class="form-label-enhanced">
+                                            <i class="fas fa-flag-checkered"></i>
+                                            Due Date & Time
+                                        </label>
+                                        <div class="date-presets-enhanced">
+                                            <button *ngFor="let preset of dueDatePresets"
+                                                (click)="applyDueDatePreset(preset)" type="button"
+                                                class="preset-button-enhanced">{{preset.label}}</button>
+                                        </div>
+                                        <div class="datetime-input-wrapper">
+                                            <input type="datetime-local" class="datetime-input-enhanced"
+                                                [(ngModel)]="dueDate" value="2025-09-14T23:59"
+                                                (ngModelChange)="onFormChange()">
+                                            <i class="fas fa-calendar-times input-icon"></i>
+                                        </div>
+                                    </div>
+
+                                    <div *ngIf="timeDisplay()" class="allotted-time-display">
+                                        <div class="time-info-card">
+                                            <div class="time-icon">
+                                                <i class="fas fa-clock"></i>
+                                            </div>
+                                            <div class="time-text">
+                                                <p class="time-description">{{timeDisplay()}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Results & Scoring -->
+                            <div class="config-card">
+                                <div class="config-card-header">
+                                    <div class="config-icon results-icon">
+                                        <i class="fas fa-chart-line"></i>
+                                    </div>
+                                    <div class="config-header-text">
+                                        <h3>Results & Scoring</h3>
+                                        <p>Configure scoring and result visibility</p>
+                                    </div>
+                                </div>
+
+                                <div class="config-card-content">
+                                    <!-- Show Results -->
+                                    <div class="form-group-enhanced">
+                                        <label class="form-label-enhanced">
+                                            <i class="fas fa-eye"></i>
+                                            Result Visibility
+                                        </label>
+                                        <div class="radio-group-enhanced">
+                                            <div class="radio-option-enhanced">
+                                                <input type="radio" value="immediate" id="immediate-results"
+                                                    class="radio-input-enhanced" name="showResults"
+                                                    [(ngModel)]="showResults" checked (ngModelChange)="onFormChange()">
+                                                <label for="immediate-results" class="radio-label-enhanced">
+                                                    <div class="radio-indicator"></div>
+                                                    <div class="radio-text">
+                                                        <span class="radio-title">Immediate Results</span>
+                                                        <span class="radio-description">Show results right after
+                                                            student submission</span>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                            <div class="radio-option-enhanced">
+                                                <input type="radio" value="completed" id="completed-results"
+                                                    class="radio-input-enhanced" name="showResults"
+                                                    [(ngModel)]="showResults" (ngModelChange)="onFormChange()">
+                                                <label for="completed-results" class="radio-label-enhanced">
+                                                    <div class="radio-indicator"></div>
+                                                    <div class="radio-text">
+                                                        <span class="radio-title">After Assessment Completion</span>
+                                                        <span class="radio-description">Show results after all
+                                                            students complete</span>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Attempts -->
+                                    <div class="form-group-enhanced">
+                                        <label class="form-label-enhanced">
+                                            <i class="fas fa-redo"></i>
+                                            Allowed Attempts
+                                        </label>
+                                        <div class="number-input-wrapper">
+                                            <input type="number" value="3" min="1" max="5" class="number-input-enhanced"
+                                                [(ngModel)]="attemptsAllowed" (ngModelChange)="onFormChange()">
+                                            <div class="input-hint">
+                                                Max 5 attempts for standard assessment
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Time Controls -->
+                            <div class="config-card">
+                                <div class="config-card-header">
+                                    <div class="config-icon time-icon">
+                                        <i class="fas fa-stopwatch"></i>
+                                    </div>
+                                    <div class="config-header-text">
+                                        <h3>Time Controls</h3>
+                                        <p>Set time limits and restrictions</p>
+                                    </div>
+                                </div>
+
+                                <div class="config-card-content">
+                                    <!-- Overall Time Limit -->
+                                    <div class="form-group-enhanced">
+                                        <label class="form-label-enhanced">
+                                            <i class="fas fa-clock"></i>
+                                            Overall Time Limit
+                                        </label>
+                                        <div class="time-input-wrapper">
+                                            <input type="number" min="0" value="60" class="time-input-enhanced"
+                                                [(ngModel)]="timeLimit" (ngModelChange)="onFormChange()">
+                                            <div class="time-unit">minutes</div>
+                                        </div>
+                                        <div class="input-hint">
+                                            <i class="fas fa-info-circle"></i>
+                                            Set to 0 for unlimited time
+                                        </div>
+                                    </div>
+
+                                    <!-- Per Question Time Limit -->
+                                    <div class="form-group-enhanced">
+                                        <label class="form-label-enhanced">
+                                            <i class="fas fa-hourglass-half"></i>
+                                            Time per Question
+                                        </label>
+                                        <div class="time-input-wrapper">
+                                            <input type="number" min="0" value="0" class="time-input-enhanced"
+                                                [(ngModel)]="timeLimitPerQuestion" (ngModelChange)="onFormChange()">
+                                            <div class="time-unit">seconds</div>
+                                        </div>
+                                        <div class="input-hint">
+                                            <i class="fas fa-info-circle"></i>
+                                            Set to 0 to disable per-question limits
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Additional Settings -->
+                            <div class="config-card full-width">
+                                <div class="config-card-header">
+                                    <div class="config-icon settings-icon">
+                                        <i class="fas fa-sliders-h"></i>
+                                    </div>
+                                    <div class="config-header-text">
+                                        <h3>Additional Settings</h3>
+                                        <p>Extra configuration options</p>
+                                    </div>
+                                </div>
+
+                                <div class="config-card-content">
+                                    <!-- Special Instructions -->
+                                    <div class="form-group-enhanced">
+                                        <label class="form-label-enhanced">
+                                            <i class="fas fa-comment-alt"></i>
+                                            Special Instructions
+                                            <span class="optional-badge">Optional</span>
+                                        </label>
+                                        <div class="textarea-wrapper">
+                                            <textarea rows="4"
+                                                placeholder="Add any special instructions or notes for students..."
+                                                class="textarea-enhanced" [(ngModel)]="specialInstructions"
+                                                (ngModelChange)="onFormChange()"></textarea>
+                                            <div class="textarea-footer">
+                                                <span class="character-count">{{specialInstructions.length}}/500</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Question Randomization -->
+                                    <div class="checkbox-group-enhanced">
+                                        <div class="checkbox-option-enhanced">
+                                            <input type="checkbox" id="randomize-questions"
+                                                class="checkbox-input-enhanced" [(ngModel)]="randomizeQuestions" checked
+                                                (ngModelChange)="onFormChange()">
+                                            <label for="randomize-questions" class="checkbox-label-enhanced">
+                                                <div class="checkbox-indicator">
+                                                    <i class="fas fa-check"></i>
+                                                </div>
+                                                <div class="checkbox-text">
+                                                    <span class="checkbox-title">Randomize Questions</span>
+                                                    <span class="checkbox-description">Questions will appear in
+                                                        different order for each student</span>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                        <div class="checkbox-option-enhanced">
+                                            <input type="checkbox" id="allow-backtrack" class="checkbox-input-enhanced"
+                                                checked>
+                                            <label for="allow-backtrack" class="checkbox-label-enhanced">
+                                                <div class="checkbox-indicator">
+                                                    <i class="fas fa-check"></i>
+                                                </div>
+                                                <div class="checkbox-text">
+                                                    <span class="checkbox-title">Allow Backtracking</span>
+                                                    <span class="checkbox-description">Students can go back to previous
+                                                        questions</span>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Floating Save Button -->
+                <div class="floating-save-container" *ngIf="hasChanges">
+                    <button type="button" class="floating-save-button" title="Save Settings" (click)="saveSettings()">
+                        <i class="fas fa-save"></i>
+                    </button>
+                </div>
+            </main>
+
+        </div>
+    </div>
+</div>

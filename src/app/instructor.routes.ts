@@ -16,6 +16,7 @@ import { FinalGenerateAssessmentComponent } from './instructor/final-generate-as
 import { EditAssessmentComponent } from './instructor/edit-assessment/edit-assessment.component';
 import { StudentAttemptComponent } from './instructor/student-attempt/student-attempt.component';
 import { ArchiveComponent } from './instructor/archive/archive.component';
+import { AssessmentSettingsComponent } from './instructor/assessment-settings/assessment-settings.component';
 
 export const INSTRUCTOR_ROUTES: Routes = [
     { path: 'dashboard', component: HomeComponent },
@@ -35,5 +36,7 @@ export const INSTRUCTOR_ROUTES: Routes = [
     { path: 'manage', component: ManageComponent },
     { path: 'response/attempts', component: StudentAttemptComponent },
     { path: 'archives', component: ArchiveComponent },
+    { path: 'result/settings', component: AssessmentSettingsComponent },
+
 
 ]; 

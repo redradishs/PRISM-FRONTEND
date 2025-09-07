@@ -308,6 +308,7 @@
 .insights-header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 0.75rem;
     margin-bottom: 1.25rem;
     padding-bottom: 0.75rem;
@@ -329,6 +330,12 @@
     color: white;
     letter-spacing: -0.025em;
     margin: 0;
+}
+
+.icf {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .insights-list {
