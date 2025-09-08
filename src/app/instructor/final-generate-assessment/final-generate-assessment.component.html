@@ -459,7 +459,8 @@
                 <!-- Question Examples Section -->
                 <div class="qtype-container">
                     <!-- Multiple Choice Questions -->
-                    <div class="qtype-card" *ngFor="let question of getQuestionsByType('multiple-choice')">
+                    <div class="qtype-card" [class.editing]="isEditing(question.id)"
+                        *ngFor="let question of getQuestionsByType('multiple-choice')">
                         <div class="qtype-header">
                             <div class="qtype-badge-group">
                                 <span class="qtype-number">Question {{ getDisplayNumber('multiple-choice', question)
@@ -514,7 +515,8 @@
                     </div>
 
                     <!-- Enumeration Questions -->
-                    <div class="qtype-card" *ngFor="let question of getQuestionsByType('enumeration')">
+                    <div class="qtype-card" [class.editing]="isEditing(question.id)"
+                        *ngFor="let question of getQuestionsByType('enumeration')">
                         <div class="qtype-header">
                             <div class="qtype-badge-group">
                                 <span class="qtype-number">Question {{ getDisplayNumber('enumeration', question)
@@ -571,7 +573,8 @@
                     </div>
 
                     <!-- Short Answer Questions -->
-                    <div class="qtype-card" *ngFor="let question of getQuestionsByType('short-answer')">
+                    <div class="qtype-card" [class.editing]="isEditing(question.id)"
+                        *ngFor="let question of getQuestionsByType('short-answer')">
                         <div class="qtype-header">
                             <div class="qtype-badge-group">
                                 <span class="qtype-number">Question {{ getDisplayNumber('short-answer', question)
@@ -612,7 +615,8 @@
                     </div>
 
                     <!-- True/False Questions -->
-                    <div class="qtype-card" *ngFor="let question of getQuestionsByType('true-false')">
+                    <div class="qtype-card" [class.editing]="isEditing(question.id)"
+                        *ngFor="let question of getQuestionsByType('true-false')">
                         <div class="qtype-header">
                             <div class="qtype-badge-group">
                                 <span class="qtype-number">Question {{ getDisplayNumber('true-false', question)
@@ -662,6 +666,45 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="fab-container" *ngIf="questions.length > 0">
+                    <div class="fab-menu" [class.open]="fabOpen" [class.active]="fabActive" [class.faded]="fabFaded">
+                        <button class="fab-main" (click)="toggleFab()" (mouseenter)="onFabInteraction()"
+                            [attr.aria-label]="fabOpen ? 'Close menu' : 'Open menu'">
+                            <i class="fas" [ngClass]="fabOpen ? 'fa-times' : 'fa-ellipsis-v'"></i>
+                        </button>
+
+                        <!-- Action Buttons -->
+                        <div class="fab-actions" [class.show]="fabOpen">
+                            <button class="fab-action fab-verify" (click)="exportQuestionsAsJson(); closeFab()">
+                                <i class="fas fa-shield"></i>
+                                <span class="fab-tooltip">Verify Questions</span>
+                            </button>
+
+                            <button class="fab-action fab-delete" (click)="clearQuestions(); closeFab()">
+                                <i class="fas fa-trash"></i>
+                                <span class="fab-tooltip">Delete All</span>
+                            </button>
+
+                            <button *ngIf="validGeneration();" class="fab-action fab-generate"
+                                (click)="generateQuestions(); closeFab()" [disabled]="isGenerating">
+                                <i class="fas fa-retweet"></i>
+                                <span class="fab-tooltip">Generate {{this.aiGeneration.questionCount}} more</span>
+                            </button>
+
+                            <button class="fab-action fab-generate" (click)="showAddDialog = true; closeFab()"
+                                [disabled]="isGenerating">
+                                <i class="fas fa-plus"></i>
+                                <span class="fab-tooltip">Add Manual Tabs</span>
+                            </button>
+
+                            <button class="fab-action fab-save" (click)="scrollToSection(2); closeFab()">
+                                <i class="fas fa-save"></i>
+                                <span class="fab-tooltip">Save</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
 
@@ -670,36 +713,84 @@
     </div>
 </div>
 
-<!-- Add Question Modal -->
-<div class="modal-overlay" *ngIf="showAddDialog">
-    <div class="modal-container">
+<!-- Compact Add Question Modal - Wider & Streamlined -->
+<div class="modal-overlay" *ngIf="showAddDialog" (click)="showAddDialog = false">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+        <!-- Compact Header -->
         <div class="modal-header">
-            <h3>Add New Question</h3>
-            <button class="modal-close" (click)="showAddDialog = false">&times;</button>
+            <div class="modal-header-content">
+                <h3>Add Questions</h3>
+            </div>
+            <button class="modal-close-btn" (click)="showAddDialog = false" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-        <div class="modal-content">
-            <label class="modal-section-title center">Question Types</label>
-            <div class="modal-qtype-grid">
-                <div class="modal-qtype-card" *ngFor="let type of questionTypes"
-                    [class.selected]="newQuestion.selectedTypes[type.value]">
-                    <input type="checkbox" [checked]="newQuestion.selectedTypes[type.value]"
-                        (change)="toggleNewQuestionType(type.value)" />
-                    <div class="modal-qtype-info">
-                        <i [class]="type.icon + ' modal-qtype-icon'" [style.color]="type.color"></i>
-                        <div>
-                            <div class="modal-qtype-label">{{ type.label }}</div>
-                            <div class="modal-qtype-desc">{{ type.desc }}</div>
+
+        <!-- Header Summary -->
+        <div class="compact-summary">
+            <span class="summary-text">Select your Question Type Template and modify the quanity to be added on your
+                Assessment.</span>
+        </div>
+
+        <!-- Question Type Grid -->
+        <div class="modal-body">
+            <div class="question-type-grid">
+                <div class="question-type-item" *ngFor="let type of questionTypes"
+                    [class.active]="newQuestion.selectedTypes[type.value]" (click)="toggleNewQuestionType(type.value)">
+
+                    <div class="type-row">
+                        <div class="type-info">
+                            <div class="type-icon" [style.background]="type.color + '15'">
+                                <i [class]="type.icon" [style.color]="type.color"></i>
+                            </div>
+                            <div class="type-details">
+                                <h4 class="type-name">{{ type.label }}</h4>
+                                <p class="type-description">{{ type.desc }}</p>
+                            </div>
+                        </div>
+
+                        <div class="type-actions">
+                            <!-- Quantity Controls (shown when selected) -->
+                            <div class="quantity-controls" *ngIf="newQuestion.selectedTypes[type.value]"
+                                (click)="$event.stopPropagation()">
+                                <button type="button" class="qty-btn" (click)="decreaseQuantity(type.value)"
+                                    [disabled]="newQuestion.counts[type.value] <= 1">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="number" min="1" max="20" [(ngModel)]="newQuestion.counts[type.value]"
+                                    class="qty-input" (click)="$event.stopPropagation()" />
+                                <button type="button" class="qty-btn" (click)="increaseQuantity(type.value)"
+                                    [disabled]="newQuestion.counts[type.value] >= 20">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+
+                            <!-- Checkbox -->
+                            <div class="type-checkbox">
+                                <input type="checkbox" [id]="'type-' + type.value"
+                                    [checked]="newQuestion.selectedTypes[type.value]"
+                                    (change)="toggleNewQuestionType(type.value)" (click)="$event.stopPropagation()" />
+                                <label [for]="'type-' + type.value" class="checkbox-custom"></label>
+                            </div>
                         </div>
                     </div>
-                    <input *ngIf="newQuestion.selectedTypes[type.value]" type="number" min="1" max="20"
-                        [(ngModel)]="newQuestion.counts[type.value]" class="modal-qtype-count"
-                        [placeholder]="'How many?'" />
                 </div>
             </div>
+
+            <div class="compact-summary" *ngIf="getSelectedQuestionTypesCount() > 0">
+                <span class="summary-text">{{ getTotalSelectedQuestions() }} questions selected</span>
+            </div>
         </div>
-        <div class="modal-actions">
-            <button class="modal-btn cancel" (click)="showAddDialog = false">Cancel</button>
-            <button class="modal-btn primary" (click)="addNewQuestions()">Add Questions</button>
+
+        <!-- Action Buttons -->
+        <div class="modal-footer">
+            <button class="action-btn cancel-btn" (click)="showAddDialog = false">
+                Cancel
+            </button>
+            <button class="action-btn primary-btn" (click)="addNewQuestions()"
+                [disabled]="getSelectedQuestionTypesCount() === 0">
+                Add {{ getTotalSelectedQuestions() || 0 }} Questions
+            </button>
         </div>
     </div>
 </div>

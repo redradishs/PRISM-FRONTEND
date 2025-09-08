@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -35,7 +35,7 @@ interface NewQuestion {
   templateUrl: './final-generate-assessment.component.html',
   styleUrl: './final-generate-assessment.component.css'
 })
-export class FinalGenerateAssessmentComponent {
+export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
   isMobile = window.innerWidth < 768;
   @HostListener('window:resize')
   onResize() {
@@ -85,6 +85,11 @@ export class FinalGenerateAssessmentComponent {
   isMenuOpen = false;
   editingQuestionId: number | null = null;
   showAddDialog = false;
+  fabOpen = false;
+  fabActive = false;
+  fabFaded = false;
+  private fabTimeoutId: any = null;
+  private readonly FAB_TIMEOUT_DURATION = 10000;
   newQuestion: NewQuestion = {
     type: 'multiple-choice',
     count: 1,
@@ -179,6 +184,12 @@ export class FinalGenerateAssessmentComponent {
     );
   }
 
+  ngOnDestroy(): void {
+    if (this.fabTimeoutId) {
+      clearTimeout(this.fabTimeoutId);
+    }
+  }
+
   clearQuestions() {
     Swal.fire({
       title: 'Are you sure you want to clear all questions?',
@@ -243,6 +254,13 @@ export class FinalGenerateAssessmentComponent {
 
     // console.log('Sending request data:', requestData);
     this.generateQuestionsWithRetry(requestData, 5);
+  }
+
+  validGeneration(): boolean {
+    if (!this.aiGeneration.topic || this.selectedTypes.length === 0 || (Number(this.aiGeneration.questionCount) > 50)) {
+      return false;
+    }
+    return true;
   }
 
   private generateQuestionsWithRetry(requestData: any, maxRetries: number, currentAttempt: number = 1): void {
@@ -383,6 +401,37 @@ export class FinalGenerateAssessmentComponent {
     }
   }
 
+  toggleFab(): void {
+    this.fabOpen = !this.fabOpen;
+    this.setFabActive();
+  }
+
+  closeFab(): void {
+    this.fabOpen = false;
+    this.setFabActive();
+  }
+
+  private setFabActive(): void {
+    this.fabActive = true;
+    this.fabFaded = false;
+
+    if (this.fabTimeoutId) {
+      clearTimeout(this.fabTimeoutId);
+    }
+
+    if (!this.fabOpen) {
+      this.fabTimeoutId = setTimeout(() => {
+        this.fabActive = false;
+        this.fabFaded = true;
+      }, this.FAB_TIMEOUT_DURATION);
+    }
+  }
+
+  onFabInteraction(): void {
+    if (!this.fabOpen) {
+      this.setFabActive();
+    }
+  }
 
 
   private mapQuestionType(aiType: string): string {
@@ -823,7 +872,6 @@ export class FinalGenerateAssessmentComponent {
   }
 
   scrollToSection(section: number) {
-    // alert(`Scroll to section number ${section}`);
     if (section === 1) {
       this.step = section;
       const sectionElement = document.getElementById('start');
@@ -1173,5 +1221,49 @@ export class FinalGenerateAssessmentComponent {
     this.errorMessage = null;
     this.basicInfoError = null;
     this.nextId = 1;
+  }
+
+  decreaseQuantity(type: string): void {
+    if (this.newQuestion.counts[type] > 1) {
+      this.newQuestion.counts[type]--;
+    }
+  }
+
+  increaseQuantity(type: string): void {
+    if (this.newQuestion.counts[type] < 20) {
+      this.newQuestion.counts[type]++;
+    }
+  }
+
+  getSelectedQuestionTypesCount(): number {
+    return Object.values(this.newQuestion.selectedTypes).filter(selected => selected).length;
+  }
+
+  getSelectedQuestionTypes(): Array<{ label: string, count: number }> {
+    const selectedTypes: Array<{ label: string, count: number }> = [];
+
+    Object.keys(this.newQuestion.selectedTypes).forEach(type => {
+      if (this.newQuestion.selectedTypes[type]) {
+        const questionType = this.questionTypes.find(qt => qt.value === type);
+        if (questionType) {
+          selectedTypes.push({
+            label: questionType.label,
+            count: this.newQuestion.counts[type] || 1
+          });
+        }
+      }
+    });
+
+    return selectedTypes;
+  }
+
+  getTotalSelectedQuestions(): number {
+    let total = 0;
+    Object.keys(this.newQuestion.selectedTypes).forEach(type => {
+      if (this.newQuestion.selectedTypes[type]) {
+        total += this.newQuestion.counts[type] || 1;
+      }
+    });
+    return total;
   }
 }

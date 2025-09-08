@@ -81,7 +81,7 @@ export class ApiService {
   }
 
   recommendedMaterialsPlus(data: any) {
-    return this.http.post(`${this.aiUrl}/search-multiple`, data)
+    return this.http.post(`${this.aiUrl}/search/multiple`, data)
   }
 
   materialsValidator(data: any) {
@@ -286,7 +286,7 @@ export class ApiService {
   }
 
   skillAIsearch(search_queries: any) {
-    return this.http.post(`${this.aiUrl}/search-multiple`, { search_queries });
+    return this.http.post(`${this.aiUrl}/search/multiple`, { search_queries });
   }
 
 

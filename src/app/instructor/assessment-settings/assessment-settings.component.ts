@@ -26,6 +26,7 @@ export class AssessmentSettingsComponent implements OnInit {
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
   @HostListener('window:resize')
   onResize() { this.isMobile = window.innerWidth < 768; }
+  mode: string = 'assessment'
   assignedAssessmentId: string = '68afeaba30b6ceac08ee74fa';
   startDate: string = '';
   dueDate: string = '';
@@ -34,6 +35,7 @@ export class AssessmentSettingsComponent implements OnInit {
   showResults: 'immediate' | 'completed' = 'completed';
   passingScore: number = 70;
   attemptsAllowed: number = 1;
+  masteryScore: number = 0;
   randomizeQuestions: boolean = false;
   specialInstructions: string = '';
   customTitle: string = '';
@@ -93,6 +95,7 @@ export class AssessmentSettingsComponent implements OnInit {
       next: (resp: any) => {
         // console.log(resp.data)
         this.assignedData = resp.data;
+        this.mode = resp.data.mode;
         this.populateData(this.assignedData);
         this.isLoading = false;
       }, error: (error: any) => {
@@ -106,6 +109,9 @@ export class AssessmentSettingsComponent implements OnInit {
   populateData(populateData: any) {
     if (populateData.customTitle) {
       this.customTitle = populateData.title || '';
+    }
+    if (populateData.mode === 'mastery') {
+      this.masteryScore = populateData.masteryScore || 0;
     }
     this.startDate = this.formatDateFromString(populateData.startDate);
     this.dueDate = this.formatDateFromString(populateData.endDate);
@@ -236,7 +242,7 @@ export class AssessmentSettingsComponent implements OnInit {
   }
 
   saveSettings() {
-    const data = {
+    const data: any = {
       id: this.assignedAssessmentId,
       startDate: this.startDate,
       dueDate: this.dueDate,
@@ -244,11 +250,14 @@ export class AssessmentSettingsComponent implements OnInit {
       allowLateSubmissions: this.allowLateSubmissions,
       showResults: this.showResults,
       passingScore: this.passingScore,
-      attemptsAllowed: this.attemptsAllowed,
+      maxAttempts: this.attemptsAllowed,
       randomizeQuestions: this.randomizeQuestions,
       specialInstructions: this.specialInstructions,
       customTitle: this.customTitle,
       timeLimitPerQuestion: this.timeLimitPerQuestion
+    }
+    if (this.mode === 'mastery') {
+      data.masteryScore = this.masteryScore
     }
     // console.log('I got this data', data)
     this.api.updateAssessmentDetails(data).subscribe({
@@ -269,6 +278,22 @@ export class AssessmentSettingsComponent implements OnInit {
         console.error('Error updating data:', error);
       }
     })
+  }
+
+  validateMasteryScore() {
+    if (this.masteryScore > this.assignedData.points) {
+      this.masteryScore = this.assignedData.points;
+      Swal.fire({
+        icon: 'warning',
+        title: 'Mastery Score Adjusted',
+        text: `Mastery score cannot exceed the total points (${this.assignedData.points}). It has been automatically adjusted.`,
+        timer: 2000,
+        showConfirmButton: false,
+        timerProgressBar: true,
+        toast: true,
+        position: 'top-end'
+      });
+    }
   }
 
 

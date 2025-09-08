@@ -74,6 +74,12 @@ export class MasteryResultComponent {
     this.router.navigate(['instructor/students']);
   }
 
+  gotoSettings() {
+    this.router.navigate(['instructor/result/settings'], {
+      state: { assessmentId: this.assignedAssessmentId }
+    });
+  }
+
   getRelativeTime(dateString: string | null): string {
     if (!dateString) return 'Never';
 

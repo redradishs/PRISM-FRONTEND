@@ -192,8 +192,31 @@
                                 </div>
 
                                 <div class="config-card-content">
+
+                                    <div *ngIf="assignedData?.mode === 'mastery'" class="mastery-score-section">
+                                        <label class="form-label-enhanced">
+                                            <i class="fas fa-trophy"></i>
+                                            Mastery Score Required
+                                        </label>
+                                        <div class="mastery-score-input-wrapper">
+                                            <input type="number" [(ngModel)]="masteryScore"
+                                                (input)="validateMasteryScore()" [min]="1"
+                                                (ngModelChange)="onFormChange()" [max]="this.assignedData?.points"
+                                                class="mastery-score-input" required>
+                                            <div class="score-divider">/</div>
+                                            <div class="total-points-display">
+                                                <span>{{this.assignedData?.points}}</span>
+                                                <small>points</small>
+                                            </div>
+                                        </div>
+                                        <div class="mastery-score-hint">
+                                            <i class="fas fa-lightbulb"></i>
+                                            <span>Students must reach the score set to be considered
+                                                Mastered.</span>
+                                        </div>
+                                    </div>
                                     <!-- Show Results -->
-                                    <div class="form-group-enhanced">
+                                    <div *ngIf="assignedData?.mode !== 'mastery'" class="form-group-enhanced">
                                         <label class="form-label-enhanced">
                                             <i class="fas fa-eye"></i>
                                             Result Visibility
