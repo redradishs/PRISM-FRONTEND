@@ -369,7 +369,11 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
               C: question.options?.C || '',
               D: question.options?.D || ''
             } : undefined,
-            answer: question.type === 'true/false' ? String(question.answer).toLowerCase() : question.answer,
+            answer: question.type === 'true/false'
+              ? String(question.answer).toLowerCase()
+              : question.type === 'enumeration'
+                ? (Array.isArray(question.answer) ? question.answer : [])
+                : question.answer,
             difficulty: question.difficulty,
             points: 1
           };
@@ -383,8 +387,12 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
             ];
           }
 
-          if (formattedQuestion.type === 'enumeration' && Array.isArray(question.answer)) {
-            this.enumerationItems = question.answer;
+          if (formattedQuestion.type === 'enumeration') {
+            if (Array.isArray(question.answer) && question.answer.length > 0) {
+              this.enumerationItems = question.answer;
+            } else {
+              formattedQuestion.answer = ['', '', ''];
+            }
           }
 
           if (formattedQuestion.type === 'true-false') {
@@ -472,8 +480,7 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
 
   getQuestionsByType(type: string): Question[] {
     return this.questions
-      .filter((q) => q.type === type)
-      .sort((a, b) => a.questionNumber - b.questionNumber);
+      .filter((q) => q.type === type);
   }
 
   getUnverifiedQuestionCount(): number {
@@ -528,7 +535,7 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
 
     if (this.editingQuestionId === questionId) {
       this.editingQuestionId = null;
-      console.log('Saved question:', question);
+      // console.log('Saved question:', question);
     } else {
       this.editingQuestionId = questionId;
     }
@@ -569,18 +576,22 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
     }
   }
 
-  getEnumAnswer(answer: string | boolean | string[], index: number): string {
-    return Array.isArray(answer) ? answer[index] : '';
+  getEnumAnswer(question: Question, index: number): string {
+    return Array.isArray(question.answer) ? (question.answer[index] || '') : '';
   }
 
-  setEnumAnswer(question: Question, index: number, value: string, event?: Event): void {
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
+  setEnumAnswer(question: Question, index: number, value: string): void {
     if (Array.isArray(question.answer)) {
       question.answer[index] = value;
     }
+  }
+
+  trackByIndex(index: number): number {
+    return index;
+  }
+
+  trackByQuestionId(index: number, question: Question): number {
+    return question.id;
   }
 
   //ADDED TO FIX THE MULTIPLE CHOICE OPTIONS BUG, PASSING THE ANSWER OR CHANGES
@@ -609,7 +620,6 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
   }
 
   addNewQuestions() {
-    const startId = this.questions.length + 1;
     let added = 0;
 
     Object.keys(this.newQuestion.selectedTypes).forEach(type => {
@@ -617,7 +627,7 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
         const count = Math.max(1, Math.round(this.newQuestion.counts[type] || 1));
         for (let i = 0; i < count; i++) {
           const question: Question = {
-            id: startId + added,
+            id: this.nextId++,
             questionNumber: this.questions.length + 1 + added,
             type: type,
             question: '',
@@ -711,7 +721,9 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
       const base = {
         type: q.type,
         questionText: q.question,
-        correctAnswer: q.answer,
+        correctAnswer: q.type === 'enumeration' && Array.isArray(q.answer)
+          ? q.answer.map(a => (a ?? '').toString().trim()).filter(a => a !== '')
+          : q.answer,
         points: q.points,
         options: [],
       };
@@ -944,32 +956,8 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
     }
   }
 
-  getTotalQuestionsBefore(type: string): number {
-    const questionTypes = ['multiple-choice', 'enumeration', 'short-answer', 'true-false'];
-    let count = 0;
-    for (const t of questionTypes) {
-      if (t === type) break;
-      count += this.getQuestionsByType(t).length;
-    }
-    return count;
-  }
 
 
-  getDisplayNumber(type: string, question: Question): number {
-    const orderedTypes = ['multiple-choice', 'enumeration', 'short-answer', 'true-false'];
-    let displayNumber = 1;
-
-    for (const t of orderedTypes) {
-      if (t === type) break;
-      displayNumber += this.getQuestionsByType(t).length;
-    }
-
-    const questionsOfType = this.getQuestionsByType(type);
-    const index = questionsOfType.findIndex(q => q.id === question.id);
-    displayNumber += index;
-
-    return displayNumber;
-  }
 
 
   //for verifying the questions, we first take the array of questions and filter out the ones that are not verified.
@@ -1265,5 +1253,11 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
       }
     });
     return total;
+  }
+
+  autoResize(event: any): void {
+    const textarea = event.target;
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
   }
 }

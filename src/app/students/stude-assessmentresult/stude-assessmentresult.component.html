@@ -480,6 +480,17 @@
                                             <div *ngIf="!question.isCorrect" class="answer-content correct">
                                                 {{formatAnswer(question.correctAnswer)}}
                                             </div>
+
+                                            <!-- AI Reasoning Section -->
+                                            <div *ngIf="question?.aiRectified" class="ai-reasoning-subtle">
+                                                <div class="ai-reasoning-header-subtle">
+                                                    <i class="fas fa-robot"></i>
+                                                    <span>PRISM Explanation</span>
+                                                </div>
+                                                <p class="ai-reasoning-text-subtle">
+                                                    {{question.aiReasoning}}
+                                                </p>
+                                            </div>
                                         </div>
 
                                         <div *ngIf="question.type === 'true-false'">
@@ -518,6 +529,17 @@
                                             <div *ngIf="!question.isCorrect" class="answer-content correct">
                                                 {{formatAnswer(question.correctAnswer)}}
                                             </div>
+
+                                            <!-- AI Reasoning Section -->
+                                            <div *ngIf="question?.aiRectified" class="ai-reasoning-subtle">
+                                                <div class="ai-reasoning-header-subtle">
+                                                    <i class="fas fa-robot"></i>
+                                                    <span>PRISM Explanation</span>
+                                                </div>
+                                                <p class="ai-reasoning-text-subtle">
+                                                    {{question.aiReasoning}}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -526,6 +548,9 @@
                         </div>
                     </section>
                 </ng-container>
+
+                <!-- Bottom Spacing -->
+                <div *ngIf="result" class="questions-bottom-space"></div>
             </main>
         </div>
     </div>

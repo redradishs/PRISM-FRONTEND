@@ -458,214 +458,260 @@
 
                 <!-- Question Examples Section -->
                 <div class="qtype-container">
-                    <!-- Multiple Choice Questions -->
+                    <!-- All Questions in Chronological Order -->
                     <div class="qtype-card" [class.editing]="isEditing(question.id)"
-                        *ngFor="let question of getQuestionsByType('multiple-choice')">
-                        <div class="qtype-header">
-                            <div class="qtype-badge-group">
-                                <span class="qtype-number">Question {{ getDisplayNumber('multiple-choice', question)
-                                    }}</span>
-                                <div class="qtype-points-container">
-                                    <input type="number" [readonly]="!isEditing(question.id)"
-                                        [(ngModel)]="question.points"
-                                        (change)="updateQuestionPoints(question.id, question.points)"
-                                        class="qtype-points-input" min="1">
-                                    <span class="qtype-points-label">points</span>
-                                </div>
-                            </div>
-                            <div class="qtype-actions">
-                                <button class="qtype-btn qtype-text-btn" (click)="toggleEditAndSave(question)">
-                                    <i class="fas" [ngClass]="isEditing(question.id) ? 'fa-check' : 'fa-edit'"></i>
-                                    <span class="btn-text">{{ isEditing(question.id) ? 'Double Click to Save' : 'Double
-                                        Click to Edit' }}</span>
-                                </button>
-                                <button class="qtype-btn qtype-btn-delete" (click)="deleteQuestion(question.id)">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
+                        *ngFor="let question of questions; trackBy: trackByQuestionId" [ngSwitch]="question.type">
 
-                        <div class="qtype-content" (dblclick)="toggleEditAndSave(question)">
-                            <textarea class="qtype-question-edit" [(ngModel)]="question.question"
-                                [placeholder]="!question.question ? 'Double click to edit this question' : ''"
-                                [readonly]="!isEditing(question.id)" rows="2"
-                                (keydown)="handleKeyPress($event, question.id, question.question, 'question')">
-                            </textarea>
-                            <div class="qtype-options">
-                                <div class="qtype-option" *ngFor="let opt of question.options | keyvalue"
-                                    (click)="preventClose($event)">
-                                    <input type="radio" [name]="'q' + question.id"
-                                        [id]="'q' + question.id + '-' + opt.key" [checked]="opt.key === question.answer"
-                                        (click)="isEditing(question.id) && (question.answer = opt.key); $event.stopPropagation()"
-                                        (keydown)="handleKeyPress($event, question.id, 'option', opt.key)">
-                                    <textarea *ngIf="isEditing(question.id)" [ngModel]="question.options![opt.key]"
-                                        (blur)="handleOptionBlur(question, opt.key, $event)" class="qtype-option-edit"
-                                        [attr.data-opt-key]="opt.key" rows="1" [readOnly]="!isEditing(question.id)"
-                                        (click)="$event.stopPropagation()" (focus)="$event.stopPropagation()"
-                                        (blur)="$event.stopPropagation()"
-                                        (keydown)="handleKeyPress($event, question.id, 'option', opt.key)">
-                                    </textarea>
-                                    <label *ngIf="!isEditing(question.id)" [for]="'q' + question.id + '-' + opt.key">
-                                        {{ question.options ? opt.value : '' }}
-                                    </label>
-                                    <span class="qtype-correct-badge" *ngIf="opt.key === question.answer">Correct</span>
+                        <!-- Multiple Choice Questions -->
+                        <div *ngSwitchCase="'multiple-choice'">
+                            <div class="qtype-header">
+                                <div class="qtype-badge-group">
+                                    <span class="qtype-number">Question {{ question.questionNumber }}</span>
+                                    <span class="qtype-label qtype-label-mc">
+                                        <i class="fas fa-list-ul"></i>
+                                        Multiple Choice
+                                    </span>
+                                    <div class="qtype-points-container">
+                                        <input type="number" [readonly]="!isEditing(question.id)"
+                                            [(ngModel)]="question.points"
+                                            (change)="updateQuestionPoints(question.id, question.points)"
+                                            class="qtype-points-input" min="1">
+                                        <span class="qtype-points-label">points</span>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Enumeration Questions -->
-                    <div class="qtype-card" [class.editing]="isEditing(question.id)"
-                        *ngFor="let question of getQuestionsByType('enumeration')">
-                        <div class="qtype-header">
-                            <div class="qtype-badge-group">
-                                <span class="qtype-number">Question {{ getDisplayNumber('enumeration', question)
-                                    }}</span>
-                                <div class="qtype-points-container">
-                                    <input type="number" [readonly]="!isEditing(question.id)"
-                                        [(ngModel)]="question.points"
-                                        (change)="updateQuestionPoints(question.id, question.points)"
-                                        class="qtype-points-input" min="1">
-                                    <span class="qtype-points-label">points</span>
-                                </div>
-                            </div>
-                            <div class="qtype-actions">
-                                <button class="qtype-btn qtype-text-btn" (click)="toggleEditAndSave(question)">
-                                    <i class="fas" [ngClass]="isEditing(question.id) ? 'fa-check' : 'fa-edit'"></i>
-                                    <span class="btn-text">{{ isEditing(question.id) ? 'Double Click to Save' : 'Double
-                                        Click to Edit' }}</span>
-                                </button>
-                                <button class="qtype-btn qtype-btn-delete" (click)="deleteQuestion(question.id)">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="qtype-content" (dblclick)="toggleEditAndSave(question)">
-                            <textarea class="qtype-question-edit" [(ngModel)]="question.question"
-                                [placeholder]="!question.question ? 'Double click to edit this question' : ''"
-                                [readonly]="!isEditing(question.id)" rows="2"
-                                (keydown)="handleKeyPress($event, question.id, question.question, 'question')">
-                            </textarea>
-                            <div class="qtype-enum-answers">
-                                <div class="qtype-enum-item"
-                                    *ngFor="let answer of isArray(question.answer) ? question.answer : []; let i = index"
-                                    (click)="preventClose($event)">
-                                    <span class="qtype-enum-number">{{ i + 1 }}.</span>
-                                    <textarea [ngModel]="getEnumAnswer(question.answer, i)"
-                                        (ngModelChange)="setEnumAnswer(question, i, $event, $event)"
-                                        [readonly]="!isEditing(question.id)" class="qtype-enum-edit" rows="1"
-                                        (click)="$event.stopPropagation()" (focus)="$event.stopPropagation()"
-                                        (blur)="$event.stopPropagation()"
-                                        (keydown)="handleKeyPress($event, question.id, 'enum', undefined, i)">
-                                    </textarea>
-                                    <button *ngIf="isEditing(question.id)" class="qtype-btn qtype-btn-delete"
-                                        (click)="removeEnumItem(question, i)">
-                                        <i class="fas fa-minus"></i>
+                                <div class="qtype-actions">
+                                    <button class="qtype-btn qtype-text-btn" (click)="toggleEditAndSave(question)">
+                                        <i class="fas" [ngClass]="isEditing(question.id) ? 'fa-check' : 'fa-edit'"></i>
+                                        <span class="btn-text">{{ isEditing(question.id) ? 'Double Click to Save' :
+                                            'Double
+                                            Click to Edit' }}</span>
+                                    </button>
+                                    <button class="qtype-btn qtype-btn-delete" (click)="deleteQuestion(question.id)">
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
-                                <button *ngIf="isEditing(question.id)" class="qtype-btn qtype-btn-add"
-                                    (click)="addEnumItem(question)">
-                                    <i class="fas fa-plus"></i> Add Item
-                                </button>
                             </div>
-                        </div>
-                    </div>
 
-                    <!-- Short Answer Questions -->
-                    <div class="qtype-card" [class.editing]="isEditing(question.id)"
-                        *ngFor="let question of getQuestionsByType('short-answer')">
-                        <div class="qtype-header">
-                            <div class="qtype-badge-group">
-                                <span class="qtype-number">Question {{ getDisplayNumber('short-answer', question)
-                                    }}</span>
-                                <div class="qtype-points-container">
-                                    <input type="number" [readonly]="!isEditing(question.id)"
-                                        [(ngModel)]="question.points"
-                                        (change)="updateQuestionPoints(question.id, question.points)"
-                                        class="qtype-points-input" min="1">
-                                    <span class="qtype-points-label">points</span>
+                            <div class="qtype-content" (dblclick)="toggleEditAndSave(question)">
+                                <textarea class="qtype-question-edit" [(ngModel)]="question.question"
+                                    [placeholder]="!question.question ? 'Double click to edit this question' : ''"
+                                    [readonly]="!isEditing(question.id)" rows="2" (input)="autoResize($event)"
+                                    (keydown)="handleKeyPress($event, question.id, question.question, 'question')">
+                            </textarea>
+                                <div class="qtype-options">
+                                    <div class="qtype-option" *ngFor="let opt of question.options | keyvalue"
+                                        (click)="preventClose($event)">
+                                        <input type="radio" [name]="'q' + question.id"
+                                            [id]="'q' + question.id + '-' + opt.key"
+                                            [checked]="opt.key === question.answer" [disabled]="!isEditing(question.id)"
+                                            (click)="isEditing(question.id) && (question.answer = opt.key); $event.stopPropagation()"
+                                            (keydown)="handleKeyPress($event, question.id, 'option', opt.key)">
+                                        <textarea *ngIf="isEditing(question.id)" [ngModel]="question.options![opt.key]"
+                                            (blur)="handleOptionBlur(question, opt.key, $event)"
+                                            (input)="autoResize($event)" class="qtype-option-edit"
+                                            [attr.data-opt-key]="opt.key" rows="1" [readOnly]="!isEditing(question.id)"
+                                            (click)="$event.stopPropagation()" (focus)="$event.stopPropagation()"
+                                            (blur)="$event.stopPropagation()"
+                                            (keydown)="handleKeyPress($event, question.id, 'option', opt.key)">
+                                    </textarea>
+                                        <label *ngIf="!isEditing(question.id)"
+                                            [for]="'q' + question.id + '-' + opt.key">
+                                            {{ question.options ? opt.value : '' }}
+                                        </label>
+                                        <span class="qtype-correct-badge"
+                                            *ngIf="opt.key === question.answer">Correct</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="qtype-actions">
-                                <button class="qtype-btn qtype-text-btn" (click)="toggleEditAndSave(question)">
-                                    <i class="fas" [ngClass]="isEditing(question.id) ? 'fa-check' : 'fa-edit'"></i>
-                                    <span class="btn-text">{{ isEditing(question.id) ? 'Double Click to Save' : 'Double
-                                        Click to Edit' }}</span>
-                                </button>
-                                <button class="qtype-btn qtype-btn-delete" (click)="deleteQuestion(question.id)">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
                         </div>
 
-                        <div class="qtype-content" (dblclick)="toggleEditAndSave(question)">
-                            <textarea class="qtype-question-edit" [(ngModel)]="question.question"
-                                [placeholder]="!question.question ? 'Double click to edit this question' : ''"
-                                [readonly]="!isEditing(question.id)" rows="2"
-                                (keydown)="handleKeyPress($event, question.id, question.question, 'question')">
-                            </textarea>
-                            <div class="qtype-answer-box">
-                                <input *ngIf="isEditing(question.id)" type="text" [(ngModel)]="question.answer"
-                                    class="qtype-short-edit" placeholder="Short answer"
-                                    (keydown.enter)="handleKeyPress($event, question.id, 'short-answer', undefined)" />
-                                <p *ngIf="!isEditing(question.id)">{{ question.answer }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- True/False Questions -->
-                    <div class="qtype-card" [class.editing]="isEditing(question.id)"
-                        *ngFor="let question of getQuestionsByType('true-false')">
-                        <div class="qtype-header">
-                            <div class="qtype-badge-group">
-                                <span class="qtype-number">Question {{ getDisplayNumber('true-false', question)
-                                    }}</span>
-                                <div class="qtype-points-container">
-                                    <input type="number" [readonly]="!isEditing(question.id)"
-                                        [(ngModel)]="question.points"
-                                        (change)="updateQuestionPoints(question.id, question.points)"
-                                        class="qtype-points-input" min="1">
-                                    <span class="qtype-points-label">points</span>
+                        <!-- Enumeration Questions -->
+                        <div *ngSwitchCase="'enumeration'">
+                            <div class="qtype-header">
+                                <div class="qtype-badge-group">
+                                    <span class="qtype-number">Question {{ question.questionNumber }}</span>
+                                    <span class="qtype-label qtype-label-enum">
+                                        <i class="fas fa-list-ol"></i>
+                                        Enumeration
+                                    </span>
+                                    <div class="qtype-points-container">
+                                        <input type="number" [readonly]="!isEditing(question.id)"
+                                            [(ngModel)]="question.points"
+                                            (change)="updateQuestionPoints(question.id, question.points)"
+                                            class="qtype-points-input" min="1">
+                                        <span class="qtype-points-label">points</span>
+                                    </div>
+                                </div>
+                                <div class="qtype-actions">
+                                    <button class="qtype-btn qtype-text-btn" (click)="toggleEditAndSave(question)">
+                                        <i class="fas" [ngClass]="isEditing(question.id) ? 'fa-check' : 'fa-edit'"></i>
+                                        <span class="btn-text">{{ isEditing(question.id) ? 'Double Click to Save' :
+                                            'Double
+                                            Click to Edit' }}</span>
+                                    </button>
+                                    <button class="qtype-btn qtype-btn-delete" (click)="deleteQuestion(question.id)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </div>
                             </div>
-                            <div class="qtype-actions">
-                                <button class="qtype-btn qtype-text-btn" (click)="toggleEditAndSave(question)">
-                                    <i class="fas" [ngClass]="isEditing(question.id) ? 'fa-check' : 'fa-edit'"></i>
-                                    <span class="btn-text">{{ isEditing(question.id) ? 'Double Click to Save' : 'Double
-                                        Click to Edit' }}</span>
-                                </button>
-                                <button class="qtype-btn qtype-btn-delete" (click)="deleteQuestion(question.id)">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+
+                            <div class="qtype-content" (dblclick)="toggleEditAndSave(question)">
+                                <textarea class="qtype-question-edit" [(ngModel)]="question.question"
+                                    [placeholder]="!question.question ? 'Double click to edit this question' : ''"
+                                    [readonly]="!isEditing(question.id)" rows="2" (input)="autoResize($event)"
+                                    (keydown)="handleKeyPress($event, question.id, question.question, 'question')">
+                            </textarea>
+                                <div class="qtype-enum-answers">
+                                    <div class="qtype-enum-item"
+                                        *ngFor="let answer of isArray(question.answer) ? question.answer : []; let i = index; trackBy: trackByIndex"
+                                        (click)="preventClose($event)">
+                                        <span class="qtype-enum-number">{{ i + 1 }}.</span>
+                                        <textarea [ngModel]="getEnumAnswer(question, i)"
+                                            (ngModelChange)="setEnumAnswer(question, i, $event)"
+                                            (input)="autoResize($event)" [readonly]="!isEditing(question.id)"
+                                            class="qtype-enum-edit" rows="1"
+                                            (keydown)="handleKeyPress($event, question.id, 'enum', undefined, i)">
+                                    </textarea>
+                                        <button *ngIf="isEditing(question.id)" class="qtype-btn qtype-btn-delete"
+                                            (click)="removeEnumItem(question, i)">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                    </div>
+                                    <button *ngIf="isEditing(question.id)" class="qtype-btn qtype-btn-add"
+                                        (click)="addEnumItem(question)">
+                                        <i class="fas fa-plus"></i> Add Item
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="qtype-content" (dblclick)="toggleEditAndSave(question)">
-                            <textarea class="qtype-question-edit" [(ngModel)]="question.question"
-                                [placeholder]="!question.question ? 'Double click to edit this question' : ''"
-                                [readonly]="!isEditing(question.id)" rows="2"
-                                (keydown)="handleKeyPress($event, question.id, question.question, 'question')">
+                        <!-- Short Answer Questions -->
+                        <div *ngSwitchCase="'short-answer'">
+                            <div class="qtype-header">
+                                <div class="qtype-badge-group">
+                                    <span class="qtype-number">Question {{ question.questionNumber }}</span>
+                                    <span class="qtype-label qtype-label-sa">
+                                        <i class="fas fa-pen"></i>
+                                        Short Answer
+                                    </span>
+                                    <div class="qtype-points-container">
+                                        <input type="number" [readonly]="!isEditing(question.id)"
+                                            [(ngModel)]="question.points"
+                                            (change)="updateQuestionPoints(question.id, question.points)"
+                                            class="qtype-points-input" min="1">
+                                        <span class="qtype-points-label">points</span>
+                                    </div>
+                                </div>
+                                <div class="qtype-actions">
+                                    <button class="qtype-btn qtype-text-btn" (click)="toggleEditAndSave(question)">
+                                        <i class="fas" [ngClass]="isEditing(question.id) ? 'fa-check' : 'fa-edit'"></i>
+                                        <span class="btn-text">{{ isEditing(question.id) ? 'Double Click to Save' :
+                                            'Double
+                                            Click to Edit' }}</span>
+                                    </button>
+                                    <button class="qtype-btn qtype-btn-delete" (click)="deleteQuestion(question.id)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="qtype-content" (dblclick)="toggleEditAndSave(question)">
+                                <textarea class="qtype-question-edit" [(ngModel)]="question.question"
+                                    [placeholder]="!question.question ? 'Double click to edit this question' : ''"
+                                    [readonly]="!isEditing(question.id)" rows="2" (input)="autoResize($event)"
+                                    (keydown)="handleKeyPress($event, question.id, question.question, 'question')">
                             </textarea>
-                            <div class="qtype-options">
-                                <div class="qtype-option">
-                                    <input type="radio" [name]="'q' + question.id" [id]="'q' + question.id + '-true'"
-                                        [checked]="question.answer === 'true'"
+                                <div class="qtype-answer-box">
+                                    <textarea *ngIf="isEditing(question.id)" [(ngModel)]="question.answer"
+                                        class="qtype-short-edit" placeholder="Short answer" rows="1"
+                                        (input)="autoResize($event)"
+                                        (keydown.enter)="handleKeyPress($event, question.id, 'short-answer', undefined)"></textarea>
+                                    <p *ngIf="!isEditing(question.id)">{{ question.answer }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- True/False Questions -->
+                        <div *ngSwitchCase="'true-false'">
+                            <div class="qtype-header">
+                                <div class="qtype-badge-group">
+                                    <span class="qtype-number">Question {{ question.questionNumber }}</span>
+                                    <span class="qtype-label qtype-label-tf">
+                                        <i class="fas fa-toggle-on"></i>
+                                        True/False
+                                    </span>
+                                    <div class="qtype-points-container">
+                                        <input type="number" [readonly]="!isEditing(question.id)"
+                                            [(ngModel)]="question.points"
+                                            (change)="updateQuestionPoints(question.id, question.points)"
+                                            class="qtype-points-input" min="1">
+                                        <span class="qtype-points-label">points</span>
+                                    </div>
+                                </div>
+                                <div class="qtype-actions">
+                                    <button class="qtype-btn qtype-text-btn" (click)="toggleEditAndSave(question)">
+                                        <i class="fas" [ngClass]="isEditing(question.id) ? 'fa-check' : 'fa-edit'"></i>
+                                        <span class="btn-text">{{ isEditing(question.id) ? 'Double Click to Save' :
+                                            'Double
+                                            Click to Edit' }}</span>
+                                    </button>
+                                    <button class="qtype-btn qtype-btn-delete" (click)="deleteQuestion(question.id)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="qtype-content" (dblclick)="toggleEditAndSave(question)">
+                                <textarea class="qtype-question-edit" [(ngModel)]="question.question"
+                                    [placeholder]="!question.question ? 'Double click to edit this question' : ''"
+                                    [readonly]="!isEditing(question.id)" rows="2" (input)="autoResize($event)"
+                                    (keydown)="handleKeyPress($event, question.id, question.question, 'question')">
+                            </textarea>
+                                <div class="qtype-options">
+                                    <div class="qtype-option"
                                         (click)="isEditing(question.id) && (question.answer = 'true')">
-                                    <label [for]="'q' + question.id + '-true'">True</label>
-                                    <span class="qtype-correct-badge" *ngIf="question.answer === 'true'">Correct</span>
-                                </div>
-                                <div class="qtype-option">
-                                    <input type="radio" [name]="'q' + question.id" [id]="'q' + question.id + '-false'"
-                                        [checked]="question.answer === 'false'"
+                                        <input type="radio" [name]="'q' + question.id"
+                                            [id]="'q' + question.id + '-true'" [checked]="question.answer === 'true'"
+                                            [disabled]="!isEditing(question.id)">
+                                        <label [for]="'q' + question.id + '-true'">True</label>
+                                        <span class="qtype-correct-badge"
+                                            *ngIf="question.answer === 'true'">Correct</span>
+                                    </div>
+                                    <div class="qtype-option"
                                         (click)="isEditing(question.id) && (question.answer = 'false')">
-                                    <label [for]="'q' + question.id + '-false'">False</label>
-                                    <span class="qtype-correct-badge" *ngIf="question.answer === 'false'">Correct</span>
+                                        <input type="radio" [name]="'q' + question.id"
+                                            [id]="'q' + question.id + '-false'" [checked]="question.answer === 'false'"
+                                            [disabled]="!isEditing(question.id)">
+                                        <label [for]="'q' + question.id + '-false'">False</label>
+                                        <span class="qtype-correct-badge"
+                                            *ngIf="question.answer === 'false'">Correct</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Generating Animation at Bottom -->
+                <div *ngIf="isGenerating" class="generating-animation-container">
+                    <div class="generating-animation">
+                        <div class="generating-content">
+                            <div class="generating-dots">
+                                <div class="generating-dot"></div>
+                                <div class="generating-dot"></div>
+                                <div class="generating-dot"></div>
+                            </div>
+                            <div class="generating-text">
+                                <h3>PRISM AI is generating questions...</h3>
+                                <p>This may take a few moments. Please wait while we create your assessment questions.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Spacing for Comfortable Editing -->
+                <div *ngIf="!isGenerating && questions.length > 0" class="questions-bottom-space"></div>
 
                 <div class="fab-container" *ngIf="questions.length > 0">
                     <div class="fab-menu" [class.open]="fabOpen" [class.active]="fabActive" [class.faded]="fabFaded">
