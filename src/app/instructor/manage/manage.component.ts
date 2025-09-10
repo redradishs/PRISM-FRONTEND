@@ -113,7 +113,6 @@ export class ManageComponent implements OnInit {
 
   isPaginationLoading: boolean = false;
   private searchSubject = new Subject<string>();
-  viewMode: 'grid' | 'list' = 'list';
 
   constructor(
     private api: ApiService,
@@ -161,23 +160,6 @@ export class ManageComponent implements OnInit {
         console.log('No user found');
       }
     });
-    this.setInitialViewMode();
-  }
-
-  //this function sets the view mode to what is LS, if not it falls to the default list mode
-  setInitialViewMode() {
-    const savedViewMode = localStorage.getItem('assessmentViewMode');
-    if (savedViewMode === 'grid' || savedViewMode === 'list') {
-      this.viewMode = savedViewMode;
-    } else if (window.innerWidth <= 640) {
-      this.viewMode = 'list';
-    }
-  }
-
-
-  @HostListener('window:resize', [])
-  onResize() {
-    this.setInitialViewMode();
   }
 
   onSearch(event: any) {
@@ -416,11 +398,15 @@ export class ManageComponent implements OnInit {
   }
 
   editAssessment(assessment: Assessment) {
-    this.router.navigate(['/instructor/edit', assessment.assessmentId]);
+    this.router.navigate(['/instructor/edit'], {
+      state: { assessmentId: assessment.id }
+    })
   }
 
   viewAssessmentDetails(assessment: Assessment) {
-    this.router.navigate(['/instructor/assessment', assessment.assessmentId]);
+    this.router.navigate(['/instructor/result/settings'], {
+      state: { assessmentId: assessment.id }
+    })
   }
 
   duplicateAssessment(assessment: Assessment) {
@@ -437,10 +423,6 @@ export class ManageComponent implements OnInit {
     this.router.navigate(['instructor/students']);
   }
 
-  setViewMode(mode: 'grid' | 'list') {
-    this.viewMode = mode;
-    localStorage.setItem('assessmentViewMode', mode);
-  }
 
 
   @HostListener('window:scroll', [])

@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 interface AIPromptRequest {
@@ -101,6 +101,9 @@ export class ApiService {
   getClassesCharts(id: string) {
     return this.http.get(`${this.apiUrl}/classes/performance/${id}/charts`);
   }
+
+  ///
+
   getInstructorTotalStudents(id: string) {
     return this.http.get(`${this.apiUrl}/getInstructorTotalStudents/${id}`);
   }
@@ -114,6 +117,12 @@ export class ApiService {
   getTotalClassess(id: string) {
     return this.http.get(`${this.apiUrl}/getTotalClasses/${id}`);
   }
+
+  instructorData(data: any) {
+    return this.http.post(`${this.apiUrl}/data`, data)
+  }
+
+  ///
 
   getOngoingAssessments(id: string, limit?: number) {
     const url = limit ? `${this.apiUrl}/getOnGoingAssessments/${id}?limit=${limit}` : `${this.apiUrl}/getOnGoingAssessments/${id}`;
@@ -209,6 +218,15 @@ export class ApiService {
 
   archiveClass(classCode: string, data: any) {
     return this.http.put(`${this.apiUrl}/class/archive/${classCode}`, data);
+  }
+
+  exportToJs(data: any) {
+    return this.http.post(`${this.apiUrl}/assessment/export`, data, {
+      responseType: 'blob',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    });
   }
 
   //archive page

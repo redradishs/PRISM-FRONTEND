@@ -97,16 +97,6 @@
                                 <option value="dueDate">Due Date</option>
                             </select>
                         </div>
-                        <div class="view-toggle">
-                            <button class="view-toggle-btn" [class.active]="viewMode === 'grid'"
-                                (click)="setViewMode('grid')" title="Grid View">
-                                <i class="fas fa-th-large"></i>
-                            </button>
-                            <button class="view-toggle-btn" [class.active]="viewMode === 'list'"
-                                (click)="setViewMode('list')" title="List View">
-                                <i class="fas fa-list"></i>
-                            </button>
-                        </div>
                     </div>
                 </div>
 
@@ -164,231 +154,117 @@
                     </button>
                 </div>
 
-                <!-- list and grid view -->
-                <div class="assessment-grid" [class.list-view]="viewMode === 'list'"
-                    *ngIf="filteredAssessments.length > 0">
-                    <ng-container *ngIf="viewMode === 'list'; else gridView">
-                        <div (click)="gotoResult(assessment)" *ngFor="let assessment of filteredAssessments"
-                            class="assessment-list-card animate-card" [ngClass]="{
-                               'border-assessment': assessment.type === 'Assessment',
-                               'border-public': assessment.type === 'Public Assessment',
-                               'border-mastery': assessment.type === 'Mastery'
-                             }">
+                <!-- Assessment List -->
+                <div class="assessment-grid list-view" *ngIf="filteredAssessments.length > 0">
+                    <div (click)="gotoResult(assessment)" *ngFor="let assessment of filteredAssessments"
+                        class="assessment-list-card animate-card" [ngClass]="{
+                           'border-assessment': assessment.type === 'Assessment',
+                           'border-public': assessment.type === 'Public Assessment',
+                           'border-mastery': assessment.type === 'Mastery'
+                         }">
 
-                            <div class="list-icon-centered" [ngClass]="{
+                        <div class="list-icon-centered" [ngClass]="{
                               'icon-assessment': assessment.type === 'Assessment',
                               'icon-public': assessment.type === 'Public Assessment',
                               'icon-mastery': assessment.type === 'Mastery'
                             }">
-                                <i class="fas {{getModeIcon(assessment.type)}}"></i>
-                            </div>
-                            <div class="list-main">
-                                <!-- desktop hidden on mobile -->
-                                <div class="list-header-main">
-                                    <span class="list-title">{{ assessment.title }}</span>
-                                    <span class="badge badge-{{assessment.type | lowercase}}">{{assessment.type}}</span>
-                                    <span class="badge badge-{{assessment.status}}">
-                                        <i class="fas {{getStatusIcon(assessment.status)}} badge-icon"></i>
-                                        <span>{{assessment.status | titlecase}}</span>
-                                    </span>
-                                </div>
-                                <!-- for mobile hidden on desktop -->
-                                <div class="list-header-mobile">
-                                    <div style="display: flex; flex-direction: column; gap: 6px; flex: 1;">
-                                        <!-- Top row: Title and Status Date -->
-                                        <div
-                                            style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
-                                            <span class="list-title">{{ assessment.title }}</span>
-                                            <!-- Status date information for mobile - upper right -->
-                                            <span *ngIf="assessment.status === 'completed'" class="mobile-status-info">
-                                                <i class="fas fa-check-circle"></i>
-                                                Completed: {{ assessment.dueDate | date:'MMM d, y' }}
-                                            </span>
-                                            <span *ngIf="assessment.status === 'scheduled'" class="mobile-status-info">
-                                                <i class="far fa-calendar"></i>
-                                                Scheduled: {{assessment.startDate | date:'MMM d, y, h:mm a':'PHT'}}
-                                            </span>
-                                            <span *ngIf="assessment.status === 'ongoing'" class="mobile-status-info">
-                                                <i class="fas fa-clock"></i>
-                                                Due {{assessment.dueDate | date:'MMM d, y, h:mm a':'PHT'}}
-                                            </span>
-                                        </div>
-                                        <!-- Bottom row: Badges -->
-                                        <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
-                                            <span
-                                                class="badge badge-{{assessment.type | lowercase}}">{{assessment.type}}</span>
-                                            <span class="badge badge-{{assessment.status}}">
-                                                <i class="fas {{getStatusIcon(assessment.status)}} badge-icon"></i>
-                                                <span>{{assessment.status | titlecase}}</span>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-description">{{ assessment.instructions }}</div>
-                                <div class="list-meta">
-                                    <div class="category-tag-row">
-                                        <span class="category-tag">
-                                            <i class="fas fa-tag"></i>
-                                            <span>{{assessment.category | titlecase}}</span>
-                                        </span>
-                                    </div>
-                                    <div class="meta-details-row">
-                                        <span>
-                                            <i class="fas fa-file-alt"></i>
-                                            {{assessment.questions}} Questions
-                                        </span>
-                                        <span>
-                                            <i class="far fa-clock"></i>
-                                            {{assessment.timeLimit}} minutes
-                                        </span>
-                                        <span *ngIf="assessment.type !== 'Public Assessment'">
-                                            <i class="fas fa-users"></i>
-                                            {{assessment.assignedClasses[0].classCode}} -
-                                            {{assessment.assignedClasses[0].className}}
-                                        </span>
-                                        <span *ngIf="assessment.type !== 'Public Assessment'">
-                                            <i class="fas fa-upload"></i>
-                                            {{assessment.assignedClasses[0].stats.submitted ||
-                                            0}}/{{assessment.assignedClasses[0].totalStudents || 0}} Submissions
-                                        </span>
-                                        <span
-                                            *ngIf="assessment.type === 'Public Assessment' && assessment.modeSettings?.joiningCode">
-                                            <i class="fas fa-link"></i>
-                                            Code: {{assessment.modeSettings.joiningCode}}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="list-side">
-                                <span *ngIf="assessment.status === 'completed'" class="completed-date-label">
-                                    <i class="fas fa-check-circle"></i>
-                                    Completed: {{ assessment.dueDate | date:'MMM d, y' }}
-                                </span>
-                                <span *ngIf="assessment.status === 'scheduled'" class="status-label">
-                                    <i class="far fa-calendar"></i>
-                                    Scheduled: {{assessment.startDate | date:'MMM d, y, h:mm a':'PHT'}}
-                                </span>
-                                <span *ngIf="assessment.status === 'ongoing'" class="status-label">
-                                    <i class="fas fa-clock"></i>
-                                    Due {{assessment.dueDate | date:'MMM d, y, h:mm a':'PHT'}}
-                                </span>
-                                <button class="btn btn-primary" (click)="viewAssessmentDetails(assessment)">
-                                    {{ assessment.status === 'completed' ? 'View Results' : 'Configure Assessment' }}
-                                </button>
-                            </div>
+                            <i class="fas {{getModeIcon(assessment.type)}}"></i>
                         </div>
-                    </ng-container>
-
-
-
-
-                    <!-- GRID VIEW  -->
-                    <ng-template #gridView>
-                        <div (click)="gotoResult(assessment)" *ngFor="let assessment of filteredAssessments"
-                            class="assessment-card card-{{assessment.type | lowercase}} animate-card">
-                            <div class="card-header">
-                                <div class="card-header-top">
-                                    <div class="card-mode">
-                                        <i
-                                            class="fas {{getModeIcon(assessment.type)}} mode-icon mode-icon-{{assessment.type | lowercase}}"></i>
+                        <div class="list-main">
+                            <!-- desktop hidden on mobile -->
+                            <div class="list-header-main">
+                                <span class="list-title">{{ assessment.title }}</span>
+                                <span class="badge badge-{{assessment.type | lowercase}}">{{assessment.type}}</span>
+                                <span class="badge badge-{{assessment.status}}">
+                                    <i class="fas {{getStatusIcon(assessment.status)}} badge-icon"></i>
+                                    <span>{{assessment.status | titlecase}}</span>
+                                </span>
+                            </div>
+                            <!-- for mobile hidden on desktop -->
+                            <div class="list-header-mobile">
+                                <div style="display: flex; flex-direction: column; gap: 6px; flex: 1;">
+                                    <!-- Top row: Title and Status Date -->
+                                    <div
+                                        style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                                        <span class="list-title">{{ assessment.title }}</span>
+                                        <!-- Status date information for mobile - upper right -->
+                                        <span *ngIf="assessment.status === 'completed'" class="mobile-status-info">
+                                            <i class="fas fa-check-circle"></i>
+                                            Completed: {{ assessment.dueDate | date:'MMM d, y' }}
+                                        </span>
+                                        <span *ngIf="assessment.status === 'scheduled'" class="mobile-status-info">
+                                            <i class="far fa-calendar"></i>
+                                            Scheduled: {{assessment.startDate | date:'MMM d, y, h:mm a':'PHT'}}
+                                        </span>
+                                        <span *ngIf="assessment.status === 'ongoing'" class="mobile-status-info">
+                                            <i class="fas fa-clock"></i>
+                                            Due {{assessment.dueDate | date:'MMM d, y, h:mm a':'PHT'}}
+                                        </span>
+                                    </div>
+                                    <!-- Bottom row: Badges -->
+                                    <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
                                         <span
                                             class="badge badge-{{assessment.type | lowercase}}">{{assessment.type}}</span>
+                                        <span class="badge badge-{{assessment.status}}">
+                                            <i class="fas {{getStatusIcon(assessment.status)}} badge-icon"></i>
+                                            <span>{{assessment.status | titlecase}}</span>
+                                        </span>
                                     </div>
-                                    <span class="badge badge-{{assessment.status}}">
-                                        <i class="fas {{getStatusIcon(assessment.status)}} badge-icon"></i>
-                                        <span>{{assessment.status | titlecase}}</span>
+                                </div>
+                            </div>
+                            <div class="card-description">{{ assessment.instructions }}</div>
+                            <div class="list-meta">
+                                <div class="category-tag-row">
+                                    <span class="category-tag">
+                                        <i class="fas fa-tag"></i>
+                                        <span>{{assessment.category | titlecase}}</span>
                                     </span>
                                 </div>
-                                <h3 class="card-title">{{assessment.title}}</h3>
-                                <p class="card-description">{{assessment.instructions}}</p>
-                            </div>
-
-                            <div class="card-content">
-                                <!-- category -->
-                                <div class="category-tag">
-                                    <i class="fas fa-tag"></i>
-                                    <span>{{assessment.category | titlecase}}</span>
-                                </div>
-
-                                <!-- public joining code -->
-                                <div class="joining-code" *ngIf="assessment.type === 'Public Assessment'">
-                                    <div class="code-label">Joining Code:</div>
-                                    <div class="code-value">{{assessment.modeSettings.joiningCode || 'N/A'}}</div>
-                                </div>
-
-                                <!-- stats info -->
-                                <ng-container [ngSwitch]="assessment.status">
-                                    <div *ngSwitchCase="'scheduled'" class="status-box">
-                                        <div class="status-box-content">
-                                            <i class="far fa-calendar"></i>
-                                            <span>Scheduled {{assessment.startDate | date:'MMM d, y, h:mm a'}}</span>
-                                        </div>
-                                    </div>
-
-                                    <div *ngSwitchCase="'ongoing'" class="status-box">
-                                        <div class="status-box-content">
-                                            <i class="fas fa-clock"></i>
-                                            <span>Due {{assessment.dueDate | date:'MMM d, y, h:mm a'}}</span>
-                                        </div>
-                                    </div>
-
-                                    <div *ngSwitchCase="'completed'" class="status-box">
-                                        <div class="status-box-content">
-                                            <i class="fas fa-check-circle"></i>
-                                            <span>Completed on {{assessment.dueDate | date:'MMM d, y'}}</span>
-                                        </div>
-                                    </div>
-                                </ng-container>
-
-                                <!-- Assessment details -->
-                                <div class="assessment-details">
-                                    <div class="detail-item">
-                                        <i class="fas fa-file-alt detail-icon"></i>
-                                        <span>{{assessment.questions}} Questions</span>
-                                    </div>
-                                    <div class="detail-item">
-                                        <i class="far fa-clock detail-icon"></i>
-                                        <span>{{assessment.timeLimit}} minutes</span>
-                                    </div>
-                                </div>
-                                <div *ngIf="assessment.type !== 'Public Assessment'" class="assessment-details">
-                                    <div class="detail-item">
-                                        <i class="fas fa-file-alt detail-icon"></i>
-                                        <span>{{assessment.assignedClasses[0].classCode}} -
-                                            {{assessment.assignedClasses[0].className}}</span>
-                                    </div>
-                                    <div class="detail-item">
-                                        <i class="far fa-clock detail-icon"></i>
-                                        <span>{{assessment.assignedClasses[0].stats.submitted ||
-                                            0}}/{{assessment.assignedClasses[0].totalStudents || 0}} Submissions</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="card-footer">
-                                <div class="actions-container">
-                                    <button class="btn btn-primary" (click)="viewAssessmentDetails(assessment)">View
-                                        Details</button>
-                                    <div class="dropdown">
-                                        <button class="btn-icon">
-                                            <i class="fas fa-ellipsis-h"></i>
-                                        </button>
-                                        <div class="dropdown-content">
-                                            <div class="dropdown-item" (click)="duplicateAssessment(assessment)">
-                                                <i class="fas fa-copy mr-2"></i> Duplicate
-                                            </div>
-                                            <div class="dropdown-item">
-                                                <i class="fas fa-share mr-2"></i> Share
-                                            </div>
-                                            <div class="dropdown-item" (click)="deleteAssessment(assessment)">
-                                                <i class="fas fa-archive mr-2"></i> Archive
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="meta-details-row">
+                                    <span>
+                                        <i class="fas fa-file-alt"></i>
+                                        {{assessment.questions}} Questions
+                                    </span>
+                                    <span>
+                                        <i class="far fa-clock"></i>
+                                        {{assessment.timeLimit}} minutes
+                                    </span>
+                                    <span *ngIf="assessment.type !== 'Public Assessment'">
+                                        <i class="fas fa-users"></i>
+                                        {{assessment.assignedClasses[0].classCode}} -
+                                        {{assessment.assignedClasses[0].className}}
+                                    </span>
+                                    <span *ngIf="assessment.type !== 'Public Assessment'">
+                                        <i class="fas fa-upload"></i>
+                                        {{assessment.assignedClasses[0].stats.submitted ||
+                                        0}}/{{assessment.assignedClasses[0].totalStudents || 0}} Submissions
+                                    </span>
+                                    <span
+                                        *ngIf="assessment.type === 'Public Assessment' && assessment.modeSettings?.joiningCode">
+                                        <i class="fas fa-link"></i>
+                                        Code: {{assessment.modeSettings.joiningCode}}
+                                    </span>
                                 </div>
                             </div>
                         </div>
-                    </ng-template>
+                        <div class="list-side">
+                            <span *ngIf="assessment.status === 'completed'" class="completed-date-label">
+                                <i class="fas fa-check-circle"></i>
+                                Completed: {{ assessment.dueDate | date:'MMM d, y' }}
+                            </span>
+                            <span *ngIf="assessment.status === 'scheduled'" class="status-label">
+                                <i class="far fa-calendar"></i>
+                                Scheduled: {{assessment.startDate | date:'MMM d, y, h:mm a':'PHT'}}
+                            </span>
+                            <span *ngIf="assessment.status === 'ongoing'" class="status-label">
+                                <i class="fas fa-clock"></i>
+                                Due {{assessment.dueDate | date:'MMM d, y, h:mm a':'PHT'}}
+                            </span>
+                            <button class="btn btn-primary" (click)="viewAssessmentDetails(assessment)">
+                                {{ assessment.status === 'completed' ? 'View Results' : 'Configure Assessment' }}
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <div *ngIf="isPaginationLoading" class="pagination-loading">

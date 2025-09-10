@@ -8,7 +8,6 @@ import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import Swal from 'sweetalert2';
 import { saveAs } from 'file-saver';
-import * as ExcelJS from 'exceljs';
 import * as QRCode from 'qrcode';
 
 
@@ -699,162 +698,46 @@ export class ResultComponent implements OnInit, OnDestroy {
     });
   }
 
+
   export() {
     Swal.fire({
       title: 'Export Results',
       text: 'Choose how you want to sort the results',
       icon: 'question',
-      showDenyButton: true,
       showCancelButton: true,
-      confirmButtonText: 'Ranking',
-      denyButtonText: 'Alphabetical',
+      confirmButtonText: 'Yes',
       cancelButtonText: 'Cancel'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.exportToCSV('score');
-      } else if (result.isDenied) {
-        this.exportToCSV('name');
+        this.exportToCSV();
       }
     });
   }
 
-  async exportToCSV(sortBy: 'score' | 'name' = 'score') {
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Assessment Results');
+  async exportToCSV() {
+    const data: any = {
+      assessmentIds: [this.assessmentId]
+    }
+    if (this.className) {
+      data.className = this.className;
+    }
+    const blob = await this.api.exportToJs(data).toPromise();
+    //save the file
+    if (blob) {
+      const fileName = `${this.assessmentTitle}_Assessment_Results_${new Date().toISOString().split('T')[0]}.xlsx`;
+      saveAs(blob, fileName);
+    } else {
+      throw new Error('Failed to generate export file');
+      Swal.fire({
+        title: 'Limit Reached',
+        text: 'You may request again after 15 minutes',
+        icon: 'error',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+      })
+    }
 
-    // Title Row
-    worksheet.mergeCells('A1', 'F1');
-    const titleCell = worksheet.getCell('A1');
-    titleCell.value = `${this.assessmentTitle.toUpperCase()} - ASSESSMENT RESULTS`;
-    titleCell.font = { size: 22, bold: true, color: { argb: 'FFFFFF' } };
-    titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
-    titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '6366f1' } };
-    titleCell.border = {
-      top: { style: 'thick', color: { argb: '4f46e5' } },
-      left: { style: 'thick', color: { argb: '4f46e5' } },
-      bottom: { style: 'thick', color: { argb: '4f46e5' } },
-      right: { style: 'thick', color: { argb: '4f46e5' } }
-    };
-
-    // Summary Section
-    worksheet.addRow([]);
-    worksheet.addRow(['Report Generated:', new Date().toLocaleDateString()]);
-    worksheet.addRow(['Total Students:', this.allStudents.length]);
-    worksheet.addRow(['Completed Assessments:', this.allStudents.filter(s => s.status === 'completed').length]);
-    worksheet.addRow(['Completion Rate:', `${((this.allStudents.filter(s => s.status === 'completed').length / this.allStudents.length) * 100).toFixed(1)}%`]);
-    worksheet.addRow(['Average Score:', `${(this.allStudents.reduce((sum, s) => sum + (s.score || 0), 0) / this.allStudents.length).toFixed(1)}%`]);
-    worksheet.addRow(['Highest Score:', `${Math.max(...this.allStudents.map(s => s.score || 0))}%`]);
-    worksheet.addRow(['Sorted By:', sortBy === 'score' ? 'Score Ranking' : 'Last Name']);
-    worksheet.addRow([]);
-    worksheet.getRow(3).alignment = { horizontal: 'center' };
-    worksheet.getRow(4).alignment = { horizontal: 'center' };
-    worksheet.getRow(5).alignment = { horizontal: 'center' };
-    worksheet.getRow(6).alignment = { horizontal: 'center' };
-    worksheet.getRow(7).alignment = { horizontal: 'center' };
-    worksheet.getRow(8).alignment = { horizontal: 'center' };
-    worksheet.getRow(9).alignment = { horizontal: 'center' };
-
-
-    // Header
-    const header = ['#', 'Student Name', 'Score (%)', 'Status', 'Violation Count', 'Performance'];
-    const headerRow = worksheet.addRow(header);
-    headerRow.eachCell(cell => {
-      cell.font = { size: 12, bold: true, color: { argb: 'FFFFFF' } };
-      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '2563EB' } };
-      cell.alignment = { horizontal: 'center' };
-    });
-
-    // Sort students based on the selected criteria
-    const sortedStudents = this.sortStudents(this.allStudents, sortBy);
-
-    // Data Rows
-    sortedStudents.forEach((student, index) => {
-      const row = worksheet.addRow([
-        index + 1,
-        student.name || 'Unknown',
-        `${student.score || 0}/${this.classOverview.totalScore}`,
-        this.getStatusText(student.status),
-        student.violationCount || 0,
-        this.getPerformanceCategory(student.score || 0)
-      ]);
-
-      const score = student.score || 0;
-      const totalItems = this.classOverview.totalScore;
-      const scorePercentage = (score / totalItems) * 100;
-
-      let style = { fontColor: '000000', bgColor: 'FFFFFF' };
-      if (scorePercentage >= 85) {
-        style = { fontColor: '166534', bgColor: 'DCFCE7' };
-      } else if (scorePercentage >= 70) {
-        style = { fontColor: '854D0E', bgColor: 'FEF9C3' };
-      } else if (scorePercentage >= 60) {
-        style = { fontColor: '4338CA', bgColor: 'E0E7FF' };
-      }
-      else {
-        style = { fontColor: 'BE185D', bgColor: 'FCE7F3' };
-      }
-
-
-      const violationCount = student.violationCount || 0;
-      if (violationCount <= 0) {
-        row.getCell(5).font = { bold: true, color: { argb: '166534' }, size: 11 };
-        row.getCell(5).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F0FDF4' } };
-      } else if (violationCount <= 3) {
-        row.getCell(5).font = { bold: true, color: { argb: 'B45309' }, size: 11 };
-        row.getCell(5).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFBEB' } };
-      } else {
-        row.getCell(5).font = { bold: true, color: { argb: 'B91C1C' }, size: 11 };
-        row.getCell(5).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FEF2F2' } };
-      }
-
-
-      row.getCell(3).font = {
-        bold: true,
-        size: 11,
-        color: { argb: style.fontColor }
-      };
-      row.getCell(3).fill = {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: style.bgColor }
-      };
-      row.eachCell(cell => {
-        cell.alignment = { vertical: 'middle', horizontal: 'center' };
-      });
-      row.getCell(2).alignment = { horizontal: 'left' };
-    });
-    worksheet.getColumn(1).width = 22;  // #
-    worksheet.getColumn(2).width = 30; // Student Name
-    worksheet.getColumn(3).width = 12; // Score
-    worksheet.getColumn(4).width = 14; // Status
-    worksheet.getColumn(5).width = 15; // Violation Count
-    worksheet.getColumn(6).width = 22; // Performance
-
-    const buffer = await workbook.xlsx.writeBuffer();
-    const blob = new Blob([buffer], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    });
-
-    const filename = `${this.assessmentTitle.replace(/[^a-zA-Z0-9]/g, '_')}_Results_${sortBy === 'score' ? 'Ranked' : 'Alphabetical'}.xlsx`;
-    saveAs(blob, filename);
-  }
-
-  // Helper methods
-  private getStatusText(status: string): string {
-    const statusMap: { [key: string]: string } = {
-      'completed': 'Completed',
-      'in_progress': 'In Progress',
-      'not_started': 'Not Started',
-      'submitted': 'Submitted'
-    };
-    return statusMap[status] || status;
-  }
-
-  private getPerformanceCategory(score: number): string {
-    if (score >= 90) return 'Excellent';
-    if (score >= 75) return 'Good';
-    if (score >= 60) return 'Satisfactory';
-    return 'Needs Improvement';
   }
 
   copyJoiningCode() {

@@ -27,7 +27,7 @@ export class EncryptionService {
         keyBuffer,
         { name: this.algorithm },
         false,
-        ['encrypt', 'decrypt'] 
+        ['encrypt', 'decrypt']
       );
     } catch (error) {
       console.error('Failed to initialize encryption key:', error);
@@ -75,7 +75,7 @@ export class EncryptionService {
 
   async decrypt(encryptedData: string): Promise<string> {
     await this.keyInitialized;
-    
+
     try {
       if (!this.secretKey) {
         throw new Error('Encryption key not initialized');
@@ -134,9 +134,15 @@ export class EncryptionService {
   shouldEncryptRequest(url: string, headers?: any): boolean {
     const encryptedEndpoints = [
       '/user/login',
-      '/user/signup'
+      '/user/signup',
+      '/instructor/data',
+      '/student/assessmentConfirmation',
+      '/submission/assessment/push',
+      '/student/recordStartTime',
+      '/student/assessment/objectBased',
+      '/student/assessment/pAIr'
     ];
-    
+
     return encryptedEndpoints.some(endpoint => url.includes(endpoint));
   }
 }

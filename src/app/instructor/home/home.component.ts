@@ -98,9 +98,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.userId = user.id;
         this.username = user.name;
         this.profile = user.profilePicture;
-        this.getTotalStudents(this.userId);
-        this.getActiveAssessments(this.userId);
-        this.getTotalClases(this.userId);
+        this.instructorData();
         this.getOnGoingAssessments(this.userId);
         this.getScheduledAssessments(this.userId);
         this.getDisputes();
@@ -130,37 +128,19 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
-  getTotalStudents(userId: string) {
-    this.api.getInstructorTotalStudents(this.userId).subscribe((resp: any) => {
-      try {
-        this.totalStudents = resp.data || 0;
-      } catch (error) {
-        console.error('Error getting total students:', error);
-        this.totalStudents = 0;
-      }
-    })
-  }
-  getActiveAssessments(userId: string) {
-    this.api.getActiveAssessments(this.userId).subscribe((resp: any) => {
-      try {
-        this.totalActiveAssessments = resp.data;
-      } catch (error) {
-        console.error('Error getting active assessments:', error);
-      }
-    })
-  }
-
-  getTotalClases(userId: string) {
-    this.api.getTotalClassess(this.userId).subscribe((resp: any) => {
-      try {
-        this.totalClasses = resp.data;
+  instructorData() {
+    const data = {
+      id: this.userId
+    }
+    this.api.instructorData(data).subscribe({
+      next: (resp: any) => {
+        this.totalStudents = resp.data.totalStudents || 0;
+        this.totalActiveAssessments = resp.data.totalActiveAssessments || 0;
+        this.totalClasses = resp.data.totalClasses;
         if (this.totalClasses > 0) {
           this.getClassesCharts();
           this.getStudentPerformance(this.userId);
         }
-
-      } catch (error) {
-        console.error('Error getting total classes:', error);
       }
     })
   }

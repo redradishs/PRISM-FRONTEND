@@ -8,7 +8,6 @@ import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { saveAs } from 'file-saver';
-import * as ExcelJS from 'exceljs';
 import * as QRCode from 'qrcode';
 
 
@@ -1340,207 +1339,6 @@ export class StudentsComponent implements OnInit {
     });
   }
 
-  async exportSelectedAssessments() {
-    try {
-      if (this.selectedAssessmentsForExport.length === 0) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Please select at least one assessment to export'
-        });
-        return;
-      }
-
-      const workbook = new ExcelJS.Workbook();
-      for (let i = 0; i < this.selectedAssessmentsForExport.length; i++) {
-        const assessment = this.selectedAssessmentsForExport[i];
-        try {
-          const response = await this.api.getClassScore(assessment._id).toPromise() as ClassScoreResponse;
-          console.log("Response for assessment:", assessment.title, response);
-
-          if (response?.data?.results && Array.isArray(response.data.results)) {
-            const worksheet = workbook.addWorksheet(`A${i + 1} - ${assessment.title.substring(0, 20)}`);
-
-            // Title Row
-            worksheet.mergeCells('A1', 'F1');
-            const titleCell = worksheet.getCell('A1');
-            titleCell.value = `${assessment.title.toUpperCase()} - ASSESSMENT RESULTS`;
-            titleCell.font = { size: 22, bold: true, color: { argb: 'FFFFFF' } };
-            titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
-            titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '6366f1' } };
-            titleCell.border = {
-              top: { style: 'thick', color: { argb: '4f46e5' } },
-              left: { style: 'thick', color: { argb: '4f46e5' } },
-              bottom: { style: 'thick', color: { argb: '4f46e5' } },
-              right: { style: 'thick', color: { argb: '4f46e5' } }
-            };
-
-            // Summary Section
-            worksheet.addRow([]);
-            const startDate = new Date(response.data.startDate);
-            const endDate = new Date(response.data.endDate);
-            const dateSpan = `${this.formatPhilippineDate(startDate)} - ${this.formatPhilippineDate(endDate)}`
-
-            worksheet.addRow(['Assessment Date Span:', dateSpan]);
-            worksheet.addRow(['Total Students:', response.data.results.length]);
-            worksheet.addRow(['Completed Assessments:', response.data.results.filter(s => s.status === 'submitted').length]);
-            worksheet.addRow(['Total Score:', response.data.totalItems]);
-            worksheet.addRow(['Average Score:', `${(response.data.results.reduce((sum, s) => sum + (s.score || 0), 0) / response.data.results.length).toFixed(1)}`]);
-            worksheet.addRow(['Highest Score:', `${Math.max(...response.data.results.map(s => s.score || 0))}`]);
-            worksheet.addRow(['Assessment Status:', response.data.assessmentStatus.toUpperCase()]);
-            const statusRow = worksheet.getRow(worksheet.rowCount);
-            statusRow.getCell(2).font = { bold: true, color: { argb: '166534' } };
-            statusRow.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'DCFCE7' } };
-            statusRow.alignment = { horizontal: 'center' };
-
-            // Mode row with styling
-            const modeRow = worksheet.addRow(['Mode:', response.data.mode.toUpperCase()]);
-            const modeCell = modeRow.getCell(2);
-            modeCell.font = { bold: true };
-            if (response.data.mode === 'mastery') {
-              modeCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'DCFCE7' } };
-              modeCell.font.color = { argb: '166534' };
-            } else {
-              modeCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FEF9C3' } };
-              modeCell.font.color = { argb: '854D0E' };
-            }
-            worksheet.addRow([]);
-
-            for (let i = 3; i <= 10; i++) {
-              worksheet.getRow(i).alignment = { horizontal: 'center' };
-            }
-
-            // Header
-            const header = ['#', 'Student Name', 'Score', 'Status', 'Violation Count', 'Performance'];
-            const headerRow = worksheet.addRow(header);
-            headerRow.eachCell(cell => {
-              cell.font = { size: 12, bold: true, color: { argb: 'FFFFFF' } };
-              cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '2563EB' } };
-              cell.alignment = { horizontal: 'center' };
-            });
-
-            const sortedStudents = this.sortByLastName(response.data.results);
-
-            // Data Rows
-            sortedStudents.forEach((student, index) => {
-              const studentScore = student.score || 0;
-              const totalItems = response.data.totalItems || 0;
-              const scoreDisplay = `${studentScore}/${totalItems}`;
-              const percentage = totalItems > 0 ? Math.ceil((student.score / totalItems) * 100) : 0;
-
-              const row = worksheet.addRow([
-                index + 1,
-                student.name || 'Unknown',
-                scoreDisplay,
-                this.getStatusText(student.status),
-                student.violationCount || 0,
-                this.getPerformanceCategory(percentage)
-              ]);
-
-              let style = { fontColor: '000000', bgColor: 'FFFFFF' };
-              if (percentage >= 85) {
-                style = { fontColor: '166534', bgColor: 'DCFCE7' };
-              } else if (percentage >= 70) {
-                style = { fontColor: '854D0E', bgColor: 'FEF9C3' };
-              } else if (percentage >= 60) {
-                style = { fontColor: '4338CA', bgColor: 'E0E7FF' };
-              }
-              else {
-                style = { fontColor: 'BE185D', bgColor: 'FCE7F3' };
-              }
-
-              // Apply style to score column (3rd)
-              row.getCell(3).font = {
-                bold: true,
-                size: 11,
-                color: { argb: style.fontColor }
-              };
-              row.getCell(3).fill = {
-                type: 'pattern',
-                pattern: 'solid',
-                fgColor: { argb: style.bgColor }
-              };
-
-              const violationCount = student.violationCount || 0;
-              if (violationCount <= 0) {
-                row.getCell(5).font = { bold: true, color: { argb: '166534' }, size: 11 };
-                row.getCell(5).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F0FDF4' } };
-              } else if (violationCount <= 3) {
-                row.getCell(5).font = { bold: true, color: { argb: 'B45309' }, size: 11 };
-                row.getCell(5).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFBEB' } };
-              } else {
-                row.getCell(5).font = { bold: true, color: { argb: 'B91C1C' }, size: 11 };
-                row.getCell(5).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FEF2F2' } };
-              }
-
-              // Apply alignments to all cells
-              row.eachCell(cell => {
-                cell.alignment = { vertical: 'middle', horizontal: 'center' };
-              });
-
-              // Left align name
-              row.getCell(2).alignment = { horizontal: 'left' };
-            });
-
-            // Set fixed widths for specific columns
-            worksheet.getColumn(1).width = 22;  // #
-            worksheet.getColumn(2).width = 30; // Student Name
-            worksheet.getColumn(3).width = 12; // Score
-            worksheet.getColumn(4).width = 14; // Status
-            worksheet.getColumn(5).width = 15; // Violation Count
-            worksheet.getColumn(6).width = 22; // Performance
-
-            await this.createViolationsSheet(workbook, assessment, response.data.results, i);
-          } else {
-            console.warn('Unexpected response format for assessment:', assessment.title, response);
-          }
-        } catch (error) {
-          console.error('Error processing assessment:', assessment.title, error);
-        }
-      }
-      //generate the file name
-      const buffer = await workbook.xlsx.writeBuffer();
-      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      const fileName = `${this.selectedClass.className}_Assessment_Results_${new Date().toISOString().split('T')[0]}.xlsx`;
-
-      saveAs(blob, fileName);
-
-      this.showExportModal = false;
-      this.selectedAssessmentsForExport = [];
-
-      Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: 'Assessment results exported successfully!'
-      });
-    } catch (error) {
-      console.error('Export error:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Failed to export assessment results'
-      });
-    }
-  }
-
-  private getStatusText(status: string): string {
-    const statusMap: { [key: string]: string } = {
-      'completed': 'Completed',
-      'in_progress': 'In Progress',
-      'not_started': 'Not Started',
-      'submitted': 'Submitted'
-    };
-    return statusMap[status] || status;
-  }
-
-  private getPerformanceCategory(score: number): string {
-    if (score >= 85) return 'Excellent';
-    if (score >= 70) return 'Good';
-    if (score >= 60) return 'Satisfactory';
-    return 'Needs Improvement';
-  }
-
-
   toggleAssessmentSelection(assessment: any) {
     const index = this.selectedAssessmentsForExport.findIndex(a => a._id === assessment._id);
     if (index === -1) {
@@ -1554,154 +1352,45 @@ export class StudentsComponent implements OnInit {
     return this.selectedAssessmentsForExport.some(a => a._id === assessment._id);
   }
 
-
-  private async createViolationsSheet(workbook: ExcelJS.Workbook, assessment: any, students: any[], assessmentIndex: number) {
-    const violationsSheet = workbook.addWorksheet(`V${assessmentIndex + 1} - Violations`);
-
-    // Title Row with brand styling
-    violationsSheet.mergeCells('A1', 'D1');
-    const titleCell = violationsSheet.getCell('A1');
-    titleCell.value = `${assessment.title.toUpperCase()} - VIOLATION DETAILS`;
-    titleCell.font = { size: 22, bold: true, color: { argb: 'FFFFFF' } };
-    titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
-    titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'ec4899' } };
-
-    violationsSheet.addRow([]);
-
-    const totalViolations = students.reduce((sum, s) => sum + (s.violationCount || 0), 0);
-    const studentsWithViolations = students.filter(s => (s.violationCount || 0) > 0).length;
-
-    const violationSummary = [
-      ['Total Violations:', totalViolations],
-      ['Students with Violations:', studentsWithViolations],
-      ['Clean Students:', students.length - studentsWithViolations]
-    ];
-
-    violationSummary.forEach(([label, value]) => {
-      const row = violationsSheet.addRow([label, value]);
-      row.getCell(1).font = { bold: true, color: { argb: '374151' } };
-      row.getCell(2).font = { bold: true, color: { argb: 'ec4899' } };
-      row.getCell(1).alignment = { horizontal: 'left', vertical: 'middle' };
-      row.getCell(2).alignment = { horizontal: 'center', vertical: 'middle' };
-    });
-
-    violationsSheet.addRow([]);
-
-
-    const headers = ['Student Name', 'Violation Type', 'Timestamp', 'Total Count'];
-    const headerRow = violationsSheet.addRow(headers);
-    headerRow.eachCell(cell => {
-      cell.font = { size: 12, bold: true, color: { argb: 'FFFFFF' } };
-      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'a855f7' } };
-      cell.alignment = { horizontal: 'center', vertical: 'middle' };
-      cell.border = {
-        top: { style: 'thin', color: { argb: 'E5E7EB' } },
-        left: { style: 'thin', color: { argb: 'E5E7EB' } },
-        bottom: { style: 'thin', color: { argb: 'E5E7EB' } },
-        right: { style: 'thin', color: { argb: 'E5E7EB' } }
-      };
-    });
-
-    const sortedStudents = this.sortByLastName(students.filter(s => s.violationDetails && s.violationDetails.length > 0));
-
-    sortedStudents.forEach(student => {
-      if (student.violationDetails && student.violationDetails.length > 0) {
-        student.violationDetails.forEach((violation: any, index: number) => {
-          const timestamp = new Date(violation.timestamp);
-          const formattedTime = this.formatPhilippineDate(timestamp);
-
-          const row = violationsSheet.addRow([
-            index === 0 ? student.name : '',
-            violation.type,
-            formattedTime,
-            index === 0 ? student.violationCount : ''
-          ]);
-
-          let violationStyle = { fontColor: 'ec4899', bgColor: 'FCE7F3' };
-
-          if (violation.type.toLowerCase().includes('developer')) {
-            violationStyle = { fontColor: 'B91C1C', bgColor: 'FEE2E2' }; // Critical - Red
-          } else if (violation.type.toLowerCase().includes('resize') || violation.type.toLowerCase().includes('window')) {
-            violationStyle = { fontColor: 'F59E0B', bgColor: 'FEF3C7' }; // Warning - Amber
-          } else if (violation.type.toLowerCase().includes('tab') || violation.type.toLowerCase().includes('focus')) {
-            violationStyle = { fontColor: '6366f1', bgColor: 'E0E7FF' }; // Info - Brand indigo
-          }
-
-          // Apply violation type styling
-          row.getCell(2).font = { color: { argb: violationStyle.fontColor }, bold: true, size: 10 };
-          row.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: violationStyle.bgColor } };
-
-          // Student name styling (first occurrence only)
-          if (index === 0) {
-            row.getCell(1).font = { bold: true, color: { argb: '1F2937' }, size: 11 };
-            row.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F3F4F6' } };
-          }
-
-          // Total count styling (first occurrence only)
-          if (index === 0) {
-            row.getCell(4).font = { bold: true, color: { argb: 'FFFFFF' }, size: 10 };
-            if (student.violationCount >= 5) {
-              row.getCell(4).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'DC2626' } };
-            } else if (student.violationCount >= 3) {
-              row.getCell(4).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F59E0B' } };
-            } else {
-              row.getCell(4).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'a855f7' } };
-            }
-          }
-
-          // Apply professional borders and alignment
-          row.eachCell((cell, colNumber) => {
-            cell.border = {
-              top: { style: 'thin', color: { argb: 'E5E7EB' } },
-              left: { style: 'thin', color: { argb: 'E5E7EB' } },
-              bottom: { style: 'thin', color: { argb: 'E5E7EB' } },
-              right: { style: 'thin', color: { argb: 'E5E7EB' } }
-            };
-
-
-            if (colNumber === 1) { // Student Name
-              cell.alignment = { vertical: 'middle', horizontal: 'left' };
-            } else if (colNumber === 4) { // Total Count
-              cell.alignment = { vertical: 'middle', horizontal: 'center' };
-            } else {  //timestamp
-              cell.alignment = { vertical: 'middle', horizontal: 'left' };
-            }
-          });
+  async exportSelectedAssessments() {
+    try {
+      if (this.selectedAssessmentsForExport.length === 0) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Please select at least one assessment to export'
         });
-
-        // for separatirs
-        const separatorRow = violationsSheet.addRow(['', '', '', '']);
-        separatorRow.eachCell(cell => {
-          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F9FAFB' } };
-        });
+        return;
       }
-    });
+      const data = {
+        className: this.selectedClass.className,
+        assessmentIds: this.selectedAssessmentsForExport.map(assessment => assessment._id)
+      }
+      const blob = await this.api.exportToJs(data).toPromise();
+      //save the file
+      if (blob) {
+        const fileName = `${this.selectedClass.className}_Assessment_Results_${new Date().toISOString().split('T')[0]}.xlsx`;
+        saveAs(blob, fileName);
+        this.selectedAssessmentsForExport = [];
+        this.showExportModal = false;
+      } else {
+        throw new Error('Failed to generate export file');
+        Swal.fire({
+          title: 'Limit Reached',
+          text: 'You may request again after 15 minutes',
+          icon: 'error',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+        })
+        this.selectedAssessmentsForExport = [];
+        this.showExportModal = false;
+      }
+    }
+    catch (error) {
+      console.error(error)
 
-    // summary for students that had no violations
-    const cleanStudents = students.filter(s => !s.violationDetails || s.violationDetails.length === 0);
-    if (cleanStudents.length > 0) {
-      violationsSheet.addRow([]);
-      const cleanHeaderRow = violationsSheet.addRow(['CLEAN STUDENTS (No Violations)', '', '', '']);
-      cleanHeaderRow.getCell(1).font = { bold: true, color: { argb: 'FFFFFF' }, size: 12 };
-      cleanHeaderRow.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '10B981' } }; // Green
-      cleanHeaderRow.getCell(1).alignment = { horizontal: 'center', vertical: 'middle' };
-      violationsSheet.mergeCells(`A${violationsSheet.rowCount}`, `D${violationsSheet.rowCount}`);
-
-      const sortedCleanStudents = this.sortByLastName(cleanStudents);
-      sortedCleanStudents.forEach(student => {
-        const row = violationsSheet.addRow([student.name, 'No violations recorded', '', '']);
-        row.getCell(1).font = { color: { argb: '059669' }, bold: true };
-        row.getCell(2).font = { color: { argb: '10B981' }, italic: true };
-        row.eachCell(cell => {
-          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'ECFDF5' } };
-          cell.alignment = { vertical: 'middle', horizontal: 'left' };
-        });
-      });
     }
 
-    violationsSheet.getColumn(1).width = 28; // Student Name (increased)
-    violationsSheet.getColumn(2).width = 45; // Violation Type (increased for readability)
-    violationsSheet.getColumn(3).width = 22; // Timestamp (increased)
-    violationsSheet.getColumn(4).width = 14; // Total Count
   }
 }
