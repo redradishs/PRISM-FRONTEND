@@ -356,160 +356,194 @@
 
                 <!-- Questions Section -->
                 <div class="questions-section">
-                    <div class="section-header">
-                        <div class="header-content">
-                            <i class="fas fa-list header-icond"></i>
-                            <div>
-                                <h3 class="header-titled">All Responses</h3>
-                                <p class="header-subtitle">Quick overview of all question responses</p>
-                            </div>
-                        </div>
-                    </div>
+                    <h2 class="review-title">
+                        <i class="fas fa-clipboard-list mr-2"></i>
+                        Question Review
+                    </h2>
 
-                    <div class="questions-list">
-                        <div class="question-item" *ngFor="let q of qna; let i = index">
-                            <div class="question-header" (click)="toggleQuestion(q.questionId || i)">
+                    <!-- Individual Question Cards -->
+                    <div class="questions-container">
+                        <div *ngFor="let q of qna; let i = index" class="question-card" [id]="'question-' + i">
+                            <div class="question-card-header">
                                 <div class="question-info">
-                                    <div class="score-badge" [ngClass]="{
-                                        'correct': q.isCorrect === true, 
-                                        'incorrect': q.isCorrect === false,
-                                        'partial': q.pointsEarned > 0 && q.pointsEarned < q.maxPoints
-                                    }">
-                                        <i class="fas" [ngClass]="{
-                                            'fa-check': q.isCorrect === true,
-                                            'fa-times': q.isCorrect === false,
-                                            'fa-minus': q.pointsEarned > 0 && q.pointsEarned < q.maxPoints
-                                        }"></i>
-                                        <!-- Change from earnedPoints to pointsEarned -->
-                                        <span>{{q.pointsEarned || 0}}/{{q.maxPoints || 0}}</span>
+                                    <span class="question-number">Question {{i + 1}}</span>
+                                    <div class="points-badge">
+                                        <i class="fas fa-star"></i>
+                                        <span>{{q.pointsEarned || 0}}/{{q.maxPoints || 0}} points</span>
                                     </div>
-                                    <span class="question-title">Question {{i + 1}}</span>
+                                    <div class="type-badge">
+                                        <i class="fas fa-question-circle"></i>
+                                        <span>{{q.questionType | titlecase}}</span>
+                                    </div>
                                 </div>
-                                <div class="question-meta">
+                                <div class="question-badges">
                                     <span class="review-badge" *ngIf="isQuestionMarkedForReview(q.questionId)">
                                         <i class="fas fa-flag"></i>
                                         Needs Review
                                     </span>
-                                    <span class="auto-grade-badge" *ngIf="q.method === 'auto'">Auto Graded</span>
-                                    <span class="manual-grade-badge" *ngIf="q.method === 'manual'">Manually
-                                        Graded</span>
-                                    <i class="fas fa-chevron-down expand-icon"
-                                        [class.expanded]="isExpanded(q.questionId || i)"></i>
+                                    <span class="auto-grade-badge" *ngIf="q.method === 'auto'">
+                                        <i class="fas fa-wand-magic-sparkles"></i>
+                                        Auto Graded
+                                    </span>
+                                    <span class="manual-grade-badge" *ngIf="q.method === 'manual'">
+                                        <i class="fas fa-user-edit"></i>
+                                        Manual Grade
+                                    </span>
+                                    <div class="status-badge" [class.correct]="q.isCorrect === true"
+                                        [class.incorrect]="q.isCorrect === false"
+                                        [class.partial]="q.pointsEarned > 0 && q.pointsEarned < q.maxPoints">
+                                        <i class="fas" [ngClass]="{
+                                            'fa-check-circle': q.isCorrect === true,
+                                            'fa-times-circle': q.isCorrect === false,
+                                            'fa-minus-circle': q.pointsEarned > 0 && q.pointsEarned < q.maxPoints
+                                        }"></i>
+                                        <span *ngIf="q.isCorrect === true">Correct</span>
+                                        <span *ngIf="q.isCorrect === false">Incorrect</span>
+                                        <span *ngIf="q.pointsEarned > 0 && q.pointsEarned < q.maxPoints">Partial</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="question-content" *ngIf="isExpanded(q.questionId || i)">
-                                <div class="content-wrapper">
-                                    <p class="question-text">{{q.questionText}}</p>
+                            <div class="question-card-content">
+                                <div class="question-text">{{q.questionText}}</div>
 
-                                    <div class="answers-container">
-                                        <!-- For multiple-choice questions -->
-                                        <div class="answer-block" *ngIf="q.questionType === 'multiple-choice'">
-                                            <span class="answer-label">Student's Answer:</span>
-                                            <div class="answer-content">{{q.studentAnswer}}</div>
+                                <div class="answers-section">
+                                    <!-- For multiple-choice questions -->
+                                    <div *ngIf="q.questionType === 'multiple-choice'" class="answer-container">
+                                        <div class="answer-header">
+                                            <i class="fas fa-user"></i>
+                                            <h4>Student's Answer</h4>
+                                        </div>
+                                        <div class="answer-content" [class.incorrect]="q.isCorrect === false">
+                                            {{q.studentAnswer}}
                                         </div>
 
-                                        <!-- For true-false questions -->
-                                        <div class="answer-block" *ngIf="q.questionType === 'true-false'">
-                                            <span class="answer-label">Student's Answer:</span>
-                                            <div class="answer-content">
-                                                <span
-                                                    [class.text-green-600]="q.studentAnswer === 'True' || q.studentAnswer === true"
-                                                    [class.text-red-600]="q.studentAnswer === 'False' || q.studentAnswer === false">
-                                                    {{(q.studentAnswer === 'True' || q.studentAnswer === true) ? 'True'
-                                                    : 'False'}}
-                                                </span>
-                                            </div>
+                                        <div *ngIf="q.isCorrect === false" class="answer-header correct mt-4">
+                                            <i class="fas fa-check-circle"></i>
+                                            <h4>Correct Answer</h4>
                                         </div>
-
-                                        <!-- For enumeration questions -->
-                                        <div class="answer-block" *ngIf="q.questionType === 'enumeration'">
-                                            <span class="answer-label">Student's Answers:</span>
-                                            <div class="answer-content">
-                                                <ul class="pl-5 list-disc">
-                                                    <li *ngFor="let answer of q.studentAnswer">{{answer}}</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-
-                                        <!-- For short-answer questions -->
-                                        <div class="answer-block" *ngIf="q.questionType !== 'multiple-choice' && 
-                                                                         q.questionType !== 'true-false' && 
-                                                                         q.questionType !== 'enumeration' && 
-                                                                         !Array.isArray(q.studentAnswer)">
-                                            <span class="answer-label">Student's Response:</span>
-                                            <div class="answer-content response-text">{{q.studentAnswer}}</div>
-                                        </div>
-
-                                        <!-- Correct answers -->
-                                        <div class="answer-block" *ngIf="q.correctAnswer">
-                                            <span class="answer-label">Correct Answer:</span>
-                                            <!-- For string answers -->
-                                            <div class="answer-content" *ngIf="!Array.isArray(q.correctAnswer)">
-                                                {{q.correctAnswer.charAt(0).toUpperCase() + q.correctAnswer.slice(1)}}
-                                            </div>
-                                            <!-- For array answers -->
-                                            <div class="answer-content"
-                                                *ngIf="Array.isArray(q.correctAnswer) && q.correctAnswer.length > 0">
-                                                <ul class="pl-5 list-disc">
-                                                    <li *ngFor="let answer of q.correctAnswer">{{answer}}</li>
-                                                </ul>
-                                            </div>
+                                        <div *ngIf="q.isCorrect === false" class="answer-content correct">
+                                            {{q.correctAnswer}}
                                         </div>
                                     </div>
 
-                                    <div class="grading-section">
-                                        <div class="grading-header">
-                                            <span class="grading-title">Grading</span>
-                                            <ng-container *ngIf="!q.isGrading">
-                                                <button class="review-button" (click)="startGrading(q)"
-                                                    [disabled]="!show">
-                                                    Rectify Grading
-                                                </button>
-                                            </ng-container>
+                                    <!-- For true-false questions -->
+                                    <div *ngIf="q.questionType === 'true-false'" class="answer-container">
+                                        <div class="answer-header">
+                                            <i class="fas fa-user"></i>
+                                            <h4>Student's Answer</h4>
+                                        </div>
+                                        <div class="answer-content" [class.incorrect]="q.isCorrect === false"
+                                            [class.correct]="q.isCorrect === true">
+                                            {{(q.studentAnswer === 'True' || q.studentAnswer === true) ? 'True' :
+                                            'False'}}
                                         </div>
 
-                                        <ng-container *ngIf="q.isGrading">
-                                            <div class="grading-form">
-                                                <div class="grading-status">
-                                                    <div class="status-options">
-                                                        <label class="status-label" [class.active]="q.grading.isCorrect"
-                                                            [attr.value]="true">
-                                                            <input type="radio" [(ngModel)]="q.grading.isCorrect"
-                                                                [value]="true" (change)="onCorrectnessChange(q)">
-                                                            <i class="fas fa-check status-icon correct"></i>
-                                                            <span class="status-text">Correct</span>
-                                                        </label>
-                                                        <label class="status-label"
-                                                            [class.active]="!q.grading.isCorrect" [attr.value]="false">
-                                                            <input type="radio" [(ngModel)]="q.grading.isCorrect"
-                                                                [value]="false" (change)="onCorrectnessChange(q)">
-                                                            <i class="fas fa-times status-icon incorrect"></i>
-                                                            <span class="status-text">Incorrect</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="points-control">
-                                                        <span class="points-label">Points:</span>
-                                                        <div class="points-wrapper">
-                                                            <input type="number" [(ngModel)]="q.grading.pointsEarned"
-                                                                [max]="q.maxPoints" [min]="0"
-                                                                [disabled]="!q.grading.isCorrect"
-                                                                (input)="onPointsInput(q, $event)">
-                                                            <span class="points-max">/{{q.maxPoints}}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="grading-actions">
-                                                    <button class="btn-cancel" (click)="cancelGrading(q)">
-                                                        Cancel
-                                                    </button>
-                                                    <button class="btn-save" (click)="saveGrading(q)">
-                                                        Save
-                                                    </button>
-                                                </div>
-                                            </div>
+                                        <div *ngIf="q.isCorrect === false" class="answer-header correct mt-4">
+                                            <i class="fas fa-check-circle"></i>
+                                            <h4>Correct Answer</h4>
+                                        </div>
+                                        <div *ngIf="q.isCorrect === false" class="answer-content correct">
+                                            {{q.correctAnswer}}
+                                        </div>
+                                    </div>
+
+                                    <!-- For enumeration questions -->
+                                    <div *ngIf="q.questionType === 'enumeration'" class="answer-container">
+                                        <div class="answer-header">
+                                            <i class="fas fa-user"></i>
+                                            <h4>Student's Answers</h4>
+                                        </div>
+                                        <div class="answer-content" [class.incorrect]="q.isCorrect === false">
+                                            <ul class="pl-5 list-disc">
+                                                <li *ngFor="let answer of q.studentAnswer">{{answer}}</li>
+                                            </ul>
+                                        </div>
+
+                                        <div *ngIf="q.isCorrect === false" class="answer-header correct mt-4">
+                                            <i class="fas fa-check-circle"></i>
+                                            <h4>Correct Answers</h4>
+                                        </div>
+                                        <div *ngIf="q.isCorrect === false" class="answer-content correct">
+                                            <ul class="pl-5 list-disc" *ngIf="Array.isArray(q.correctAnswer)">
+                                                <li *ngFor="let answer of q.correctAnswer">{{answer}}</li>
+                                            </ul>
+                                            <span *ngIf="!Array.isArray(q.correctAnswer)">{{q.correctAnswer}}</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- For short-answer questions -->
+                                    <div *ngIf="q.questionType !== 'multiple-choice' && 
+                                               q.questionType !== 'true-false' && 
+                                               q.questionType !== 'enumeration'" class="answer-container">
+                                        <div class="answer-header">
+                                            <i class="fas fa-user"></i>
+                                            <h4>Student's Response</h4>
+                                        </div>
+                                        <div class="answer-content" [class.incorrect]="q.isCorrect === false">
+                                            {{q.studentAnswer}}
+                                        </div>
+
+                                        <div *ngIf="q.isCorrect === false" class="answer-header correct mt-4">
+                                            <i class="fas fa-check-circle"></i>
+                                            <h4>Correct Answer</h4>
+                                        </div>
+                                        <div *ngIf="q.isCorrect === false" class="answer-content correct">
+                                            {{q.correctAnswer}}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="grading-section">
+                                    <div class="grading-header">
+                                        <span class="grading-title">Grading</span>
+                                        <ng-container *ngIf="!q.isGrading">
+                                            <button class="review-button" (click)="startGrading(q)" [disabled]="!show">
+                                                <i class="fas fa-edit"></i>
+                                                Rectify Grading
+                                            </button>
                                         </ng-container>
                                     </div>
+
+                                    <ng-container *ngIf="q.isGrading">
+                                        <div class="grading-form-compact">
+                                            <div class="grading-row">
+                                                <div class="status-options-compact">
+                                                    <label class="status-btn" [class.active]="q.grading.isCorrect"
+                                                        [attr.value]="true">
+                                                        <input type="radio" [(ngModel)]="q.grading.isCorrect"
+                                                            [value]="true" (change)="onCorrectnessChange(q)">
+                                                        <i class="fas fa-check"></i>
+                                                        <span>Correct</span>
+                                                    </label>
+                                                    <label class="status-btn" [class.active]="!q.grading.isCorrect"
+                                                        [attr.value]="false">
+                                                        <input type="radio" [(ngModel)]="q.grading.isCorrect"
+                                                            [value]="false" (change)="onCorrectnessChange(q)">
+                                                        <i class="fas fa-times"></i>
+                                                        <span>Incorrect</span>
+                                                    </label>
+                                                </div>
+                                                <div class="points-input-compact">
+                                                    <input type="number" [(ngModel)]="q.grading.pointsEarned"
+                                                        [max]="q.maxPoints" [min]="0" [disabled]="!q.grading.isCorrect"
+                                                        (input)="onPointsInput(q, $event)" placeholder="0">
+                                                    <span class="points-divider">/</span>
+                                                    <span class="points-total">{{q.maxPoints}}</span>
+                                                </div>
+                                                <div class="actions-compact">
+                                                    <button class="btn-compact btn-cancel-compact"
+                                                        (click)="cancelGrading(q)">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                    <button class="btn-compact btn-save-compact"
+                                                        (click)="saveGrading(q)">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
                                 </div>
                             </div>
                         </div>
