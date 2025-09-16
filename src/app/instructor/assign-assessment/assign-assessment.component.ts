@@ -61,20 +61,22 @@ interface AssignmentData {
   startDate: string;
   dueDate: string;
   timeLimit: number;
-  timeLimitPerQuestion: number;
   instructions: string;
   createdBy: string;
   assignmentMode: 'assessment' | 'mastery' | 'public';
   classCodes: string[];
   maxAttempts: number;
   totalPoints?: number;
+  status?: string;
   modeSettings: {
     masteryScore?: number;
     joiningCode?: string;
     randomizeQuestions: boolean;
     showResults: 'immediate' | 'completed';
+    timedQuestions: number;
     passingScore: number;
   };
+  sendUpdates?: boolean | false;
 }
 
 @Component({
@@ -104,6 +106,8 @@ export class AssignAssessmentComponent implements OnInit {
   randomizeQuestions: boolean = false;
   specialInstructions: string = '';
   customTitle: string = '';
+  isNowSelected: boolean = false;
+  sendUpdates: boolean = false;
 
   // Mastery mode settings
   masteryScore: number = 90;
@@ -169,7 +173,7 @@ export class AssignAssessmentComponent implements OnInit {
   showingAll: boolean = false;
   dateFilter: string = 'all';
 
-  timeLimitPerQuestion: number = 0;
+  timedQuestions: number = 0;
 
   @HostListener('window:resize')
   onResize() {
@@ -407,9 +411,7 @@ export class AssignAssessmentComponent implements OnInit {
   }
 
   getClassName(classId: string): string {
-    console.log(this.classes);
     const classObj = this.classes.find(c => String(c.classCode) === String(classId));
-    console.log(classObj)
     return classObj ? classObj.className : '';
   }
 
@@ -452,6 +454,8 @@ export class AssignAssessmentComponent implements OnInit {
 
   applyStartDatePreset(preset: DatePreset) {
     this.startDate = this.formatDate(preset.startDate);
+
+    this.isNowSelected = preset.label === 'Now';
 
     if (this.dueDate) {
       const startDateTime = new Date(this.startDate);
@@ -652,7 +656,6 @@ export class AssignAssessmentComponent implements OnInit {
       startDate: this.startDate,
       dueDate: this.dueDate,
       timeLimit: this.timeLimit,
-      timeLimitPerQuestion: this.timeLimitPerQuestion,
       instructions: this.specialInstructions,
       createdBy: this.userId,
       assignmentMode: this.selectedMode,
@@ -663,9 +666,13 @@ export class AssignAssessmentComponent implements OnInit {
       modeSettings: {
         randomizeQuestions: this.randomizeQuestions,
         showResults: this.showResults,
-        passingScore: this.passingScore
-      }
+        passingScore: this.passingScore,
+        timedQuestions: this.timedQuestions,
+      },
+      sendUpdates: this.sendUpdates || false
     };
+
+    assignmentData.status = this.isNowSelected ? 'ongoing' : 'scheduled';
 
     // console.log(assignmentData.classCodes);
     if (this.selectedMode === 'mastery') {
@@ -693,11 +700,11 @@ export class AssignAssessmentComponent implements OnInit {
       return 'Time limit must be at least 1 minute.';
     }
 
-    if (this.timeLimitPerQuestion > 0) {
-      if (this.timeLimitPerQuestion < 10) {
+    if (this.timedQuestions > 0) {
+      if (this.timedQuestions < 10) {
         return 'Time Limit per Question is Unreasonable must be at least 10'
       }
-      if (this.timeLimitPerQuestion > 180) {
+      if (this.timedQuestions > 180) {
         return 'Time Limit per Question cannot exceed 3 minutes'
       }
     }
@@ -753,8 +760,8 @@ export class AssignAssessmentComponent implements OnInit {
   }
 
   isTimeLimitPerQuestionInvalid(): boolean {
-    if (this.timeLimitPerQuestion === 0) return false;
-    return this.timeLimitPerQuestion < 10 || this.timeLimitPerQuestion > 180;
+    if (this.timedQuestions === 0) return false;
+    return this.timedQuestions < 10 || this.timedQuestions > 180;
   }
 
 
@@ -787,7 +794,7 @@ export class AssignAssessmentComponent implements OnInit {
         assignmentData.classCodes = [];
         this.api.assignAssessment(assignmentData).subscribe({
           next: (response) => {
-            console.log('Public Assignment Response:', response);
+            // console.log('Public Assignment Response:', response);
             this.showSuccessAndNavigate();
           },
           error: (error) => {
@@ -800,14 +807,12 @@ export class AssignAssessmentComponent implements OnInit {
           ? Array.from(this.selectedClasses)
           : Array.from(this.selectedStudents);
 
-        console.log('Recipients:', recipients);
-
         const assignments = recipients.map(recipient => {
           const singleAssignment = {
             ...assignmentData,
             classCodes: [recipient]
           };
-          console.log('Single Assignment Data:', singleAssignment);
+          // console.log('Single Assignment Data:', singleAssignment);
           return this.api.assignAssessment(singleAssignment);
         });
 
@@ -994,16 +999,17 @@ export class AssignAssessmentComponent implements OnInit {
       startDate: this.startDate,
       dueDate: this.dueDate,
       timeLimit: this.timeLimit,
-      timeLimitPerQuestion: this.timeLimitPerQuestion,
       instructions: this.specialInstructions,
       createdBy: this.userId,
       assignmentMode: "assessment",
       modeSettings: {
         randomizeQuestions: this.randomizeQuestions,
         showResults: this.showResults,
-        passingScore: this.passingScore
+        passingScore: this.passingScore,
+        timedQuestions: this.timedQuestions,
       },
       maxAttempts: this.attemptsAllowed,
+      sendUpdates: this.sendUpdates || false
     }
 
 

@@ -1,4 +1,4 @@
-import { Component, HostListener, ViewChild, OnInit } from '@angular/core';
+import { Component, HostListener, ViewChild, OnInit, NgZone, OnDestroy } from '@angular/core';
 import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -31,7 +31,7 @@ import { TutorialService } from '../../services/tutorial.service';
   templateUrl: './stud-home.component.html',
   styleUrl: './stud-home.component.css'
 })
-export class StudHomeComponent implements OnInit {
+export class StudHomeComponent implements OnInit, OnDestroy {
   isMobile = window.innerWidth < 768;
   @HostListener('window:resize')
   onResize() {
@@ -56,6 +56,8 @@ export class StudHomeComponent implements OnInit {
   showJoinAssessmentModal = false;
   isLoading = true;
 
+  private eventSource: EventSource | null = null;
+
   constructor(
     private auth: AuthService,
     private api: StudentService,
@@ -63,7 +65,8 @@ export class StudHomeComponent implements OnInit {
     private router: Router,
     private fb: FormBuilder,
     private dialog: MatDialog,
-    private tutorialService: TutorialService
+    private tutorialService: TutorialService,
+    private ngZone: NgZone
   ) {
     this.titleService.setTitle('PRISM | Dashboard');
     this.joinClassForm = this.fb.group({
@@ -93,12 +96,17 @@ export class StudHomeComponent implements OnInit {
         this.username = resp.name;
         this.profile = resp.profilePicture;
         this.getStatistics(this.userId);
+        this.setupRealTimeUpdates();
       },
       error: (err) => {
         console.log(err);
       }
     })
 
+  }
+
+  ngOnDestroy() {
+    this.closeEventSource();
   }
 
   getStatistics(id: string) {
@@ -118,6 +126,57 @@ export class StudHomeComponent implements OnInit {
         console.log(err);
       }
     })
+  }
+
+  private setupRealTimeUpdates() {
+    if (!this.userId) return;
+
+    this.eventSource = this.api.studentDashboardUpdates(this.userId);
+
+    this.eventSource.onmessage = (event) => {
+      this.ngZone.run(() => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.type === 'update_detected') {
+            this.getStatistics(this.userId);
+          }
+        } catch (error) {
+          console.error('Error handling real-time update:', error);
+        }
+      });
+    };
+
+    this.eventSource.onerror = (error: any) => {
+      this.ngZone.run(() => {
+        if (this.eventSource) {
+          const readyState = this.eventSource.readyState;
+          if (readyState === EventSource.CLOSED) {
+            console.warn('Maximum EventSource connections reached or connection closed.');
+          } else if (readyState === EventSource.CONNECTING) {
+            console.log('EventSource is reconnecting...');
+            this.reconnectAfterDelay();
+          } else {
+            console.log('EventSource connection error. ReadyState:', readyState);
+          }
+        }
+      });
+    };
+
+  }
+
+  private reconnectAfterDelay() {
+    setTimeout(() => {
+      if (this.eventSource?.readyState === EventSource.CLOSED) {
+        this.setupRealTimeUpdates();
+      }
+    }, 5000);
+  }
+
+  private closeEventSource() {
+    if (this.eventSource) {
+      this.eventSource.close();
+      this.eventSource = null;
+    }
   }
 
   setActiveTab(tab: string) {

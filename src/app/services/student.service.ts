@@ -9,11 +9,14 @@ export class StudentService {
   // Assessment = 'https://prismapi2.onrender.com/submission';
   // apiUrl = 'http://localhost:8000/student';
   // Assessment = 'http://localhost:8000/submission';
+  // rtUrl = 'http://localhost:8000/rt';
+
 
 
   // Google Cloud Console 
   apiUrl = 'https://api.prismgcccs.live/student';
   Assessment = 'https://api.prismgcccs.live/submission';
+  rtUrl = 'https://api.prismgcccs.live/rt';
 
 
   constructor(private http: HttpClient) { }
@@ -21,6 +24,10 @@ export class StudentService {
   //dashboad page
   getDashboardData(id: string) {
     return this.http.get(`${this.apiUrl}/statistics/${id}`);
+  }
+
+  studentDashboardUpdates(studentId: string): EventSource {
+    return new EventSource(`${this.rtUrl}/student/stream/${studentId}/updates`);
   }
 
   //conformation page

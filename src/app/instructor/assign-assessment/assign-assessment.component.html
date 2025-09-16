@@ -818,7 +818,7 @@
                                                 Time per Question
                                             </label>
                                             <div class="time-input-wrapper">
-                                                <input type="number" [(ngModel)]="timeLimitPerQuestion" min="0"
+                                                <input type="number" [(ngModel)]="timedQuestions" min="0"
                                                     [class.validation-error]="isTimeLimitPerQuestionInvalid()"
                                                     class="time-input-enhanced" placeholder="0">
                                                 <div class="time-unit">seconds</div>
@@ -879,6 +879,21 @@
                                                         <span class="checkbox-title">Randomize Questions</span>
                                                         <span class="checkbox-description">Questions will appear in
                                                             different order for each student</span>
+                                                    </div>
+                                                </label>
+                                            </div>
+
+                                            <div class="checkbox-option-enhanced">
+                                                <input type="checkbox" [(ngModel)]="sendUpdates" id="send-updates"
+                                                    class="checkbox-input-enhanced">
+                                                <label for="send-updates" class="checkbox-label-enhanced">
+                                                    <div class="checkbox-indicator">
+                                                        <i class="fas fa-check"></i>
+                                                    </div>
+                                                    <div class="checkbox-text">
+                                                        <span class="checkbox-title">Send Updates</span>
+                                                        <span class="checkbox-description">Send updates to students when
+                                                            the assessment is assigned</span>
                                                     </div>
                                                 </label>
                                             </div>

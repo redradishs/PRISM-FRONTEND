@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgChartsConfiguration, BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';
@@ -58,7 +58,7 @@ interface AssessmentProgress {
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit, AfterViewInit {
+export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   userId: string = '';
   username: string = '';
   profile: string = '';
@@ -82,13 +82,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
   @ViewChild('barChart') barChart?: BaseChartDirective;
   @ViewChild('pieChart') pieChart?: BaseChartDirective;
 
+  private eventSource: EventSource | null = null;
+
   @HostListener('window:resize')
   onResize() {
     this.isMobile = window.innerWidth < 768;
     this.resizeCharts();
   }
 
-  constructor(private api: ApiService, private auth: AuthService, private router: Router, private titleService: Title, private tutorialService: TutorialService) {
+  constructor(private api: ApiService, private auth: AuthService, private router: Router, private titleService: Title, private tutorialService: TutorialService, private ngZone: NgZone) {
     this.titleService.setTitle('PRISM | Home');
   }
 
@@ -102,6 +104,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.getOnGoingAssessments(this.userId);
         this.getScheduledAssessments(this.userId);
         this.getDisputes();
+
+        this.setupRealTimeUpdates();
       } else {
         console.log('No user found');
       }
@@ -111,6 +115,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.tutorialService.continueTutorial();
       }
     }, 500);
+  }
+
+  ngOnDestroy() {
+    this.closeEventSource();
   }
 
   ngAfterViewInit() {
@@ -180,6 +188,77 @@ export class HomeComponent implements OnInit, AfterViewInit {
     });
 
     return dueThisWeek.length;
+  }
+
+  private setupRealTimeUpdates() {
+    if (!this.userId) return;
+
+    this.eventSource = this.api.instructorDashboardUpdates(this.userId);
+
+    this.eventSource.onmessage = (event) => {
+      this.ngZone.run(() => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.type === 'update_detected') {
+            this.getOnGoingAssessments(this.userId);
+            this.getScheduledAssessments(this.userId);
+          }
+
+          switch (data.type) {
+            case 'connected':
+              console.log('Real-time connection established.');
+              break;
+            case 'update_detected':
+              console.log('Real-time update detected. Fetching latest data...');
+              this.getOnGoingAssessments(this.userId);
+              this.getScheduledAssessments(this.userId);
+              break;
+            case 'max_reached':
+              this.closeEventSource();
+              console.warn('Maximum EventSource connections reached. Connection closed.');
+              break;
+            default:
+              console.log('Unknown real-time event type:', data.type);
+          }
+
+        } catch (error) {
+          console.error('Error handling real-time update:', error);
+        }
+      });
+    };
+
+    this.eventSource.onerror = (error: any) => {
+      this.ngZone.run(() => {
+        if (this.eventSource) {
+          const readyState = this.eventSource.readyState;
+          if (readyState === EventSource.CLOSED) {
+            console.warn('Maximum EventSource connections reached or connection closed.');
+          } else if (readyState === EventSource.CONNECTING) {
+            console.log('EventSource is reconnecting...');
+            this.reconnectAfterDelay();
+          } else {
+            console.log('EventSource connection error. ReadyState:', readyState);
+          }
+        }
+      });
+    };
+
+  }
+
+
+  private reconnectAfterDelay() {
+    setTimeout(() => {
+      if (this.eventSource?.readyState === EventSource.CLOSED) {
+        this.setupRealTimeUpdates();
+      }
+    }, 5000);
+  }
+
+  private closeEventSource() {
+    if (this.eventSource) {
+      this.eventSource.close();
+      this.eventSource = null;
+    }
   }
 
 

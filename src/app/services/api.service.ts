@@ -124,6 +124,10 @@ export class ApiService {
 
   ///
 
+  instructorDashboardUpdates(instructorId: string): EventSource {
+    return new EventSource(`${this.rtUrl}/instructor/stream/${instructorId}/updates`);
+  }
+
   getOngoingAssessments(id: string, limit?: number) {
     const url = limit ? `${this.apiUrl}/getOnGoingAssessments/${id}?limit=${limit}` : `${this.apiUrl}/getOnGoingAssessments/${id}`;
     return this.http.get(url);
