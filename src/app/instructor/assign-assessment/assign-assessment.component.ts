@@ -75,6 +75,8 @@ interface AssignmentData {
     showResults: 'immediate' | 'completed';
     timedQuestions: number;
     passingScore: number;
+    enableDatabank?: boolean;
+    questionsToServe?: number;
   };
   sendUpdates?: boolean | false;
 }
@@ -108,6 +110,10 @@ export class AssignAssessmentComponent implements OnInit {
   customTitle: string = '';
   isNowSelected: boolean = false;
   sendUpdates: boolean = false;
+  totalQuestions: number = 0;
+  enableDatabank: boolean = false;
+  questionsToServe: number = 0;
+  assessment: any;
 
   // Mastery mode settings
   masteryScore: number = 90;
@@ -330,12 +336,22 @@ export class AssignAssessmentComponent implements OnInit {
     if (this.selectedAssessments.has(assessmentId)) {
       this.selectedAssessments.delete(assessmentId);
       this.selectedAssessmentPoints = 0;
+      this.totalQuestions = 0;
+      this.enableDatabank = false;
+      this.questionsToServe = 0;
     } else {
       this.selectedAssessments.clear();
       this.selectedAssessments.add(assessmentId);
-      const assessment = this.assessments.find(a => a._id === assessmentId);
-      if (assessment) {
-        this.selectedAssessmentPoints = assessment.totalPoints;
+      this.assessment = this.assessments.find(a => a._id === assessmentId);
+      this.totalQuestions = this.assessment ? this.assessment.totalQuestions : 0;
+
+      if (!this.canbeDatabanked()) {
+        this.enableDatabank = false;
+        this.questionsToServe = 0;
+      }
+
+      if (this.assessment) {
+        this.selectedAssessmentPoints = this.assessment.totalPoints;
         if (this.selectedMode === 'mastery') {
           this.validateMasteryScore();
         }
@@ -431,6 +447,8 @@ export class AssignAssessmentComponent implements OnInit {
       this.showResults = 'immediate';
       this.randomizeQuestions = false;
       this.masteryScore = Math.min(90, this.selectedAssessmentPoints);
+      this.enableDatabank = false;
+      this.questionsToServe = 0;
     } else if (mode === 'public') {
       this.attemptsAllowed = 1;
       this.showResults = 'immediate';
@@ -668,6 +686,8 @@ export class AssignAssessmentComponent implements OnInit {
         showResults: this.showResults,
         passingScore: this.passingScore,
         timedQuestions: this.timedQuestions,
+        enableDatabank: this.enableDatabank,
+        questionsToServe: this.enableDatabank ? this.questionsToServe : 0
       },
       sendUpdates: this.sendUpdates || false
     };
@@ -764,6 +784,41 @@ export class AssignAssessmentComponent implements OnInit {
     return this.timedQuestions < 10 || this.timedQuestions > 180;
   }
 
+  canbeDatabanked(): boolean {
+    return this.totalQuestions >= 20;
+  }
+
+  getMaxQuestionsAvailable(): number {
+    if (this.totalQuestions > 0) {
+      const maxQuestions = this.totalQuestions || 0;
+      const allowedMax = Math.floor(maxQuestions - 5);
+      return allowedMax > 0 ? allowedMax : 0;
+    }
+    return 0;
+  }
+
+  isQuestionsToServeInvalid(): boolean {
+    if (!this.enableDatabank) return false;
+
+    const max = this.getMaxQuestionsAvailable();
+    return this.questionsToServe < 1 || this.questionsToServe > max;
+  }
+
+  onDataBankToggle() {
+    if (!this.canbeDatabanked()) {
+      this.enableDatabank = false;
+      this.questionsToServe = 0;
+      return;
+    }
+
+    if (!this.enableDatabank) {
+      this.questionsToServe = 0;
+    } else {
+      this.randomizeQuestions = false;
+      const maxQuestions = this.getMaxQuestionsAvailable();
+      this.questionsToServe = Math.max(5, Math.floor(maxQuestions / 2));
+    }
+  }
 
   async saveAssignment() {
     const validationError = this.validateAssignmentData();
@@ -1007,6 +1062,8 @@ export class AssignAssessmentComponent implements OnInit {
         showResults: this.showResults,
         passingScore: this.passingScore,
         timedQuestions: this.timedQuestions,
+        enableDatabank: this.enableDatabank,
+        questionsToServe: this.enableDatabank ? this.questionsToServe : 0
       },
       maxAttempts: this.attemptsAllowed,
       sendUpdates: this.sendUpdates || false
