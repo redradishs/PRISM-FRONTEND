@@ -17,9 +17,9 @@ export class PwaService {
    * Check if app is running in standalone mode (installed as PWA)
    */
   isStandaloneMode(): boolean {
-    return (window.matchMedia('(display-mode: standalone)').matches) || 
-           (window.navigator as any)?.standalone || 
-           document.referrer.includes('android-app://');
+    return (window.matchMedia('(display-mode: standalone)').matches) ||
+      (window.navigator as any)?.standalone ||
+      document.referrer.includes('android-app://');
   }
 
   /**
@@ -44,6 +44,51 @@ export class PwaService {
   }
 
   /**
+   * Check if service worker is active
+   */
+  async isServiceWorkerActive(): Promise<boolean> {
+    if (!this.isServiceWorkerSupported()) {
+      return false;
+    }
+
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      return registration.active !== null;
+    } catch (error) {
+      console.error('Error checking service worker status:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Get service worker status for debugging
+   */
+  async getServiceWorkerStatus(): Promise<any> {
+    if (!this.isServiceWorkerSupported()) {
+      return { supported: false, active: false, controller: null };
+    }
+
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      return {
+        supported: true,
+        active: registration.active !== null,
+        controller: navigator.serviceWorker.controller !== null,
+        state: registration.active?.state,
+        scope: registration.scope,
+        updateViaCache: registration.updateViaCache
+      };
+    } catch (error) {
+      return {
+        supported: true,
+        active: false,
+        controller: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  /**
    * Prompt user to install PWA
    */
   async promptInstall(): Promise<boolean> {
@@ -54,13 +99,13 @@ export class PwaService {
     try {
       this.installPromptEvent.prompt();
       const choiceResult = await this.installPromptEvent.userChoice;
-      
+
       if (choiceResult.outcome === 'accepted') {
         this.installPromptEvent = null;
         this.isInstallableSubject.next(false);
         return true;
       }
-      
+
       return false;
     } catch (error) {
       console.error('Error prompting PWA install:', error);
@@ -82,6 +127,34 @@ export class PwaService {
       return 'minimal-ui';
     }
     return 'browser';
+  }
+
+  /**
+   * Get comprehensive PWA debug information
+   */
+  async getDebugInfo(): Promise<any> {
+    const serviceWorkerStatus = await this.getServiceWorkerStatus();
+
+    return {
+      pwa: {
+        isInstalled: this.isStandaloneMode(),
+        isInstallable: this.isInstallableSubject.value,
+        displayMode: this.getDisplayMode(),
+        hasInstallPrompt: this.installPromptEvent !== null
+      },
+      serviceWorker: serviceWorkerStatus,
+      browser: {
+        userAgent: navigator.userAgent,
+        referrer: document.referrer,
+        standalone: (window.navigator as any)?.standalone,
+        cookieEnabled: navigator.cookieEnabled
+      },
+      viewport: {
+        width: window.innerWidth,
+        height: window.innerHeight,
+        orientation: window.screen?.orientation?.type || 'unknown'
+      }
+    };
   }
 
   /**

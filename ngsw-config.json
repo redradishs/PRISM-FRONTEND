@@ -29,19 +29,31 @@
   ],
   "dataGroups": [
     {
-      "name": "api-freshness",
+      "name": "api-cache-first",
       "urls": [
+        "https://api.prismgcccs.live/**",
         "https://prismapi2.onrender.com/**",
         "https://redprismai.vercel.app/**",
-        "https://api.studio.nebius.com/**",
         "http://localhost:8000/**",
         "http://localhost:3000/**"
       ],
       "cacheConfig": {
-        "strategy": "freshness",
+        "strategy": "performance",
+        "maxSize": 10,
+        "maxAge": "1h",
+        "timeout": "15s"
+      }
+    },
+    {
+      "name": "ai-api-bypass",
+      "urls": [
+        "https://api.studio.nebius.com/**"
+      ],
+      "cacheConfig": {
+        "strategy": "performance",
         "maxSize": 0,
         "maxAge": "0u",
-        "timeout": "5s"
+        "timeout": "30s"
       }
     }
   ],

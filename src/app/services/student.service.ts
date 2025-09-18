@@ -14,9 +14,15 @@ export class StudentService {
 
 
   // Google Cloud Console 
-  apiUrl = 'https://api.prismgcccs.live/student';
-  Assessment = 'https://api.prismgcccs.live/submission';
-  rtUrl = 'https://api.prismgcccs.live/rt';
+  // apiUrl = 'https://api.prismgcccs.live/student';
+  // Assessment = 'https://api.prismgcccs.live/submission';
+  // rtUrl = 'https://api.prismgcccs.live/rt';
+
+
+  // Google Cloud Console 
+  apiUrl = 'https://vps.prismgcccs.live/student';
+  Assessment = 'https://vps.prismgcccs.live/submission';
+  rtUrl = 'https://vps.prismgcccs.live/rt';
 
 
   constructor(private http: HttpClient) { }

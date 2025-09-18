@@ -22,9 +22,29 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 // Function to check if app is running in standalone mode (installed as PWA)
 function isStandaloneMode(): boolean {
-  return (window.matchMedia('(display-mode: standalone)').matches) || 
-         (window.navigator as any)?.standalone || 
-         document.referrer.includes('android-app://');
+  // Check for display-mode: standalone (PWA installed)
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+
+  // Check for iOS Safari standalone mode
+  const isIOSStandalone = (window.navigator as any)?.standalone === true;
+
+  // Check for Android app referrer
+  const isAndroidApp = document.referrer.includes('android-app://');
+
+  // Check for TWA (Trusted Web Activity) indicators
+  const isTWA = document.referrer.startsWith('android-app://') ||
+    (window as any)?.matchMedia?.('(display-mode: standalone)')?.matches;
+
+  console.log('PWA Detection:', {
+    isStandalone,
+    isIOSStandalone,
+    isAndroidApp,
+    isTWA,
+    userAgent: navigator.userAgent,
+    referrer: document.referrer
+  });
+
+  return isStandalone || isIOSStandalone || isAndroidApp || isTWA;
 }
 
 // Function to check if service worker should be enabled
@@ -32,8 +52,10 @@ function shouldEnableServiceWorker(): boolean {
   if (isDevMode()) {
     return false; // Always disabled in development
   }
-  
-  return isStandaloneMode(); // Only enabled when installed as PWA
+
+  const isPWA = isStandaloneMode();
+  console.log(`Service Worker: ${isPWA ? 'Enabled' : 'Disabled'} - PWA mode: ${isPWA}`);
+  return isPWA;
 }
 
 export const appConfig: ApplicationConfig = {
@@ -55,7 +77,7 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(HttpClientModule),
     provideCharts(withDefaultRegisterables()),
     provideServiceWorker('ngsw-worker.js', {
-      enabled: !isDevMode(),
+      enabled: shouldEnableServiceWorker(),
       registrationStrategy: 'registerWhenStable:30000'
     }),
 
