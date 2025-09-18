@@ -35,15 +35,6 @@ function isStandaloneMode(): boolean {
   const isTWA = document.referrer.startsWith('android-app://') ||
     (window as any)?.matchMedia?.('(display-mode: standalone)')?.matches;
 
-  console.log('PWA Detection:', {
-    isStandalone,
-    isIOSStandalone,
-    isAndroidApp,
-    isTWA,
-    userAgent: navigator.userAgent,
-    referrer: document.referrer
-  });
-
   return isStandalone || isIOSStandalone || isAndroidApp || isTWA;
 }
 
@@ -53,9 +44,7 @@ function shouldEnableServiceWorker(): boolean {
     return false; // Always disabled in development
   }
 
-  const isPWA = isStandaloneMode();
-  console.log(`Service Worker: ${isPWA ? 'Enabled' : 'Disabled'} - PWA mode: ${isPWA}`);
-  return isPWA;
+  return isStandaloneMode(); // Only enabled when installed as PWA
 }
 
 export const appConfig: ApplicationConfig = {

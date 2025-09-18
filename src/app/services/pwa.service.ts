@@ -130,34 +130,6 @@ export class PwaService {
   }
 
   /**
-   * Get comprehensive PWA debug information
-   */
-  async getDebugInfo(): Promise<any> {
-    const serviceWorkerStatus = await this.getServiceWorkerStatus();
-
-    return {
-      pwa: {
-        isInstalled: this.isStandaloneMode(),
-        isInstallable: this.isInstallableSubject.value,
-        displayMode: this.getDisplayMode(),
-        hasInstallPrompt: this.installPromptEvent !== null
-      },
-      serviceWorker: serviceWorkerStatus,
-      browser: {
-        userAgent: navigator.userAgent,
-        referrer: document.referrer,
-        standalone: (window.navigator as any)?.standalone,
-        cookieEnabled: navigator.cookieEnabled
-      },
-      viewport: {
-        width: window.innerWidth,
-        height: window.innerHeight,
-        orientation: window.screen?.orientation?.type || 'unknown'
-      }
-    };
-  }
-
-  /**
    * Initialize PWA event listeners
    */
   private initializePwaListeners(): void {
