@@ -70,6 +70,8 @@ export class StudClassesComponent implements OnInit {
   classCode = '';
   viewMode: 'grid' | 'list' = 'grid';
   classes: any[] = [];
+  loadedEnrolled: boolean = false;
+  loadedPending: boolean = false;
 
   pendingApplications: any[] = [];
 
@@ -105,7 +107,6 @@ export class StudClassesComponent implements OnInit {
       this.profile = user.profilePicture;
       this.getStats();
       this.enrolledClasses();
-      this.pendingApplicationList();
     })
     const savedView = localStorage.getItem('classView');
     if (savedView) {
@@ -133,6 +134,18 @@ export class StudClassesComponent implements OnInit {
 
   setActiveTab(tab: 'enrolled' | 'pending') {
     this.activeTab = tab;
+
+    switch (tab) {
+      case 'enrolled':
+        if (!this.loadedEnrolled) {
+          this.enrolledClasses();
+        }
+        break;
+      case 'pending':
+        if (!this.loadedPending) {
+          this.pendingApplicationList();
+        }
+    }
   }
 
   toggleSidebar() {
@@ -184,6 +197,7 @@ export class StudClassesComponent implements OnInit {
             color: this.getBadgeColor(i)
           };
         });
+        this.loadedEnrolled = true;
         // console.log(this.classes);
       },
       error: (err: any) => {
@@ -196,6 +210,7 @@ export class StudClassesComponent implements OnInit {
     this.api.pendingApplications(this.userId, this.page, this.limit).subscribe({
       next: (resp: any) => {
         this.pendingApplications = resp.data.result;
+        this.loadedPending = true;
         // console.log(this.pendingApplications);
       }, error: (err: any) => {
         console.log(err);

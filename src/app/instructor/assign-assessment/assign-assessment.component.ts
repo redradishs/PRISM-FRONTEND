@@ -206,7 +206,6 @@ export class AssignAssessmentComponent implements OnInit {
         this.profile = user.profilePicture;
         this.loadAssessments(this.userId);
         this.loadClasses(this.userId);
-        this.loadStudents();
       },
       error: (err) => {
         this.error = 'Failed to load user data';
@@ -289,6 +288,7 @@ export class AssignAssessmentComponent implements OnInit {
       this.selectedMode = 'public';
       this.attemptsAllowed = 1;
       this.showResults = 'completed';
+      this.loadStudents();
       this.generateJoiningCode();
     }
     if (type === 'public') {

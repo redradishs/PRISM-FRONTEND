@@ -239,19 +239,19 @@
                                         </div>
                                     </div>
 
-                                    <div class="performance-summary">
+                                    <div *ngIf="performance" class="performance-summary">
                                         <h4>Performance Summary</h4>
                                         <div class="stats-grid">
                                             <div class="stat-card">
-                                                <div class="stat-value one">{{profile.assessmentsTaken}}</div>
+                                                <div class="stat-value one">{{performance.totalAssessmentTaken}}</div>
                                                 <div class="stat-label">Assessments Taken</div>
                                             </div>
                                             <div class="stat-card">
-                                                <div class="stat-value two">{{profile.averageScore}}%</div>
+                                                <div class="stat-value two">{{performance.averageScore}}%</div>
                                                 <div class="stat-label">Average Score</div>
                                             </div>
                                             <div class="stat-card">
-                                                <div class="stat-value two">{{profile.completionRate}}%</div>
+                                                <div class="stat-value two">{{performance.completionRate}}%</div>
                                                 <div class="stat-label">Completion Rate</div>
                                             </div>
                                         </div>
@@ -429,46 +429,53 @@
                                     <p>Your assessment performance and progress</p>
                                 </div>
                                 <div class="card-body">
-                                    <div class="performance-overview">
+                                    <div *ngIf="performance" class="performance-overview">
                                         <div class="progress-section">
                                             <div class="progress-header">
                                                 <label>Overall Performance</label>
-                                                <span>{{profile.averageScore}}%</span>
+                                                <span>{{performance?.averageScore}}%</span>
                                             </div>
                                             <div class="progress-bar">
-                                                <div class="progress-fill" [style.width.%]="profile.averageScore"></div>
+                                                <div class="progress-fill"
+                                                    [ngClass]="getPercentage(performance?.averageScore)"
+                                                    [style.width.%]="performance?.averageScore">
+                                                </div>
                                             </div>
                                         </div>
 
                                         <div class="stats-grid">
                                             <div class="stat-card">
-                                                <div class="stat-value">{{profile.assessmentsTaken}}</div>
+                                                <div class="stat-value">{{performance?.totalAssessmentTaken}}</div>
                                                 <div class="stat-label">Assessments Taken</div>
                                             </div>
                                             <div class="stat-card">
-                                                <div class="stat-value">{{profile.averageScore}}%</div>
+                                                <div class="stat-value">{{performance?.averageScore}}%</div>
                                                 <div class="stat-label">Average Score</div>
                                             </div>
                                             <div class="stat-card">
-                                                <div class="stat-value">{{profile.completionRate}}%</div>
+                                                <div class="stat-value">{{performance?.completionRate}}%</div>
                                                 <div class="stat-label">Completion Rate</div>
                                             </div>
                                         </div>
 
                                         <div class="subject-performance">
-                                            <h4>Subject Performance</h4>
+                                            <h4>Category Performance</h4>
                                             <div class="subject-list">
-                                                <div class="subject-item" *ngFor="let subject of subjectPerformance">
+                                                <div class="subject-item"
+                                                    *ngFor="let category of getCategoryBreakdownEntries()">
                                                     <div class="subject-header">
-                                                        <span>{{subject.name}}</span>
-                                                        <span>{{subject.score}}%</span>
+                                                        <span>{{category.key}}</span>
+                                                        <span>{{category.value.averagePercentage}}%</span>
                                                     </div>
                                                     <div class="progress-bar">
-                                                        <div class="progress-fill" [style.width.%]="subject.score">
+                                                        <div class="progress-fill"
+                                                            [ngClass]="getPercentage(category.value.averagePercentage)"
+                                                            [style.width.%]="category.value.averagePercentage">
                                                         </div>
                                                     </div>
                                                     <div class="subject-stats">
-                                                        <span>{{subject.completionRate}}% Completion</span>
+                                                        <span>{{category.value.assessmentsTaken}} Assessments
+                                                            Taken</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -488,12 +495,17 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="assessment-list">
-                                            <div class="assessment-item" *ngFor="let assessment of recentAssessments">
+                                            <div (click)="gotoAssessment(assessment)" class="assessment-item"
+                                                *ngFor="let assessment of recentAssessments">
                                                 <div class="assessment-info">
                                                     <p class="assessment-title">{{assessment.title}}</p>
-                                                    <p class="assessment-date">{{assessment.date}}</p>
+                                                    <p class="assessment-date">{{assessment.submittedAt | date:
+                                                        'shortDate'}}</p>
                                                 </div>
-                                                <span class="badge score-badge">{{assessment.score}}%</span>
+                                                <span class="badge"
+                                                    [ngClass]="getScoreBadgeClass(assessment.score, assessment.totalPoints)">
+                                                    {{calculatePercentage(assessment.score, assessment.totalPoints)}}%
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -506,16 +518,22 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="assessment-list">
-                                            <div class="assessment-item" *ngFor="let assessment of upcomingAssessments">
+                                            <div (click)="gotoConfirmation(assessment)" class="assessment-item"
+                                                *ngFor="let assessment of upcomingAssessments">
                                                 <div class="assessment-info">
                                                     <p class="assessment-title">{{assessment.title}}</p>
-                                                    <p class="assessment-date">Due: {{assessment.date}}</p>
+                                                    <div>
+                                                        <p class="assessment-date">Start: {{assessment.startDate | date:
+                                                            'MMM d, y h:mm a':'PHT'}}</p>
+                                                        <p class="assessment-date">Due: {{assessment.dueDate | date:
+                                                            'MMM d, y h:mm a':'PHT'}}</p>
+                                                    </div>
                                                 </div>
                                                 <span class="badge" [ngClass]="{
-                                                    'exam-badge': assessment.type === 'exam',
-                                                    'project-badge': assessment.type === 'project'
+                                                    'exam-badge': assessment.assignmentMode === 'assessment',
+                                                    'project-badge': assessment.assignmentMode === 'mastery'
                                                 }">
-                                                    {{assessment.type | titlecase}}
+                                                    {{assessment.assignmentMode | titlecase}}
                                                 </span>
                                             </div>
                                         </div>

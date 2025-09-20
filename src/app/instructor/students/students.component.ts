@@ -248,7 +248,6 @@ export class StudentsComponent implements OnInit {
         this.getClasses();
       }
     });
-    this.loadOwnAssessments();
   }
 
   setSelectedClass(selectedClass: any) {
@@ -733,7 +732,6 @@ export class StudentsComponent implements OnInit {
 
   loadOwnAssessments() {
     if (!this.userId) return;
-
     this.api.getOwnAssessment(this.userId).subscribe({
       next: (data: any) => {
         this.ownAssessments = data.data;

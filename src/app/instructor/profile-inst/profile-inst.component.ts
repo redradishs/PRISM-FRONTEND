@@ -115,6 +115,7 @@ export class ProfileInstComponent implements OnInit {
   profilePicture: string = '';
   isLoading: boolean = true;
   loginData: any;
+  loginHistoryLoaded = false;
 
   showCurrentPassword = false;
   showNewPassword = false;
@@ -182,7 +183,6 @@ export class ProfileInstComponent implements OnInit {
         this.username = user.name;
         this.profilePicture = user.profilePicture;
         this.loadProfileData();
-        this.loadHistory();
       }
     });
   }
@@ -231,6 +231,14 @@ export class ProfileInstComponent implements OnInit {
 
   setActiveTab(tab: string): void {
     this.activeTab = tab;
+
+    switch (tab) {
+      case 'login-history':
+        if (!this.loginHistoryLoaded) {
+          this.loadHistory();
+        }
+        break;
+    }
   }
 
   // Update the save method
@@ -385,6 +393,7 @@ export class ProfileInstComponent implements OnInit {
     this.auth.loginHistory(this.userId).subscribe({
       next: (resp: any) => {
         this.loginData = resp.data;
+        this.loginHistoryLoaded = true;
         // console.log('Login history:', this.loginData);
       }, error: (error) => {
         console.error('Error loading login history:', error);

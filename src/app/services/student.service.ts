@@ -7,6 +7,8 @@ import { Injectable } from '@angular/core';
 export class StudentService {
   // apiUrl = 'https://prismapi2.onrender.com/student';
   // Assessment = 'https://prismapi2.onrender.com/submission';
+
+  // Localhost
   // apiUrl = 'http://localhost:8000/student';
   // Assessment = 'http://localhost:8000/submission';
   // rtUrl = 'http://localhost:8000/rt';
@@ -19,7 +21,7 @@ export class StudentService {
   // rtUrl = 'https://api.prismgcccs.live/rt';
 
 
-  // Google Cloud Console 
+  // VPS Server
   apiUrl = 'https://vps.prismgcccs.live/student';
   Assessment = 'https://vps.prismgcccs.live/submission';
   rtUrl = 'https://vps.prismgcccs.live/rt';
@@ -173,11 +175,14 @@ export class StudentService {
     return this.http.get(`${this.apiUrl}/history/specific/upcoming/${instructorId}/${classCode}/${studentId}`);
   }
 
+  //profile data page
 
+  accountStats(data: any) {
+    return this.http.post(`${this.apiUrl}/accountStats`, data);
+  }
 
-
-
-
-
+  accountPerformance(data: any) {
+    return this.http.post(`${this.apiUrl}/accountperformance`, data);
+  }
 
 }

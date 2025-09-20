@@ -183,7 +183,7 @@ export class StudeAssessmentresultComponent implements OnInit {
       next: (resp: any) => {
         if (resp.remarks === 'Success') {
           this.questionType = resp.data.breakdown;
-          console.log('Performance per question:', this.questionType);
+          // console.log('Performance per question:', this.questionType);
           if (resp.data.hasNonObject === true && resp.data.hasBeenFinalized === false) {
             console.log('Detected and not finalized, checking.');
             this.getObjectBasedQuestions();

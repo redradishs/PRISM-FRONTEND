@@ -7,6 +7,7 @@ import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import Swal from 'sweetalert2';
 import { TutorialService } from '../../services/tutorial.service';
+import { StudentService } from '../../services/student.service';
 
 interface StudentProfile {
   _id: string;
@@ -30,17 +31,25 @@ interface StudentProfile {
 interface Assessment {
   id: string;
   title: string;
-  date: string;
-  score?: number;
-  status?: string;
-  type?: string;
+  score: number;
+  totalPoints?: number;
+  submittedAt?: Date;
+  startDate?: Date;
+  dueDate?: Date;
+  assignmentMode?: string;
 }
 
 interface SubjectPerformance {
   id: string;
-  name: string;
-  score: number;
+  totalAssessmentTaken: number;
+  averageScore: number;
   completionRate: number;
+  categoryBreakdown: {
+    [key: string]: {
+      averagePercentage: number;
+      assessmentsTaken: number;
+    };
+  };
 }
 
 interface ProfileChanges {
@@ -125,50 +134,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
   loginData: any;
   private originalProfile: StudentProfile | null = null;
 
-  recentAssessments: Assessment[] = [
-    {
-      id: '1',
-      title: 'Midterm Exam: Advanced Programming Concepts',
-      date: 'Mar 15, 2025',
-      score: 92,
-      status: 'completed',
-    },
-    {
-      id: '2',
-      title: 'Quiz: Database Design Principles',
-      date: 'Mar 10, 2025',
-      score: 88,
-      status: 'completed',
-    },
-    {
-      id: '3',
-      title: 'Lab Exercise: Web Development',
-      date: 'Mar 5, 2025',
-      score: 95,
-      status: 'completed',
-    },
-  ];
+  recentAssessments: Assessment[] = [];
 
-  upcomingAssessments: Assessment[] = [
-    {
-      id: '4',
-      title: 'Final Exam: Advanced Programming Concepts',
-      date: 'Apr 20, 2025',
-      type: 'exam',
-    },
-    {
-      id: '5',
-      title: 'Project Submission: Mobile App Development',
-      date: 'Apr 15, 2025',
-      type: 'project',
-    },
-  ];
+  upcomingAssessments: Assessment[] = [];
 
-  subjectPerformance: SubjectPerformance[] = [
-    { id: '1', name: 'Programming', score: 95, completionRate: 100 },
-    { id: '2', name: 'Database Systems', score: 88, completionRate: 95 },
-    { id: '3', name: 'Web Development', score: 92, completionRate: 100 },
-  ];
+  subjectPerformance: SubjectPerformance[] = []
+  performance: any;
 
   // Password related properties
   passwordData: PasswordData = {
@@ -177,8 +148,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
     confirmPassword: ''
   };
 
+  //lazy loading vars
+  loginHistoryLoaded: boolean = false;
+  performanceHistoryLoaded: boolean = false;
 
-  constructor(private api: ApiService, private auth: AuthService, private router: Router, private ts: TutorialService) {
+  constructor(private api: ApiService, private auth: AuthService, private router: Router, private ts: TutorialService, private student: StudentService) {
   }
 
   ngOnInit(): void {
@@ -198,7 +172,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
           this.username = user.name;
           this.profilePicture = user.profilePicture;
           this.loadProfileData();
-          this.loadHistory();
+          this.accountPerformance();
         } else {
           this.isLoading = false;
         }
@@ -227,8 +201,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
             block: resp.data.block?.toUpperCase() || this.profile.block?.toUpperCase()
           };
           this.originalProfile = { ...this.profile };
-
-          this.loadPerformanceData();
         }
         this.isLoading = false;
       },
@@ -240,15 +212,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     });
   }
 
-
-
-  private loadPerformanceData(): void {
-    // Add any additional API calls for performance data here
-    // This is where you'd load real data for:
-    // - recentAssessments
-    // - upcomingAssessments
-    // - subjectPerformance
-  }
 
   private handleError(message: string): void {
     Swal.fire({
@@ -292,6 +255,19 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   setActiveTab(tab: string): void {
     this.activeTab = tab;
+
+    switch (tab) {
+      case 'login-history':
+        if (!this.loginHistoryLoaded) {
+          this.loadHistory();
+        }
+        break;
+      case 'activity':
+        if (!this.performanceHistoryLoaded) {
+          this.accountStats();
+        }
+        break;
+    }
   }
 
   savePersonalInfo(): void {
@@ -444,11 +420,114 @@ export class ProfileComponent implements OnInit, OnDestroy {
     });
   }
 
+
+  private accountStats() {
+    const data = {
+      userId: this.userId
+    }
+    this.student.accountStats(data).subscribe({
+      next: (resp: any) => {
+        this.performanceHistoryLoaded = true;
+        this.recentAssessments = resp.data.recent || [];
+        this.upcomingAssessments = resp.data.upcoming || [];
+        // console.log('Account stats:', resp.data.upcoming);
+      }, error: (error) => {
+        console.error('Error loading account stats:', error);
+      }
+    })
+  }
+  private accountPerformance() {
+    const data = {
+      userId: this.userId
+    }
+    this.student.accountPerformance(data).subscribe({
+      next: (resp: any) => {
+        // console.log('Account performance:', resp);
+        this.performance = resp.data;
+      }, error: (error) => {
+        console.error('Error loading account performance:', error);
+      }
+    });
+  }
+
+  getCategoryBreakdownEntries(): Array<{ key: string, value: { averagePercentage: number, assessmentsTaken: number } }> {
+    if (!this.performance?.categoryBreakdown) {
+      return [];
+    }
+    return Object.entries(this.performance.categoryBreakdown).map(([key, value]) => ({
+      key,
+      value: value as { averagePercentage: number, assessmentsTaken: number }
+    }));
+  }
+
+  calculatePercentage(score: number | undefined, totalPoints: number | undefined): number {
+    if (!score || !totalPoints || totalPoints === 0) {
+      return 0;
+    }
+    const percentage = (score / totalPoints) * 100;
+    return isNaN(percentage) ? 0 : Math.round(percentage * 100) / 100;
+  }
+
+  getScoreBadgeClass(score: number | undefined, totalPoints: number | undefined): string {
+    const percentage = this.calculatePercentage(score, totalPoints);
+
+    if (percentage >= 90) {
+      return 'excellent-badge'; // Green excellent (90-100%)
+    } else if (percentage >= 80) {
+      return 'good-badge'; // Blue good (80-89%)
+    } else if (percentage >= 70) {
+      return 'average-badge'; // Yellow average (70-79%)
+    } else if (percentage >= 50) {
+      return 'below-average-badge'; // Orange below average (60-69%)
+    } else {
+      return 'poor-badge'; // Red poor (below 60%)
+    }
+  }
+
+  getPercentage(score: number | undefined): string {
+    const percentage = score || 0;
+    if (percentage >= 90) {
+      return 'excellent-badge';
+    } else if (percentage >= 80) {
+      return 'good-badge';
+    } else if (percentage >= 70) {
+      return 'average-badge';
+    } else if (percentage >= 50) {
+      return 'below-average-badge';
+    } else {
+      return 'poor-badge';
+    }
+  }
+
+
+  gotoAssessment(ass: any) {
+    this.router.navigate(['/student/result'], {
+      state: { assessmentId: ass.assigned }
+    })
+  }
+
+  gotoConfirmation(ass: any) {
+    this.router.navigate(['/student/confirmation'], {
+      state: { assessmentId: ass.id }
+    })
+  }
+
+
+
+
+
+
+
+
+
+
+
+
   private loadHistory() {
     this.auth.loginHistory(this.userId).subscribe({
       next: (resp: any) => {
         this.loginData = resp.data;
-        // console.log('Login history:', this.loginData);
+        this.loginHistoryLoaded = true;
       }, error: (error) => {
         console.error('Error loading login history:', error);
       }

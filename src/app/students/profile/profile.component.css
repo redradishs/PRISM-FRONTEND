@@ -104,10 +104,6 @@
     height: 100%;
     object-fit: cover;
 }
-
-
-
-
 .initials-avatar {
     width: 100%;
     height: 100%;
@@ -158,20 +154,32 @@
 }
 
 .badge {
+    display: inline-flex;
+    align-items: center;
     padding: 6px 12px;
     border-radius: 20px;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+}
+
+.badge:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .student-badge {
     background-color: #e3f2fd;
     color: #1976d2;
+    box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3);
 }
 
 .instructor-badge {
-    background-color: #f3e5f5;
-    color: #7b1fa2;
+    background: linear-gradient(135deg, #a855f7, #9333ea);
+    color: white;
+    box-shadow: 0 2px 8px rgba(168, 85, 247, 0.3);
 }
 
 .role-toggle {
@@ -237,13 +245,14 @@
 
 /* Tabs */
 .tabs-container {
-    margin-top: 30px;
+    margin-top: 10px;
 }
 
 .tabs-header {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
+
 }
 
 .tab-button {
@@ -638,7 +647,7 @@ input:checked + .slider:before {
 
 .assessment-info .assessment-title {
     margin: 0;
-    font-weight: 500;
+    font-weight: 700;
     color: #333;
 }
 
@@ -784,6 +793,33 @@ input:checked + .slider:before {
     .login-history::-webkit-scrollbar {
         width: 4px;
     }
+
+     .tabs-header {
+    padding: 4px;
+    gap: 2px;
+    margin: 0 -4px;
+    border-radius: 8px;
+  }
+  
+  .tab-button {
+    padding: 10px 12px;
+    font-size: 13px;
+    min-width: auto;
+    flex: 1;
+    max-width: none;
+  }
+  
+  .tab-button span {
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.2;
+  }
+  
+  .tab-button i {
+    font-size: 14px;
+    margin-bottom: 2px;
+  }
+
 }
 
 @media (max-width: 480px) {
@@ -845,6 +881,23 @@ input:checked + .slider:before {
 
     .login-history {
         max-height: 350px;
+    }
+
+     .tab-button {
+      flex-direction: column;
+      gap: 4px;
+      padding: 8px 6px;
+      min-height: 54px;
+    }
+    
+    .tab-button span {
+      font-size: 11px;
+      line-height: 1.1;
+    }
+    
+    .tab-button i {
+      font-size: 16px;
+      margin-bottom: 0;
     }
 }
 
@@ -1100,4 +1153,48 @@ input:checked + .slider:before {
 .no-data p {
     margin: 0;
     font-size: 14px;
+}
+
+/* Score Badge Styles */
+.excellent-badge {
+    background: linear-gradient(135deg, #10b981, #047857);
+    color: white;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.good-badge {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: white;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.average-badge {
+    background: linear-gradient(135deg, #a855f7, #9333ea);
+    color: white;
+    box-shadow: 0 2px 8px rgba(168, 85, 247, 0.3);
+}
+
+.below-average-badge {
+    background: linear-gradient(135deg, #ec4899, #db2777);
+    color: white;
+    box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3);
+}
+
+.poor-badge {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+/* Assignment Type Badge Styles */
+.exam-badge {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: white;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.project-badge {
+    background: linear-gradient(135deg, #a855f7, #9333ea);
+    color: white;
+    box-shadow: 0 2px 8px rgba(168, 85, 247, 0.3);
 }

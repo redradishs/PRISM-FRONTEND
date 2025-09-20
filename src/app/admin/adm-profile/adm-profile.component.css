@@ -237,7 +237,7 @@
 
 /* Tabs */
 .tabs-container {
-    margin-top: 30px;
+    margin-top: 10px;
 }
 
 .tabs-header {
@@ -980,6 +980,31 @@ input:checked + .slider:before {
     .login-history::-webkit-scrollbar {
         width: 4px;
     }
+   .tabs-header {
+    padding: 4px;
+    gap: 2px;
+    margin: 0 -4px;
+    border-radius: 8px;
+  }
+  
+  .tab-button {
+    padding: 10px 12px;
+    font-size: 13px;
+    min-width: auto;
+    flex: 1;
+    max-width: none;
+  }
+  
+  .tab-button span {
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.2;
+  }
+  
+  .tab-button i {
+    font-size: 14px;
+    margin-bottom: 2px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1040,6 +1065,23 @@ input:checked + .slider:before {
 
     .login-history {
         max-height: 350px;
+    }
+
+    .tab-button {
+      flex-direction: column;
+      gap: 4px;
+      padding: 8px 6px;
+      min-height: 54px;
+    }
+    
+    .tab-button span {
+      font-size: 11px;
+      line-height: 1.1;
+    }
+    
+    .tab-button i {
+      font-size: 16px;
+      margin-bottom: 0;
     }
 }
 
