@@ -317,16 +317,16 @@
                                     *ngIf="assessment.status === 'completed' && assessment.studentStatus === 'not_started'"
                                     class="ended-label">
                                     <i class="fas fa-check-circle"></i>
-                                    Ended: {{ assessment.dueDate | date:'MMM d, y' }}
+                                    Ended: {{ assessment.dueDate | date:'MMM d, y':'UTC' }}
                                 </span>
 
                                 <span *ngIf="assessment.status === 'scheduled'" class="status-label">
                                     <i class="far fa-calendar"></i>
-                                    Scheduled: {{assessment.startDate | date:'MMM d, y, h:mm a'}}
+                                    Scheduled: {{assessment.startDate | date:'MMM d, y, h:mm a':'UTC'}}
                                 </span>
                                 <span *ngIf="assessment.status === 'ongoing'" class="status-label">
                                     <i class="fas fa-clock"></i>
-                                    Due {{assessment.dueDate | date:'MMM d, y, h:mm a'}}
+                                    Due {{assessment.dueDate | date:'MMM d, y, h:mm a':'UTC'}}
                                 </span>
                                 <button
                                     *ngIf="(assessment.status === 'ongoing' || assessment.status === 'scheduled') || (assessment.status === 'completed' && assessment.studentStatus === 'submitted')"
@@ -394,23 +394,23 @@
                                             <div class="status-box-content">
                                                 <i class="far fa-calendar"></i>
                                                 <span>Scheduled {{assessment.startDate | date:'MMM d, y, h:mm
-                                                    a'}}</span>
+                                                    a':'UTC'}}</span>
                                             </div>
                                         </div>
                                         <div *ngSwitchCase="'ongoing'" class="status-box">
                                             <div class="status-box-content">
                                                 <i class="fas fa-clock"></i>
-                                                <span>Due {{assessment.dueDate | date:'MMM d, y, h:mm a'}}</span>
+                                                <span>Due {{assessment.dueDate | date:'MMM d, y, h:mm a':'UTC'}}</span>
                                             </div>
                                         </div>
                                         <div *ngSwitchCase="'completed'" class="status-box">
                                             <div class="status-box-content">
                                                 <i class="fas fa-check-circle"></i>
                                                 <span *ngIf="assessment.studentStatus === 'submitted'">
-                                                    Submitted: {{assessment.submittedAt | date:'MMM d, y'}}
+                                                    Submitted: {{assessment.submittedAt | date:'MMM d, y':'UTC'}}
                                                 </span>
                                                 <span *ngIf="assessment.studentStatus === 'not_started'">
-                                                    Ended: {{assessment.dueDate | date:'MMM d, y'}}
+                                                    Ended: {{assessment.dueDate | date:'MMM d, y':'UTC'}}
                                                 </span>
                                             </div>
                                         </div>

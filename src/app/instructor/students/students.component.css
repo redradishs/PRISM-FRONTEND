@@ -3223,7 +3223,6 @@ input:checked + .toggle-slider:before {
 .form-textarea:focus {
   outline: none;
   border-color: #3b82f6;
-  ring: 2px solid #bfdbfe;
 }
 
 

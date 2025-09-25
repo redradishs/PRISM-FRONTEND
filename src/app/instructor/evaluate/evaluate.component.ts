@@ -94,6 +94,25 @@ export class EvaluateComponent implements OnInit {
   scrappedSkill: any = {};
   recommendationList: any[] = [];
 
+  selectedDropdownAssessment: any = null;
+  selectedAssessment: any = null;
+  dateError: string = "";
+  assessmentSearchQuery = '';
+  searchedAssessments: any[] = [];
+
+  assignmentDetails = {
+    startDate: '',
+    dueDate: '',
+    timeLimit: 60,
+    instructions: '',
+    randomizeQuestions: false,
+    showResults: false
+  };
+
+  modalTab: 'search' | 'dropdown' = 'dropdown';
+
+
+
   startDatePresets: DatePreset[] = [
     {
       label: 'Now',
@@ -417,32 +436,34 @@ export class EvaluateComponent implements OnInit {
     return hasRequiredFields && hasValidDates && hasMasteryScore;
   }
 
-  applyStartDatePreset(preset: DatePreset) {
+
+  applyStartDatePreset(preset: any) {
     this.assignmentData.startDate = this.formatDate(preset.startDate);
 
+    // if there is an existing due, adjust it as well.
     if (this.assignmentData.dueDate) {
       const startDateTime = new Date(this.assignmentData.startDate);
       const newDueDate = new Date(startDateTime);
       newDueDate.setHours(startDateTime.getHours() + 24);
       this.assignmentData.dueDate = this.formatDate(newDueDate);
     }
+    this.dateError = '';
   }
 
   applyDueDatePreset(preset: { label: string; hoursToAdd: number }) {
-    // console.log('Applying due date preset:', preset.label, 'hours to add:', preset.hoursToAdd);
-
     if (!this.assignmentData.startDate) {
       const now = new Date();
       const newDueDate = new Date(now.getTime() + preset.hoursToAdd * 60 * 60 * 1000);
       this.assignmentData.dueDate = this.formatDate(newDueDate);
-      // console.log('Due date set from current time:', this.assignmentData.dueDate);
     } else {
       const startDateTime = new Date(this.assignmentData.startDate);
       const newDueDate = new Date(startDateTime.getTime() + preset.hoursToAdd * 60 * 60 * 1000);
       this.assignmentData.dueDate = this.formatDate(newDueDate);
-      // console.log('Due date set from start date:', this.assignmentData.dueDate);
     }
+
+    this.dateError = '';
   }
+
 
   skillScrapper() {
     this.api.skillScraper(this.studentId).subscribe({
@@ -450,7 +471,7 @@ export class EvaluateComponent implements OnInit {
         // console.log("This is the scrapped skills:", resp);
         this.scrappedSkill = resp.data;
         const searchData = this.scrappedSkill.assessmentsWithWrongQuestions;
-        this.generateSearch(searchData);
+        // this.generateSearch(searchData);
       }, error: (error: any) => {
         console.error('Error scraping skills:', error);
       }
@@ -480,6 +501,7 @@ export class EvaluateComponent implements OnInit {
   }
 
   async assignAssessment() {
+    console.log('Assignment Data:', this.assignmentData);
     if (!this.canSubmitAssignment()) {
       Swal.fire({
         icon: 'error',
@@ -518,4 +540,108 @@ export class EvaluateComponent implements OnInit {
       this.isSubmitting = false;
     }
   }
+  onAssessmentDropdownChange() {
+    if (this.selectedDropdownAssessment) {
+      this.selectedAssessment = this.selectedDropdownAssessment;
+      // Missing this line:
+      this.assignmentData.assessmentId = this.selectedDropdownAssessment._id;
+      this.setupDefaultScheduleSettings();
+    }
+  }
+
+  setupDefaultScheduleSettings() {
+    const now = new Date();
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 7);
+
+    this.assignmentDetails.startDate = this.formatDateForInput(now);
+    this.assignmentDetails.dueDate = this.formatDateForInput(dueDate);
+  }
+
+  formatDateForInput(date: Date): string {
+    return date.toISOString().slice(0, 16);
+  }
+
+  clearSelectedAssessment() {
+    this.selectedAssessment = null;
+    this.selectedDropdownAssessment = null;
+  }
+
+  onTabChange(tab: 'search' | 'dropdown') {
+    this.modalTab = tab;
+    console.log('Tab changed to:', this.modalTab); // Debug line
+
+    if (tab === 'dropdown') {
+      this.assessmentSearchQuery = '';
+      this.searchedAssessments = [];
+    } else {
+      this.clearSelectedAssessment();
+    }
+  }
+
+  getCurrentDateTimeString(): string {
+    return this.formatDate(new Date());
+  }
+
+
+  selectAssessment(assessment: any) {
+    if (this.selectedAssessment?._id === assessment._id) {
+      this.clearSelectedAssessment();
+      return;
+    }
+
+    this.selectedAssessment = assessment;
+
+    this.searchedAssessments = this.searchedAssessments.map(a => ({
+      ...a,
+      selected: a._id === assessment._id
+    }));
+
+    this.selectedDropdownAssessment = this.availableAssessments.find(
+      a => a._id === assessment._id
+    ) || null;
+
+    this.setupDefaultScheduleSettings();
+  }
+
+  clearAssessmentSearch() {
+    this.assessmentSearchQuery = '';
+    this.searchedAssessments = [];
+  }
+
+  searchAssessments() {
+    if (!this.assessmentSearchQuery || this.assessmentSearchQuery.length < 3) {
+      this.searchedAssessments = [];
+      return;
+    }
+
+    this.api.searchAssessmentUser(
+      this.userId,
+      this.assessmentSearchQuery
+    ).subscribe({
+      next: (resp: any) => {
+        this.searchedAssessments = resp.data.assessments.map((assessment: any) => ({
+          ...assessment,
+          selected: this.selectedAssessment?._id === assessment._id
+        }));
+      },
+      error: (err) => {
+        console.error('Error searching assessments:', err);
+      }
+    });
+  }
+
+
+  getMinDueDateString(): string {
+    if (this.assignmentDetails.startDate) {
+      const start = new Date(this.assignmentDetails.startDate);
+      start.setMinutes(start.getMinutes() + 10);
+      return this.formatDate(start);
+    } else {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() + 1);
+      return this.formatDate(now);
+    }
+  }
+
 }
