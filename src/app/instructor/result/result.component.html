@@ -773,6 +773,41 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="fab-container">
+                    <div class="fab-menu" [class.open]="fabOpen" [class.active]="fabActive" [class.faded]="fabFaded">
+                        <button class="fab-main" (click)="toggleFab()" (mouseenter)="onFabInteraction()"
+                            [attr.aria-label]="fabOpen ? 'Close menu' : 'Open menu'">
+                            <i class="fas" [ngClass]="fabOpen ? 'fa-times' : 'fa-ellipsis-v'"></i>
+                        </button>
+
+                        <!-- Action Buttons -->
+                        <div class="fab-actions" [class.show]="fabOpen">
+                            <button [disabled]="classOverview.status !== 'completed'" class="fab-action fab-delete"
+                                (click)="export(); closeFab()">
+                                <i class="fas fa-file-export"></i>
+                                <span class="fab-tooltip">Export</span>
+                            </button>
+
+                            <button *ngIf="classOverview.status === 'ongoing'" class="fab-action fab-generate"
+                                (click)="endAssessment(); closeFab()">
+                                <i class="fas fa-hourglass-end  "></i>
+                                <span class="fab-tooltip">Force End</span>
+                            </button>
+
+                            <button *ngIf="classOverview.status === 'scheduled'" class="fab-action fab-generate"
+                                (click)="startAssessment(); closeFab()">
+                                <i class="fas fa-circle-play"></i>
+                                <span class="fab-tooltip">Force Start</span>
+                            </button>
+
+                            <button class="fab-action fab-save" (click)="gotoSettings(); closeFab()">
+                                <i class="fas fa-gear"></i>
+                                <span class="fab-tooltip">Settings</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

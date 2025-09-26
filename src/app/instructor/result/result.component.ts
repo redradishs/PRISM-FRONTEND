@@ -117,6 +117,12 @@ export class ResultComponent implements OnInit, OnDestroy {
     'De', 'Del', 'Dela', 'De la', 'De los', 'San', 'Santa', 'Sta.'
   ];
 
+  fabOpen: boolean = false;
+  fabActive = false;
+  fabFaded = false;
+  private fabTimeoutId: any = null;
+  private readonly FAB_TIMEOUT_DURATION = 10000;
+
   constructor(
     private api: ApiService,
     private auth: AuthService,
@@ -154,6 +160,10 @@ export class ResultComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.scoreStream) {
       this.scoreStream.close();
+    }
+
+    if (this.fabTimeoutId) {
+      clearTimeout(this.fabTimeoutId);
     }
   }
 
@@ -502,10 +512,13 @@ export class ResultComponent implements OnInit, OnDestroy {
       cancelButtonColor: '#6b7280',
     }).then((result) => {
       if (result.isConfirmed) {
+        const currentDT = new Date();
+        const extended = new Date(currentDT.getTime() + 60 * 60 * 1000);
+        const phTime = new Date(extended.getTime() + (8 * 60 * 60 * 1000));
         const data = {
           instructorId: this.userId,
           assignedAssessmentId: this.assessmentId,
-          endDate: new Date().toISOString()
+          endDate: phTime
         }
         this.api.endNow(data).subscribe({
           next: (resp: any) => {
@@ -546,11 +559,12 @@ export class ResultComponent implements OnInit, OnDestroy {
     }).then((result) => {
       if (result.isConfirmed) {
         const currentDT = new Date();
-        const extended = new Date(currentDT.getTime() + 60 * 60 * 1000)
+        const extended = new Date(currentDT.getTime() + 60 * 60 * 1000);
+        const phTime = new Date(extended.getTime() + (8 * 60 * 60 * 1000));
         const data = {
           instructorId: this.userId,
           assignedAssessmentId: this.assessmentId,
-          endDate: extended.toISOString()
+          endDate: phTime
         }
         this.api.extendNow(data).subscribe({
           next: (resp: any) => {
@@ -826,6 +840,39 @@ export class ResultComponent implements OnInit, OnDestroy {
         timer: 2000
       });
     });
+  }
+
+
+  closeFab() {
+    this.fabOpen = false;
+    this.setFabActive();
+  }
+
+  toggleFab() {
+    this.fabOpen = !this.fabOpen;
+    this.setFabActive();
+  }
+
+  private setFabActive(): void {
+    this.fabActive = true;
+    this.fabFaded = false;
+
+    if (this.fabTimeoutId) {
+      clearTimeout(this.fabTimeoutId);
+    }
+
+    if (!this.fabOpen) {
+      this.fabTimeoutId = setTimeout(() => {
+        this.fabActive = false;
+        this.fabFaded = true;
+      }, this.FAB_TIMEOUT_DURATION);
+    }
+  }
+
+  onFabInteraction(): void {
+    if (!this.fabOpen) {
+      this.setFabActive();
+    }
   }
 
 }

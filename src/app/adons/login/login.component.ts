@@ -387,6 +387,32 @@ export class LoginComponent implements OnInit {
       error: (err) => {
         console.error('Login error:', err);
 
+        if (err.error && err.error.message && err.error.message.includes('Too many authentication attempts')) {
+          this.loading = false;
+          this.clicked = false;
+          Swal.fire({
+            title: 'Too Many Attempts',
+            text: 'You have tried to login too many times. Please wait 3 minutes before trying again.',
+            icon: 'error',
+            showConfirmButton: false,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            width: '400px',
+            customClass: {
+              popup: 'attempts-alert-popup'
+            },
+            timer: 2000,
+            timerProgressBar: true,
+          });
+
+          this.clicked = true;
+          setTimeout(() => {
+            this.clicked = false;
+          }, 180000); // 3 minutes
+
+          return;
+        }
+
         if (err.status === 403 && err.error && err.error.data && err.error.data.needsVerification) {
           this.loading = false;
           this.clicked = false;
