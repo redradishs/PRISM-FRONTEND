@@ -2485,9 +2485,6 @@ input:checked + .toggle-slider:before {
     min-width: 180px;
   }
 
-  .demo-table-cell {
-    padding: 12px 16px;
-  }
 
   .demo-student-info {
     gap: 8px;
@@ -2527,9 +2524,6 @@ input:checked + .toggle-slider:before {
         min-width: 160px;
     }
 
-    .demo-table-cell {
-        padding: 10px 12px;
-    }
 
     .demo-student-info {
         max-width: 150px;
@@ -3224,8 +3218,6 @@ input:checked + .toggle-slider:before {
   outline: none;
   border-color: #3b82f6;
 }
-
-
 
 .performance-badge {
     padding: 0.35rem 0.6rem;

@@ -75,6 +75,7 @@ export class ResultComponent implements OnInit, OnDestroy {
   currentPage: number = 1;
   itemsPerPage: number = 9;
   activeTab: string = 'results';
+  mobileTab: string = 'insights';
   classResult: any;
   className: string = '';
   classCode: string = '';

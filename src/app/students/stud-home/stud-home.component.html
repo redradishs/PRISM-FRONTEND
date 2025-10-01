@@ -206,9 +206,13 @@
                                     <i class="fas fa-chevron-right"></i>
                                 </a>
 
-                                <div class="mt-3">
-                                    <p *ngIf="onGoingAssessments.length === 0" class="text-center text-gray-500">No
-                                        ongoing assessment found</p>
+                                <div *ngIf="onGoingAssessments.length === 0" class="empty-state-container">
+                                    <div class="empty-state-icon-wrapper">
+                                        <div class="empty-state-circle"></div>
+                                        <i class="fa-solid fa-check empty-state-icon"></i>
+                                    </div>
+                                    <h3 class="empty-state-title">You're all caught up!</h3>
+                                    <p class="empty-state-description">No ongoing assessments at the moment.</p>
                                 </div>
 
 
@@ -235,8 +239,17 @@
 
                             <div [ngSwitch]="activeTab">
                                 <div *ngSwitchCase="'upcoming'" class="space-y-4">
-                                    <p *ngIf="upcomingAssessments.length === 0" class="text-center text-gray-500">No
-                                        upcoming assessments</p>
+
+                                    <div *ngIf="upcomingAssessments.length === 0" class="empty-state-container">
+                                        <div class="empty-state-icon-wrapper">
+                                            <div class="empty-state-circle"></div>
+                                            <i class="fa-solid fa-check empty-state-icon"></i>
+                                        </div>
+                                        <h3 class="empty-state-title">You're all caught up!</h3>
+                                        <p class="empty-state-description">No upcoming assessments at the moment.</p>
+                                    </div>
+
+
                                     <div (click)="goToConfirmation(assessment)"
                                         *ngFor="let assessment of upcomingAssessments" class="ongoing-card">
                                         <div class="upcoming-card">
@@ -286,8 +299,17 @@
                                     </a>
                                 </div>
                                 <div *ngSwitchCase="'completed'" class="space-y-4">
-                                    <p *ngIf="completedAssessments.length === 0" class="text-center text-gray-500">No
-                                        completed assessments</p>
+                                    <div *ngIf="completedAssessments.length === 0" class="empty-state-container">
+                                        <div class="empty-state-icon-wrapper">
+                                            <div class="empty-state-circle"></div>
+                                            <i class="fa-solid fa-check empty-state-icon"></i>
+                                        </div>
+                                        <h3 class="empty-state-title">You're all caught up!</h3>
+                                        <p class="empty-state-description">No completed assessments at the moment.</p>
+                                    </div>
+
+
+
                                     <div (click)="gotoResult(assessment.assignedAssessmentId)"
                                         *ngFor="let assessment of completedAssessments" class="ongoing-card">
                                         <div class="upcoming-card">

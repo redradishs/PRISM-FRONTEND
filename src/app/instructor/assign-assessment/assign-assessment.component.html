@@ -415,6 +415,7 @@
                                                     <div class="selection-checkbox">
                                                         <input type="checkbox"
                                                             [checked]="selectedStudents.has(student._id)"
+                                                            (change)="toggleStudentSelection(student._id)"
                                                             (click)="$event.stopPropagation()">
                                                     </div>
                                                     <div class="student-name">{{student.name}}</div>

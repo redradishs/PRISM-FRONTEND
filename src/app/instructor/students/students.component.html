@@ -242,7 +242,8 @@
                         </div>
 
                         <div class="demo-table-container">
-                            <div class="demo-table-wrapper">
+                            <!-- Desktop Table View -->
+                            <div class="demo-table-wrapper hidden md:block">
                                 <table class="demo-table">
                                     <thead class="demo-table-header">
                                         <tr>
@@ -313,6 +314,97 @@
                                     </tbody>
                                 </table>
                             </div>
+
+                            <!-- Mobile Card View -->
+                            <div class="md:hidden divide-y divide-gray-200">
+                                <div *ngIf="filteredStudents?.length === 0" class="p-8 text-center bg-white">
+                                    <div class="empty-state-icon">
+                                        <i class="fas fa-user-graduate text-4xl text-gray-300"></i>
+                                    </div>
+                                    <p class="mt-3 text-sm text-gray-500">No students found matching your search.</p>
+                                </div>
+
+                                <div *ngFor="let student of currentStudentsInfo || []" (click)="studentInfo(student)"
+                                    class="p-3 bg-white hover:bg-gray-50 transition-colors duration-200 active:bg-gray-100">
+
+                                    <!-- Student Header -->
+                                    <div class="flex items-center justify-between mb-2 pb-2 border-b border-gray-100">
+                                        <div class="flex items-center gap-2 flex-1 min-w-0">
+                                            <div
+                                                class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold overflow-hidden shadow-sm flex-shrink-0">
+                                                <img *ngIf="student.profilePicture && !student.imageLoadFailed"
+                                                    [src]="student.profilePicture" alt="Profile"
+                                                    class="w-full h-full object-cover"
+                                                    (error)="student.imageLoadFailed = true">
+                                                <span *ngIf="!student.profilePicture || student.imageLoadFailed"
+                                                    class="text-sm">
+                                                    {{ getInitials(student.name) }}
+                                                </span>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <h4 class="font-bold text-gray-900 text-sm truncate">{{student.name}}
+                                                </h4>
+                                                <p class="text-xs text-gray-500">{{student.email.split('@')[0]}}</p>
+                                            </div>
+                                        </div>
+                                        <button (click)="removeStudent(student); $event.stopPropagation()"
+                                            class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0">
+                                            <i class="fas fa-trash text-xs"></i>
+                                        </button>
+                                    </div>
+
+                                    <!-- Student Info Grid -->
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <!-- Block -->
+                                        <div class="text-center">
+                                            <div class="text-[10px] text-gray-500 mb-0.5 font-medium uppercase">Block
+                                            </div>
+                                            <div class="text-xs font-bold text-gray-900">
+                                                {{student.block ? student.block.toUpperCase() : 'N/A'}}
+                                            </div>
+                                        </div>
+
+                                        <!-- Performance -->
+                                        <div class="text-center">
+                                            <div class="text-[10px] text-gray-500 mb-0.5 font-medium uppercase">
+                                                Performance</div>
+                                            <span class="inline-block px-1.5 py-0.5 text-[11px] font-bold rounded-full"
+                                                [ngClass]="{
+                                                'bg-red-100 text-red-700': student.performancePercent < 50,
+                                                'bg-yellow-100 text-yellow-700': student.performancePercent >= 50 && student.performancePercent <= 80,
+                                                'bg-green-100 text-green-700': student.performancePercent > 80
+                                            }">
+                                                {{student.performancePercent | number:'1.0-0'}}%
+                                            </span>
+                                        </div>
+
+                                        <!-- Completion -->
+                                        <div class="text-center">
+                                            <div class="text-[10px] text-gray-500 mb-0.5 font-medium uppercase">Done
+                                            </div>
+                                            <div class="text-xs font-bold text-gray-900">
+                                                {{student.completion}}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Completion Progress Bar -->
+                                    <div class="mt-2 pt-2 border-t border-gray-100">
+                                        <div class="flex items-center justify-between text-[10px] text-gray-500 mb-1">
+                                            <span>Progress</span>
+                                            <span class="font-medium">{{getCompletionPercentage(student.completion) |
+                                                number:'1.0-0'}}%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                            <div [style.width.%]="getCompletionPercentage(student.completion)"
+                                                [class]="isFullyCompleted(student.completion) ? 
+                                                    'h-1.5 rounded-full bg-gradient-to-r from-green-400 to-green-600 transition-all duration-300' : 
+                                                    'h-1.5 rounded-full bg-gradient-to-r from-indigo-400 to-purple-600 transition-all duration-300'">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="demo-pagination-container" *ngIf="totalPages > 0">
@@ -355,7 +447,8 @@
 
                         <!-- Students Table -->
                         <div class="demo-table-container">
-                            <div class="demo-table-wrapper">
+                            <!-- Desktop Table View -->
+                            <div class="demo-table-wrapper hidden md:block">
                                 <table class="demo-table">
                                     <thead class="demo-table-header">
                                         <tr>
@@ -410,6 +503,81 @@
                                         </tr>
                                     </tbody>
                                 </table>
+                            </div>
+
+                            <!-- Mobile Card View -->
+                            <div class="md:hidden divide-y divide-gray-200">
+                                <div *ngIf="assignedAssessments?.length === 0" class="p-8 text-center bg-white">
+                                    <div class="empty-state-icon">
+                                        <i class="fas fa-clipboard-list text-4xl text-gray-300"></i>
+                                    </div>
+                                    <p class="mt-3 text-sm text-gray-500">No Assessments found matching your search.</p>
+                                </div>
+
+                                <div *ngFor="let student of assignedAssessments" (click)="goToResult(student._id)"
+                                    class="p-3 bg-white hover:bg-gray-50 transition-colors duration-200 active:bg-gray-100 cursor-pointer">
+
+                                    <!-- Assessment Header -->
+                                    <div class="flex items-start gap-2 mb-2 pb-2 border-b border-gray-100">
+                                        <div
+                                            class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white flex-shrink-0 shadow-sm">
+                                            <i class="fas fa-file-alt text-sm"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <h4 class="font-bold text-gray-900 text-sm mb-1 line-clamp-2">
+                                                {{student.title}}</h4>
+                                            <div class="flex items-center gap-1.5 flex-wrap">
+                                                <span
+                                                    class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-indigo-100 text-indigo-700">
+                                                    <i class="fas fa-clipboard-check mr-1"></i>
+                                                    Assessment
+                                                </span>
+                                                <span
+                                                    class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium"
+                                                    [ngClass]="getStatusClass(student.status)">
+                                                    {{student.status}}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Due Date -->
+                                    <div class="flex items-center gap-1.5 mb-2 text-xs">
+                                        <i class="fas fa-clock text-gray-400 text-[10px]"></i>
+                                        <span class="text-gray-600">Due:</span>
+                                        <span class="font-medium text-gray-900">{{student.dueDate | date:'MMM d, yyyy,
+                                            h:mm a':'PHT'}}</span>
+                                    </div>
+
+                                    <!-- Completion Info -->
+                                    <div class="space-y-1.5">
+                                        <div class="flex items-center justify-between text-[10px] text-gray-500">
+                                            <span class="flex items-center gap-1">
+                                                <i class="fas fa-users"></i>
+                                                <span>{{student.completion}} completed</span>
+                                            </span>
+                                            <span
+                                                class="font-medium text-indigo-600">{{getCompletionPercentage(student.completion)
+                                                | number:'1.0-0'}}%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                            <div [style.width.%]="getCompletionPercentage(student.completion)"
+                                                [class]="isFullyCompleted(student.completion) ? 
+                                                    'h-1.5 rounded-full bg-gradient-to-r from-green-400 to-green-600 transition-all duration-300' : 
+                                                    'h-1.5 rounded-full bg-gradient-to-r from-indigo-400 to-purple-600 transition-all duration-300'">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tap Hint -->
+                                    <div class="mt-2 pt-2 border-t border-gray-100 text-center">
+                                        <span
+                                            class="text-[10px] text-indigo-600 font-medium flex items-center justify-center gap-1">
+                                            <i class="fas fa-hand-pointer text-[9px]"></i>
+                                            Tap to view results
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

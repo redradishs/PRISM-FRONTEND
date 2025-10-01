@@ -66,7 +66,7 @@
             </div>
 
             <!-- Main Content -->
-            <div class="p-4 md:p-8 space-y-8">
+            <div class="p-1 md:p-8 space-y-8">
 
                 <div *ngIf="showSettings" class="header-section">
                     <div class="header-content">
@@ -134,63 +134,155 @@
 
 
                 <!-- Class Overview Section -->
-                <div class="grid gap-6 md:grid-cols-2 section">
-                    <div class="insights-card">
-                        <div class="insights-header">
-                            <div class="icf">
-                                <i class="fas fa-star"></i>
-                                <h2>PRISM - INSIGHTS</h2>
+                <div class="section">
+                    <!-- Desktop Grid -->
+                    <div class="hidden md:grid md:grid-cols-2 gap-6">
+                        <div class="insights-card">
+                            <div class="insights-header">
+                                <div class="icf">
+                                    <i class="fas fa-star"></i>
+                                    <h2>PRISM - INSIGHTS</h2>
+                                </div>
+                                <i class="fas fa-gear" title="Click me to update the Assessment Settings"
+                                    (click)="gotoSettings()"></i>
                             </div>
-                            <i class="fas fa-gear" title="Click me to update the Assessment Settings"
-                                (click)="gotoSettings()"></i>
+                            <ul class="insights-list">
+                                <li *ngFor="let insight of insights; let i = index"
+                                    [class.expanded]="expandedIndex === i" (click)="toggleInsight(i)">
+                                    <span class="bullet">{{i < 5 ? '•' : '◦' }}</span>
+                                            <div class="content">
+                                                <span class="primary">{{insight.primary}}</span>
+                                                <span class="secondary">{{insight.secondary}}</span>
+                                            </div>
+                                </li>
+                            </ul>
                         </div>
-                        <ul class="insights-list">
-                            <li *ngFor="let insight of insights; let i = index" [class.expanded]="expandedIndex === i"
-                                (click)="toggleInsight(i)">
-                                <span class="bullet">{{i < 5 ? '•' : '◦' }}</span>
-                                        <div class="content">
-                                            <span class="primary">{{insight.primary}}</span>
-                                            <span class="secondary">{{insight.secondary}}</span>
-                                        </div>
-                            </li>
-                        </ul>
-                    </div>
 
-                    <!-- Class Overview Card -->
-                    <div class="overview-card">
-                        <div class="overview-header">
-                            <div class="overview-header-left">
-                                <i class="fas fa-users"></i>
-                                <h2 *ngIf="classOverview.mode === 'public'">Public Overview</h2>
-                                <h2 *ngIf="classOverview.mode !== 'public'">Class Overview</h2>
+                        <!-- Class Overview Card -->
+                        <div class="overview-card">
+                            <div class="overview-header">
+                                <div class="overview-header-left">
+                                    <i class="fas fa-users"></i>
+                                    <h2 *ngIf="classOverview.mode === 'public'">Public Overview</h2>
+                                    <h2 *ngIf="classOverview.mode !== 'public'">Class Overview</h2>
+                                </div>
+
+                                <!-- Joining Code Display for Public Assessments -->
+                                <div class="overview-header-right"
+                                    *ngIf="classOverview.mode === 'public' && classOverview.joiningCode"
+                                    (click)="showJoiningCodeDetails()">
+                                    <div class="join-display" title="Click this to view your QR and Joining Link">
+                                        <span class="join-label">Joining Code:</span>
+                                        <span class="join-value">{{ classOverview.joiningCode }}</span>
+                                    </div>
+                                </div>
                             </div>
-
-                            <!-- Joining Code Display for Public Assessments -->
-                            <div class="overview-header-right"
-                                *ngIf="classOverview.mode === 'public' && classOverview.joiningCode"
-                                (click)="showJoiningCodeDetails()">
-                                <div class="join-display" title="Click this to view your QR and Joining Link">
-                                    <span class="join-label">Joining Code:</span>
-                                    <span class="join-value">{{ classOverview.joiningCode }}</span>
+                            <div class="overview-grid">
+                                <div class="overview-stat">
+                                    <div class="stat-value">{{classOverview.totalStudents}}</div>
+                                    <div class="stat-label">Total Students</div>
+                                </div>
+                                <div class="overview-stat">
+                                    <div class="stat-value">{{classOverview.averageScore}}%</div>
+                                    <div class="stat-label">Average Score</div>
+                                </div>
+                                <div class="overview-stat">
+                                    <div class="stat-value highest">{{classOverview.highestScore}}%</div>
+                                    <div class="stat-label">Highest Score</div>
+                                </div>
+                                <div class="overview-stat">
+                                    <div class="stat-value lowest">{{classOverview.lowestScore}}%</div>
+                                    <div class="stat-label">Lowest Score</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="overview-grid">
-                            <div class="overview-stat">
-                                <div class="stat-value">{{classOverview.totalStudents}}</div>
-                                <div class="stat-label">Total Students</div>
+                    </div>
+
+                    <!-- Mobile Tabs -->
+                    <div class="md:hidden">
+                        <!-- Tab Navigation -->
+                        <div class="flex border-b border-gray-200 mb-3">
+                            <button (click)="mobileTab = 'insights'"
+                                [class.border-indigo-600]="mobileTab === 'insights'"
+                                [class.text-indigo-600]="mobileTab === 'insights'"
+                                [class.border-transparent]="mobileTab !== 'insights'"
+                                [class.text-gray-500]="mobileTab !== 'insights'"
+                                class="flex-1 py-3 px-4 text-sm font-medium border-b-2 transition-colors duration-200 flex items-center justify-center gap-2">
+                                <i class="fas fa-star"></i>
+                                <span>Insights</span>
+                            </button>
+                            <button (click)="mobileTab = 'overview'"
+                                [class.border-indigo-600]="mobileTab === 'overview'"
+                                [class.text-indigo-600]="mobileTab === 'overview'"
+                                [class.border-transparent]="mobileTab !== 'overview'"
+                                [class.text-gray-500]="mobileTab !== 'overview'"
+                                class="flex-1 py-3 px-4 text-sm font-medium border-b-2 transition-colors duration-200 flex items-center justify-center gap-2">
+                                <i class="fas fa-users"></i>
+                                <span>Overview</span>
+                            </button>
+                        </div>
+
+                        <!-- Tab Content -->
+                        <div class="relative">
+                            <!-- Insights Card Mobile -->
+                            <div *ngIf="mobileTab === 'insights'" class="insights-card">
+                                <div class="insights-header">
+                                    <div class="icf">
+                                        <i class="fas fa-star"></i>
+                                        <h2>PRISM - INSIGHTS</h2>
+                                    </div>
+                                    <i class="fas fa-gear" title="Click me to update the Assessment Settings"
+                                        (click)="gotoSettings()"></i>
+                                </div>
+                                <ul class="insights-list">
+                                    <li *ngFor="let insight of insights; let i = index"
+                                        [class.expanded]="expandedIndex === i" (click)="toggleInsight(i)">
+                                        <span class="bullet">{{i < 5 ? '•' : '◦' }}</span>
+                                                <div class="content">
+                                                    <span class="primary">{{insight.primary}}</span>
+                                                    <span class="secondary">{{insight.secondary}}</span>
+                                                </div>
+                                    </li>
+                                </ul>
                             </div>
-                            <div class="overview-stat">
-                                <div class="stat-value">{{classOverview.averageScore}}%</div>
-                                <div class="stat-label">Average Score</div>
-                            </div>
-                            <div class="overview-stat">
-                                <div class="stat-value highest">{{classOverview.highestScore}}%</div>
-                                <div class="stat-label">Highest Score</div>
-                            </div>
-                            <div class="overview-stat">
-                                <div class="stat-value lowest">{{classOverview.lowestScore}}%</div>
-                                <div class="stat-label">Lowest Score</div>
+
+                            <!-- Class Overview Card Mobile -->
+                            <div *ngIf="mobileTab === 'overview'" class="overview-card">
+                                <div class="overview-header">
+                                    <div class="overview-header-left">
+                                        <i class="fas fa-users"></i>
+                                        <h2 *ngIf="classOverview.mode === 'public'">Public Overview</h2>
+                                        <h2 *ngIf="classOverview.mode !== 'public'">Class Overview</h2>
+                                    </div>
+
+                                    <!-- Joining Code Display for Public Assessments -->
+                                    <div class="overview-header-right"
+                                        *ngIf="classOverview.mode === 'public' && classOverview.joiningCode"
+                                        (click)="showJoiningCodeDetails()">
+                                        <div class="join-display" title="Click this to view your QR and Joining Link">
+                                            <span class="join-label">Joining Code:</span>
+                                            <span class="join-value">{{ classOverview.joiningCode }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="overview-grid">
+                                    <div class="overview-stat">
+                                        <div class="stat-value">{{classOverview.totalStudents}}</div>
+                                        <div class="stat-label">Total Students</div>
+                                    </div>
+                                    <div class="overview-stat">
+                                        <div class="stat-value">{{classOverview.averageScore}}%</div>
+                                        <div class="stat-label">Average Score</div>
+                                    </div>
+                                    <div class="overview-stat">
+                                        <div class="stat-value highest">{{classOverview.highestScore}}%</div>
+                                        <div class="stat-label">Highest Score</div>
+                                    </div>
+                                    <div class="overview-stat">
+                                        <div class="stat-value lowest">{{classOverview.lowestScore}}%</div>
+                                        <div class="stat-label">Lowest Score</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -228,28 +320,29 @@
                     </div>
 
                     <div class="card-body p-0">
-                        <div class="overflow-x-auto">
+                        <!-- Desktop Table View -->
+                        <div class="hidden md:block overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
                                         <th
-                                            class="sticky left-0 bg-gray-50 px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[160px] md:min-w-[280px]">
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Name
                                         </th>
                                         <th
-                                            class="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[80px] md:min-w-[120px]">
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Block
                                         </th>
                                         <th
-                                            class="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[80px] md:min-w-[120px]">
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Score
                                         </th>
                                         <th
-                                            class="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px] md:min-w-[140px]">
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Status
                                         </th>
                                         <th
-                                            class="px-3 py-2 md:px-6 md:py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px] md:min-w-[140px]">
+                                            class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Integrity
                                         </th>
                                     </tr>
@@ -258,12 +351,12 @@
                                     <tr (click)="assessmentDetails(student)" *ngFor="let student of filteredStudents"
                                         [class.hover:bg-green-50]="student.status?.toLowerCase() === 'submitted'"
                                         [class.cursor-pointer]="student.status?.toLowerCase() === 'submitted'"
-                                        [class.hover:bg-red-50]="student.status?.toLowerCase() !== 'submitted'">
-                                        <td
-                                            class="sticky left-0 bg-white px-3 py-2 md:px-6 md:py-4 whitespace-nowrap z-20">
-                                            <div class="flex items-center gap-2 md:gap-3">
+                                        [class.hover:bg-red-50]="student.status?.toLowerCase() !== 'submitted'"
+                                        class="transition-colors duration-200">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center gap-3">
                                                 <div
-                                                    class="w-7 h-7 md:w-9 md:h-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-xs md:text-sm font-medium overflow-hidden">
+                                                    class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-sm font-medium overflow-hidden">
                                                     <img *ngIf="student.profile" [src]="student.profile"
                                                         [alt]="student.name" class="w-full h-full object-cover">
                                                     <span *ngIf="!student.profile">
@@ -271,61 +364,55 @@
                                                     </span>
                                                 </div>
                                                 <span
-                                                    class="font-semibold text-sm md:text-base text-gray-900">{{student.name}}</span>
+                                                    class="font-semibold text-base text-gray-900">{{student.name}}</span>
                                             </div>
                                         </td>
-                                        <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap bg-white">
-                                            <span class="text-sm md:text-base text-gray-900 uppercase">{{student.block
-                                                ||
-                                                'N/A'}}</span>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="text-base text-gray-900 uppercase font-medium">{{student.block
+                                                || 'N/A'}}</span>
                                         </td>
-                                        <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap bg-white">
-                                            <span class="text-sm md:text-base font-medium" [class]="{
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center gap-1">
+                                                <span class="text-base font-semibold" [class]="{
                                                     'text-green-600': (student.score / classOverview.totalScore * 100) >= 75,
                                                     'text-yellow-600': (student.score / classOverview.totalScore * 100) >= 50 && (student.score / classOverview.totalScore * 100) < 75,
                                                     'text-red-600': (student.score / classOverview.totalScore * 100) < 50
                                                 }">
-                                                {{student.score}}/{{classOverview.totalScore}}
-                                            </span>
+                                                    {{student.score}}/{{classOverview.totalScore}}
+                                                </span>
+                                            </div>
                                         </td>
-                                        <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap bg-white">
-                                            <div class="inline-flex items-center px-2.5 py-1.5 md:px-3.5 md:py-2 rounded-full gap-1.5"
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="inline-flex items-center px-3.5 py-2 rounded-full gap-1.5"
                                                 [ngClass]="{
                                                     'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/10': student.status?.toLowerCase() === 'submitted',
                                                     'bg-amber-50 text-amber-700 ring-1 ring-amber-600/10 animate-pulse': student.status?.toLowerCase() === 'in-progress',
                                                     'bg-slate-50 text-slate-600 ring-1 ring-slate-500/10': student.status?.toLowerCase() === 'not_started'
                                                 }">
-                                                <i class="fas text-xs md:text-sm" [ngClass]="{
+                                                <i class="fas text-sm" [ngClass]="{
                                                     'fa-circle-check': student.status?.toLowerCase() === 'submitted',
                                                     'fa-spinner fa-spin': student.status?.toLowerCase() === 'in-progress',
                                                     'fa-circle-pause': student.status?.toLowerCase() === 'not_started'
                                                 }"></i>
-                                                <span class="text-xs md:text-sm font-medium">
+                                                <span class="text-sm font-medium">
                                                     {{student.status === 'not_started' ? 'Not Started' :
                                                     (student.status === 'in-progress' ? 'In Progress' : 'Submitted')}}
                                                 </span>
                                             </div>
                                         </td>
-                                        <td class="px-3 py-2 md:px-6 md:py-4 whitespace-nowrap text-right bg-white">
-                                            <div class="inline-flex items-center px-2.5 py-1.5 md:px-3.5 md:py-2 rounded-full gap-2"
+                                        <td class="px-6 py-4 whitespace-nowrap text-right">
+                                            <div class="inline-flex items-center px-3.5 py-2 rounded-full gap-2"
                                                 [ngClass]="{
                                                     'bg-green-50 text-green-700 ring-1 ring-green-600/10': student.violationCount === 0,
                                                     'bg-amber-50 text-amber-700 ring-1 ring-amber-600/10': student.violationCount > 0 && student.violationCount <= 5,
                                                     'bg-red-50 text-red-700 ring-1 ring-red-600/10': student.violationCount > 5
                                                 }">
-                                                <div class="flex items-center gap-1">
-                                                    <i class="fas text-xs md:text-sm" [ngClass]="{
-                                                        'fa-shield-check': student.violationCount === 0,
-                                                        'fa-shield-exclamation animate-pulse': student.violationCount > 0 && student.violationCount <= 5,
-                                                        'fa-shield-xmark': student.violationCount > 5
-                                                    }"></i>
-                                                    <i class="fas text-xs md:text-sm" [ngClass]="{
-                                                        'fa-check': student.violationCount === 0,
-                                                        'fa-triangle-exclamation': student.violationCount > 0 && student.violationCount <= 5,
-                                                        'fa-ban': student.violationCount > 5
-                                                    }"></i>
-                                                </div>
-                                                <span class="text-xs md:text-sm font-medium">
+                                                <i class="fas text-sm" [ngClass]="{
+                                                    'fa-shield-check': student.violationCount === 0,
+                                                    'fa-shield-exclamation animate-pulse': student.violationCount > 0 && student.violationCount <= 5,
+                                                    'fa-shield-xmark': student.violationCount > 5
+                                                }"></i>
+                                                <span class="text-sm font-medium">
                                                     {{student.violationCount === 0 ? 'Clean' :
                                                     (student.violationCount <= 5 ? 'Warning (' + student.violationCount
                                                         + ')' : 'Cheated' )}} </span>
@@ -372,6 +459,135 @@
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+
+                        <!-- Mobile Card View -->
+                        <div class="md:hidden divide-y divide-gray-200">
+                            <div *ngFor="let student of filteredStudents" (click)="assessmentDetails(student)"
+                                [class.cursor-pointer]="student.status?.toLowerCase() === 'submitted'"
+                                class="p-4 bg-white hover:bg-gray-50 transition-colors duration-200 active:bg-gray-100">
+
+                                <!-- Student Name Header -->
+                                <div class="flex items-center gap-3 mb-3 pb-3 border-b border-gray-100">
+                                    <div
+                                        class="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold overflow-hidden shadow-sm flex-shrink-0">
+                                        <img *ngIf="student.profile" [src]="student.profile" [alt]="student.name"
+                                            class="w-full h-full object-cover">
+                                        <span *ngIf="!student.profile" class="text-base">
+                                            {{student.name.charAt(0).toUpperCase()}}
+                                        </span>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="font-bold text-gray-900 text-sm truncate">{{student.name}}</h4>
+                                        <p class="text-sm text-gray-500 uppercase font-medium">Block {{student.block ||
+                                            'N/A'}}</p>
+                                    </div>
+                                </div>
+
+                                <!-- Student Info Grid -->
+                                <div class="grid grid-cols-3 gap-3">
+                                    <div class="text-center">
+                                        <div class="text-[10px] text-gray-500 mb-0.5 font-medium uppercase">Score</div>
+                                        <div class="font-bold text-base" [class]="{
+                                            'text-green-600': (student.score / classOverview.totalScore * 100) >= 75,
+                                            'text-yellow-600': (student.score / classOverview.totalScore * 100) >= 50 && (student.score / classOverview.totalScore * 100) < 75,
+                                            'text-red-600': (student.score / classOverview.totalScore * 100) < 50
+                                        }">
+                                            {{student.score}}<span
+                                                class="text-xs text-gray-400">/{{classOverview.totalScore}}</span>
+                                        </div>
+                                        <div class="text-[10px] text-gray-500 mt-0.5">
+                                            {{(student.score / classOverview.totalScore * 100) | number:'1.0-0'}}%
+                                        </div>
+                                    </div>
+
+                                    <!-- Status -->
+                                    <div class="text-center">
+                                        <div class="text-[10px] text-gray-500 mb-0.5 font-medium uppercase">Status</div>
+                                        <div class="flex flex-col items-center gap-0.5">
+                                            <i class="fas text-lg" [ngClass]="{
+                                                'fa-circle-check text-emerald-600': student.status?.toLowerCase() === 'submitted',
+                                                'fa-spinner fa-spin text-amber-600': student.status?.toLowerCase() === 'in-progress',
+                                                'fa-circle-pause text-slate-500': student.status?.toLowerCase() === 'not_started'
+                                            }"></i>
+                                            <span class="text-[10px] font-semibold" [ngClass]="{
+                                                'text-emerald-700': student.status?.toLowerCase() === 'submitted',
+                                                'text-amber-700': student.status?.toLowerCase() === 'in-progress',
+                                                'text-slate-600': student.status?.toLowerCase() === 'not_started'
+                                            }">
+                                                {{student.status === 'not_started' ? 'Pending' :
+                                                (student.status === 'in-progress' ? 'Active' : 'Done')}}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Integrity -->
+                                    <div class="text-center">
+                                        <div class="text-[10px] text-gray-500 mb-0.5 font-medium uppercase">Integrity
+                                        </div>
+                                        <div class="flex flex-col items-center gap-0.5">
+                                            <i class="fas text-lg" [ngClass]="{
+                                                'fa-shield-check text-green-600': student.violationCount === 0,
+                                                'fa-shield-exclamation text-amber-600 animate-pulse': student.violationCount > 0 && student.violationCount <= 5,
+                                                'fa-shield-xmark text-red-600': student.violationCount > 5
+                                            }"></i>
+                                            <span class="text-[10px] font-semibold" [ngClass]="{
+                                                'text-green-700': student.violationCount === 0,
+                                                'text-amber-700': student.violationCount > 0 && student.violationCount <= 5,
+                                                'text-red-700': student.violationCount > 5
+                                            }">
+                                                {{student.violationCount === 0 ? 'Clean' :
+                                                (student.violationCount <= 5 ? student.violationCount + ' Issues'
+                                                    : 'Alert' )}} </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Tap Hint -->
+                                <div *ngIf="student.status?.toLowerCase() === 'submitted'"
+                                    class="mt-3 pt-3 border-t border-gray-100 text-center">
+                                    <span
+                                        class="text-xs text-indigo-600 font-medium flex items-center justify-center gap-1.5">
+                                        <i class="fas fa-hand-pointer text-xs"></i>
+                                        Tap to view details
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Empty State for Mobile -->
+                            <div *ngIf="!filteredStudents || filteredStudents.length === 0"
+                                class="p-8 text-center bg-white">
+                                <div class="empty-state-content">
+                                    <div class="empty-state-icon">
+                                        <i class="fas fa-user-graduate"></i>
+                                    </div>
+                                    <div class="empty-state-text">
+                                        <h3 class="empty-state-title">No Students Found</h3>
+                                        <p class="empty-state-description"
+                                            *ngIf="searchTerm || selectedStatus !== 'all'">
+                                            No students match your current filters. Try adjusting your
+                                            search or filter criteria.
+                                        </p>
+                                        <p class="empty-state-description"
+                                            *ngIf="!searchTerm && selectedStatus === 'all'">
+                                            No students have been assigned to this assessment yet. Students
+                                            will appear here once they join or are assigned to the
+                                            assessment.
+                                        </p>
+                                    </div>
+                                    <div class="empty-state-actions" *ngIf="!searchTerm && selectedStatus === 'all'">
+                                        <button class="empty-state-button" (click)="refreshData()">
+                                            <i class="fas fa-sync-alt"></i>
+                                            Refresh Data
+                                        </button>
+                                        <button *ngIf="classOverview?.mode === 'public'"
+                                            class="empty-state-button secondary" (click)="showJoiningCodeDetails()">
+                                            <i class="fas fa-share-alt"></i>
+                                            Share Joining Code
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
