@@ -110,6 +110,7 @@ export class EvaluateComponent implements OnInit {
   };
 
   modalTab: 'search' | 'dropdown' = 'dropdown';
+  searchData: any = [];
 
 
 
@@ -470,12 +471,17 @@ export class EvaluateComponent implements OnInit {
       next: (resp: any) => {
         // console.log("This is the scrapped skills:", resp);
         this.scrappedSkill = resp.data;
-        const searchData = this.scrappedSkill.assessmentsWithWrongQuestions;
-        // this.generateSearch(searchData);
+        this.searchData = this.scrappedSkill.assessmentsWithWrongQuestions;
       }, error: (error: any) => {
         console.error('Error scraping skills:', error);
       }
     })
+  }
+
+  triggerRecommendationTab() {
+    if (this.recommendationList.length > 0) return;
+
+    // this.generateSearch(this.searchData);
   }
 
   generateSearch(searchData: any) {

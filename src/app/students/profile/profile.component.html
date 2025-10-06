@@ -507,6 +507,17 @@
                                                     {{calculatePercentage(assessment.score, assessment.totalPoints)}}%
                                                 </span>
                                             </div>
+
+                                            <div *ngIf="recentAssessments.length === 0" class="empty-state-container">
+                                                <div class="empty-state-icon-wrapper">
+                                                    <div class="empty-state-circle"></div>
+                                                    <i class="fa-solid fa-check empty-state-icon"></i>
+                                                </div>
+                                                <h3 class="empty-state-title">You're all caught up!</h3>
+                                                <p class="empty-state-description">You have not taken any assessment at
+                                                    the
+                                                    moment.</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -535,6 +546,16 @@
                                                 }">
                                                     {{assessment.assignmentMode | titlecase}}
                                                 </span>
+                                            </div>
+
+                                            <div *ngIf="upcomingAssessments.length === 0" class="empty-state-container">
+                                                <div class="empty-state-icon-wrapper">
+                                                    <div class="empty-state-circle"></div>
+                                                    <i class="fa-solid fa-check empty-state-icon"></i>
+                                                </div>
+                                                <h3 class="empty-state-title">You're all caught up!</h3>
+                                                <p class="empty-state-description">No upcoming assessments at the
+                                                    moment.</p>
                                             </div>
                                         </div>
                                     </div>

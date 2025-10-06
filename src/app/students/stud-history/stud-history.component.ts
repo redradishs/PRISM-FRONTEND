@@ -380,6 +380,39 @@ export class StudHistoryComponent {
     return this.assessments.filter(a => a.status === status).length;
   }
 
+  isTimeSpentAnomalous(assessment: Assessment): boolean {
+    if (!assessment.performance?.timeSpent?.formatted) {
+      return false;
+    }
+    const formatted = assessment.performance.timeSpent.formatted;
+    const timeInSeconds = this.parseFormattedTime(formatted);
+    const threeHoursInSeconds = 3 * 60 * 60;
+
+    return timeInSeconds > threeHoursInSeconds || timeInSeconds < 0;
+  }
+
+
+  private parseFormattedTime(formatted: string): number {
+    let totalSeconds = 0;
+
+    const hoursMatch = formatted.match(/(\d+)h/);
+    if (hoursMatch) {
+      totalSeconds += parseInt(hoursMatch[1]) * 3600;
+    }
+
+    const minutesMatch = formatted.match(/(\d+)m/);
+    if (minutesMatch) {
+      totalSeconds += parseInt(minutesMatch[1]) * 60;
+    }
+
+    const secondsMatch = formatted.match(/(\d+)s/);
+    if (secondsMatch) {
+      totalSeconds += parseInt(secondsMatch[1]);
+    }
+
+    return totalSeconds;
+  }
+
   getModeIcon(type: string): string {
     switch (type) {
       case 'Assessment': return 'fa-file-alt';

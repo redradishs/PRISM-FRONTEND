@@ -202,8 +202,9 @@
                                                 <span>{{assessment.status | titlecase}}</span>
                                             </span>
                                             <!-- time spent-->
-                                            <span *ngIf="assessment.studentStatus === 'submitted'" class="badge"
-                                                style="background: #f0f9ff; color: #0369a1;">
+                                            <span
+                                                *ngIf="assessment.studentStatus === 'submitted' && !isTimeSpentAnomalous(assessment)"
+                                                class="badge" style="background: #f0f9ff; color: #0369a1;">
                                                 <i class="fas fa-clock mr-1"></i>
                                                 {{assessment.performance.timeSpent.formatted}}
                                             </span>
@@ -256,8 +257,17 @@
                                             No Attempt was made
                                         </span>
                                         <span *ngIf="assessment.studentStatus === 'submitted'">
-                                            <i class="fas fa-clock"></i>
-                                            Time Spent: {{assessment.performance.timeSpent.formatted}}
+                                            <span *ngIf="!isTimeSpentAnomalous(assessment)"
+                                                class="anomalous-time-warning" title="Anomalous Time Spent Detected">
+                                                <i class="fas fa-clock"></i>
+                                                Time Spent: {{assessment.performance.timeSpent.formatted}}
+                                            </span>
+
+                                            <span *ngIf="isTimeSpentAnomalous(assessment)"
+                                                class="anomalous-time-warning" title="Anomalous Time Spent Detected">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                Force Stopped
+                                            </span>
                                         </span>
                                         <span *ngIf="assessment.remainingAttempts && assessment.status !== 'completed'">
                                             <i class="fas fa-redo"></i>
