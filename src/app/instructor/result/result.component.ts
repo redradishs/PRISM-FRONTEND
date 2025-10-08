@@ -117,7 +117,7 @@ export class ResultComponent implements OnInit, OnDestroy {
   private lastNamePrefixes = [
     'De', 'Del', 'Dela', 'De la', 'De los', 'San', 'Santa', 'Sta.'
   ];
-
+  allowJoining: boolean = false;
   fabOpen: boolean = false;
   fabActive = false;
   fabFaded = false;
@@ -257,6 +257,7 @@ export class ResultComponent implements OnInit, OnDestroy {
       next: (resp: any) => {
         this.classOverview = resp.data;
         this.assessmentTitle = resp.data.title;
+        this.allowJoining = resp.data.enableJoining;
         if (resp.data.classes && resp.data.classes.length > 0) {
           this.className = resp.data.classes[0].className;
           this.classCode = resp.data.classes[0].classCode;
@@ -779,6 +780,39 @@ export class ResultComponent implements OnInit, OnDestroy {
         });
       });
     }
+  }
+
+  toggleAllowJoining() {
+    this.allowJoining = !this.allowJoining;
+
+    const data = {
+      assignedAssessmentId: this.assessmentId,
+      instructorId: this.userId,
+      enableJoining: this.allowJoining
+    }
+
+    // console.log(data);
+
+    this.api.updateJoiningAccess(data).subscribe({
+      next: (resp: any) => {
+        Swal.fire({
+          title: 'Success',
+          text: `Joining access has been ${this.allowJoining ? 'enabled' : 'disabled'}.`,
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false
+        });
+        this.getResultOverview(this.assessmentId);
+      }, error: (error) => {
+        Swal.fire({
+          title: 'Error',
+          text: 'Failed to update joining access. Please try again.',
+          icon: 'error',
+          confirmButtonColor: '#dc2626'
+        });
+        console.error('Error updating joining access:', error);
+      }
+    })
   }
 
   async showJoiningCodeDetails() {

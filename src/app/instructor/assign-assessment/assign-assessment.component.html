@@ -747,30 +747,24 @@
                                             </div>
                                         </div>
 
-                                        <!-- Attempts -->
-                                        <div class="form-group-enhanced">
+                                        <!-- Attempts - Hidden for Mastery Mode (defaults to 50) -->
+                                        <div class="form-group-enhanced" *ngIf="selectedMode !== 'mastery'">
                                             <label class="form-label-enhanced">
                                                 <i class="fas fa-redo"></i>
                                                 Allowed Attempts
                                             </label>
                                             <div class="number-input-wrapper">
-                                                <input type="number" [(ngModel)]="attemptsAllowed" [min]="1"
-                                                    [max]="selectedMode === 'mastery' ? 10 : 5"
+                                                <input type="number" [(ngModel)]="attemptsAllowed" [min]="1" [max]="5"
                                                     [class.validation-error]="isAttemptsInvalid()"
                                                     class="number-input-enhanced">
                                                 <div class="input-hint" *ngIf="!isAttemptsInvalid()">
-                                                    {{selectedMode === 'mastery'
-                                                    ? 'Set for 50 attempts for mastery learning'
-                                                    : 'Max 5 attempts for standard assessment'}}
+                                                    Max 5 attempts for standard assessment
                                                 </div>
                                             </div>
 
                                             <div *ngIf="isAttemptsInvalid()" class="validation-message">
                                                 <i class="fas fa-exclamation-triangle"></i>
-                                                <span> {{selectedMode === 'mastery' ? 'Attempts must only be within 1 -
-                                                    50'
-                                                    : 'Attempts must only be within 1 - 5'
-                                                    }}</span>
+                                                <span>Attempts must only be within 1 - 5</span>
                                             </div>
 
                                         </div>
@@ -812,23 +806,29 @@
                                             </div>
                                         </div>
 
-                                        <!-- Per Question Time Limit -->
+                                        <!-- Per Question Time Limit - Disabled for Mastery Mode -->
                                         <div class="form-group-enhanced">
                                             <label class="form-label-enhanced">
                                                 <i class="fas fa-hourglass-half"></i>
                                                 Time per Question
+                                                <span *ngIf="selectedMode === 'mastery'" class="disabled-badge">Disabled in Mastery Mode</span>
                                             </label>
                                             <div class="time-input-wrapper">
                                                 <input type="number" [(ngModel)]="timedQuestions" min="0"
                                                     [class.validation-error]="isTimeLimitPerQuestionInvalid()"
+                                                    [disabled]="selectedMode === 'mastery'"
                                                     class="time-input-enhanced" placeholder="0">
                                                 <div class="time-unit">seconds</div>
                                             </div>
-                                            <div class="input-hint">
+                                            <div class="input-hint" *ngIf="selectedMode !== 'mastery'">
                                                 <i class="fas fa-info-circle"></i>
                                                 Set to 0 to disable per-question limits
                                             </div>
-                                            <div *ngIf="isTimeLimitPerQuestionInvalid()" class="validation-message">
+                                            <div class="input-hint" *ngIf="selectedMode === 'mastery'">
+                                                <i class="fas fa-lock"></i>
+                                                Time limits per question are not available in Mastery Mode
+                                            </div>
+                                            <div *ngIf="isTimeLimitPerQuestionInvalid() && selectedMode !== 'mastery'" class="validation-message">
                                                 <i class="fas fa-exclamation-triangle"></i>
                                                 Time limit is unreasonable, must be between 10 - 180 seconds
                                             </div>
@@ -899,9 +899,9 @@
                                                 </label>
                                             </div>
 
-                                            <!-- Data Bank Settings -->
-                                            <div *ngIf="!randomizeQuestions" class="checkbox-option-enhanced"
-                                                [class.disabled]="!canbeDatabanked()">
+                                            <!-- Data Bank Settings - Hidden for Mastery Mode -->
+                                            <div *ngIf="!randomizeQuestions && selectedMode !== 'mastery'"
+                                                class="checkbox-option-enhanced" [class.disabled]="!canbeDatabanked()">
                                                 <input type="checkbox" [(ngModel)]="enableDatabank" id="enable-databank"
                                                     class="checkbox-input-enhanced" [disabled]="!canbeDatabanked()"
                                                     (change)="onDataBankToggle()">

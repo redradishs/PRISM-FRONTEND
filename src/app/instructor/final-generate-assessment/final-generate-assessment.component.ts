@@ -111,6 +111,7 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
   selectedFileName: string = '';
   showUploadSection = false;
   showCategories = false;
+  isSortedByType = false;
 
   questionTypes = [
     {
@@ -213,6 +214,12 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
       this.errorMessage = 'Please enter a topic';
       return;
     }
+
+    if (!this.isValidTopic(this.aiGeneration.topic)) {
+      this.errorMessage = 'Please enter a valid topic. The input appears to contain random or invalid text.';
+      return;
+    }
+
     if (this.selectedTypes.length === 0) {
       this.errorMessage = 'Please select at least one question type';
       return;
@@ -260,6 +267,58 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
     if (!this.aiGeneration.topic || this.selectedTypes.length === 0 || (Number(this.aiGeneration.questionCount) > 50)) {
       return false;
     }
+    if (!this.isValidTopic(this.aiGeneration.topic)) {
+      return false;
+    }
+    return true;
+  }
+
+  public isValidTopic(topic: string): boolean {
+    if (!topic || topic.trim().length < 3) {
+      return false;
+    }
+
+    const trimmedTopic = topic.trim();
+
+    const words = trimmedTopic.split(/\s+/).filter(word => word.length >= 3);
+    if (words.length === 0) {
+      return false;
+    }
+
+    const hasValidWords = words.some(word => {
+      const vowels = (word.match(/[aeiouAEIOU]/g) || []).length;
+      const consonants = (word.match(/[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]/g) || []).length;
+      const totalLetters = vowels + consonants;
+
+      if (vowels === 0 && totalLetters > 2) {
+        return false;
+      }
+
+      // vowel ration 15 - 70%
+      const vowelRatio = totalLetters > 0 ? vowels / totalLetters : 0;
+      return vowelRatio >= 0.15 && vowelRatio <= 0.7;
+    });
+
+    if (!hasValidWords) {
+      return false;
+    }
+
+    const repeatingPattern = /(.)\1{3,}/;
+    if (repeatingPattern.test(trimmedTopic)) {
+      return false;
+    }
+
+    const excessiveConsonants = /[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]{6,}/;
+    if (excessiveConsonants.test(trimmedTopic)) {
+      return false;
+    }
+
+    const alphaChars = (trimmedTopic.match(/[a-zA-Z]/g) || []).length;
+    const totalChars = trimmedTopic.replace(/\s/g, '').length;
+    if (alphaChars / totalChars < 0.5) {
+      return false;
+    }
+
     return true;
   }
 
@@ -455,12 +514,80 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
 
   //used this function to sort the numbers in order, there was a bug before and this fixed it.
   private updateQuestionNumbers() {
-    this.questions.sort((a, b) => a.id - b.id);
+    // this.questions.sort((a, b) => a.id - b.id);
     let currentNumber = 1;
     this.questions.forEach((q) => {
       q.questionNumber = currentNumber++;
     });
   }
+
+  sortQuestionByType() {
+    if (this.questions.length === 0) {
+      Swal.fire({
+        title: 'No Questions',
+        text: 'Please add questions before sorting.',
+        icon: 'warning',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+      });
+      return;
+    }
+
+    const typeOrder = {
+      'multiple-choice': 1,
+      'true-false': 2,
+      'enumeration': 3,
+      'short-answer': 4
+    };
+
+    if (!this.isSortedByType) {
+      this.questions.sort((a, b) => {
+        const typeA = typeOrder[a.type as keyof typeof typeOrder] || 999;
+        const typeB = typeOrder[b.type as keyof typeof typeOrder] || 999;
+
+        if (typeA !== typeB) {
+          return typeA - typeB;
+        }
+
+        return a.id - b.id;
+      });
+
+      this.isSortedByType = true;
+      Swal.fire({
+        title: 'Questions Sorted',
+        text: 'Questions have been sorted by type',
+        icon: 'success',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        background: '#fff',
+        iconColor: '#22c55e'
+      });
+    } else {
+      this.questions.sort((a, b) => a.id - b.id);
+      this.isSortedByType = false;
+
+      Swal.fire({
+        title: 'Original Order Restored',
+        text: 'Questions have been restored to creation order',
+        icon: 'info',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        background: '#fff',
+        iconColor: '#6366f1'
+      });
+    }
+
+    this.updateQuestionNumbers();
+  }
+
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
   }

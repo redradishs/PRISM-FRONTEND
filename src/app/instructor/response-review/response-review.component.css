@@ -2684,6 +2684,22 @@ html {
     background-color: #3b82f6;
 }
 
+.simple-violation-left-border.copy-border {
+    background-color: #8b5cf6;
+}
+
+.simple-violation-left-border.paste-border {
+    background-color: #ec4899;
+}
+
+.simple-violation-left-border.select-border {
+    background-color: #6366f1;
+}
+
+.simple-violation-left-border.devtools-border {
+    background-color: #dc2626;
+}
+
 .simple-violation-icon {
     width: 36px;
     height: 36px;
@@ -2710,6 +2726,26 @@ html {
 .simple-violation-icon.screenshot-icon {
     background-color: #dbeafe;
     color: #3b82f6;
+}
+
+.simple-violation-icon.copy-icon {
+    background-color: #ede9fe;
+    color: #8b5cf6;
+}
+
+.simple-violation-icon.paste-icon {
+    background-color: #fce7f3;
+    color: #ec4899;
+}
+
+.simple-violation-icon.select-icon {
+    background-color: #e0e7ff;
+    color: #6366f1;
+}
+
+.simple-violation-icon.devtools-icon {
+    background-color: #fee2e2;
+    color: #dc2626;
 }
 
 .simple-violation-icon.generic-icon {

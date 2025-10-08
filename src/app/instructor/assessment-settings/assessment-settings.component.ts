@@ -113,8 +113,13 @@ export class AssessmentSettingsComponent implements OnInit {
     if (populateData.mode === 'mastery') {
       this.masteryScore = populateData.masteryScore || 0;
     }
-    this.startDate = this.formatDateFromString(populateData.startDate);
-    this.dueDate = this.formatDateFromString(populateData.endDate);
+
+    // PHT TO UTC
+    const startDateUTC = this.convertFromPhilippineTime(new Date(populateData.startDate));
+    const endDateUTC = this.convertFromPhilippineTime(new Date(populateData.endDate));
+
+    this.startDate = this.formatDateFromString(startDateUTC);
+    this.dueDate = this.formatDateFromString(endDateUTC);
 
     this.showResults = populateData.modeSettings.showResults || 'immediate';
     this.attemptsAllowed = populateData.maxAttempts || 1;
@@ -218,6 +223,16 @@ export class AssessmentSettingsComponent implements OnInit {
     return this.formatDate(new Date());
   }
 
+  private convertToPhilippineTime(date: Date): Date {
+    const phTime = new Date(date.getTime() + (8 * 60 * 60 * 1000));
+    return phTime;
+  }
+
+  private convertFromPhilippineTime(date: Date): Date {
+    const utcTime = new Date(date.getTime() - (8 * 60 * 60 * 1000));
+    return utcTime;
+  }
+
   timeDisplay(): string {
     if (!this.startDate && !this.dueDate) {
       return ''
@@ -242,10 +257,13 @@ export class AssessmentSettingsComponent implements OnInit {
   }
 
   saveSettings() {
+    const startDatePH = this.convertToPhilippineTime(new Date(this.startDate));
+    const dueDatePH = this.convertToPhilippineTime(new Date(this.dueDate));
+
     const data: any = {
       id: this.assignedAssessmentId,
-      startDate: this.startDate,
-      dueDate: this.dueDate,
+      startDate: startDatePH,
+      dueDate: dueDatePH,
       timeLimit: this.timeLimit,
       allowLateSubmissions: this.allowLateSubmissions,
       showResults: this.showResults,

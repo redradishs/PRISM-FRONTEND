@@ -636,6 +636,7 @@
   justify-content: center;
   z-index: 1000;
   padding: 1rem;
+  animation: overlayFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .modal-content {
@@ -649,6 +650,7 @@
   flex-direction: column;
   position: relative;
   overflow: hidden;
+  animation: modalSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .modal-header {

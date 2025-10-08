@@ -449,6 +449,7 @@ export class AssignAssessmentComponent implements OnInit {
       this.masteryScore = Math.min(90, this.selectedAssessmentPoints);
       this.enableDatabank = false;
       this.questionsToServe = 0;
+      this.timedQuestions = 0;
     } else if (mode === 'public') {
       this.attemptsAllowed = 1;
       this.showResults = 'immediate';

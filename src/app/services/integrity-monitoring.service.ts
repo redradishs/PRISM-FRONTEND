@@ -44,6 +44,10 @@ export class IntegrityMonitoringService {
   private lastActionTime = 0;
   private readonly RAPID_ACTION_THRESHOLD = 3000;
 
+  // ✅ Deduplication tracking
+  private lastViolation: { type: string; timestamp: number } | null = null;
+  private readonly DEBOUNCE_TIME = 500;
+
   // Public observables
   public cheatingCount$: Observable<number> =
     this._cheatingCount.asObservable();
@@ -118,15 +122,29 @@ export class IntegrityMonitoringService {
 
   // Public method to register violations from components
   public registerViolation(reason: string, severity: string): void {
+    const now = Date.now();
+
+    if (this.lastViolation) {
+      const timeDiff = now - this.lastViolation.timestamp;
+      const isSameType = this.lastViolation.type === reason;
+
+      if (isSameType && timeDiff < this.DEBOUNCE_TIME) {
+        console.log(`Ignoring the duplicate ${reason})`);
+        return;
+      }
+    }
+
+    // Record the violation
     const violations = [...this._violations.value];
 
     violations.push({
       type: reason,
-      timestamp: Date.now(),
+      timestamp: now,
       severity: severity,
     });
 
     this._violations.next(violations);
+    this.lastViolation = { type: reason, timestamp: now };
 
     this.updateCheatingCount();
 
@@ -409,6 +427,7 @@ export class IntegrityMonitoringService {
     this._violations.next([]);
     this._cheatingCount.next(0);
     this._cheatMessage.next(null);
+    this.lastViolation = null;
 
     localStorage.removeItem('assessment_integrity_data');
     sessionStorage.removeItem('assessment_integrity_data');
@@ -520,12 +539,39 @@ export class IntegrityMonitoringService {
       }
     }
 
-    // ctrl keys detections
-    if (e.ctrlKey) {
-      const forbiddenKeys = ['c', 'v', 'x', 'a', 's', 'p', 'f', 'h', 'u', 'r', 'w', 't', 'n'];
-      if (forbiddenKeys.includes(e.key.toLowerCase())) {
-        this.registerViolation(`Keyboard shortcut Ctrl+${e.key.toUpperCase()} detected`, 'medium');
+    // mapping of shortcuts
+    if (e.ctrlKey || e.metaKey) {
+      const key = e.key.toLowerCase();
+
+      const shortcutMap: { [key: string]: string } = {
+        'c': 'Copy attempt detected',
+        'v': 'Paste attempt detected',
+        'x': 'Cut attempt detected',
+        'a': 'Select all attempt detected',
+        's': 'Save attempt detected',
+        'p': 'Print attempt detected',
+        'f': 'Find attempt detected',
+        'h': 'Replace attempt detected',
+        'u': 'View source attempt detected',
+        'r': 'Refresh attempt detected',
+        'w': 'Close tab attempt detected',
+        't': 'New tab attempt detected',
+        'n': 'New window attempt detected'
+      };
+
+      if (shortcutMap[key]) {
+        this.registerViolation(shortcutMap[key], 'medium');
       }
+
+      if (key === 'i' || key === 'j') {
+        e.preventDefault();
+        this.registerViolation('DevTools attempt detected', 'high');
+      }
+    }
+
+    if (e.key === 'F12') {
+      e.preventDefault();
+      this.registerViolation('DevTools attempt detected', 'high');
     }
   };
 

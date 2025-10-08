@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { StudentService } from '../../services/student.service';
 import { IntegrityMonitoringService } from '../../services/integrity-monitoring.service';
-import { Subscription } from 'rxjs';
+import { Subscription, timestamp } from 'rxjs';
 import Swal from 'sweetalert2';
 
 interface Question {
@@ -280,13 +280,15 @@ export class StudTakeexamsecureComponent implements OnInit, OnDestroy {
 
       if (violations.length > 0) {
         //most recent violation only
-        const sortedViolations = [...violations].sort((a, b) => b.timestamp - a.timestamp);
-        const latestViolation = sortedViolations[0];
-        data.violation = {
-          type: latestViolation.type,
+        // const sortedViolations = [...violations].sort((a, b) => b.timestamp - a.timestamp);
+        // const latestViolation = sortedViolations[0];
+        data.violation = violations.map(v => ({
+          type: v.type,
           fromQuestionId: q._id,
-          violationCount: this.cheatingCount
-        };
+          timestamp: v.timestamp
+        }));
+
+        data.violationCount = this.cheatingCount;
 
         // console.log('Sending exact violation type:', latestViolation.type);
       }

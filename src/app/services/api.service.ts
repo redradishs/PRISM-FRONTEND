@@ -390,6 +390,10 @@ export class ApiService {
     return new EventSource(`${this.rtUrl}/assessment/result/score/stream/${id}/rt`);
   }
 
+  updateJoiningAccess(data: any) {
+    return this.http.post(`${this.apiUrl}/assessment/togglejoin`, data);
+  }
+
   startNow(data: any) {
     return this.http.post(`${this.apiUrl}/assessment/start`, data);
   }

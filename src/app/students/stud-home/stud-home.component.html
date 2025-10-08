@@ -288,8 +288,8 @@
                                             </div>
                                         </div>
                                         <div class="ongoing-footer flex-between">
-                                            <span>Start: {{assessment.startDate | date:'MMM d, y h:mm a'}}</span>
-                                            <span>Due: {{assessment.endDate | date:'MMM d, y h:mm a'}}</span>
+                                            <span>Start: {{assessment.startDate | date:'MMM d, y h:mm a':'UTC'}}</span>
+                                            <span>Due: {{assessment.endDate | date:'MMM d, y h:mm a':'UTC'}}</span>
                                         </div>
                                     </div>
                                     <a *ngIf="upcomingAssessments.length >= 5" routerLink="/student/history"
@@ -380,11 +380,10 @@
 </div>
 
 <!-- Join Class Modal -->
-<div *ngIf="showJoinClassModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog"
-    aria-modal="true">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="fixed inset-0 backdrop-blur-[5px] bg-black/10 transition-opacity" aria-hidden="true"
-            (click)="closeJoinClassModal()"></div>
+<div *ngIf="showJoinClassModal" class="fixed inset-0 z-50 overflow-y-auto modal backdrop-blur-[2px] bg-black/20"
+    aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen p-4 modal-body">
+        <div class="fixed inset-0 transition-opacity" aria-hidden="true" (click)="closeJoinClassModal()"></div>
 
 
         <!-- Modal Container -->
@@ -451,11 +450,10 @@
 </div>
 
 <!-- Join Assessment Modal -->
-<div *ngIf="showJoinAssessmentModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title"
-    role="dialog" aria-modal="true">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="fixed inset-0 backdrop-blur-[5px] bg-black/10 transition-opacity" aria-hidden="true"
-            (click)="closeJoinAssessmentModal()"></div>
+<div *ngIf="showJoinAssessmentModal" class="fixed inset-0 z-50 overflow-y-auto modal backdrop-blur-[2px] bg-black/20"
+    aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen p-4 modal-body">
+        <div class="fixed inset-0" aria-hidden="true" (click)="closeJoinAssessmentModal()"></div>
 
         <!-- Modal Container -->
         <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md transform transition-all">

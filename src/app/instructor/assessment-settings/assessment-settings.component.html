@@ -252,7 +252,7 @@
                                     </div>
 
                                     <!-- Attempts -->
-                                    <div class="form-group-enhanced">
+                                    <div class="form-group-enhanced" *ngIf="assignedData?.mode !== 'mastery'">
                                         <label class="form-label-enhanced">
                                             <i class="fas fa-redo"></i>
                                             Allowed Attempts
@@ -303,15 +303,24 @@
                                         <label class="form-label-enhanced">
                                             <i class="fas fa-hourglass-half"></i>
                                             Time per Question
+                                            <span *ngIf="assignedData?.mode === 'mastery'"
+                                                class="disabled-badge">Disabled in
+                                                Mastery Mode</span>
                                         </label>
                                         <div class="time-input-wrapper">
                                             <input type="number" min="0" value="0" class="time-input-enhanced"
+                                                [disabled]="assignedData?.mode === 'mastery'"
                                                 [(ngModel)]="timeLimitPerQuestion" (ngModelChange)="onFormChange()">
                                             <div class="time-unit">seconds</div>
                                         </div>
-                                        <div class="input-hint">
+                                        <div *ngIf="assignedData?.mode !== 'mastery'" class="input-hint">
                                             <i class="fas fa-info-circle"></i>
                                             Set to 0 to disable per-question limits
+                                        </div>
+
+                                        <div class="input-hint" *ngIf="assignedData?.mode === 'mastery'">
+                                            <i class="fas fa-lock"></i>
+                                            Time limits per question are not available in Mastery Mode
                                         </div>
                                     </div>
                                 </div>
@@ -362,21 +371,6 @@
                                                     <span class="checkbox-title">Randomize Questions</span>
                                                     <span class="checkbox-description">Questions will appear in
                                                         different order for each student</span>
-                                                </div>
-                                            </label>
-                                        </div>
-
-                                        <div class="checkbox-option-enhanced">
-                                            <input type="checkbox" id="allow-backtrack" class="checkbox-input-enhanced"
-                                                checked>
-                                            <label for="allow-backtrack" class="checkbox-label-enhanced">
-                                                <div class="checkbox-indicator">
-                                                    <i class="fas fa-check"></i>
-                                                </div>
-                                                <div class="checkbox-text">
-                                                    <span class="checkbox-title">Allow Backtracking</span>
-                                                    <span class="checkbox-description">Students can go back to previous
-                                                        questions</span>
                                                 </div>
                                             </label>
                                         </div>

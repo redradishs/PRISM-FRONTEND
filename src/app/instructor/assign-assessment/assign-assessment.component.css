@@ -2917,9 +2917,6 @@ html {
 }
 
 /* Settings Section */
-.settings-section {
-    margin-bottom: 2rem;
-}
 
 .mode-selection-section {
     background: white;
@@ -3263,6 +3260,19 @@ html {
     padding: 0.125rem 0.5rem;
     border-radius: 12px;
     margin-left: auto;
+}
+
+.disabled-badge {
+    background: #fef3c7;
+    color: #d97706;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
 }
 
 /* Date Presets Enhanced */

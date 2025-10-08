@@ -65,6 +65,10 @@ export class JoinAssessmentComponent implements OnInit {
             this.canJoin = false;
             this.showCompletedMessage();
           }
+          if (resp.data.modesettings.enableJoining === false) {
+            this.canJoin = false;
+            this.showDisableJoining();
+          }
         } else {
           this.found = false;
           this.showNotFoundMessage();
@@ -172,4 +176,19 @@ export class JoinAssessmentComponent implements OnInit {
     });
   }
 
+  showDisableJoining() {
+    Swal.fire({
+      title: 'Joining Disabled',
+      text: 'The Instructor has disabled joining for this Public Assessment.',
+      icon: 'error',
+      showConfirmButton: false,
+      timer: 7000,
+      timerProgressBar: true,
+    }).then(() => {
+      this.router.navigate(['/dashboard']);
+    });
+  }
+
 }
+
+

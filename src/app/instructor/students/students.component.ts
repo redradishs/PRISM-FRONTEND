@@ -1149,7 +1149,7 @@ export class StudentsComponent implements OnInit {
   }
 
   removeStudent(student: any) {
-    // console.log("This is the student", student);
+    console.log("This is the student", student);
     const data = {
       studentId: student._id,
       classCode: this.selectedClass.classCode
@@ -1171,7 +1171,7 @@ export class StudentsComponent implements OnInit {
             this.statsClass();
             console.log('Student removed successfully');
             Swal.fire({
-              title: `{student.name} Removed!`,
+              title: `${student.name} Removed!`,
               text: 'Student has been removed from the class.',
               icon: 'success',
               confirmButtonColor: '#3b82f6',

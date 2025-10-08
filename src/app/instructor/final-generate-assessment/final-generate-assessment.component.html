@@ -157,7 +157,14 @@
                         <div class="genform-field" data-tour="instructor-create-topic">
                             <label for="topic">Topic</label>
                             <textarea id="topic" placeholder="Enter your topic or learning objectives"
-                                class="genform-textarea" [(ngModel)]="aiGeneration.topic"></textarea>
+                                class="genform-textarea"
+                                [class.invalid-input]="aiGeneration.topic && !isValidTopic(aiGeneration.topic)"
+                                [(ngModel)]="aiGeneration.topic"></textarea>
+                            <div class="input-validation-hint"
+                                *ngIf="aiGeneration.topic && aiGeneration.topic.trim().length > 0 && !isValidTopic(aiGeneration.topic)">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <span>Please enter a valid topic. Avoid inputting random characters.</span>
+                            </div>
                         </div>
 
                         <!-- Difficulty and Questions Count -->
@@ -356,6 +363,12 @@
                             (click)="clearQuestions()">
                             <i class="fas fa-trash"></i>
                             Clear Questions
+                        </button>
+
+                        <button *ngIf="getTotalQuestions() > 1" class="inix-add-button sort-button"
+                            (click)="sortQuestionByType()">
+                            <i class="fas" [ngClass]="isSortedByType ? 'fa-sort-amount-up' : 'fa-sort'"></i>
+                            {{isSortedByType ? 'Original Order' : 'Sort by Type'}}
                         </button>
 
                         <button (click)="scrollToSection(2)" class="inix-add-button">
@@ -730,6 +743,11 @@
                             <button class="fab-action fab-delete" (click)="clearQuestions(); closeFab()">
                                 <i class="fas fa-trash"></i>
                                 <span class="fab-tooltip">Delete All</span>
+                            </button>
+
+                            <button class="fab-action fab-delete" (click)="sortQuestionByType(); closeFab()">
+                                <i class="fas" [ngClass]="isSortedByType ? 'fa-sort-amount-up' : 'fa-sort'"></i>
+                                <span class="fab-tooltip">{{isSortedByType ? 'Original Order' : 'Sort by Type'}}</span>
                             </button>
 
                             <button *ngIf="validGeneration();" class="fab-action fab-generate"

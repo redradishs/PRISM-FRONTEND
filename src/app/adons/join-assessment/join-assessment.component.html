@@ -68,13 +68,13 @@
             <div class="sched-ss">
                 <div class="sched-separator">
                     <h2>Start Date</h2>
-                    <span class="date-desktop">{{assessmentDetails?.startDate | date:'MMMM d, y h:mm a':'PHT'}}</span>
-                    <span class="date-mobile">{{assessmentDetails?.startDate | date:'MM/dd/yy h:mm a':'PHT'}}</span>
+                    <span class="date-desktop">{{assessmentDetails?.startDate | date:'MMMM d, y h:mm a':'UTC'}}</span>
+                    <span class="date-mobile">{{assessmentDetails?.startDate | date:'MM/dd/yy h:mm a':'UTC'}}</span>
                 </div>
                 <div class="sched-separator">
                     <h2>End Date</h2>
-                    <span class="date-desktop">{{assessmentDetails?.dueDate | date:'MMMM d, y h:mm a':'PHT'}}</span>
-                    <span class="date-mobile">{{assessmentDetails?.dueDate | date:'MM/dd/yy h:mm a':'PHT'}}</span>
+                    <span class="date-desktop">{{assessmentDetails?.dueDate | date:'MMMM d, y h:mm a':'UTC'}}</span>
+                    <span class="date-mobile">{{assessmentDetails?.dueDate | date:'MM/dd/yy h:mm a':'UTC'}}</span>
                 </div>
             </div>
         </div>

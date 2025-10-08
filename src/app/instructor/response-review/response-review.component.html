@@ -325,18 +325,30 @@
                             <div class="simple-violation-left-border" [ngClass]="{
                                 'window-border': violation.type.includes('Window') || violation.type.includes('resize'),
                                 'tab-border': violation.type.includes('tab') || violation.type.includes('Tab'),
-                                'screenshot-border': violation.type.includes('Screenshot') || violation.type.includes('screenshot')
+                                'screenshot-border': violation.type.includes('Screenshot') || violation.type.includes('screenshot'),
+                                'copy-border': violation.type.includes('Copy') || violation.type.includes('copy'),
+                                'paste-border': violation.type.includes('Paste') || violation.type.includes('paste'),
+                                'select-border': violation.type.includes('Select') || violation.type.includes('select'),
+                                'devtools-border': violation.type.includes('DevTools') || violation.type.includes('devtools') || violation.type.includes('Developer')
                             }"></div>
                             <div class="simple-violation-icon" [ngClass]="{
                                 'window-icon': violation.type.includes('Window') || violation.type.includes('resize'),
                                 'tab-icon': violation.type.includes('tab') || violation.type.includes('Tab'),
                                 'screenshot-icon': violation.type.includes('Screenshot') || violation.type.includes('screenshot'),
+                                'copy-icon': violation.type.includes('Copy') || violation.type.includes('copy'),
+                                'paste-icon': violation.type.includes('Paste') || violation.type.includes('paste'),
+                                'select-icon': violation.type.includes('Select') || violation.type.includes('select'),
+                                'devtools-icon': violation.type.includes('DevTools') || violation.type.includes('devtools') || violation.type.includes('Developer'),
                                 'generic-icon': violation.type === 'integrity_violation'
                             }">
                                 <i class="fas" [ngClass]="{
                                     'fa-window-restore': violation.type.includes('tab') || violation.type.includes('Tab'),
                                     'fa-expand-arrows-alt': violation.type.includes('Window') || violation.type.includes('resize'),
                                     'fa-camera': violation.type.includes('Screenshot') || violation.type.includes('screenshot'),
+                                    'fa-copy': violation.type.includes('Copy') || violation.type.includes('copy'),
+                                    'fa-clone': violation.type.includes('Paste') || violation.type.includes('paste'),
+                                    'fa-object-group': violation.type.includes('Select') || violation.type.includes('select'),
+                                    'fa-code': violation.type.includes('DevTools') || violation.type.includes('devtools') || violation.type.includes('Developer'),
                                     'fa-exclamation-circle': violation.type === 'integrity_violation'
                                 }"></i>
                             </div>

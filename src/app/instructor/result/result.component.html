@@ -1041,6 +1041,31 @@
             </div>
 
             <div class="modal-body">
+
+                <!-- Joining Toggle -->
+                <div class="modal-controls">
+                    <div class="control-section">
+                        <div class="control-header">
+                            <div class="control-info">
+                                <h4>Assessment Access</h4>
+                                <p>Control of access to this assessment.</p>
+                            </div>
+                            <div class="toggle-switch" [class.enabled]="allowJoining" (click)="toggleAllowJoining()">
+                                <div class="toggle-slider">
+                                    <div class="toggle-thumb"></div>
+                                </div>
+                                <span class="toggle-label">{{ allowJoining ? 'Enabled' : 'Disabled' }}</span>
+                            </div>
+                        </div>
+                        <div class="control-status" [class.active]="allowJoining">
+                            <i class="fas"
+                                [ngClass]="allowJoining ? 'fa-unlock text-green-400' : 'fa-lock text-gray-400'"></i>
+                            <span>{{ allowJoining ? 'Students can join this Public Assessment using the code below' :
+                                'No one can join using the link or code.' }}</span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="top-row-container">
                     <!-- Joining Code Section -->
                     <div class="joining-code-section">
