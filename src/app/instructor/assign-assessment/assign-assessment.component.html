@@ -747,7 +747,7 @@
                                             </div>
                                         </div>
 
-                                        <!-- Attempts - Hidden for Mastery Mode (defaults to 50) -->
+                                        <!-- Attempts  -->
                                         <div class="form-group-enhanced" *ngIf="selectedMode !== 'mastery'">
                                             <label class="form-label-enhanced">
                                                 <i class="fas fa-redo"></i>
@@ -811,13 +811,14 @@
                                             <label class="form-label-enhanced">
                                                 <i class="fas fa-hourglass-half"></i>
                                                 Time per Question
-                                                <span *ngIf="selectedMode === 'mastery'" class="disabled-badge">Disabled in Mastery Mode</span>
+                                                <span *ngIf="selectedMode === 'mastery'" class="disabled-badge">Disabled
+                                                    in Mastery Mode</span>
                                             </label>
                                             <div class="time-input-wrapper">
                                                 <input type="number" [(ngModel)]="timedQuestions" min="0"
                                                     [class.validation-error]="isTimeLimitPerQuestionInvalid()"
-                                                    [disabled]="selectedMode === 'mastery'"
-                                                    class="time-input-enhanced" placeholder="0">
+                                                    [disabled]="selectedMode === 'mastery'" class="time-input-enhanced"
+                                                    placeholder="0">
                                                 <div class="time-unit">seconds</div>
                                             </div>
                                             <div class="input-hint" *ngIf="selectedMode !== 'mastery'">
@@ -828,7 +829,8 @@
                                                 <i class="fas fa-lock"></i>
                                                 Time limits per question are not available in Mastery Mode
                                             </div>
-                                            <div *ngIf="isTimeLimitPerQuestionInvalid() && selectedMode !== 'mastery'" class="validation-message">
+                                            <div *ngIf="isTimeLimitPerQuestionInvalid() && selectedMode !== 'mastery'"
+                                                class="validation-message">
                                                 <i class="fas fa-exclamation-triangle"></i>
                                                 Time limit is unreasonable, must be between 10 - 180 seconds
                                             </div>
@@ -899,7 +901,7 @@
                                                 </label>
                                             </div>
 
-                                            <!-- Data Bank Settings - Hidden for Mastery Mode -->
+                                            <!-- Data Bank Settings  -->
                                             <div *ngIf="!randomizeQuestions && selectedMode !== 'mastery'"
                                                 class="checkbox-option-enhanced" [class.disabled]="!canbeDatabanked()">
                                                 <input type="checkbox" [(ngModel)]="enableDatabank" id="enable-databank"
