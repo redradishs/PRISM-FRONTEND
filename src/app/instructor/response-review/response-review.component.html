@@ -141,7 +141,7 @@
                             <div class="infoitem">
                                 <span>Submitted:</span>
                                 <span>{{assessmentDetails.assessment?.performance?.submittedAt | date: 'MMM d, y h:mm
-                                    a':'PHT'}}</span>
+                                    a':'UTC'}}</span>
                             </div>
                             <div class="infoitem">
                                 <span>Time Spent:</span>
@@ -270,7 +270,7 @@
                                             </div>
                                             <div class="attempt-date">
                                                 <i class="fas fa-clock"></i>
-                                                <span>{{attempt.submittedAt | date: 'MMM d, y h:mm a':'PHT'}}</span>
+                                                <span>{{attempt.submittedAt | date: 'MMM d, y h:mm a':'UTC'}}</span>
                                             </div>
                                         </div>
                                     </div>
