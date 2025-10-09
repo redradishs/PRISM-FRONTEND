@@ -718,7 +718,7 @@ export class ResultComponent implements OnInit, OnDestroy {
   export() {
     Swal.fire({
       title: 'Export Results',
-      text: 'Choose how you want to sort the results',
+      text: 'Do you want to export the Result?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonText: 'Yes',

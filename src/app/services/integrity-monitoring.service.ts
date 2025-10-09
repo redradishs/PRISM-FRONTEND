@@ -48,6 +48,10 @@ export class IntegrityMonitoringService {
   private lastViolation: { type: string; timestamp: number } | null = null;
   private readonly DEBOUNCE_TIME = 500;
 
+  // DevTools persistent detection tracking
+  private devToolsDetected = false;
+  private devToolsCheckInterval: any;
+
   // Public observables
   public cheatingCount$: Observable<number> =
     this._cheatingCount.asObservable();
@@ -175,6 +179,10 @@ export class IntegrityMonitoringService {
     if (this.altTabResetTimer) {
       clearTimeout(this.altTabResetTimer);
       this.altTabResetTimer = null;
+    }
+    if (this.devToolsCheckInterval) {
+      clearInterval(this.devToolsCheckInterval);
+      this.devToolsCheckInterval = null;
     }
 
     // Remove all event listeners that were added
@@ -428,6 +436,7 @@ export class IntegrityMonitoringService {
     this._cheatingCount.next(0);
     this._cheatMessage.next(null);
     this.lastViolation = null;
+    this.devToolsDetected = false; // Reset DevTools detection flag
 
     localStorage.removeItem('assessment_integrity_data');
     sessionStorage.removeItem('assessment_integrity_data');
@@ -469,36 +478,27 @@ export class IntegrityMonitoringService {
     debugger;
     const endTime = new Date().getTime();
 
-    if (endTime - startTime > 100) {
+    if (endTime - startTime > 100 && !this.devToolsDetected) {
+      this.devToolsDetected = true;
       this.registerViolation('Developer tools detected', 'high');
     }
+
+    // Console override detection (one-time setup)
     const consoleCheck = () => {
       const original = window.console.log;
       window.console.log = (...args) => {
         const stack = new Error().stack || '';
         if (stack.includes('console-api') || stack.includes('debugger')) {
-          this.registerViolation('Console API usage detected', 'medium');
+          if (!this.devToolsDetected) {
+            this.devToolsDetected = true;
+            this.registerViolation('Console API usage detected', 'medium');
+          }
         }
         original(...args);
       };
     };
 
     consoleCheck();
-
-    setInterval(() => {
-      // Check if it's a mobile device
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-      // Only check for DevTools on desktop devices
-      if (!isMobile) {
-        const widthThreshold = window.outerWidth - window.innerWidth > 160;
-        const heightThreshold = window.outerHeight - window.innerHeight > 160;
-
-        if (widthThreshold || heightThreshold) {
-          this.registerViolation('Developer tools potentially detected', 'medium');
-        }
-      }
-    }, 5000);
   }
 
   private handleMouseMove = () => {
