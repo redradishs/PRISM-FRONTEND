@@ -40,6 +40,140 @@
     font-size: 0.875rem;
   }
 
+
+  .status-badged {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.under_review {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.resolved {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.reviewed {
+    background: #dcfce7;
+    color: #166530;
+}
+
+.dismissed {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+  /* Reports specific styles */
+  .reason-cell {
+    max-width: 200px;
+  }
+  
+  .reason-title {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+  
+  .reason-description {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.4;
+  }
+  
+  .class-badge {
+    background-color: #e0e7ff;
+    color: #3730a3;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  
+  .severity-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+  
+  .severity-badge.low {
+    background-color: #dcfce7;
+    color: #166534;
+  }
+  
+  .severity-badge.medium {
+    background-color: #fef3c7;
+    color: #92400e;
+  }
+  
+  .severity-badge.high {
+    background-color: #fee2e2;
+    color: #991b1b;
+  }
+  
+  .severity-badge.critical {
+    background-color: #fecaca;
+    color: #7f1d1d;
+  }
+  
+  .action-buttons-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .review-btn {
+    background-color: #3b82f6;
+    color: white;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  
+  .review-btn:hover {
+    background-color: #2563eb;
+  }
+  
+  .sanction-btn {
+    background-color: #f59e0b;
+    color: white;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  
+  .sanction-btn:hover {
+    background-color: #d97706;
+  }
+  
+  .sanction-menu {
+    min-width: 180px;
+  }
+
   /* Mobile Optimizations  */
   @media screen and (max-width: 768px) {
       .katamat-container {
@@ -424,21 +558,27 @@
     background-color: white;
     border: 1px solid #e5e7eb;
     border-radius: 0.75rem;
-    padding: 0.75rem;
+    padding: 1rem;
     margin-bottom: 1.5rem;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
     margin-top: 1rem;
 }
 
+.filters-section > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
 @media (min-width: 768px) {
-    .filters-section {
+    .filters-section > div {
         flex-direction: row;
         align-items: center;
         gap: 1rem;
-        padding: 0.5rem;
+    }
+    
+    .filters-section {
+        padding: 1rem;
     }
 }
 
@@ -476,13 +616,14 @@
 .filters-container {
     display: flex;
     gap: 0.5rem;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
 }
 
 @media (min-width: 768px) {
     .filters-container {
         flex: 0 0 auto;
-        gap: 0.5rem;
+        gap: 0.75rem;
+        flex-wrap: nowrap;
     }
 }
 
@@ -498,9 +639,17 @@
     background-repeat: no-repeat;
     background-position: right 0.75rem center;
     background-size: 0.75rem;
-    min-width: 100px;
+    min-width: 120px;
     flex: 1;
     transition: border-color 0.2s;
+}
+
+@media (min-width: 768px) {
+    .select {
+        flex: 0 0 auto;
+        min-width: 140px;
+        max-width: 180px;
+    }
 }
 
 .select:focus {
@@ -1261,4 +1410,527 @@
 
 ::ng-deep .swal2-container {
   z-index: 99999 !important;
+}
+
+.review-modal {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+}
+
+.tab-navigation {
+  display: flex;
+  gap: 0;
+  padding: 0 1.5rem;
+  background: #fafbfc;
+  border-bottom: 1px solid #e5e7eb;
+  position: relative;
+}
+
+.tab-button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  padding: 1rem 1.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #6b7280;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  letter-spacing: -0.0125em;
+}
+
+.tab-button i {
+  font-size: 1.125rem;
+  transition: all 0.2s ease;
+}
+
+.tab-button span {
+  transition: all 0.2s ease;
+}
+
+.tab-button:hover:not(.active) {
+  color: #374151;
+  background: rgba(102, 126, 234, 0.03);
+}
+
+.tab-button.active {
+  color: #667eea;
+  background: white;
+  border-bottom-color: #667eea;
+}
+
+.tab-button.active i {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.tab-button.active span {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.report-details,
+.form-section {
+  animation: tabContentFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes tabContentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.review-modal .relative {
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.review-modal .modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem 1rem 0 0;
+  padding: 2rem 1.5rem !important;
+}
+
+.review-modal .modal-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 1;
+  letter-spacing: -0.025em;
+}
+
+.review-modal .modal-subtitle {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 0.95rem;
+  font-weight: 400;
+  position: relative;
+  z-index: 1;
+  line-height: 1.5;
+}
+
+.review-modal .report-details {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.review-modal .section-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 0;
+  border-bottom: none;
+  letter-spacing: -0.025em;
+}
+
+.review-modal .section-title i {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 1.25rem;
+}
+
+.review-modal .detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.review-modal .detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: transparent;
+  padding: 0.75rem 0;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid #f3f4f6;
+  transition: all 0.2s ease;
+}
+
+.review-modal .detail-item:hover {
+  background: transparent;
+  border-bottom-color: rgba(102, 126, 234, 0.2);
+}
+
+.review-modal .detail-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.review-modal .detail-value {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #374151;
+  line-height: 1.6;
+  padding: 0;
+}
+
+.review-modal .detail-full-width {
+  grid-column: span 2;
+}
+
+/* Modern Form Section */
+.review-modal .form-section {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+/* Enhanced Form Labels */
+.review-modal .form-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.625rem;
+  letter-spacing: -0.0125em;
+}
+
+.review-modal .required-asterisk {
+  color: #ef4444;
+  font-weight: 700;
+  margin-left: 0.125rem;
+}
+
+/* Modern Form Inputs */
+.review-modal .form-input,
+.review-modal .form-select,
+.review-modal .form-textarea {
+  width: 100%;
+  padding: 0.875rem 1.125rem;
+  font-size: 0.9375rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  background-color: #ffffff;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 400;
+  color: #111827;
+}
+
+.review-modal .form-input:hover,
+.review-modal .form-select:hover,
+.review-modal .form-textarea:hover {
+  border-color: #cbd5e1;
+}
+
+.review-modal .form-input:focus,
+.review-modal .form-select:focus,
+.review-modal .form-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.review-modal .form-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.25rem;
+  padding-right: 3rem;
+}
+
+.review-modal .form-textarea {
+  resize: vertical;
+  line-height: 1.6;
+  min-height: 120px;
+  font-family: inherit;
+}
+
+.review-modal .form-textarea::placeholder {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* Modern Action Buttons */
+.review-modal .action-buttons {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.875rem;
+  margin-top: 1.75rem;
+}
+
+@media (min-width: 640px) {
+  .review-modal .action-buttons {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.review-modal .btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  padding: 0.875rem 1.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  letter-spacing: -0.0125em;
+}
+
+.review-modal .btn-primary:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.review-modal .btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.review-modal .btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.review-modal .btn-primary i,
+.review-modal .btn-secondary i {
+  font-size: 1.125rem;
+}
+
+.review-modal .btn-secondary {
+  background: #ffffff;
+  color: #6b7280;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  padding: 0.875rem 1.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  letter-spacing: -0.0125em;
+}
+
+.review-modal .btn-secondary:hover {
+  background-color: #f9fafb;
+  border-color: #cbd5e1;
+  color: #374151;
+}
+
+.review-modal .btn-secondary:active {
+  transform: scale(0.98);
+}
+
+/* Enhanced Severity Badges */
+.review-modal .severity-badge {
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.review-modal .severity-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.review-modal .severity-badge.low {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.review-modal .severity-badge.low::before {
+  background: #16a34a;
+}
+
+.review-modal .severity-badge.medium {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.review-modal .severity-badge.medium::before {
+  background: #f59e0b;
+}
+
+.review-modal .severity-badge.high {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.review-modal .severity-badge.high::before {
+  background: #ef4444;
+}
+
+.review-modal .severity-badge.critical {
+  background: #fecaca;
+  color: #7f1d1d;
+}
+
+.review-modal .severity-badge.critical::before {
+  background: #dc2626;
+}
+
+.review-modal .max-h-\[70vh\] {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+.review-modal .max-h-\[70vh\]::-webkit-scrollbar {
+  width: 8px;
+}
+
+.review-modal .max-h-\[70vh\]::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.review-modal .max-h-\[70vh\]::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+  border: 2px solid #f1f5f9;
+}
+
+.review-modal .max-h-\[70vh\]::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+@media (max-width: 640px) {
+  .tab-navigation {
+    padding: 0 0.75rem;
+    gap: 0;
+  }
+  
+  .tab-button {
+    padding: 0.875rem 0.75rem;
+    font-size: 0.8125rem;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+  
+  .tab-button i {
+    font-size: 1rem;
+  }
+  
+  .tab-button span {
+    font-size: 0.75rem;
+  }
+
+  .review-modal .detail-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .review-modal .detail-full-width {
+    grid-column: span 1;
+  }
+  
+  .review-modal .modal-header {
+    padding: 1.5rem 1rem !important;
+  }
+  
+  .review-modal .modal-title {
+    font-size: 1.375rem;
+  }
+  
+  .review-modal .modal-subtitle {
+    font-size: 0.875rem;
+  }
+  
+  .review-modal .report-details,
+  .review-modal .form-section {
+    padding: 0;
+  }
+  
+  .review-modal .section-title {
+    font-size: 1rem;
+  }
+  
+  .review-modal .action-buttons {
+    grid-template-columns: 1fr;
+  }
+  
+  .review-modal .btn-primary,
+  .review-modal .btn-secondary {
+    padding: 0.875rem 1.25rem;
+    font-size: 0.875rem;
+  }
+  
+  .review-modal .detail-item {
+    padding: 0.625rem 0;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  .tab-button {
+    padding: 1rem 1.25rem;
+    font-size: 0.875rem;
+  }
 }

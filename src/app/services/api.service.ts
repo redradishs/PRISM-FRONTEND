@@ -166,6 +166,10 @@ export class ApiService {
     return this.http.post(`${this.apiUrl}/class/removeStudent`, data);
   }
 
+  reportStudent(data: any) {
+    return this.http.post(`${this.apiUrl}/submit/report`, data);
+  }
+
   studentList(id: string, classCode: string, page: number = 1, pageSize: number = 20) {
     let params = new HttpParams()
       .set('page', page.toString())
@@ -239,6 +243,10 @@ export class ApiService {
         'Content-Type': 'application/json'
       })
     });
+  }
+
+  importStudentsToClass(formData: FormData) {
+    return this.http.post(`${this.apiUrl}/upload/classlist`, formData);
   }
 
   //archive page
@@ -417,6 +425,10 @@ export class ApiService {
   //profile page instructor
   getTeachingSummary(id: string) {
     return this.http.get(`${this.apiUrl}/instructorstats/${id}`);
+  }
+
+  getReportStatus(id: string) {
+    return this.http.get(`${this.apiUrl}/retrieve/reports/${id}`);
   }
 
   //student assessment history page

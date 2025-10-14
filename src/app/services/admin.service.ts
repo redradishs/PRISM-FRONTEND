@@ -71,6 +71,29 @@ export class AdminService {
   }
 
 
+  getStudentReports(queryParams: any) {
+    const params = new URLSearchParams();
+
+    Object.keys(queryParams).forEach(key => {
+      if (queryParams[key] !== undefined && queryParams[key] !== null) {
+        params.append(key, queryParams[key].toString());
+      }
+    });
+
+    return this.http.get(`${this.apiUrl}/reports/allreport?${params.toString()}`);
+  }
+
+  reviewReport(data: any) {
+    return this.http.post(`${this.apiUrl}/reports/review`, data);
+  }
+
+
+  reviewReportStats() {
+    return this.http.get(`${this.apiUrl}/reports/stats`);
+  }
+
+
+
   //system setting
 
   getSystemSettings() {

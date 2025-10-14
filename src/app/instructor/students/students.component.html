@@ -233,7 +233,13 @@
                                         <input type="text" placeholder="Search Student..." [(ngModel)]="searchTerm"
                                             (keyup)="onSearchInputChange('student')" class="demo-search-input">
                                     </div>
-                                    <button class="demo-action-button-primary" (click)="toggleAddStudentModal()">
+                                    <button class="demo-button-secondary" (click)="toggleImportClassListModal()">
+                                        <i class="fas fa-download demo-icon"></i>
+                                        Import Class List
+                                    </button>
+
+                                    <button class="demo-action-button-primary demobuttt"
+                                        (click)="toggleAddStudentModal()">
                                         <i class="fas fa-user-plus"></i>
                                         Add Student
                                     </button>
@@ -246,19 +252,26 @@
                             <div class="demo-table-wrapper hidden md:block">
                                 <table class="demo-table">
                                     <thead class="demo-table-header">
-                                        <tr>
+                                        <tr class="demo-table-row">
                                             <th>Name</th>
                                             <th>Student ID</th>
                                             <th>Block</th>
                                             <th>Performance</th>
                                             <th>Completion</th>
-                                            <th>Actions</th>
+                                            <th class="demo-action">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr *ngIf="filteredStudents?.length === 0">
                                             <td colspan="6" class="demo-empty-state">
-                                                No students found matching your search.
+                                                <div class="empty-state-icon-wrapper">
+                                                    <div class="empty-state-circle"></div>
+                                                    <i class="fa-solid fa-users-slash empty-state-icond"></i>
+                                                </div>
+                                                <h3 class="empty-state-title">No Students Found</h3>
+                                                <p class="empty-state-descriptiond">No student found matching your
+                                                    search.
+                                                </p>
                                             </td>
                                         </tr>
                                         <tr *ngFor="let student of currentStudentsInfo || []" class="demo-table-row">
@@ -306,9 +319,16 @@
                                                 </div>
                                             </td>
                                             <td class="demo-table-cell">
-                                                <button (click)="removeStudent(student)" class="demo-action-button">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
+                                                <div class="demo-action-buttons">
+                                                    <button (click)="reportStudent(student)"
+                                                        class="demo-action-button report-button" title="Report Student">
+                                                        <i class="fas fa-flag"></i>
+                                                    </button>
+                                                    <button (click)="removeStudent(student)"
+                                                        class="demo-action-button remove-button" title="Remove Student">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -347,10 +367,18 @@
                                                 <p class="text-xs text-gray-500">{{student.email.split('@')[0]}}</p>
                                             </div>
                                         </div>
-                                        <button (click)="removeStudent(student); $event.stopPropagation()"
-                                            class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0">
-                                            <i class="fas fa-trash text-xs"></i>
-                                        </button>
+                                        <div class="flex gap-1">
+                                            <button (click)="reportStudent(student); $event.stopPropagation()"
+                                                class="p-1.5 text-orange-500 hover:bg-orange-50 rounded-lg transition-colors flex-shrink-0"
+                                                title="Report Student">
+                                                <i class="fas fa-flag text-xs"></i>
+                                            </button>
+                                            <button (click)="removeStudent(student); $event.stopPropagation()"
+                                                class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
+                                                title="Remove Student">
+                                                <i class="fas fa-trash text-xs"></i>
+                                            </button>
+                                        </div>
                                     </div>
 
                                     <!-- Student Info Grid -->
@@ -462,7 +490,14 @@
                                     <tbody>
                                         <tr *ngIf="assignedAssessments?.length === 0">
                                             <td colspan="6" class="demo-empty-state">
-                                                No Assessments found matching your search.
+                                                <div class="empty-state-icon-wrapper">
+                                                    <div class="empty-state-circle"></div>
+                                                    <i class="fa-solid fa-file-excel empty-state-icond"></i>
+                                                </div>
+                                                <h3 class="empty-state-title">No Assessments Found</h3>
+                                                <p class="empty-state-descriptiond">No assessments found matching your
+                                                    search.
+                                                </p>
                                             </td>
                                         </tr>
                                         <tr (click)="goToResult(student._id)"
@@ -497,8 +532,16 @@
                                                 </div>
                                             </td>
                                             <td class="demo-table-cell">
-                                                <span
+                                                <!-- <span
+                                                    [ngClass]="getStatusClass(student.status)">{{student.status}}</span> -->
+
+                                                <span *ngIf="student.status !== 'completed'"
                                                     [ngClass]="getStatusClass(student.status)">{{student.status}}</span>
+
+
+                                                <span [ngClass]="getStatusClass(student.status)">{{student.status ===
+                                                    'completed' && student.isCompleted ? 'Completed' : 'Partially
+                                                    Completed'}}</span>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -776,6 +819,88 @@
         </div>
     </div>
 </div>
+
+
+
+<!-- Import Class List  -->
+<div class="modal-overlay cs-backdrop-blur" *ngIf="showImportClassListModal" (click)="toggleImportClassListModal()">
+    <div class="modal-content create-class-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <div class="header-content">
+                <h2>Import Student List</h2>
+                <p class="modal-subtitle">Upload a CSV file to import student list</p>
+            </div>
+            <button class="close-button" (click)="toggleImportClassListModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form (ngSubmit)="importClassList()">
+                <!-- File Upload Section -->
+                <div class="form-group">
+                    <label for="csvFile">CSV File</label>
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="csvFile" name="csvFile" accept=".csv" (change)="onFileSelected($event)"
+                            class="file-input" required #fileInput>
+                        <div class="file-upload-display" [class.has-file]="selectedFile" (click)="fileInput.click()">
+                            <div class="file-upload-content">
+                                <i class="fas fa-cloud-upload-alt" *ngIf="!selectedFile"></i>
+                                <i class="fas fa-file-csv" *ngIf="selectedFile"></i>
+                                <span class="file-text" *ngIf="!selectedFile">
+                                    Choose CSV file or drag and drop
+                                </span>
+                                <span class="file-text" *ngIf="selectedFile">
+                                    {{ selectedFile.name }} ({{ (selectedFile.size / 1024).toFixed(1) }} KB)
+                                </span>
+                            </div>
+                            <button type="button" class="remove-file-btn" *ngIf="selectedFile"
+                                (click)="removeSelectedFile(); $event.stopPropagation()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <small class="file-help-text">
+                        Upload a CSV file with columns: Name, Email, Student ID (optional)
+                    </small>
+                </div>
+
+                <!-- Preview Section -->
+                <div class="form-group" *ngIf="csvPreviewData.length > 0">
+                    <label>Preview (First 3 rows)</label>
+                    <div class="csv-preview-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th *ngFor="let header of csvHeaders">{{ header }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of csvPreviewData.slice(0, 3)">
+                                    <td *ngFor="let cell of row">{{ cell }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p class="preview-info" *ngIf="csvPreviewData.length > 3">
+                            ... and {{ csvPreviewData.length - 3 }} more rows ({{ csvPreviewData.length }} total
+                            students)
+                        </p>
+                        <p class="preview-info" *ngIf="csvPreviewData.length <= 3">
+                            Total: {{ csvPreviewData.length }} rows (total student)
+                        </p>
+                    </div>
+                </div>
+
+                <div class="form-footer">
+                    <button type="button" class="cancel-button" (click)="toggleImportClassListModal()">Cancel</button>
+                    <button type="submit" class="submit-button" [disabled]="!selectedFile">
+                        Import Students
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 
 
 <!-- Add Student Modal  -->
@@ -1377,6 +1502,66 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Report Student Modal -->
+<div class="modal-overlay cs-backdrop-blur" *ngIf="showReportStudentModal" (click)="toggleReportStudentModal()">
+    <div class="modal-content create-class-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <div class="header-content">
+                <h2>Report Student</h2>
+                <p class="modal-subtitle hidden md:block" *ngIf="studentToReport">{{studentToReport.name}} -
+                    {{studentToReport.email}}
+                </p>
+
+                <p class="modal-subtitle md:hidden" *ngIf="studentToReport">{{studentToReport.name}} -
+                    {{studentToReport.email.split('@')[0]}}
+                </p>
+            </div>
+            <button class="close-button" (click)="toggleReportStudentModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form (ngSubmit)="submitStudentReport()">
+                <div class="form-group">
+                    <label for="reportReason">Reason for Report</label>
+                    <select id="reportReason" name="reportReason" [(ngModel)]="reportDetails.reason" required
+                        class="form-select">
+                        <option value="" disabled selected>Select a reason</option>
+                        <option value="cheating">Cheating</option>
+                        <option value="academic_dishonesty">Academic Dishonesty</option>
+                        <option value="suspicious_activity">Suspicious Activity</option>
+                        <option value="violation_of_rules">Violation of Rules</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="reportSeverity">Severity Level</label>
+                    <select id="reportSeverity" name="reportSeverity" [(ngModel)]="reportDetails.severity" required
+                        class="form-select">
+                        <option value="" disabled selected>Select severity</option>
+                        <option value="low">Low - Minor issue</option>
+                        <option value="medium">Medium - Moderate concern</option>
+                        <option value="high">High - Serious violation</option>
+                        <option value="critical">Critical - Immediate attention required</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="reportDescription">Description</label>
+                    <textarea id="reportDescription" name="reportDescription" [(ngModel)]="reportDetails.description"
+                        required class="form-input" rows="4"
+                        placeholder="Please provide detailed information about the incident..."></textarea>
+                </div>
+
+                <div class="form-footer">
+                    <button type="button" class="cancel-button" (click)="toggleReportStudentModal()">Cancel</button>
+                    <button type="submit" class="submit-button">Submit Report</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

@@ -141,6 +141,8 @@ export class StudentsComponent implements OnInit {
   autoAdmission = false;
   allowJoining = false;
 
+  showImportClassListModal = false;
+
   showCreateClassModal = false;
   showAddStudentModal = false;
   newClass = {
@@ -214,6 +216,21 @@ export class StudentsComponent implements OnInit {
   showExportModal: boolean = false;
   showJoiningCodeModal: boolean = false;
   qrCodeDataUrl: string = '';
+
+  // Import functionality properties
+  selectedFile: File | null = null;
+  csvPreviewData: string[][] = [];
+  csvHeaders: string[] = [];
+  isImporting: boolean = false;
+
+  // Report student functionality properties
+  showReportStudentModal: boolean = false;
+  studentToReport: any = null;
+  reportDetails = {
+    reason: '',
+    description: '',
+    severity: ''
+  };
 
   private lastNamePrefixes = [
     'De', 'Del', 'Dela', 'De la', 'De los', 'San', 'Santa', 'Sta.'
@@ -592,6 +609,112 @@ export class StudentsComponent implements OnInit {
 
     return 'status-unknown';
   }
+
+  toggleImportClassListModal() {
+    this.showImportClassListModal = !this.showImportClassListModal;
+    if (!this.showImportClassListModal) {
+      this.selectedFile = null;
+      this.csvPreviewData = [];
+      this.csvHeaders = [];
+    }
+  }
+
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file && file.type === 'text/csv') {
+      this.selectedFile = file;
+      this.parseCSVPreview(file);
+    } else if (file) {
+      Swal.fire({
+        title: 'Invalid File Type',
+        text: 'Please select a CSV file.',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
+      event.target.value = '';
+    }
+  }
+
+  removeSelectedFile(): void {
+    this.selectedFile = null;
+    this.csvPreviewData = [];
+    this.csvHeaders = [];
+    const fileInput = document.getElementById('csvFile') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  }
+
+  private parseCSVPreview(file: File): void {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const csv = e.target?.result as string;
+      const lines = csv.split('\n').filter(line => line.trim() !== '');
+
+      if (lines.length > 0) {
+        // Parse headers
+        this.csvHeaders = lines[0].split(',').map(header => header.trim().replace(/"/g, ''));
+
+        // Parse data rows
+        this.csvPreviewData = lines.slice(1).map(line =>
+          line.split(',').map(cell => cell.trim().replace(/"/g, ''))
+        );
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  importClassList(): void {
+    if (!this.selectedFile) {
+      Swal.fire({
+        title: 'Missing Information',
+        text: 'Please select a CSV file.',
+        icon: 'warning',
+        confirmButtonText: 'OK'
+      });
+      return;
+    }
+
+    if (!this.selectedClass) {
+      Swal.fire({
+        title: 'No Class Selected',
+        text: 'Please select a class first.',
+        icon: 'warning',
+        confirmButtonText: 'OK'
+      });
+      return;
+    }
+
+    this.isImporting = true;
+
+    const formData = new FormData();
+    formData.append('file', this.selectedFile);
+    formData.append('classCode', this.selectedClass.classCode);
+
+    this.api.importStudentsToClass(formData).subscribe({
+      next: (response: any) => {
+        this.isImporting = false;
+        Swal.fire({
+          title: 'Import Successful',
+          text: `Successfully imported ${response.imported || 'students'} to ${this.selectedClass.className}.`,
+          icon: 'success',
+          confirmButtonText: 'OK'
+        });
+        this.toggleImportClassListModal();
+        this.getClasses();
+      },
+      error: (error) => {
+        this.isImporting = false;
+        Swal.fire({
+          title: 'Import Failed',
+          text: error.error?.message || 'Failed to import students. Please try again.',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      }
+    });
+  }
+
 
   toggleCreateClassModal() {
     this.showCreateClassModal = !this.showCreateClassModal;
@@ -1390,5 +1513,82 @@ export class StudentsComponent implements OnInit {
 
     }
 
+  }
+
+  // Report Student Methods
+  reportStudent(student: any) {
+    this.studentToReport = student;
+    this.showReportStudentModal = true;
+  }
+
+  toggleReportStudentModal() {
+    this.showReportStudentModal = !this.showReportStudentModal;
+    if (!this.showReportStudentModal) {
+      this.resetReportForm();
+    }
+  }
+
+  resetReportForm() {
+    this.studentToReport = null;
+    this.reportDetails = {
+      reason: '',
+      description: '',
+      severity: ''
+    };
+  }
+
+  isReportFormValid(): boolean {
+    return !!(this.reportDetails.reason &&
+      this.reportDetails.description &&
+      this.reportDetails.severity);
+  }
+
+  submitStudentReport() {
+    if (!this.isReportFormValid() || !this.studentToReport) {
+      return;
+    }
+
+    Swal.fire({
+      title: 'Submit Report?',
+      text: `Are you sure you want to report ${this.studentToReport.name}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, submit report',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const reportData = {
+          studentId: this.studentToReport._id,
+          instructorId: this.userId,
+          classCode: this.selectedClass.classCode,
+          reason: this.reportDetails.reason,
+          severity: this.reportDetails.severity,
+          description: this.reportDetails.description,
+        };
+
+        this.api.reportStudent(reportData).subscribe({
+          next: (response: any) => {
+            Swal.fire({
+              title: 'Report Submitted!',
+              text: 'The student report has been submitted successfully, the Administrator will review the report and take appropriate action.',
+              icon: 'success',
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true
+            });
+            this.toggleReportStudentModal();
+          },
+          error: (error: any) => {
+            Swal.fire({
+              title: 'Error!',
+              text: 'Failed to submit report. Please try again.',
+              icon: 'error',
+              confirmButtonColor: '#3b82f6'
+            });
+            this.toggleReportStudentModal();
+          }
+        });
+      }
+    });
   }
 }

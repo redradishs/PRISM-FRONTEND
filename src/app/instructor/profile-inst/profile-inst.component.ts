@@ -82,6 +82,22 @@ interface LoginHistoryData {
   summary: LoginHistorySummary;
 }
 
+interface StudentReport {
+  id: string;
+  studentId: {
+    _id: string;
+    name: string;
+  };
+  classCode: string;
+  reason: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  status: 'pending' | 'under_review' | 'resolved' | 'dismissed';
+  resolution?: string;
+  reviewedAt?: string;
+  submittedAt: string;
+  description: string;
+}
+
 @Component({
   selector: 'app-profile-inst',
   imports: [CommonModule, FormsModule, ReactiveFormsModule, SidebarComponent, RouterLink],
@@ -117,6 +133,17 @@ export class ProfileInstComponent implements OnInit {
   loginData: any;
   loginHistoryLoaded = false;
 
+  reportStatusLoaded = false;
+  reportStatus: any;
+
+  // Report Status Properties
+  reports: StudentReport[] = [];
+  filteredReports: StudentReport[] = [];
+  reportSearchTerm: string = '';
+  selectedStatusFilter: string = '';
+  selectedSeverityFilter: string = '';
+
+
   showCurrentPassword = false;
   showNewPassword = false;
   showConfirmPassword = false;
@@ -129,48 +156,6 @@ export class ProfileInstComponent implements OnInit {
   private originalProfile: InstructorProfile | null = null;
 
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
-
-  recentAssessments: Assessment[] = [
-    {
-      id: '1',
-      title: 'Midterm Exam: Advanced Programming Concepts',
-      date: 'Mar 15, 2025',
-      type: 'exam',
-    },
-    {
-      id: '2',
-      title: 'Quiz: Database Design Principles',
-      date: 'Mar 10, 2025',
-      type: 'quiz',
-    },
-    {
-      id: '3',
-      title: 'Lab Exercise: Web Development',
-      date: 'Mar 5, 2025',
-      type: 'lab',
-    },
-  ];
-
-  upcomingAssessments: Assessment[] = [
-    {
-      id: '4',
-      title: 'Final Exam: Advanced Programming Concepts',
-      date: 'Apr 20, 2025',
-      type: 'exam',
-    },
-    {
-      id: '5',
-      title: 'Project Submission: Mobile App Development',
-      date: 'Apr 15, 2025',
-      type: 'project',
-    },
-  ];
-
-  classPerformance: ClassPerformance[] = [
-    { id: '1', name: 'BSIT 3A', students: 40, avgScore: 92, completionRate: 100 },
-    { id: '2', name: 'BSIT 3B', students: 35, avgScore: 85, completionRate: 95 },
-    { id: '3', name: 'BSIT 3C', students: 45, avgScore: 88, completionRate: 90 },
-  ];
 
   constructor(private api: ApiService, private auth: AuthService, private router: Router, private tutorialService: TutorialService) { }
 
@@ -236,6 +221,11 @@ export class ProfileInstComponent implements OnInit {
       case 'login-history':
         if (!this.loginHistoryLoaded) {
           this.loadHistory();
+        }
+        break;
+      case 'reports':
+        if (!this.reportStatusLoaded) {
+          this.loadReportStatus();
         }
         break;
     }
@@ -444,7 +434,6 @@ export class ProfileInstComponent implements OnInit {
     return item.loginDate;
   }
 
-
   toggleSidebar(): void {
     if (this.sidebar) {
       this.sidebar.toggleSidebar();
@@ -535,5 +524,66 @@ export class ProfileInstComponent implements OnInit {
 
   startTutorial(): void {
     this.tutorialService.tutorialInitialize();
+  }
+
+
+  loadReportStatus(): void {
+    if (this.reportStatusLoaded) return;
+
+    this.api.getReportStatus(this.userId).subscribe({
+      next: (response: any) => {
+        this.reports = response.data.reports || [];
+        this.filteredReports = [...this.reports];
+        this.reportStatusLoaded = true;
+      },
+      error: (error) => {
+        console.error('Error loading report status:', error);
+        this.reportStatusLoaded = true;
+      }
+    });
+  }
+
+  filterReports(): void {
+    this.filteredReports = this.reports.filter(report => {
+      const matchesSearch = !this.reportSearchTerm ||
+        report.studentId.name.toLowerCase().includes(this.reportSearchTerm.toLowerCase()) ||
+        report.classCode.toLowerCase().includes(this.reportSearchTerm.toLowerCase());
+
+      const matchesStatus = !this.selectedStatusFilter || report.status === this.selectedStatusFilter;
+      const matchesSeverity = !this.selectedSeverityFilter || report.severity === this.selectedSeverityFilter;
+
+      return matchesSearch && matchesStatus && matchesSeverity;
+    });
+  }
+
+  formatReason(reason: string): string {
+    const reasonMap: { [key: string]: string } = {
+      'cheating': 'Cheating',
+      'academic_dishonesty': 'Academic Dishonesty',
+      'suspicious_activity': 'Suspicious Activity',
+      'violation_of_rules': 'Violation of Rules',
+    };
+    return reasonMap[reason] || reason;
+  }
+
+  formatStatus(status: string): string {
+    const statusMap: { [key: string]: string } = {
+      'pending': 'Pending',
+      'reviewed': 'Under Review',
+      'resolved': 'Resolved',
+      'dismissed': 'Dismissed'
+    };
+    return statusMap[status] || status;
+  }
+
+
+  formatResolution(resolution: string): string {
+    console.log('Resolution:', resolution);
+    const resolutionMap: { [key: string]: string } = {
+      'warning_issued': 'Warning Issued',
+      'student_banned': 'Student Banned',
+      'no_action': 'No Action'
+    }
+    return resolutionMap[resolution] || resolution;
   }
 }

@@ -21,6 +21,7 @@ export class AdmUserlistComponent {
   isMobile = window.innerWidth < 768;
   isLoading: boolean = true;
   isLoadingUsers: boolean = true;
+  isLoadingReports: boolean = false;
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
   totalUserDB: number = 0;
 
@@ -42,6 +43,9 @@ export class AdmUserlistComponent {
   totalUsers: number = 0;
   isBanned: boolean = false;
 
+
+  currentView: string = 'userlist';
+
   role: string = 'student';
   program: string = 'bsit';
   verified: string = 'all'
@@ -51,6 +55,29 @@ export class AdmUserlistComponent {
   paginationData: any;
   Math = Math;
   basicData: any;
+
+  reportStatsData: any;
+  reportsList: any[] = [];
+  currentReportsPage: number = 1;
+  reportsLimit: number = 10;
+  totalReports: number = 0;
+  totalReportsPages: number = 0;
+  hasReportsNext: boolean = false;
+  hasReportsPrevious: boolean = false;
+
+  reportStatus: string = 'all';
+  reportSeverity: string = 'all';
+  reportReason: string = 'all';
+
+  showReviewModal: boolean = false;
+  selectedReport: any = null;
+  activeReviewTab: string = 'review';
+  reviewData = {
+    status: '',
+    resolution: '',
+    adminNotes: '',
+    banDuration: ''
+  };
   @HostListener('window:resize')
   onResize() {
     this.isMobile = window.innerWidth < 768;
@@ -73,6 +100,15 @@ export class AdmUserlistComponent {
   }
 
   ngOnInit(): void {
+    this.currentView = localStorage.getItem('currentView') as 'userlist' | 'reports';
+    if (this.currentView === 'reports') {
+      this.reportStats();
+      this.getReportsList();
+    } else {
+      this.currentView = 'userlist';
+      this.getList();
+      this.getData();
+    }
     this.auth.getCurrentUser().subscribe(user => {
       this.userId = user.id,
         this.username = user.name,
@@ -165,7 +201,6 @@ export class AdmUserlistComponent {
       this.goToPage(this.currentPage - 1);
     }
   }
-
   onRoleChange(newRole: string) {
     this.role = newRole;
     if (this.role == 'instructor') {
@@ -456,5 +491,243 @@ export class AdmUserlistComponent {
     this.showPassword = !this.showPassword;
   }
 
+
+
+  reportStats() {
+    this.api.reviewReportStats().subscribe({
+      next: (resp: any) => {
+        this.reportStatsData = resp.data;
+
+      }, error: (error: any) => {
+        console.error('Error fetching report stats', error);
+      }
+    })
+  }
+  toggleView() {
+    this.currentView = this.currentView === 'userlist' ? 'reports' : 'userlist';
+    localStorage.setItem('currentView', this.currentView);
+    if (this.currentView === 'reports') {
+      this.reportStats();
+      this.getReportsList();
+    }
+  }
+
+  changeTab(currentTab: string) {
+    const tab = currentTab;
+    switch (tab) {
+      case 'all':
+        this.reportStatus = 'all';
+        this.reportSeverity = 'all';
+        this.reportReason = 'all';
+        this.currentReportsPage = 1;
+        this.getReportsList();
+        break;
+      case 'pending':
+        this.reportStatus = 'pending';
+        this.reportSeverity = 'all';
+        this.reportReason = 'all';
+        this.currentReportsPage = 1;
+        this.getReportsList();
+        break;
+      case 'resolved':
+        this.reportStatus = 'resolved';
+        this.currentReportsPage = 1;
+        this.getReportsList();
+        break;
+      case 'high':
+        this.reportSeverity = 'high';
+        this.reportStatus = 'all';
+        this.reportReason = 'all';
+        this.currentReportsPage = 1;
+        this.getReportsList();
+        break;
+    }
+  }
+
+  getReportsList() {
+    this.isLoadingReports = true;
+
+    const queryParams: any = {
+      page: this.currentReportsPage,
+      limit: this.reportsLimit
+    };
+
+    if (this.reportStatus !== 'all') {
+      queryParams.status = this.reportStatus;
+    }
+    if (this.reportSeverity !== 'all') {
+      queryParams.severity = this.reportSeverity;
+    }
+    if (this.reportReason !== 'all') {
+      queryParams.reason = this.reportReason;
+    }
+
+    this.api.getStudentReports(queryParams).subscribe({
+      next: (resp: any) => {
+        // Map the backend response to match our component expectations
+        this.reportsList = (resp.data.reports || []).map((report: any) => ({
+          ...report,
+          studentName: report.studentId?.name || 'Unknown Student',
+          instructorName: report.instructorId?.name || 'Unknown Instructor',
+          className: report.classCode || 'Unknown Class'
+        }));
+
+        const pagination = resp.data.pagination;
+        this.currentReportsPage = pagination.page;
+        this.totalReportsPages = pagination.pages;
+        this.totalReports = pagination.total;
+        this.hasReportsNext = pagination.page < pagination.pages;
+        this.hasReportsPrevious = pagination.page > 1;
+        this.isLoadingReports = false;
+      },
+      error: (error: any) => {
+        console.error('Error fetching reports', error);
+        this.isLoadingReports = false;
+      }
+    });
+  }
+
+  trackByReportId(index: number, report: any): string {
+    return report._id;
+  }
+
+
+  openReviewModal(report: any) {
+    this.selectedReport = report;
+    this.showReviewModal = true;
+    this.resetReviewForm();
+  }
+
+  closeReviewModal() {
+    this.showReviewModal = false;
+    this.selectedReport = null;
+    this.resetReviewForm();
+  }
+
+  resetReviewForm() {
+    this.reviewData = {
+      status: '',
+      resolution: '',
+      adminNotes: '',
+      banDuration: ''
+    };
+    this.activeReviewTab = 'review';
+  }
+
+  switchReviewTab(tab: string) {
+    this.activeReviewTab = tab;
+  }
+
+  isReviewFormValid(): boolean {
+    const isBasicValid = !!(this.reviewData.status && this.reviewData.resolution && this.reviewData.adminNotes);
+
+    if (this.reviewData.resolution === 'student_banned') {
+      return isBasicValid && !!this.reviewData.banDuration;
+    }
+
+    return isBasicValid;
+  }
+
+  submitReview() {
+    if (!this.isReviewFormValid() || !this.selectedReport) {
+      return;
+    }
+
+    const data = {
+      adminId: this.userId,
+      reportId: this.selectedReport._id,
+      status: this.reviewData.status,
+      adminNotes: this.reviewData.adminNotes,
+      resolution: this.reviewData.resolution,
+      ...(this.reviewData.resolution === 'student_banned' && { banDuration: parseInt(this.reviewData.banDuration) })
+    };
+
+    this.api.reviewReport(data).subscribe({
+      next: (resp: any) => {
+        Swal.fire({
+          title: 'Success!',
+          text: 'Report has been reviewed successfully',
+          icon: 'success',
+          showConfirmButton: false,
+          toast: true,
+          position: 'top-end',
+          timer: 2000,
+          timerProgressBar: true
+        });
+
+        this.closeReviewModal();
+        this.getReportsList();
+        this.getData();
+      },
+      error: (error: any) => {
+        console.error('Error reviewing report', error);
+        Swal.fire({
+          title: 'Error!',
+          text: error.error?.message || 'Failed to review report. Please try again.',
+          icon: 'error',
+          confirmButtonColor: '#dc2626'
+        });
+      }
+    });
+  }
+
+
+
+  // Reports pagination methods
+  getReportsPageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxPagesToShow = 5;
+    let startPage = Math.max(1, this.currentReportsPage - Math.floor(maxPagesToShow / 2));
+    let endPage = Math.min(this.totalReportsPages, startPage + maxPagesToShow - 1);
+
+    if (endPage - startPage + 1 < maxPagesToShow) {
+      startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  goToReportsPage(page: number) {
+    if (page >= 1 && page <= this.totalReportsPages) {
+      this.currentReportsPage = page;
+      this.getReportsList();
+    }
+  }
+
+  previousReportsPage() {
+    if (this.hasReportsPrevious) {
+      this.currentReportsPage--;
+      this.getReportsList();
+    }
+  }
+
+  nextReportsPage() {
+    if (this.hasReportsNext) {
+      this.currentReportsPage++;
+      this.getReportsList();
+    }
+  }
+
+  // Reports filter methods
+  onReportStatusChange(status: string) {
+    this.reportStatus = status;
+    this.currentReportsPage = 1;
+    this.getReportsList();
+  }
+
+  onReportSeverityChange(severity: string) {
+    this.reportSeverity = severity;
+    this.currentReportsPage = 1;
+    this.getReportsList();
+  }
+
+  onReportReasonChange(reason: string) {
+    this.reportReason = reason;
+    this.currentReportsPage = 1;
+    this.getReportsList();
+  }
 
 }
