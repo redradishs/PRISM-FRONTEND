@@ -16,6 +16,7 @@ import { EditAssessmentComponent } from './instructor/edit-assessment/edit-asses
 import { StudentAttemptComponent } from './instructor/student-attempt/student-attempt.component';
 import { ArchiveComponent } from './instructor/archive/archive.component';
 import { AssessmentSettingsComponent } from './instructor/assessment-settings/assessment-settings.component';
+import { AnalyticsComponent } from './instructor/analytics/analytics.component';
 
 export const INSTRUCTOR_ROUTES: Routes = [
     { path: 'dashboard', component: HomeComponent },
@@ -29,6 +30,7 @@ export const INSTRUCTOR_ROUTES: Routes = [
     { path: 'coordinator', component: CoordinatorComponent },
     { path: 'evaluate', component: EvaluateComponent },
     { path: 'response', component: ResponseReviewComponent },
+    { path: 'analytics', component: AnalyticsComponent },
     { path: 'students/assessments', component: StudentAssessmentsComponent },
     { path: 'edit', component: EditAssessmentComponent },
     { path: 'manage', component: ManageComponent },

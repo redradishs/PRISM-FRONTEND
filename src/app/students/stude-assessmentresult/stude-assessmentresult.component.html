@@ -101,9 +101,15 @@
                         </div>
                     </div>
                     <div class="action-buttons">
+                        <button *ngIf="result.violationDetails && result.violationDetails.length > 0" class="action-btn"
+                            (click)="openViolationsModal()">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            {{isMobile ? 'Violations' : 'View Violations (' + (result.violationCount ||
+                            result.violationDetails.length) + ')'}}
+                        </button>
                         <button *ngIf="result.canRetake === true" class="action-btn" (click)="retakeAssessment()">
                             <i class="fas fa-redo"></i>
-                            Retake Assessment
+                            {{isMobile ? 'Retake' : 'Retake Assessment'}}
                         </button>
                         <button *ngIf="result.status === 'completed'" class="action-btn" (click)="openReportModal()">
                             <i class="fas fa-flag"></i>
@@ -649,6 +655,87 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Violations Modal -->
+    <div *ngIf="showViolationsModal" class="report-modal-overlay" (click)="closeViolationsModal()">
+        <div class="violations-modal" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h2>Assessment Violations ({{result.violationCount || result.violationDetails?.length}})</h2>
+                </div>
+                <button class="close-btn" (click)="closeViolationsModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="violations-summary">
+                    <div *ngFor="let group of groupViolationsByType()" class="violation-summary-card">
+                        <div class="violation-icon" [style.background-color]="group.color + '20'"
+                            [style.color]="group.color">
+                            <i class="fas {{group.icon}}"></i>
+                        </div>
+                        <div class="violation-summary-content">
+                            <div class="violation-count">{{group.count}}</div>
+                            <div class="violation-type">{{group.type}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="violations-list">
+                    <h4 class="violations-list-title">
+                        <i class="fas fa-list"></i>
+                        Detailed Violation Log
+                    </h4>
+                    <div class="violations-timeline">
+                        <div *ngFor="let violation of result.violationDetails; let i = index" class="violation-item">
+                            <div class="violation-timeline-marker"
+                                [style.background-color]="getViolationColor(violation.type)">
+                                <span>{{i + 1}}</span>
+                            </div>
+                            <div class="violation-card">
+                                <div class="violation-header">
+                                    <div class="violation-type-badge"
+                                        [style.background-color]="getViolationColor(violation.type) + '20'"
+                                        [style.color]="getViolationColor(violation.type)">
+                                        <i class="fas {{getViolationIcon(violation.type)}}"></i>
+                                        {{violation.type}}
+                                    </div>
+                                    <div class="violation-timestamp">
+                                        <i class="fas fa-clock"></i>
+                                        {{formatTimestamp(violation.timestamp)}}
+                                    </div>
+                                </div>
+                                <div class="violation-details">
+                                    <div class="violation-question">
+                                        <i class="fas fa-question-circle"></i>
+                                        <span *ngIf="getQuestionNumber(violation.fromQuestionId) > 0">
+                                            Occurred during Question #{{getQuestionNumber(violation.fromQuestionId)}}
+                                        </span>
+                                        <span *ngIf="getQuestionNumber(violation.fromQuestionId) === 0">
+                                            Question information not available
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="violation-notice">
+                    <i class="fas fa-info-circle"></i>
+                    <p>
+                        These are the violations you have acquired during the assessment.
+                        <br>
+                        The details of the assessment is visible to you and your instructor.
+                        <br>
+                        If you believe the violations were an error of the system, please contact your instructor.
+                    </p>
+                </div>
             </div>
         </div>
     </div>

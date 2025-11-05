@@ -1,7 +1,7 @@
 .main-content {
   padding: 1.5rem;
   background-color: #f9fafb;
-  max-width: 1600px;
+  max-width: 1900px;
   margin: 0 auto;
 
 }
@@ -676,7 +676,7 @@
 
 .classes-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 1rem;
   margin: 0.50rem auto;
   padding: 0 0.20rem;

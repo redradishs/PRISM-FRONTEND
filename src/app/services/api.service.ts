@@ -100,6 +100,11 @@ export class ApiService {
     return this.http.post(`${this.aiUrl}/finalize`, { data });
   }
 
+  //analyze overall platform performance 
+  analyzePlatformPerformance(data: any) {
+    return this.http.post(`${this.aiUrl}/topic-distribution`, data)
+  }
+
   //normal api calls here, starts with dashboard
 
   getStudentPerformance(id: string) {
@@ -534,6 +539,59 @@ export class ApiService {
   updateAssessmentDetails(data: any) {
     return this.http.put(`${this.apiUrl}/assessment/update/config`, data)
   }
+
+
+  //analytics page
+  analyticsPlatformOverview(data: any) {
+    return this.http.post(`${this.apiUrl}/analytics/platform/overview`, data);
+  }
+  analyticsClassPerformance(data: any) {
+    return this.http.post(`${this.apiUrl}/analytics/classes/performance`, data);
+  }
+
+  analyticsTopicAnalysis(data: any) {
+    return this.http.post(`${this.apiUrl}/analytics/topic/analysis`, data);
+  }
+
+  analyticsPerformanceTrend(data: any) {
+    return this.http.post(`${this.apiUrl}/analytics/performance/trend`, data);
+  }
+  /////////////////////////// individual class performance ////////////////////////////
+
+  analyticsIndividualClassPerformance(data: any) {
+    return this.http.post(`${this.apiUrl}/analytics/class/performance`, data);
+  }
+
+  analyticsIndividualClassAssessmentPerformance(data: any) {
+    return this.http.post(`${this.apiUrl}/analytics/class-assessment-performance`, data);
+  }
+
+  analyticsIndividualPerformers(data: any) {
+    return this.http.post(`${this.apiUrl}/analytics/class-assessment-performance`, data);
+  }
+
+  topandlowPerformers(data: any) {
+    return this.http.post(`${this.apiUrl}/analytics/performers`, data);
+  }
+
+  analyticsIndividualPerformanceDistribution(data: any) {
+    return this.http.post(`${this.apiUrl}/analytics/performance-ditribution`, data);
+  }
+
+  analyticsTopicParser(data: any) {
+    return this.http.post(`${this.apiUrl}/analytics/topicparse`, data)
+  }
+
+  analyticsSaveSnapshot(data: any) {
+    return this.http.post(`${this.apiUrl}/analytics/save/snapshot`, data);
+  }
+
+
+
+
+
+
+
 
 
 

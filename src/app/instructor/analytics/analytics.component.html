@@ -1,0 +1,1015 @@
+<div class="bg-gray-50 min-h-screen w-full overflow-x-hidden">
+    <div class="flex w-full">
+        <app-sidebar></app-sidebar>
+        <div class="flex-1 ml-0 md:ml-20 w-full">
+            <header class="bg-white shadow-sm fixed top-0 right-0 w-full md:w-[calc(100%-80px)] z-40">
+                <div class="w-full px-4 md:px-6 py-3 md:py-4">
+                    <div class="flex items-center justify-between">
+                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">Analytics</h1>
+                        <div class="flex items-center">
+                            <div class="hidden md:flex items-center mr-4">
+                                <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
+                                <button
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2">
+                                    Platform Overview
+                                </button>
+                                <button
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
+                                    Individual Class
+                                </button>
+                            </div>
+                            <div *ngIf="!isMobile" class="flex items-center">
+                                <div class="relative mr-3">
+                                    <div
+                                        class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <img *ngIf="profile" [src]="profile" alt="Profile"
+                                            class="w-full h-full object-cover">
+                                        <span *ngIf="!profile" class="text-base md:text-lg font-medium text-gray-600">
+                                            {{username.charAt(0) || 'A'}}
+                                        </span>
+                                    </div>
+                                    <div
+                                        class="absolute bottom-0 right-0 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-500 ring-2 ring-white">
+                                    </div>
+                                </div>
+                                <div class="text-left">
+                                    <div class="text-sm font-medium text-gray-900">{{username}}</div>
+                                    <div class="text-xs text-gray-500">Instructor</div>
+                                </div>
+                            </div>
+                            <button *ngIf="isMobile" (click)="toggleSidebar()"
+                                class="p-2 rounded-md hover:bg-gray-100 transition-colors">
+                                <i class="fas fa-bars w-5 h-5 text-gray-600"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="h-[65px] md:h-[68px] w-full"></div>
+
+            <div *ngIf="isLoading"
+                class="flex items-center justify-center min-h-[calc(100vh-68px)] bg-white transition-colors duration-900">
+                <div class="text-center animate-fade-in">
+                    <div class="relative w-16 h-16 mx-auto">
+                        <div
+                            class="absolute inset-0 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin">
+                        </div>
+                        <div class="absolute inset-2 rounded-full border-4 border-indigo-300 border-b-transparent animate-spin"
+                            style="animation-direction: reverse;">
+                        </div>
+                    </div>
+                    <p class="mt-5 text-gray-600 text-lg font-medium animate-pulse">
+                        Loading instructor data...
+                    </p>
+                </div>
+            </div>
+
+            <main class="p-2 md:p-5 w-full">
+                <div class="genggengg" data-tour="instructor-manage-welcome">
+                    <div class="oknato-header">
+                        <div class="oknato-icon-wrapper">
+                            <i class="fa-solid fa-chart-simple oknato-icon"></i>
+                        </div>
+                        <div class="oknato-header-content">
+                            <h1>Analytics Dashboard</h1>
+                            <p>Comprehensive insights into assessment performance and student engagement.</p>
+                        </div>
+                    </div>
+
+                    <div class="publish-container">
+                        <div *ngIf="mobileTab === 'platform'" class="input-butt">
+                            <select name="" id="" [(ngModel)]="selectedPreset" (change)="datePresetChange($event)">
+                                <option *ngFor="let p of startDatePresets" [value]="p.value">{{p.label}}</option>
+                            </select>
+                        </div>
+
+                        <div *ngIf="mobileTab === 'individual'" class="input-butt">
+                            <select name="" id="" [(ngModel)]="selectedClassCode" (change)="onClassCodeChange()">
+                                <option *ngFor="let c of classes" [value]="c.classCode">{{c.className}} -
+                                    {{c.classCode}}</option>
+                            </select>
+                        </div>
+
+                        <button class="publish-button">
+                            <i class="fa-solid fa-download"></i>
+                            <span>Export PDF Report</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex border-b border-gray-200 mb-3">
+                    <button (click)="onTabChange('platform')" [class.text-indigo-600]="mobileTab === 'platform'"
+                        [class.border-transparent]="mobileTab !== 'platform'"
+                        [class.text-gray-500]="mobileTab !== 'platform'"
+                        class="flex-1 py-3 px-4 text-sm font-medium border-b-2 transition-colors duration-200 flex items-center justify-center gap-2">
+                        <i class="fas fa-chart-simple"></i>
+                        <span>Platform Overview</span>
+                    </button>
+                    <button (click)="onTabChange('individual')" [class.text-indigo-600]="mobileTab === 'individual'"
+                        [class.border-transparent]="mobileTab !== 'individual'"
+                        [class.text-gray-500]="mobileTab !== 'individual'"
+                        class="flex-1 py-3 px-4 text-sm font-medium border-b-2 transition-colors duration-200 flex items-center justify-center gap-2">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Individual Class</span>
+                    </button>
+                </div>
+
+                <div *ngIf="mobileTab === 'platform'" class="demo-stats-grid">
+                    <div class="demo-stat-card">
+                        <div class="demo-stat-content">
+                            <div class="demo-stat-info">
+                                <span class="demo-stat-label">TOTAL ASSESSMENTS</span>
+                                <div class="demo-stat-value">{{platformOverviewData.totalAssessments}}</div>
+                                <p class="demo-stat-description">Total Assessments</p>
+                            </div>
+                            <div class="demo-stat-icon performance">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="demo-stat-card">
+                        <div class="demo-stat-content">
+                            <div class="demo-stat-info">
+                                <span class="demo-stat-label">AVERAGE SCORE</span>
+                                <div class="demo-stat-value">{{platformOverviewData.averageScore}}%</div>
+                                <p class="demo-stat-description">Average Score</p>
+                            </div>
+                            <div class="demo-stat-icon admitted">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="demo-stat-card clickable">
+                        <div class="demo-stat-content">
+                            <div class="demo-stat-info">
+                                <span class="demo-stat-label">TOTAL CLASS INVOLVED</span>
+                                <div class="demo-stat-value">{{platformOverviewData.totalClasses}}</div>
+                                <p class="demo-stat-description">Total classes covered</p>
+                            </div>
+                            <div class="demo-stat-icon pending">
+                                <i class="fas fa-user-clock"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div *ngIf="mobileTab === 'individual'" class="demo-stats-grid">
+                    <div class="demo-stat-card">
+                        <div class="demo-stat-content">
+                            <div class="demo-stat-info">
+                                <span class="demo-stat-label">TOTAL STUDENTS</span>
+                                <div class="demo-stat-value">{{classStats?.totalStudents}}</div>
+                                <p class="demo-stat-description">Total students in this class</p>
+                            </div>
+                            <div class="demo-stat-icon performance">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="demo-stat-card">
+                        <div class="demo-stat-content">
+                            <div class="demo-stat-info">
+                                <span class="demo-stat-label">PERFORMANCE</span>
+                                <div class="demo-stat-value">{{classStats?.overallPerformance}}</div>
+                                <p class="demo-stat-description">Performance of this class</p>
+                            </div>
+                            <div class="demo-stat-icon admitted">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="demo-stat-card clickable">
+                        <div class="demo-stat-content">
+                            <div class="demo-stat-info">
+                                <span class="demo-stat-label">PASSING RATE</span>
+                                <div class="demo-stat-value">{{classStats?.passingRate}}%</div>
+                                <p class="demo-stat-description">Passing Rate</p>
+                            </div>
+                            <div class="demo-stat-icon pending">
+                                <i class="fas fa-user-clock"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="mobileTab === 'platform'" class="overall-contents">
+                    <div class="class-performance-comparison">
+                        <h2 class="table-title">Class Performance Comparison</h2>
+                        <table *ngIf="overallClassPerformanceData.length > 0">
+                            <thead>
+                                <tr>
+                                    <th>Class</th>
+                                    <th>Avg Score</th>
+                                    <th>Participation Rate</th>
+                                    <th>Passing Rate</th>
+                                    <th>Students</th>
+                                    <th>Assessments</th>
+                                    <th>Performance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let c of overallClassPerformanceData">
+                                    <td class="font-medium text-gray-900">{{c.className}}</td>
+                                    <td [ngClass]="getScoreColorClass(c.averageScore)">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                                            [ngClass]="c.averageScore >= 80 ? 'bg-green-100 text-green-800' : c.averageScore >= 70 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'">
+                                            {{c.averageScore}}%
+                                        </span>
+                                    </td>
+                                    <td [ngClass]="getScoreColorClass(c.participationRate)">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                                            [ngClass]="c.participationRate >= 80 ? 'bg-green-100 text-green-800' : c.participationRate >= 70 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'">
+                                            {{c.participationRate}}%
+                                        </span>
+                                    </td>
+                                    <td [ngClass]="getScoreColorClass(c.passingRate)">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                                            [ngClass]="c.passingRate >= 80 ? 'bg-green-100 text-green-800' : c.passingRate >= 70 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'">
+                                            {{c.passingRate}}%
+                                        </span>
+                                    </td>
+                                    <td class="text-gray-600">{{c.totalStudents}}</td>
+                                    <td class="text-gray-600">{{c.totalAssessments}}</td>
+                                    <td [ngClass]="getPerformanceColorClass(c.performance)">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize"
+                                            [ngClass]="c.performance.toLowerCase() === 'excellent' ? 'bg-green-100 text-green-800' : 
+                                                         c.performance.toLowerCase() === 'good' ? 'bg-blue-100 text-blue-800' : 
+                                                         c.performance.toLowerCase() === 'average' ? 'bg-yellow-100 text-yellow-800' : 
+                                                         c.performance.toLowerCase() === 'below average' ? 'bg-orange-100 text-orange-800' : 'bg-red-100 text-red-800'">
+                                            {{c.performance}}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div *ngIf="overallClassPerformanceData.length === 0" class="empty-state">
+                            <i class="fas fa-chart-bar text-gray-300 text-6xl mb-4"></i>
+                            <h3 class="text-xl font-semibold text-gray-600 mb-2">No Class Data Available</h3>
+                            <p class="text-gray-500">There are no classes with assessment data for the selected time
+                                period.</p>
+                        </div>
+                    </div>
+
+
+
+                    <div class="topic-analysis">
+
+                        <div class="class-performance-comparison">
+                            <h2 class="table-title">Topic Analysis</h2>
+
+                            <div class="item-cont" [attr.data-level]="getTopicDataLevel(t.percentage)"
+                                *ngFor="let t of topTopics">
+                                <div class="upper">
+                                    <p class="title">{{t.categoryName}}</p>
+                                    <p class="percentage">{{t.percentage}}%</p>
+                                </div>
+
+                                <div class="upper">
+                                    <p class="dets">{{t.totalAssessments}} Assessments</p>
+                                    <p class="dets-value">{{getTopicPerformanceLabel(t.percentage)}}</p>
+                                </div>
+                                <div class="bar" [style.width.%]="t.percentage"></div>
+                            </div>
+
+                            <div *ngIf="topTopics.length === 0" class="empty-state">
+                                <div class="flex flex-col items-center justify-center py-12 px-6">
+                                    <div class="relative mb-6">
+                                        <div
+                                            class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-chart-pie text-3xl text-indigo-400"></i>
+                                        </div>
+                                        <div
+                                            class="absolute -top-1 -right-1 w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-search text-xs text-yellow-600"></i>
+                                        </div>
+                                    </div>
+                                    <h3 class="text-xl font-semibold text-gray-800 mb-2">No Topic Data Available</h3>
+                                    <p class="text-gray-500 text-center max-w-md leading-relaxed">
+                                        There are no topics with assessment data for the selected time period.
+                                        Try adjusting your date range or check back once assessments are completed.
+                                    </p>
+                                    <div class="mt-6 flex items-center space-x-2 text-sm text-gray-400">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span>Data updates automatically as new assessments are submitted</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="class-performance-comparison">
+                            <h2 class="table-title">Commonly Missed Topics</h2>
+
+                            <div class="item-cont" [attr.data-missed-level]="getMissedTopicLevel(m.percentage)"
+                                *ngFor="let m of leastTopics">
+                                <div class="upper">
+                                    <p class="title">{{m.categoryName}}</p>
+                                    <p class="percentage">{{m.percentage}}%</p>
+                                </div>
+
+                                <div class="upper">
+                                    <p class="dets">{{m.totalAssessments}} Assessments</p>
+                                    <p class="dets-value">{{getMissedTopicPerformanceLabel(m.percentage)}}</p>
+                                </div>
+                                <div class="bar" [style.width.%]="m.percentage"></div>
+                            </div>
+
+                            <div *ngIf="leastTopics.length === 0" class="empty-state">
+                                <div class="flex flex-col items-center justify-center py-12 px-6">
+                                    <div class="relative mb-6">
+                                        <div
+                                            class="w-20 h-20 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-check-circle text-3xl text-green-400"></i>
+                                        </div>
+                                        <div
+                                            class="absolute -top-1 -right-1 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-thumbs-up text-xs text-green-600"></i>
+                                        </div>
+                                    </div>
+                                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Great Performance!</h3>
+                                    <p class="text-gray-500 text-center max-w-md leading-relaxed">
+                                        No commonly missed topics found for the selected time period.
+                                        Your students are performing well across all assessment areas.
+                                    </p>
+                                    <div class="mt-6 flex items-center space-x-2 text-sm text-gray-400">
+                                        <i class="fas fa-star"></i>
+                                        <span>Keep up the excellent teaching work!</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="class-performance-comparison mt-6">
+                        <div class="ttl-header">
+                            <h2>Title Distributions</h2>
+                            <div class="ttl-header-right">
+                                <p class="ttl-refresh-meta">Last generated: {{topicGeneratedDate | date:'MM/d/yyyy, h:mm
+                                    a'}}</p>
+                                <button type="button" class="ttl-refresh-btn" aria-label="Refresh title distributions"
+                                    (click)="analyticsTopicParser()">
+                                    <span class="ttl-refresh-icon"><i class="fa-solid fa-rotate"></i></span>
+                                    <span class="ttl-refresh-label">Refresh</span>
+                                </button>
+                            </div>
+                        </div>
+
+
+                        <div class="stats-cont">
+                            <div class="box-cont">
+                                <span><i class="fa-solid fa-star"></i></span>
+                                <ng-container *ngIf="topicDistribution?.top?.length > 9; else topEmptyState">
+                                    <p *ngFor="let a of topicDistribution?.top">{{a.title}}</p>
+                                </ng-container>
+                                <ng-template #topEmptyState>
+                                    <div
+                                        class="empty-state-small flex flex-col items-center text-center gap-2 py-6 px-5 bg-slate-50 border border-slate-200 rounded-lg">
+                                        <h3 class="text-sm font-semibold text-slate-700">
+                                            No standout titles yet.
+                                        </h3>
+                                        <p class="text-xs text-slate-500 leading-relaxed">
+                                            We have not detected any standout titles yet. As more assessments roll in,
+                                            this space will highlight topics with exceptional performance.
+                                        </p>
+                                    </div>
+                                </ng-template>
+                            </div>
+
+                            <div class="box-cont">
+                                <span><i class="fa-solid fa-star-half-stroke"></i></span>
+                                <ng-container *ngIf="topicDistribution?.average?.length > 9; else averageEmptyState">
+                                    <p *ngFor="let a of topicDistribution?.average">{{a.title}}</p>
+                                </ng-container>
+                                <ng-template #averageEmptyState>
+                                    <div
+                                        class="empty-state-small flex flex-col items-center text-center gap-2 py-6 px-5 bg-slate-50 border border-slate-200 rounded-lg">
+                                        <h3 class="text-sm font-semibold text-slate-700">Waiting for balanced trends
+                                        </h3>
+                                        <p class="text-xs text-slate-500 leading-relaxed">
+                                            We have not detected titles sitting around the average band yet.
+                                            As more assessments roll in, this space will highlight topics with mid-range
+                                            engagement.
+                                        </p>
+                                    </div>
+                                </ng-template>
+                            </div>
+
+
+                            <div class="box-cont">
+                                <span><i class="fa-solid fa-down-long"></i></span>
+                                <ng-container
+                                    *ngIf="topicDistribution?.needs_attention?.length; else attentionEmptyState">
+                                    <p *ngFor="let a of topicDistribution?.needs_attention">{{a.title}}</p>
+                                </ng-container>
+                                <ng-template #attentionEmptyState>
+                                    <div
+                                        class="empty-state-small flex flex-col items-center text-center gap-2 py-6 px-5 bg-slate-50 border border-slate-200 rounded-lg">
+                                        <h3 class="text-sm font-semibold text-slate-700">
+                                            No titles need attention at the moment.
+                                        </h3>
+                                        <p class="text-xs text-slate-500 leading-relaxed">
+                                            Great news! No titles need attention at the moment.
+                                        </p>
+                                    </div>
+                                </ng-template>
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="class-performance-comparison mt-6">
+                        <h2 class="table-title">Performance Trend Over Time</h2>
+                        <div *ngIf="performanceTrendData.trends && performanceTrendData.trends.length > 0"
+                            class="performance-trend-cont">
+                            <div class="monthly" *ngFor="let m of performanceTrendData.trends">
+                                <p class="month">{{m.period}}</p>
+                                <span class="perc">{{m.averagePercentage}}%</span>
+                                <p class="avg-score">Avg Score</p>
+                                <p class="part">{{m.totalSubmissions}} Submissions</p>
+                                <p class="pass">{{m.passingRate}}% Passing</p>
+                            </div>
+                        </div>
+
+                        <div *ngIf="!performanceTrendData.trends || performanceTrendData.trends.length === 0"
+                            class="empty-state">
+                            <i class="fas fa-chart-line text-gray-300 text-6xl mb-4"></i>
+                            <h3 class="text-xl font-semibold text-gray-600 mb-2">No Performance Trend Data</h3>
+                            <p class="text-gray-500">There is no trend data available for the selected time period.</p>
+                        </div>
+
+                        <div *ngIf="performanceTrendData && performanceTrendData.trendAnalysis" class="analysis-cont"
+                            [ngClass]="{
+                                'trend-improving': performanceTrendData.trendAnalysis.improvement > 0,
+                                'trend-declining': performanceTrendData.trendAnalysis.improvement < 0,
+                                'trend-stable': performanceTrendData.trendAnalysis.improvement === 0
+                            }">
+                            <div class="leftt">
+                                <p class="trend-title">Trend Analysis</p>
+                                <p class="trend-description">{{performanceTrendData.trendAnalysis.details}}</p>
+                            </div>
+                            <div class="rightt">
+                                <i class="fa-solid" [ngClass]="{
+                                       'fa-up-long': performanceTrendData.trendAnalysis.improvement > 0,
+                                       'fa-down-long': performanceTrendData.trendAnalysis.improvement < 0,
+                                       'fa-minus': performanceTrendData.trendAnalysis.improvement === 0
+                                   }"></i>
+                                <p>{{Math.abs(performanceTrendData.trendAnalysis.improvement)}}%</p>
+                            </div>
+                        </div>
+
+                        <!-- Summary Statistics -->
+                        <div *ngIf="performanceTrendData && performanceTrendData.summary" class="summary-stats-grid">
+                            <div class="summary-stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-chart-bar"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <h4>Overall Average</h4>
+                                    <p class="stat-value">{{performanceTrendData.summary.overallAveragePercentage}}%</p>
+                                    <span class="stat-label">Across {{performanceTrendData.summary.activeMonths}} active
+                                        months</span>
+                                </div>
+                            </div>
+
+                            <div class="summary-stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-tasks"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <h4>Total Submissions</h4>
+                                    <p class="stat-value">{{performanceTrendData.summary.totalSubmissions}}</p>
+                                    <span class="stat-label">Over {{performanceTrendData.summary.totalMonthsInRange}}
+                                        months</span>
+                                </div>
+                            </div>
+
+                            <div class="summary-stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <h4>Passing Rate</h4>
+                                    <p class="stat-value">{{performanceTrendData.summary.averagePassingRate}}%</p>
+                                    <span class="stat-label">Average across period</span>
+                                </div>
+                            </div>
+
+                            <div class="summary-stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <h4>High Performers</h4>
+                                    <p class="stat-value">{{performanceTrendData.summary.averageHighPerformerRate}}%</p>
+                                    <span class="stat-label">Top performing students</span>
+                                </div>
+                            </div>
+
+                            <div class="summary-stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <h4>Needs Support</h4>
+                                    <p class="stat-value">{{performanceTrendData.summary.averageLowPerformerRate}}%</p>
+                                    <span class="stat-label">Students needing attention</span>
+                                </div>
+                            </div>
+
+                            <div class="summary-stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-balance-scale"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <h4>Consistency</h4>
+                                    <p class="stat-value">{{performanceTrendData.summary.overallConsistency}}%</p>
+                                    <span class="stat-label">Performance stability</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Key Insights -->
+                        <div *ngIf="performanceTrendData && performanceTrendData.insights" class="insights-section">
+                            <h3 class="insights-title">Key Insights</h3>
+                            <div class="insights-grid">
+                                <div class="insight-card productive">
+                                    <div class="insight-icon">
+                                        <i class="fas fa-rocket"></i>
+                                    </div>
+                                    <div class="insight-content">
+                                        <h4>Most Productive</h4>
+                                        <p>{{performanceTrendData.insights.mostProductiveMonth}}</p>
+                                        <span>Highest submission volume</span>
+                                    </div>
+                                </div>
+
+                                <div class="insight-card performance">
+                                    <div class="insight-icon">
+                                        <i class="fas fa-trophy"></i>
+                                    </div>
+                                    <div class="insight-content">
+                                        <h4>Best Performance</h4>
+                                        <p>{{performanceTrendData.insights.bestPerformanceMonth}}</p>
+                                        <span>Highest average scores</span>
+                                    </div>
+                                </div>
+
+                                <div class="insight-card consistent">
+                                    <div class="insight-icon">
+                                        <i class="fas fa-chart-line"></i>
+                                    </div>
+                                    <div class="insight-content">
+                                        <h4>Most Consistent</h4>
+                                        <p>{{performanceTrendData.insights.mostConsistentMonth}}</p>
+                                        <span>Most stable performance</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="mobileTab === 'individual'" class="specific-contents">
+
+
+                    <div class="box">
+                        <h2 class="table-title">Assessment Performance Over Time</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Assessment</th>
+                                    <th>Date</th>
+                                    <th>Avg Score</th>
+                                    <th>Participation</th>
+                                    <th>Passing Rate</th>
+                                    <th>Submissions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let a of performers">
+                                    <td data-label="Assessment">{{a.title}}</td>
+                                    <td data-label="Date">{{a.startDate | date:'MM/d/yyyy, h:mm a':'UTC'}}</td>
+                                    <td data-label="Avg Score">{{a.averageScore}}%</td>
+                                    <td data-label="Participation">{{a.participation}}%</td>
+                                    <td data-label="Passing Rate">{{a.passingRate}}%</td>
+                                    <td data-label="Submissions">{{a.submissions}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="topic-analysis">
+
+                        <div class="class-performance-comparison">
+                            <h2 class="table-title">Top Performing Students</h2>
+
+                            <div *ngFor="let p of topPerformers; let i = index"
+                                class="student-rank student-rank-success" data-rank="1">
+                                <div class="student-rank-sub">
+                                    <div class="left-side">
+                                        <span class="rank-number">{{i + 1}}</span>
+                                        <div class="left-side-sub">
+                                            <p class="rank-name">{{p.name}}</p>
+                                            <p class="rank-title">Rank #{{i + 1}}</p>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="right-side">
+                                        <span class="rank-percentage">{{p.passingRate}}%</span>
+                                        <p class="rank-average">Passing Rate</p>
+                                    </div>
+                                </div>
+
+                                <div class="student-stats">
+                                    <div class="student-stats-cont">
+                                        <p class="student-stats-number">{{p.completedAssessments}}</p>
+                                        <p class="student-stats-title">Completed</p>
+                                    </div>
+                                    <div class="student-stats-cont">
+                                        <p class="student-stats-number">{{p.passingRate}}%</p>
+                                        <p class="student-stats-title">Passing Rate</p>
+                                    </div>
+                                    <div class="student-stats-cont">
+                                        <p class="student-stats-number">{{p.averageScore}}%</p>
+                                        <p class="student-stats-title">Avg Score</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="class-performance-comparison">
+                            <h2 class="table-title">Students Needing Attention</h2>
+
+                            <div *ngFor="let p of leastPerformers; let i = index"
+                                class="student-rank student-rank-danger" data-rank="1">
+                                <div class="student-rank-sub">
+                                    <div class="left-side">
+                                        <span class="rank-number">{{i + 1}}</span>
+                                        <div class="left-side-sub">
+                                            <p class="rank-name">{{p.name}}</p>
+                                            <p class="rank-title">Rank #{{i + 1}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="right-side">
+                                        <span class="rank-percentage">{{p.passingRate}}%</span>
+                                        <p class="rank-average">Passing Rate</p>
+                                    </div>
+                                </div>
+                                <div class="student-stats">
+                                    <div class="student-stats-cont">
+                                        <p class="student-stats-number">{{p.completedAssessments}}</p>
+                                        <p class="student-stats-title">Completed</p>
+                                    </div>
+                                    <div class="student-stats-cont">
+                                        <p class="student-stats-number">{{p.passingRate}}%</p>
+                                        <p class="student-stats-title">Passing Rate</p>
+                                    </div>
+                                    <div class="student-stats-cont">
+                                        <p class="student-stats-number">{{p.averageScore}}%</p>
+                                        <p class="student-stats-title">Avg Score</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="class-performance-comparison mt-6">
+                        <div class="ttl-header">
+                            <h2>Title Distributions</h2>
+                            <div class="ttl-header-right">
+                                <p class="ttl-refresh-meta">Last generated: {{topicGeneratedDate | date:'MM/d/yyyy, h:mm
+                                    a'}}</p>
+                                <button type="button" class="ttl-refresh-btn" aria-label="Refresh title distributions"
+                                    (click)="analyticsTopicParser()">
+                                    <span class="ttl-refresh-icon"><i class="fa-solid fa-rotate"></i></span>
+                                    <span class="ttl-refresh-label">Refresh</span>
+                                </button>
+                            </div>
+                        </div>
+
+
+                        <div class="stats-cont">
+                            <div class="box-cont">
+                                <span><i class="fa-solid fa-star"></i></span>
+                                <ng-container *ngIf="topicDistribution?.top?.length > 9; else topEmptyState">
+                                    <p *ngFor="let a of topicDistribution?.top">{{a.title}}</p>
+                                </ng-container>
+                                <ng-template #topEmptyState>
+                                    <div
+                                        class="empty-state-small flex flex-col items-center text-center gap-2 py-6 px-5 bg-slate-50 border border-slate-200 rounded-lg">
+                                        <h3 class="text-sm font-semibold text-slate-700">
+                                            No standout titles yet.
+                                        </h3>
+                                        <p class="text-xs text-slate-500 leading-relaxed">
+                                            We have not detected any standout titles yet. As more assessments roll in,
+                                            this space will highlight topics with exceptional performance.
+                                        </p>
+                                    </div>
+                                </ng-template>
+                            </div>
+
+                            <div class="box-cont">
+                                <span><i class="fa-solid fa-star-half-stroke"></i></span>
+                                <ng-container *ngIf="topicDistribution?.average?.length > 9; else averageEmptyState">
+                                    <p *ngFor="let a of topicDistribution?.average">{{a.title}}</p>
+                                </ng-container>
+                                <ng-template #averageEmptyState>
+                                    <div
+                                        class="empty-state-small flex flex-col items-center text-center gap-2 py-6 px-5 bg-slate-50 border border-slate-200 rounded-lg">
+                                        <h3 class="text-sm font-semibold text-slate-700">Waiting for balanced trends
+                                        </h3>
+                                        <p class="text-xs text-slate-500 leading-relaxed">
+                                            We have not detected titles sitting around the average band yet.
+                                            As more assessments roll in, this space will highlight topics with mid-range
+                                            engagement.
+                                        </p>
+                                    </div>
+                                </ng-template>
+                            </div>
+
+
+                            <div class="box-cont">
+                                <span><i class="fa-solid fa-down-long"></i></span>
+                                <ng-container
+                                    *ngIf="topicDistribution?.needs_attention?.length; else attentionEmptyState">
+                                    <p *ngFor="let a of topicDistribution?.needs_attention">{{a.title}}</p>
+                                </ng-container>
+                                <ng-template #attentionEmptyState>
+                                    <div
+                                        class="empty-state-small flex flex-col items-center text-center gap-2 py-6 px-5 bg-slate-50 border border-slate-200 rounded-lg">
+                                        <h3 class="text-sm font-semibold text-slate-700">
+                                            No titles need attention at the moment.
+                                        </h3>
+                                        <p class="text-xs text-slate-500 leading-relaxed">
+                                            Great news! No titles need attention at the moment.
+                                        </p>
+                                    </div>
+                                </ng-template>
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="box mt-6">
+                        <h2 class="table-title">Student Performance Distribution</h2>
+
+                        <div class="progress-students grade-a">
+                            <div class="progress-student">
+                                <div class="left-side">
+                                    <p class="row-ttl">A (90 - 100%) </p>
+                                    <p class="row-desc">{{performanceDistribution?.performanceRanges?.excellent?.count >
+                                        1 ? performanceDistribution?.performanceRanges?.excellent?.count + ' students' :
+                                        performanceDistribution?.performanceRanges?.excellent?.count + ' student' }}
+
+                                        ({{performanceDistribution?.performanceRanges?.excellent?.percentage}}%)</p>
+                                </div>
+
+                                <div class="right-side">
+                                    <span
+                                        class="row-span">{{performanceDistribution?.performanceRanges?.excellent?.count
+                                        > 1 ? performanceDistribution?.performanceRanges?.excellent?.count + ' students'
+                                        : performanceDistribution?.performanceRanges?.excellent?.count + ' student' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-student-progress"
+                                    [style.width.%]="performanceDistribution?.performanceRanges?.excellent?.percentage || 0">
+                                </div>
+                            </div>
+
+                            <div class="list-of-stud">
+                                <span
+                                    *ngFor="let e of performanceDistribution?.performanceRanges?.excellent?.students">{{e.name}}</span>
+                            </div>
+                        </div>
+
+                        <div class="progress-students grade-b">
+                            <div class="progress-student">
+                                <div class="left-side">
+                                    <p class="row-ttl">B (80 - 89%) </p>
+                                    <p class="row-desc">{{performanceDistribution?.performanceRanges?.veryGood?.count >
+                                        1 ? performanceDistribution?.performanceRanges?.veryGood?.count + ' students' :
+                                        performanceDistribution?.performanceRanges?.veryGood?.count + ' student' }}
+
+                                        ({{performanceDistribution?.performanceRanges?.veryGood?.percentage}}%)</p>
+                                </div>
+
+                                <div class="right-side">
+                                    <span class="row-span">{{performanceDistribution?.performanceRanges?.veryGood?.count
+                                        > 1 ? performanceDistribution?.performanceRanges?.veryGood?.count + ' students'
+                                        : performanceDistribution?.performanceRanges?.veryGood?.count + ' student' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-student-progress"
+                                    [style.width.%]="performanceDistribution?.performanceRanges?.veryGood?.percentage || 0">
+                                </div>
+                            </div>
+
+                            <div class="list-of-stud">
+                                <span
+                                    *ngFor="let e of performanceDistribution?.performanceRanges?.veryGood?.students">{{e.name}}</span>
+                            </div>
+                        </div>
+
+                        <div class="progress-students grade-c">
+                            <div class="progress-student">
+                                <div class="left-side">
+                                    <p class="row-ttl">C (70 - 79%) </p>
+                                    <p class="row-desc">{{performanceDistribution?.performanceRanges?.good?.count > 1 ?
+                                        performanceDistribution?.performanceRanges?.good?.count + ' students' :
+                                        performanceDistribution?.performanceRanges?.good?.count + ' student' }}
+
+                                        ({{performanceDistribution?.performanceRanges?.good?.percentage}}%)</p>
+                                </div>
+
+                                <div class="right-side">
+                                    <span class="row-span">{{performanceDistribution?.performanceRanges?.good?.count > 1
+                                        ? performanceDistribution?.performanceRanges?.good?.count + ' students' :
+                                        performanceDistribution?.performanceRanges?.good?.count + ' student' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-student-progress"
+                                    [style.width.%]="performanceDistribution?.performanceRanges?.good?.percentage || 0">
+                                </div>
+                            </div>
+
+                            <div class="list-of-stud">
+                                <span
+                                    *ngFor="let e of performanceDistribution?.performanceRanges?.good?.students">{{e.name}}</span>
+                            </div>
+                        </div>
+
+                        <div class="progress-students grade-d">
+                            <div class="progress-student">
+                                <div class="left-side">
+                                    <p class="row-ttl">D (60 - 69%) </p>
+                                    <p class="row-desc">
+                                        {{performanceDistribution?.performanceRanges?.satisfactory?.count > 1 ?
+                                        performanceDistribution?.performanceRanges?.satisfactory?.count + ' students' :
+                                        performanceDistribution?.performanceRanges?.satisfactory?.count + ' student' }}
+                                        ({{performanceDistribution?.performanceRanges?.satisfactory?.percentage}}%)</p>
+                                </div>
+
+                                <div class="right-side">
+                                    <span
+                                        class="row-span">{{performanceDistribution?.performanceRanges?.satisfactory?.count
+                                        > 1 ? performanceDistribution?.performanceRanges?.satisfactory?.count + '
+                                        students' : performanceDistribution?.performanceRanges?.satisfactory?.count + '
+                                        student' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-student-progress"
+                                    [style.width.%]="performanceDistribution?.performanceRanges?.satisfactory?.percentage || 0">
+                                </div>
+                            </div>
+
+                            <div class="list-of-stud">
+                                <span
+                                    *ngFor="let e of performanceDistribution?.performanceRanges?.satisfactory?.students">{{e.name}}</span>
+                            </div>
+                        </div>
+
+                        <div class="progress-students grade-e">
+                            <div class="progress-student">
+                                <div class="left-side">
+                                    <p class="row-ttl">E (50 - 59%) </p>
+                                    <p class="row-desc">
+                                        {{performanceDistribution?.performanceRanges?.needsImprovement?.count > 1 ?
+                                        performanceDistribution?.performanceRanges?.needsImprovement?.count + '
+                                        students' : performanceDistribution?.performanceRanges?.needsImprovement?.count
+                                        + ' student' }}
+                                        ({{performanceDistribution?.performanceRanges?.needsImprovement?.percentage}}%)
+                                    </p>
+                                </div>
+
+                                <div class="right-side">
+                                    <span
+                                        class="row-span">{{performanceDistribution?.performanceRanges?.needsImprovement?.count
+                                        > 1 ? performanceDistribution?.performanceRanges?.needsImprovement?.count + '
+                                        students' : performanceDistribution?.performanceRanges?.needsImprovement?.count
+                                        + ' student' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-student-progress"
+                                    [style.width.%]="performanceDistribution?.performanceRanges?.needsImprovement?.percentage || 0">
+                                </div>
+                            </div>
+
+                            <div class="list-of-stud">
+                                <span
+                                    *ngFor="let e of performanceDistribution?.performanceRanges?.needsImprovement?.students">{{e.name}}</span>
+                            </div>
+                        </div>
+
+                        <div class="progress-students grade-f">
+                            <div class="progress-student">
+                                <div class="left-side">
+                                    <p class="row-ttl">F (0 - 49%) </p>
+                                    <p class="row-desc">{{performanceDistribution?.performanceRanges?.poor?.count > 1 ?
+                                        performanceDistribution?.performanceRanges?.poor?.count + ' students' :
+                                        performanceDistribution?.performanceRanges?.poor?.count + ' student' }}
+
+                                        ({{performanceDistribution?.performanceRanges?.poor?.percentage}}%)</p>
+                                </div>
+
+                                <div class="right-side">
+                                    <span class="row-span">{{performanceDistribution?.performanceRanges?.poor?.count > 1
+                                        ? performanceDistribution?.performanceRanges?.poor?.count + ' students' :
+                                        performanceDistribution?.performanceRanges?.poor?.count + ' student' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-student-progress"
+                                    [style.width.%]="performanceDistribution?.performanceRanges?.poor?.percentage || 0">
+                                </div>
+                            </div>
+
+                            <div class="list-of-stud">
+                                <span
+                                    *ngFor="let e of performanceDistribution?.performanceRanges?.poor?.students">{{e.name}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                </div>
+            </main>
+        </div>
+    </div>
+</div>

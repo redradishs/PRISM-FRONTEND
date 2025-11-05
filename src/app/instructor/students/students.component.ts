@@ -477,40 +477,66 @@ export class StudentsComponent implements OnInit {
 
   approveRequest(student: any) {
     console.log(student);
-    const data = {
-      instructorId: this.userId,
-      studentId: student._id,
-      classCode: this.selectedClass.classCode,
-      action: 'accept'
-    }
-    this.api.approve(data).subscribe({
-      next: (resp: any) => {
-        console.log(resp);
-        this.pendingRequests = this.pendingRequests.filter(req => req.id !== student.id);
-        this.updateDisplayedData(this.selectedClass);
-      },
-      error: (err) => {
-        console.log(err);
+    Swal.fire({
+      title: 'Approve Request?',
+      text: `Are you sure you want to approve "${student.name}" request to join this class?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3b82f6',
+      cancelButtonColor: '#d1d5db',
+      confirmButtonText: 'Yes, approve',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const data = {
+          instructorId: this.userId,
+          studentId: student._id,
+          classCode: this.selectedClass.classCode,
+          action: 'accept'
+        }
+        this.api.approve(data).subscribe({
+          next: (resp: any) => {
+            console.log(resp);
+            this.pendingRequests = this.pendingRequests.filter(req => req.id !== student.id);
+            this.updateDisplayedData(this.selectedClass);
+          },
+          error: (err) => {
+            console.log(err);
+          }
+        })
       }
     })
   }
 
   rejectRequest(student: any) {
     console.log(student);
-    const data = {
-      instructorId: this.userId,
-      studentId: student.id,
-      classCode: this.selectedClass.classCode,
-      action: 'decline'
-    }
-    this.api.approve(data).subscribe({
-      next: (resp: any) => {
-        console.log(resp);
-        this.pendingRequests = this.pendingRequests.filter(req => req.id !== student.id);
-        this.updateDisplayedData(this.selectedClass);
-      },
-      error: (err) => {
-        console.log(err);
+    Swal.fire({
+      title: 'Reject Request?',
+      text: `Are you sure you want to reject "${student.name}" request to join this class?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3b82f6',
+      cancelButtonColor: '#d1d5db',
+      confirmButtonText: 'Yes, reject',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const data = {
+          instructorId: this.userId,
+          studentId: student._id,
+          classCode: this.selectedClass.classCode,
+          action: 'decline'
+        }
+        this.api.approve(data).subscribe({
+          next: (resp: any) => {
+            console.log(resp);
+            this.pendingRequests = this.pendingRequests.filter(req => req.id !== student.id);
+            this.updateDisplayedData(this.selectedClass);
+          },
+          error: (err) => {
+            console.log(err);
+          }
+        })
       }
     })
   }

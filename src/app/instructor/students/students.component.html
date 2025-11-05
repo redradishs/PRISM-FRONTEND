@@ -658,7 +658,7 @@
                 <label class="toggle-label">
                     <span class="toggle-text">Auto Admission</span>
                     <div class="toggle-switch">
-                        <input type="checkbox" [(ngModel)]="autoAdmission">
+                        <input type="checkbox" [(ngModel)]="autoAdmission" disabled>
                         <span class="toggle-slider"></span>
                     </div>
                 </label>
@@ -700,7 +700,7 @@
                                         <i class="fas fa-check-circle"></i> Approve
                                     </button>
                                     <button class="reject-button" (click)="rejectRequest(request)">
-                                        <i class="fas fa-times-circle"></i> Reject
+                                        <i class="fas fa-times-circle"></i> Decline
                                     </button>
                                 </div>
                             </td>
@@ -715,7 +715,8 @@
                     <i class="fas fa-user-clock"></i>
                 </div>
                 <p class="empty-text">No pending requests</p>
-                <p class="empty-subtext">When students request to join your class, they'll appear here</p>
+                <p class="empty-subtext">When you have auto admission off, students that will join your class will
+                    appear here</p>
             </div>
         </div>
     </div>

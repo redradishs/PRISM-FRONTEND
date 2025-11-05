@@ -3981,7 +3981,7 @@ input:checked + .toggle-slider:before {
 }
 
 .pending-modal .modal-body {
-  padding: 32px;
+  padding: 10px;
   background: white;
 }
 

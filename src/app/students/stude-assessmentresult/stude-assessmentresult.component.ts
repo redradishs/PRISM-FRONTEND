@@ -25,6 +25,13 @@ interface ReportRequest {
   selectedQuestions: string[];
 }
 
+interface Violation {
+  type: string;
+  fromQuestionId: string;
+  timestamp: string;
+  _id: string;
+}
+
 interface AssessmentResult {
   assessmentTitle: string;
   score: number;
@@ -62,6 +69,8 @@ interface AssessmentResult {
       formatted: string;
     };
   };
+  violationCount?: number;
+  violationDetails?: Violation[];
 }
 
 @Component({
@@ -111,6 +120,8 @@ export class StudeAssessmentresultComponent implements OnInit {
     'Other'
   ];
   isSubmittingReport = false;
+
+  showViolationsModal = false;
 
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
 
@@ -577,5 +588,98 @@ export class StudeAssessmentresultComponent implements OnInit {
         });
       }
     });
+  }
+
+  openViolationsModal() {
+    this.showViolationsModal = true;
+  }
+
+  closeViolationsModal() {
+    this.showViolationsModal = false;
+  }
+
+  getViolationIcon(type: string): string {
+    switch (type.toLowerCase()) {
+      case 'tab switch detected':
+        return 'fa-window-restore';
+      case 'copy attempt detected':
+        return 'fa-copy';
+      case 'paste attempt detected':
+        return 'fa-paste';
+      case 'devtools attempt detected':
+        return 'fa-code';
+      case 'select all attempt detected':
+        return 'fa-object-group';
+      case 'multiple window focus losses detected':
+        return 'fa-window-restore';
+      case 'focus lost':
+        return 'fa-eye-slash';
+      default:
+        return 'fa-exclamation-triangle';
+    }
+  }
+
+  getViolationColor(type: string): string {
+    switch (type.toLowerCase()) {
+      case 'tab switch detected':
+        return '#f59e0b';
+      case 'copy attempt detected':
+        return '#ef4444';
+      case 'paste attempt detected':
+        return '#dc2626';
+      case 'devtools attempt detected':
+        return '#dc2626';
+      case 'select all attempt detected':
+        return '#6366f1';
+      case 'multiple window focus losses detected':
+        return '#f59e0b';
+      case 'focus lost':
+        return '#f97316';
+      default:
+        return '#6b7280';
+    }
+  }
+
+  formatTimestamp(timestamp: string): string {
+    const date = new Date(timestamp);
+    return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  }
+
+  getQuestionNumber(questionId: string): number {
+    if (!this.analysis || this.analysis.length === 0) {
+      return 0;
+    }
+    const index = this.analysis.findIndex(q => q.questionId === questionId);
+    return index !== -1 ? index + 1 : 0;
+  }
+
+  groupViolationsByType(): { type: string; count: number; color: string; icon: string }[] {
+    if (!this.result?.violationDetails || this.result.violationDetails.length === 0) {
+      return [];
+    }
+
+    const grouped = this.result.violationDetails.reduce((acc, violation) => {
+      const existing = acc.find(item => item.type === violation.type);
+      if (existing) {
+        existing.count++;
+      } else {
+        acc.push({
+          type: violation.type,
+          count: 1,
+          color: this.getViolationColor(violation.type),
+          icon: this.getViolationIcon(violation.type)
+        });
+      }
+      return acc;
+    }, [] as { type: string; count: number; color: string; icon: string }[]);
+
+    return grouped;
   }
 }
