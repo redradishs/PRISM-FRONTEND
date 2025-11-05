@@ -127,11 +127,22 @@
                 </div>
 
 
-                <div class="assessments" data-tour="instructor-ongoing">
-                    <div class="assessments-header">
-                        <h1>Ongoing Assessments ({{totalOngoingAssessments}})</h1>
-                        <button (click)="viewAll('ongoing')" class="view-all" *ngIf="totalOngoingAssessments >= 5">View
-                            {{remainingOngoingAssessments}} more <i class="fas fa-chevron-right"></i></button>
+                <div class="assessments-section" data-tour="instructor-ongoing">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <div class="title-icon ongoing">
+                                <i class="fas fa-circle-play"></i>
+                            </div>
+                            <div>
+                                <h2>Ongoing Assessments</h2>
+                                <p class="section-count">{{totalOngoingAssessments}} active
+                                    assessment{{totalOngoingAssessments !== 1 ? 's' : ''}}</p>
+                            </div>
+                        </div>
+                        <button (click)="viewAll('ongoing')" class="view-all-btn" *ngIf="totalOngoingAssessments >= 5">
+                            View all {{remainingOngoingAssessments}} more
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
                     </div>
                     <div *ngIf="totalOngoingAssessments === 0" class="empty-state">
                         <div class="empty-state-icon">
@@ -155,19 +166,31 @@
                                         {{ass.type}}
                                     </span>
                                 </div>
-                                <p class="course" *ngIf="ass.type !== 'Public Assessment'">{{ass.classes[0].className}}
+                                <p class="course" *ngIf="ass.type !== 'Public Assessment'">
+                                    <i class="fas fa-school"></i>
+                                    {{ass.classes[0].className}}
                                 </p>
                                 <p class="course" *ngIf="ass.type === 'Public Assessment'">
-                                    <span class="joining-code">Joining Code: {{ass.modeSettings?.joiningCode}}</span>
+                                    <span class="joining-code">
+                                        <i class="fas fa-key"></i>
+                                        {{ass.modeSettings?.joiningCode}}
+                                    </span>
                                 </p>
                                 <div class="progress-bar" *ngIf="ass.type !== 'Public Assessment'">
                                     <div class="progress" [style.width.%]="calculateProgress(ass)"></div>
                                 </div>
                                 <div class="assessment-info">
-                                    <p class="due-date">Due: {{ass.dueDate | date: 'MMM d, y h:mm a':'UTC'}}</p>
-                                    <p class="progress-text" *ngIf="ass.type !== 'Public Assessment'">Progress:
-                                        {{calculateProgress(ass) | number:'1.0-0'}}%</p>
-                                    <p class="progress-text" *ngIf="ass.type === 'Public Assessment'">Public Assessment
+                                    <p class="due-date">
+                                        <i class="fas fa-clock"></i>
+                                        Due: {{ass.dueDate | date: 'MMM d, y h:mm a':'UTC'}}
+                                    </p>
+                                    <p class="progress-text" *ngIf="ass.type !== 'Public Assessment'">
+                                        <i class="fas fa-chart-line"></i>
+                                        {{calculateProgress(ass) | number:'1.0-0'}}% complete
+                                    </p>
+                                    <p class="progress-text" *ngIf="ass.type === 'Public Assessment'">
+                                        <i class="fas fa-globe"></i>
+                                        Public
                                     </p>
                                 </div>
                             </div>
@@ -175,12 +198,23 @@
                     </div>
                 </div>
 
-                <div class="assessments" data-tour="instructor-scheduled">
-                    <div class="assessments-header">
-                        <h1>Scheduled Assessments ({{totalScheduledAssessments}})</h1>
-                        <button (click)="viewAll('scheduled')" class="view-all"
-                            *ngIf="totalScheduledAssessments >= 5">View
-                            {{remainingScheduledAssessments}} more <i class="fas fa-chevron-right"></i></button>
+                <div class="assessments-section scheduled" data-tour="instructor-scheduled">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <div class="title-icon scheduled">
+                                <i class="fa-solid fa-calendar"></i>
+                            </div>
+                            <div>
+                                <h2>Scheduled Assessments</h2>
+                                <p class="section-count">{{totalScheduledAssessments}} upcoming
+                                    assessment{{totalScheduledAssessments !== 1 ? 's' : ''}}</p>
+                            </div>
+                        </div>
+                        <button (click)="viewAll('scheduled')" class="view-all-btn"
+                            *ngIf="totalScheduledAssessments >= 5">
+                            View all {{remainingScheduledAssessments}} more
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
                     </div>
                     <div *ngIf="totalScheduledAssessments === 0" class="empty-state">
                         <div class="empty-state-icon">
@@ -204,19 +238,31 @@
                                         {{ass.type}}
                                     </span>
                                 </div>
-                                <p class="course" *ngIf="ass.type !== 'Public Assessment'">{{ass.classes[0].className}}
+                                <p class="course" *ngIf="ass.type !== 'Public Assessment'">
+                                    <i class="fas fa-school"></i>
+                                    {{ass.classes[0].className}}
                                 </p>
                                 <p class="course" *ngIf="ass.type === 'Public Assessment'">
-                                    <span class="joining-code">Joining Code: {{ass.modeSettings?.joiningCode}}</span>
+                                    <span class="joining-code">
+                                        <i class="fas fa-key"></i>
+                                        {{ass.modeSettings?.joiningCode}}
+                                    </span>
                                 </p>
                                 <div class="progress-bar" *ngIf="ass.type !== 'Public Assessment'">
                                     <div class="progress" [style.width.%]="calculateProgress(ass)"></div>
                                 </div>
                                 <div class="assessment-info">
-                                    <p class="due-date">Start: {{ass.startDate | date: 'MMM d, y h:mm a':'UTC'}}</p>
-                                    <p class="progress-text" *ngIf="ass.type !== 'Public Assessment'">Progress:
-                                        {{calculateProgress(ass) | number:'1.0-0'}}%</p>
-                                    <p class="progress-text" *ngIf="ass.type === 'Public Assessment'">Public Assessment
+                                    <p class="due-date">
+                                        <i class="fas fa-calendar-day"></i>
+                                        Starts: {{ass.startDate | date: 'MMM d, y h:mm a':'UTC'}}
+                                    </p>
+                                    <p class="progress-text" *ngIf="ass.type !== 'Public Assessment'">
+                                        <i class="fas fa-chart-line"></i>
+                                        {{calculateProgress(ass) | number:'1.0-0'}}% complete
+                                    </p>
+                                    <p class="progress-text" *ngIf="ass.type === 'Public Assessment'">
+                                        <i class="fas fa-globe"></i>
+                                        Public
                                     </p>
                                 </div>
                             </div>
