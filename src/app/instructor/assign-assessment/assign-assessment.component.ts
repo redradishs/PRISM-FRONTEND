@@ -28,6 +28,8 @@ interface Assessment {
   questionTypes: {
     [key: string]: number;
   };
+  sharedBy?: string;
+  sharedAt?: string;
 }
 
 interface ClassData {
@@ -177,7 +179,7 @@ export class AssignAssessmentComponent implements OnInit {
   selectedAssessmentPoints: number = 0;
   displayLimit: number = 6;
   showingAll: boolean = false;
-  dateFilter: string = 'all';
+  assessmentFilter: string = 'mine';
 
   timedQuestions: number = 0;
 
@@ -226,6 +228,24 @@ export class AssignAssessmentComponent implements OnInit {
         this.error = 'Failed to load assessments';
         this.loading = false;
         console.error('Error loading assessments:', err);
+      }
+    });
+  }
+
+  loadsharedToMeAssessments(id: string) {
+    this.loading = true;
+    const data = {
+      instructorId: this.userId
+    }
+    this.api.sharedAssessmentsToMe(data).subscribe({
+      next: (resp: any) => {
+        this.assessments = resp.data;
+        this.loading = false;
+      },
+      error: (err) => {
+        this.error = 'Failed to load shared assessments';
+        this.loading = false;
+        console.error('Error loading shared assessments:', err);
       }
     });
   }
@@ -934,8 +954,7 @@ export class AssignAssessmentComponent implements OnInit {
   get displayedAssessments(): Assessment[] {
     let filtered = this.assessments.filter(assessment => {
       const matchesSearch = assessment.title.toLowerCase().includes(this.searchQuery.toLowerCase());
-      const matchesDate = this.filterByDate(assessment.createdAt);
-      return matchesSearch && matchesDate;
+      return matchesSearch;
     });
 
     filtered = filtered.sort((a, b) =>
@@ -948,8 +967,7 @@ export class AssignAssessmentComponent implements OnInit {
   get remainingCount(): number {
     const filtered = this.assessments.filter(assessment => {
       const matchesSearch = assessment.title.toLowerCase().includes(this.searchQuery.toLowerCase());
-      const matchesDate = this.filterByDate(assessment.createdAt);
-      return matchesSearch && matchesDate;
+      return matchesSearch;
     });
     return Math.max(0, filtered.length - this.displayLimit);
   }
@@ -958,30 +976,17 @@ export class AssignAssessmentComponent implements OnInit {
     this.showingAll = !this.showingAll;
   }
 
-  filterByDate(dateStr: string): boolean {
-    if (this.dateFilter === 'all') return true;
-
-    const assessmentDate = new Date(dateStr);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    switch (this.dateFilter) {
-      case 'today':
-        return assessmentDate >= today;
-      case 'week': {
-        const weekAgo = new Date();
-        weekAgo.setDate(weekAgo.getDate() - 7);
-        weekAgo.setHours(0, 0, 0, 0);
-        return assessmentDate >= weekAgo;
-      }
-      case 'month': {
-        const monthAgo = new Date();
-        monthAgo.setMonth(monthAgo.getMonth() - 1);
-        monthAgo.setHours(0, 0, 0, 0);
-        return assessmentDate >= monthAgo;
-      }
-      default:
-        return true;
+  filterAssessments(): void {
+    if (this.assessmentFilter === 'mine') {
+      this.loadAssessments(this.userId);
+      this.selectedAssessments.clear();
+      // console.log('Loaded mine assessments');
+    } else if (this.assessmentFilter === 'sharedToMe') {
+      this.loadsharedToMeAssessments(this.userId);
+      this.selectedAssessments.clear();
+      // console.log('Loaded shared assessments');
+    } else {
+      this.assessments = [];
     }
   }
 
@@ -1158,4 +1163,187 @@ export class AssignAssessmentComponent implements OnInit {
   viewAssessment(assessmentId: string): void {
     this.router.navigate(['/instructor/edit'], { state: { assessmentId } });
   }
+
+  // Share Modal Properties
+  showShareModal = false;
+  selectedShareAssessment: any = null;
+  instructorSearchQuery = '';
+  allInstructors: any[] = [];
+  filteredInstructors: any[] = [];
+  selectedInstructors = new Set<string>();
+  selectedInstructorsList: any[] = [];
+  isLoadingInstructors = false;
+  shareMessage = '';
+
+  sharedAssessment: any = null;
+
+  shareAssessment(assessmentId: string): void {
+    const assessment = this.assessments.find(a => a._id === assessmentId);
+
+    if (!assessment) {
+      return;
+    }
+
+    this.selectedShareAssessment = assessment;
+    this.showShareModal = true;
+    this.loadSharedAssessments();
+  }
+
+
+  loadSharedAssessments() {
+    const data = {
+      instructorId: this.userId,
+      assessmentId: this.selectedShareAssessment._id
+    }
+    this.api.sharedDetails(data).subscribe({
+      next: (resp: any) => {
+        console.log('Shared assessment details:', resp);
+        if (resp.data !== null && resp.data.sharedWith) {
+          this.allInstructors = resp.data.sharedWith || [];
+          this.filteredInstructors = [];
+          this.sharedAssessment = resp.data;
+          console.log('All instructors loaded:', this.allInstructors);
+        } else {
+          this.allInstructors = [];
+          this.filteredInstructors = [];
+          this.sharedAssessment = [];
+        }
+      },
+      error: (err) => {
+        console.error('Error loading shared assessments:', err);
+        this.allInstructors = [];
+      }
+    });
+  }
+
+
+
+  searchInstructors(): void {
+    const query = this.instructorSearchQuery.toLowerCase().trim();
+    this.isLoadingInstructors = true;
+    let shareId = '';
+    if (this.sharedAssessment) {
+      shareId = this.sharedAssessment._id;
+    }
+    this.api.searchInstructorToAdd(query, shareId).subscribe({
+      next: (resp: any) => {
+        console.log('Search instructors:', resp);
+        this.isLoadingInstructors = false;
+        this.filteredInstructors = resp.data;
+      },
+      error: (err) => {
+        console.error('Error searching instructors:', err);
+        this.isLoadingInstructors = false;
+      }
+    });
+  }
+
+  toggleInstructorSelection(instructor: any): void {
+    if (this.selectedInstructors.has(instructor._id)) {
+      this.selectedInstructors.delete(instructor._id);
+      this.selectedInstructorsList = this.selectedInstructorsList.filter(i => i._id !== instructor._id);
+    } else {
+      this.selectedInstructors.add(instructor._id);
+      this.selectedInstructorsList.push(instructor);
+      // console.log('Selected instructors:', this.selectedInstructors);
+    }
+  }
+
+  removeInstructorFromShared(id: string): void {
+    const data = {
+      shareId: this.sharedAssessment._id,
+      instructorId: id,
+      originalOwner: this.userId
+    }
+    this.api.removeInstructorFromShared(data).subscribe({
+      next: (resp: any) => {
+        console.log('Removed instructor from shared:', resp);
+        Swal.fire({
+          title: 'Instructor Removed!',
+          text: 'Instructor has been removed from the shared assessment.',
+          icon: 'success',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+        });
+        this.loadSharedAssessments();
+      }, error: (err) => {
+        console.error('Error removing instructor from shared:', err);
+        Swal.fire({
+          title: 'Error!',
+          text: 'Failed to remove instructor from shared. Please try again.',
+          icon: 'error',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+        });
+      }
+    });
+  }
+
+  deleteSharedAssessment(): void {
+    const data = {
+      shareId: this.sharedAssessment._id,
+      instructorId: this.userId,
+      originalOwner: this.userId
+    }
+    this.api.deleteSharedAssessment(data).subscribe({
+      next: (resp: any) => {
+        console.log('Deleted shared assessment:', resp);
+        Swal.fire({
+          title: 'Assessment Unshared!',
+          text: 'Assessment has been unshared from all instructors.',
+          icon: 'success',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+        });
+        this.closeShareModal();
+      }, error: (err) => {
+        console.error('Error deleting shared assessment:', err);
+      }
+    });
+  }
+
+  closeShareModal(): void {
+    this.showShareModal = false;
+    this.selectedShareAssessment = null;
+    this.instructorSearchQuery = '';
+    this.selectedInstructors.clear();
+    this.selectedInstructorsList = [];
+    this.shareMessage = '';
+    this.filteredInstructors = [];
+    this.allInstructors = [];
+  }
+
+  confirmShareAssessment(): void {
+    if (this.selectedInstructors.size === 0) {
+      return;
+    }
+    const instructorIds = Array.from(this.selectedInstructors);
+
+    const data = {
+      assessmentId: this.selectedShareAssessment._id,
+      originalOwner: this.userId,
+      instructorIds: instructorIds,
+      shareMessage: this.shareMessage
+    }
+    this.api.shareAssessment(data).subscribe({
+      next: (resp: any) => {
+        console.log('Shared assessment:', resp);
+        Swal.fire({
+          title: 'Assessment Shared!',
+          text: `Successfully shared with ${this.selectedInstructors.size} instructor(s)`,
+          icon: 'success',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+        });
+        this.closeShareModal();
+      }, error: (err) => {
+        console.error('Error sharing assessment:', err);
+      }
+    })
+  }
+
 }

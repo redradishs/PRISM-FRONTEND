@@ -586,6 +586,48 @@ export class ApiService {
     return this.http.post(`${this.apiUrl}/analytics/save/snapshot`, data);
   }
 
+  //assignment page
+
+  shareAssessment(data: any) {
+    return this.http.post(`${this.apiUrl}/assessment/share`, data);
+  }
+
+  sharedAssessmentsToMe(data: any) {
+    return this.http.post(`${this.apiUrl}/assessment/shared`, data);
+  }
+
+  mySharedAssessments(data: any) {
+    return this.http.post(`${this.apiUrl}/assessment/shared/my`, data);
+  }
+
+  removeInstructorFromShared(data: any) {
+    return this.http.post(`${this.apiUrl}/assessment/shared/remove`, data);
+  }
+
+  deleteSharedAssessment(data: any) {
+    return this.http.post(`${this.apiUrl}/assessment/shared/delete`, data);
+  }
+
+  searchInstructorToAdd(query: string, shareId: string) {
+    if (!shareId) {
+      return this.http.get(`${this.apiUrl}/assessment/shared/search/?query=${query}`);
+    }
+    return this.http.get(`${this.apiUrl}/assessment/shared/search/?shareId=${shareId}&query=${query}`);
+  }
+
+  sharedDetails(data: any) {
+    return this.http.post(`${this.apiUrl}/assessment/shared/details`, data);
+  }
+
+  updateMessage(data: any) {
+    return this.http.post(`${this.apiUrl}/assessment/shared/update/message`, data);
+  }
+
+
+
+
+
+
 
 
 

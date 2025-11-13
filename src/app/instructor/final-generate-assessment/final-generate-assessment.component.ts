@@ -60,6 +60,12 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
     difficulty: 'medium',
     questionCount: '5',
     instructions: '',
+    typeCounts: {
+      'mc': 1,
+      'enum': 1,
+      'sa': 1,
+      'tf': 1
+    }
   };
   defaultPoints = {
     'multiple-choice': 1,
@@ -224,7 +230,8 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
       this.errorMessage = 'Please select at least one question type';
       return;
     }
-    if (Number(this.aiGeneration.questionCount) > 50) {
+    const totalQuestions = this.getTotalAiSelectedQuestions();
+    if (Number(totalQuestions) > 50) {
       this.errorMessage = 'You have unlimited generation of questions. PRISM recommends to generate maximum of 50 questions per request.';
       return;
     }
@@ -233,36 +240,162 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
     this.isGenerating = true;
     this.errorMessage = null;
     this.generated = false;
+    this.generateQuestionByType();
 
     // Map selected types to API format
-    const questionTypes = this.selectedTypes.map(type => {
-      const typeMapping = {
-        'mc': 'multiple choice',
-        'sa': 'short answer',
-        'enum': 'enumeration',
-        'tf': 'true/false'
-      };
-      return typeMapping[type as keyof typeof typeMapping];
-    }).filter(type => type);
+    // const questionTypes = this.selectedTypes.map(type => {
+    //   const typeMapping = {
+    //     'mc': 'multiple choice',
+    //     'sa': 'short answer',
+    //     'enum': 'enumeration',
+    //     'tf': 'true/false'
+    //   };
+    //   return typeMapping[type as keyof typeof typeMapping];
+    // }).filter(type => type);
 
-    // prepare data
-    const requestData: any = {
-      topic: this.aiGeneration.topic,
-      numberOfQuestions: Number(this.aiGeneration.questionCount),
-      questionTypes: questionTypes,
-      difficulty: this.aiGeneration.difficulty
-    };
-    if (this.extractedText && this.extractedText.trim() !== '') {
-      requestData.context = this.extractedText;
-    }
-    if (this.aiGeneration.instructions && this.aiGeneration.instructions.trim() !== '') {
-      requestData.additionalInstructions = this.aiGeneration.instructions;
-    }
+    // const requestData: any = {
+    //   topic: this.aiGeneration.topic,
+    //   numberOfQuestions: Number(this.aiGeneration.questionCount),
+    //   questionTypes: questionTypes,
+    //   difficulty: this.aiGeneration.difficulty
+    // };
+    // if (this.extractedText && this.extractedText.trim() !== '') {
+    //   requestData.context = this.extractedText;
+    // }
+    // if (this.aiGeneration.instructions && this.aiGeneration.instructions.trim() !== '') {
+    //   requestData.additionalInstructions = this.aiGeneration.instructions;
+    // }
 
-    // console.log('Sending request data:', requestData);
-    this.generateQuestionsWithRetry(requestData, 5);
+    // this.generateQuestionsWithRetry(requestData, 5);
   }
 
+  // STARTOF PER QUESTION TYPE GENERATION 
+  private async generateQuestionByType(): Promise<void> {
+    const typeMapping: { [key: string]: string } = {
+      'mc': 'multiple-choice',
+      'sa': 'short-answer',
+      'enum': 'enumeration',
+      'tf': 'true-false'
+    };
+
+    let completedTypes = 0;
+    const totalTypes = this.selectedTypes.length;
+
+    for (const type of this.selectedTypes) {
+      const questionType = typeMapping[type];
+      const count = this.aiGeneration.typeCounts[type as keyof typeof this.aiGeneration.typeCounts];
+
+
+      const requestData: any = {
+        topic: this.aiGeneration.topic,
+        numberOfQuestions: count,
+        questionTypes: [questionType],
+        difficulty: this.aiGeneration.difficulty
+      };
+
+      if (this.extractedText && this.extractedText.trim() !== '') {
+        requestData.context = this.extractedText;
+      }
+      if (this.aiGeneration.instructions && this.aiGeneration.instructions.trim() !== '') {
+        requestData.additionalInstructions = this.aiGeneration.instructions;
+      }
+
+      this.showGenerationProgress(questionType, completedTypes + 1, totalTypes);
+
+      try {
+        await this.generateSingleWithRetry(requestData, 5);
+        completedTypes++;
+      } catch (error) {
+        console.error(`Error generating ${questionType} questions:`, error);
+        this.errorMessage = `Error generating ${questionType} questions. Please try again.`;
+        this.isGenerating = false;
+        return;
+      }
+    }
+    this.isGenerating = false;
+    this.generated = true;
+    this.showSuccessMessage();
+  }
+
+
+  private generateSingleWithRetry(requestData: any, maxRetries: number, currentAttempt: number = 1): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const questionCount = Number(requestData.numberOfQuestions);
+      const apiCall = questionCount > 20
+        ? this.api.bulkfinalGenerateAssessment(requestData)
+        : this.api.finalGenerateAssessment(requestData);
+
+      apiCall.subscribe({
+        next: (response: any) => {
+          try {
+            // console.log(`API Response (Attempt ${currentAttempt}):`, response);
+
+            if (response.success && response.data && response.data.questions && Array.isArray(response.data.questions)) {
+              this.handleGeneratedQuestions(response.data, Number(questionCount));
+              resolve(response);
+            } else if (response.questions && Array.isArray(response.questions)) {
+              this.handleGeneratedQuestions(response, Number(questionCount));
+              resolve(response);
+            } else if (response.success === false && response.error && currentAttempt < maxRetries) {
+              console.log(`Attempt ${currentAttempt} failed, retrying... (${maxRetries - currentAttempt} attempts left)`);
+              this.showRetryMessage(currentAttempt, maxRetries);
+
+              setTimeout(() => {
+                this.generateSingleWithRetry(requestData, maxRetries, currentAttempt + 1).then(resolve).catch(reject);
+              }, 2000);
+            } else {
+              console.error('Invalid response structure:', response);
+              reject(new Error(response.error || 'Invalid response format from AI'));
+            }
+          } catch (error) {
+            console.error('Error parsing AI response:', error);
+            reject(new Error('Error processing the generated questions'));
+          }
+        },
+        error: (error: any) => {
+          console.error(`Error generating ${requestData.questionTypes[0]} questions (Attempt ${currentAttempt}):`, error);
+
+          if (currentAttempt < maxRetries) {
+            console.log(`Attempt ${currentAttempt} failed, retrying...`);
+            this.showRetryMessage(currentAttempt, maxRetries);
+
+            setTimeout(() => {
+              this.generateSingleWithRetry(requestData, maxRetries, currentAttempt + 1)
+                .then(resolve)
+                .catch(reject);
+            }, 5000);
+          } else {
+            reject(new Error('Failed to generate questions after multiple attempts'));
+          }
+        }
+      });
+    });
+  }
+
+  private async showGenerationProgress(questionType: string, current: number, total: number) {
+    Swal.fire({
+      title: `Generating ${questionType} Questions...`,
+      text: `Processing ${current} of ${total} question types...`,
+      icon: 'info',
+      toast: true,
+      position: 'bottom',
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+      background: '#fff',
+    })
+  }
+
+  getTypeAbbreviation(typeValue: string): string {
+    const typeMap: { [key: string]: string } = {
+      'multiple-choice': 'mc',
+      'enumeration': 'enum',
+      'short-answer': 'sa',
+      'true-false': 'tf'
+    };
+    return typeMap[typeValue] || typeValue;
+  }
+  // END OF PER QUESTION TYPE GENERATION 
   validGeneration(): boolean {
     if (!this.aiGeneration.topic || this.selectedTypes.length === 0 || (Number(this.aiGeneration.questionCount) > 50)) {
       return false;
@@ -333,11 +466,11 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
         try {
           console.log(`API Response (Attempt ${currentAttempt}):`, response);
           if (response.success && response.data && response.data.questions && Array.isArray(response.data.questions)) {
-            this.handleGeneratedQuestions(response.data);
+            this.handleGeneratedQuestions(response.data, Number(this.aiGeneration.questionCount));
             this.generated = true;
             this.showSuccessMessage();
           } else if (response.questions && Array.isArray(response.questions)) {
-            this.handleGeneratedQuestions(response);
+            this.handleGeneratedQuestions(response, Number(this.aiGeneration.questionCount));
             this.generated = true;
             this.showSuccessMessage();
           } else if (response.success === false && response.error && currentAttempt < maxRetries) {
@@ -405,14 +538,13 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
     });
   }
 
-  private handleGeneratedQuestions(response: any): void {
+  private handleGeneratedQuestions(response: any, expectedCount: number): void {
     try {
       const questions = response.questions;
       if (!Array.isArray(questions)) {
         throw new Error('Invalid questions array format');
       }
-      const expectedCount = Number(this.aiGeneration.questionCount);
-      console.log(`Expected ${expectedCount} questions, got ${questions.length}`);
+      // console.log(`Expected ${expectedCount} questions, got ${questions.length}`);
       const questionToAddOnly = questions.slice(0, expectedCount);
 
       if (Array.isArray(questionToAddOnly)) {
@@ -603,6 +735,40 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
 
   isTypeSelected(type: string): boolean {
     return this.selectedTypes.includes(type);
+  }
+
+  // AI Generation quantity controls
+  decreaseAiQuantity(type: string): void {
+    const typeCounts = this.aiGeneration.typeCounts as any;
+    if (typeCounts[type] > 1) {
+      typeCounts[type]--;
+    }
+  }
+
+  increaseAiQuantity(type: string): void {
+    const typeCounts = this.aiGeneration.typeCounts as any;
+    if (typeCounts[type] < 50) {
+      typeCounts[type]++;
+    }
+  }
+
+  getAiTypeQuantity(type: string): number {
+    const typeCounts = this.aiGeneration.typeCounts as any;
+    return typeCounts[type] || 1;
+  }
+
+  updateAiTypeQuantity(type: string, value: number): void {
+    const typeCounts = this.aiGeneration.typeCounts as any;
+    typeCounts[type] = Math.max(1, Math.min(50, value));
+  }
+
+  getTotalAiSelectedQuestions(): number {
+    let total = 0;
+    this.selectedTypes.forEach(type => {
+      const typeCounts = this.aiGeneration.typeCounts as any;
+      total += typeCounts[type] || 1;
+    });
+    return total;
   }
 
   getQuestionsByType(type: string): Question[] {
@@ -1325,6 +1491,12 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
       difficulty: 'medium',
       questionCount: '5',
       instructions: '',
+      typeCounts: {
+        'mc': 1,
+        'enum': 1,
+        'sa': 1,
+        'tf': 1
+      }
     };
 
     this.questions = [];

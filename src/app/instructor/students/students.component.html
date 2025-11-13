@@ -536,10 +536,12 @@
                                                     [ngClass]="getStatusClass(student.status)">{{student.status}}</span> -->
 
                                                 <span *ngIf="student.status !== 'completed'"
-                                                    [ngClass]="getStatusClass(student.status)">{{student.status}}</span>
+                                                    [ngClass]="getStatusClass(student.status)">{{student.status.charAt(0).toUpperCase()
+                                                    + student.status.slice(1)}}</span>
 
 
-                                                <span [ngClass]="getStatusClass(student.status)">{{student.status ===
+                                                <span *ngIf="student.status === 'completed'"
+                                                    [ngClass]="getStatusClass(student.status)">{{student.status ===
                                                     'completed' && student.isCompleted ? 'Completed' : 'Partially
                                                     Completed'}}</span>
                                             </td>

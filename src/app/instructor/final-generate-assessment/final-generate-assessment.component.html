@@ -178,64 +178,67 @@
                                 </select>
                             </div>
                             <div class="genform-field">
-                                <label for="questionCount">Number of Questions</label>
-                                <input type="number" id="questionCount" class="genform-input" placeholder="5" min="1"
-                                    max="20" [(ngModel)]="aiGeneration.questionCount">
+                                <label for="questionCount">Questions to be Generated</label>
+                                <!-- <input type="number" id="questionCount" class="genform-input" placeholder="5" min="1"
+                                    max="20" [(ngModel)]="aiGeneration.questionCount" disabled> -->
+                                <input type="number" id="questionCount" class="genform-input"
+                                    [value]="getTotalAiSelectedQuestions()" disabled>
                             </div>
+                        </div>
+
+                        <div *ngIf="getTotalAiSelectedQuestions() === 0" class="gen-hint">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Click the Question type that you want to generate. You can also adjust the number of
+                                questions you want to generate.</span>
                         </div>
 
                         <!-- Question Types -->
                         <div class="genform-field" data-tour="instructor-create-qtypes">
                             <label>Question Types</label>
-                            <div class="genform-checkbox-grid">
-                                <!-- Multiple Choice -->
-                                <label class="genform-checkbox-item">
-                                    <input type="checkbox" [checked]="isTypeSelected('mc')" (change)="toggleType('mc')">
-                                    <div class="genform-checkbox-content">
-                                        <div class="genform-checkbox-header">
-                                            <i class="fas fa-file-text text-indigo-600"></i>
-                                            <span class="checkbox-label">Multiple Choice</span>
-                                        </div>
-                                        <p>Questions with several options</p>
-                                    </div>
-                                </label>
+                            <div class="ai-question-types">
+                                <div class="ai-type-card" *ngFor="let type of questionTypes"
+                                    [class.selected]="isTypeSelected(getTypeAbbreviation(type.value))"
+                                    (click)="toggleType(getTypeAbbreviation(type.value))">
 
-                                <!-- Enumeration -->
-                                <label class="genform-checkbox-item">
-                                    <input type="checkbox" [checked]="isTypeSelected('enum')"
-                                        (change)="toggleType('enum')">
-                                    <div class="genform-checkbox-content">
-                                        <div class="genform-checkbox-header">
-                                            <i class="fas fa-list text-purple-600"></i>
-                                            <span class="checkbox-label">Enumeration</span>
+                                    <div class="ai-type-header">
+                                        <div class="ai-type-icon" [style.background]="type.color + '15'">
+                                            <i [class]="type.icon" [style.color]="type.color"></i>
                                         </div>
-                                        <p>List-based answers</p>
+                                        <div class="ai-type-info">
+                                            <span class="ai-type-label">{{ type.label }}</span>
+                                            <span class="ai-type-desc">{{ type.desc }}</span>
+                                        </div>
                                     </div>
-                                </label>
 
-                                <!-- Short Answer -->
-                                <label class="genform-checkbox-item">
-                                    <input type="checkbox" [checked]="isTypeSelected('sa')" (change)="toggleType('sa')">
-                                    <div class="genform-checkbox-content">
-                                        <div class="genform-checkbox-header">
-                                            <i class="fas fa-comment text-pink-600"></i>
-                                            <span class="checkbox-label">Short Answer</span>
-                                        </div>
-                                        <p>Brief text responses</p>
-                                    </div>
-                                </label>
+                                    <div class="ai-type-quantity"
+                                        *ngIf="isTypeSelected(getTypeAbbreviation(type.value))"
+                                        (click)="$event.stopPropagation()">
+                                        <button type="button" class="ai-qty-btn"
+                                            (click)="decreaseAiQuantity(getTypeAbbreviation(type.value))"
+                                            [disabled]="getAiTypeQuantity(getTypeAbbreviation(type.value)) <= 1">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <!-- <span class="ai-qty-display">{{ getAiTypeQuantity(type.value ===
+                                            'multiple-choice' ? 'mc' : type.value === 'enumeration' ? 'enum' :
+                                            type.value === 'short-answer' ? 'sa' : 'tf') }}</span> -->
 
-                                <!-- True/False -->
-                                <label class="genform-checkbox-item">
-                                    <input type="checkbox" [checked]="isTypeSelected('tf')" (change)="toggleType('tf')">
-                                    <div class="genform-checkbox-content">
-                                        <div class="genform-checkbox-header">
-                                            <i class="fas fa-check text-green-600"></i>
-                                            <span class="checkbox-label">True/False</span>
-                                        </div>
-                                        <p>Binary choice questions</p>
+                                        <input type="number" class="ai-qty-display"
+                                            [value]="getAiTypeQuantity(getTypeAbbreviation(type.value))"
+                                            (input)="updateAiTypeQuantity(getTypeAbbreviation(type.value), $any($event.target).value)"
+                                            (click)="$event.stopPropagation()" min="1" max="20" />
+                                        <button type="button" class="ai-qty-btn"
+                                            (click)="increaseAiQuantity(getTypeAbbreviation(type.value))"
+                                            [disabled]="getAiTypeQuantity(getTypeAbbreviation(type.value)) >= 50">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
                                     </div>
-                                </label>
+                                </div>
+                            </div>
+
+                            <div class="ai-summary" *ngIf="selectedTypes.length > 0">
+                                <i class="fas fa-check-circle"></i>
+                                <span>{{ getTotalAiSelectedQuestions() }} question{{ getTotalAiSelectedQuestions() > 1 ?
+                                    's' : '' }} selected</span>
                             </div>
                         </div>
 

@@ -119,121 +119,190 @@
 
                         <div class="review-content">
                             <!-- Assessment Search and Filter -->
-                            <div class="search-filter-bar">
-                                <div class="search-wrapper">
-                                    <input type="text" [(ngModel)]="searchQuery" placeholder="Search assessments..."
-                                        class="search-input">
-                                    <i class="fas fa-search search-icon"></i>
+                            <div class="search-filter-bar-enhanced">
+                                <div class="search-wrapper-enhanced">
+                                    <i class="fas fa-search search-icon-enhanced"></i>
+                                    <input type="text" [(ngModel)]="searchQuery"
+                                        placeholder="Search by title, category, or question type..."
+                                        class="search-input-enhanced">
+                                    <button *ngIf="searchQuery" class="clear-search-btn" (click)="searchQuery = ''">
+                                        <i class="fas fa-times"></i>
+                                    </button>
                                 </div>
-                                <select [(ngModel)]="dateFilter" class="filter-select">
-                                    <option value="all">All Time</option>
-                                    <option value="today">Today</option>
-                                    <option value="week">Last 7 Days</option>
-                                    <option value="month">Last 30 Days</option>
-                                </select>
+                                <div class="filter-wrapper-enhanced">
+                                    <i class="fas fa-filter filter-icon-enhanced"></i>
+                                    <select [(ngModel)]="assessmentFilter" class="filter-select-enhanced"
+                                        (change)="filterAssessments()">
+                                        <option value="mine">My Assessments </option>
+                                        <option value="sharedToMe">Shared to me</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <!-- Assessment Selection Area -->
-                            <div class="assessment-selector">
+                            <div class="assessment-selector-enhanced">
                                 <!-- Empty State -->
-                                <div *ngIf="assessments.length === 0" class="empty-state-modern">
-                                    <div class="empty-icon">
-                                        <i class="fas fa-clipboard-list"></i>
+                                <div *ngIf="assessments.length === 0" class="empty-state-enhanced">
+                                    <div class="empty-icon-enhanced">
+                                        <div class="icon-circle">
+                                            <i class="fas fa-clipboard-list"></i>
+                                        </div>
                                     </div>
                                     <h3>No Assessments Found</h3>
                                     <p>Create your first assessment to get started with assignments.</p>
-                                    <button class="create-btn" [routerLink]="['/instructor/createAssessment']">
+                                    <button class="create-btn-enhanced" [routerLink]="['/instructor/createAssessment']">
                                         <i class="fas fa-plus"></i>
-                                        Create Assessment
+                                        <span>Create Assessment</span>
                                     </button>
                                 </div>
 
                                 <!-- Assessment Selection Grid -->
-                                <div *ngIf="assessments.length > 0" class="assessment-grid-modern">
-                                    <!-- Selection Instructions -->
-                                    <div class="selection-instructions" *ngIf="selectedAssessments.size === 0">
-                                        <i class="fas fa-info-circle"></i>
-                                        <span>Select one assessment to assign to your students</span>
-                                    </div>
-
-                                    <!-- Selected Assessment Display -->
-                                    <div *ngIf="selectedAssessments.size > 0" class="selected-assessment-banner">
-                                        <div class="banner-content">
-                                            <i class="fas fa-check-circle"></i>
-                                            <span>Assessment selected for assignment</span>
+                                <div *ngIf="assessments.length > 0" class="assessment-grid-container">
+                                    <!-- Selection Status Bar -->
+                                    <div class="selection-status-bar"
+                                        [class.has-selection]="selectedAssessments.size > 0">
+                                        <div class="status-left">
+                                            <div class="status-indicator" [class.active]="selectedAssessments.size > 0">
+                                                <i class="fas" [class.fa-hand-pointer]="selectedAssessments.size === 0"
+                                                    [class.fa-check-circle]="selectedAssessments.size > 0"></i>
+                                            </div>
+                                            <div class="status-text">
+                                                <span *ngIf="selectedAssessments.size === 0" class="status-title">
+                                                    Select an Assessment
+                                                </span>
+                                                <span *ngIf="selectedAssessments.size > 0" class="status-title">
+                                                    Assessment Selected
+                                                </span>
+                                                <span class="status-subtitle">
+                                                    {{selectedAssessments.size === 0 ?
+                                                    'Click on a card to select' :
+                                                    'Ready to proceed to next step'}}
+                                                </span>
+                                            </div>
                                         </div>
-                                        <button class="change-selection-btn" (click)="clearAssessmentSelection()">
-                                            <i class="fas fa-edit"></i>
-                                            Change Selection
+                                        <button *ngIf="selectedAssessments.size > 0"
+                                            class="change-selection-btn-enhanced" (click)="clearAssessmentSelection()">
+                                            <i class="fas fa-sync-alt"></i>
+                                            <span>Change Selection</span>
                                         </button>
                                     </div>
 
                                     <!-- Assessment Cards -->
-                                    <div class="assessment-cards-container">
+                                    <div class="assessment-cards-grid">
                                         <div *ngFor="let assessment of displayedAssessments; let i = index"
-                                            class="assessment-card-modern"
+                                            class="assessment-card-enhanced"
                                             [class.selected]="isAssessmentSelected(assessment._id)"
                                             [class.hidden]="selectedAssessments.size > 0 && !isAssessmentSelected(assessment._id)"
-                                            (click)="toggleAssessmentSelection(assessment._id)">
+                                            (click)="toggleAssessmentSelection(assessment._id)"
+                                            [style.animation-delay.ms]="i * 50">
 
-                                            <!-- Selection Radio -->
-                                            <div class="selection-radio">
-                                                <input type="radio" [id]="'assessment-radio-' + i"
-                                                    name="selectedAssessment"
-                                                    [checked]="isAssessmentSelected(assessment._id)"
-                                                    (change)="toggleAssessmentSelection(assessment._id)">
-                                                <label [for]="'assessment-radio-' + i" class="radio-label"></label>
+                                            <!-- Selection Indicator -->
+                                            <div class="card-selection-indicator">
+                                                <div class="selection-checkmark">
+                                                    <i class="fas fa-check"></i>
+                                                </div>
                                             </div>
 
-                                            <!-- Card Content -->
-                                            <div class="card-content">
-                                                <div class="card-header">
-                                                    <h3 class="card-title">{{assessment.title}}</h3>
-                                                    <div class="card-date">{{assessment.createdAt | date:'MMM dd,
-                                                        yyyy'}}</div>
-                                                </div>
-
-                                                <div class="card-stats">
-                                                    <div class="stat">
-                                                        <i class="fas fa-question-circle"></i>
-                                                        <span>{{assessment.totalQuestions}} Questions</span>
-                                                    </div>
-                                                    <div class="stat">
-                                                        <i class="fas fa-star"></i>
-                                                        <span>{{assessment.totalPoints}} Points</span>
+                                            <!-- Card Header -->
+                                            <div class="card-header-enhanced">
+                                                <div class="card-title-wrapper">
+                                                    <h3 class="card-title-enhanced">{{assessment.title}}</h3>
+                                                    <div class="card-meta">
+                                                        <i class="far fa-calendar-alt"></i>
+                                                        <span>{{assessment.createdAt | date:'MMM dd, yyyy'}}</span>
                                                     </div>
                                                 </div>
+                                            </div>
 
-                                                <div class="card-category" *ngIf="assessment.category">
+                                            <!-- Card Body -->
+                                            <div class="card-body-enhanced">
+                                                <!-- Stats Row -->
+                                                <div class="card-stats-enhanced">
+                                                    <div class="stat-enhanced">
+                                                        <div class="stat-icon questions">
+                                                            <i class="fas fa-question-circle"></i>
+                                                        </div>
+                                                        <div class="stat-details">
+                                                            <span
+                                                                class="stat-value">{{assessment.totalQuestions}}</span>
+                                                            <span class="stat-label">Questions</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="stat-divider"></div>
+                                                    <div class="stat-enhanced">
+                                                        <div class="stat-icon points">
+                                                            <i class="fas fa-star"></i>
+                                                        </div>
+                                                        <div class="stat-details">
+                                                            <span class="stat-value">{{assessment.totalPoints}}</span>
+                                                            <span class="stat-label">Points</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Category Badge -->
+                                                <div class="card-category-enhanced" *ngIf="assessment.category">
                                                     <i class="fas fa-tag"></i>
                                                     <span>{{assessment.category}}</span>
                                                 </div>
 
-                                                <div class="card-question-types" *ngIf="assessment.questionTypes">
-                                                    <div class="question-type"
+                                                <!-- Question Types -->
+                                                <div class="card-question-types-enhanced"
+                                                    *ngIf="assessment.questionTypes">
+                                                    <div class="question-type-badge"
                                                         *ngFor="let type of getQuestionTypes(assessment.questionTypes)"
-                                                        [class]="type.type.split(' ')[0].toLowerCase()">
-                                                        {{type.type | titlecase}}: {{type.count}}
+                                                        [class]="'type-' + type.type.split(' ')[0].toLowerCase()">
+                                                        <span class="type-name">{{type.type | titlecase}}</span>
+                                                        <span class="type-count">{{type.count}}</span>
                                                     </div>
+                                                </div>
+
+                                                <div class="card-shared-by-enhanced" *ngIf="assessment.sharedBy">
+                                                    <div class="shared-by-meta">
+                                                        <i class="fas fa-share-alt"></i>
+                                                        <span class="shared-by-label">Shared by
+                                                            {{assessment.sharedBy}}</span>
+                                                    </div>
+                                                    <span class="shared-by-date">
+                                                        {{assessment.sharedAt | date:'MMM dd, yyyy'}}
+                                                    </span>
                                                 </div>
                                             </div>
 
-                                            <!-- Preview Button -->
-                                            <button class="preview-btn"
-                                                (click)="viewAssessment(assessment._id); $event.stopPropagation()"
-                                                title="Preview Assessment">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
+                                            <!-- Card Actions -->
+                                            <div class="card-actions-enhanced">
+                                                <button class="action-btn preview-btn-enhanced"
+                                                    (click)="viewAssessment(assessment._id); $event.stopPropagation()"
+                                                    title="Preview Assessment">
+                                                    <i class="fas fa-eye"></i>
+                                                    <span>Preview</span>
+                                                </button>
+                                                <button *ngIf="!assessment.sharedBy"
+                                                    class="action-btn share-btn-enhanced"
+                                                    (click)="shareAssessment(assessment._id); $event.stopPropagation()"
+                                                    title="Share Assessment">
+                                                    <i class="fas fa-share-alt"></i>
+                                                    <span>Share</span>
+                                                </button>
+                                            </div>
+
+                                            <!-- Hover Effect Overlay -->
+                                            <div class="card-hover-overlay"></div>
                                         </div>
                                     </div>
 
                                     <!-- Load More -->
-                                    <div class="load-more-section"
+                                    <div class="load-more-section-enhanced"
                                         *ngIf="remainingCount > 0 && selectedAssessments.size === 0">
-                                        <button class="load-more-btn" (click)="toggleShowAll()">
-                                            <span *ngIf="!showingAll">Show {{remainingCount}} More Assessments</span>
-                                            <span *ngIf="showingAll">Show Less</span>
-                                            <i class="fas fa-chevron-down" [class.rotate]="showingAll"></i>
+                                        <button class="load-more-btn-enhanced" (click)="toggleShowAll()">
+                                            <span *ngIf="!showingAll">
+                                                <i class="fas fa-plus-circle"></i>
+                                                Show {{remainingCount}} More Assessments
+                                            </span>
+                                            <span *ngIf="showingAll">
+                                                <i class="fas fa-minus-circle"></i>
+                                                Show Less
+                                            </span>
                                         </button>
                                     </div>
                                 </div>
@@ -1199,6 +1268,173 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Share Assessment Modal -->
+<div *ngIf="showShareModal" class="modal-overlay cs-backdrop-blur" (click)="closeShareModal()">
+    <div class="modal-content share-assessment-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <div class="header-content">
+                <h2>Share Assessment</h2>
+                <p class="modal-subtitle">Share with other instructors in your organization</p>
+            </div>
+            <button class="close-button" (click)="closeShareModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="modal-body">
+
+            <!-- Search Instructors -->
+            <div class="search-instructors-section">
+                <label class="modal-label">
+                    <i class="fas fa-search"></i>
+                    Search Instructors
+                </label>
+                <div class="search-input-wrapper">
+                    <input type="text" [(ngModel)]="instructorSearchQuery" (keyup.enter)="searchInstructors()"
+                        placeholder="Search by name or email (press Enter)..." class="modal-search-input">
+                    <button *ngIf="instructorSearchQuery" class="clear-input-btn"
+                        (click)="instructorSearchQuery = ''; filteredInstructors = []">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Instructors List -->
+            <div class="instructors-list-section">
+                <div class="list-header">
+                    <span class="list-title">Select Instructors</span>
+                    <span class="selected-count" *ngIf="selectedInstructors.size > 0">
+                        {{selectedInstructors.size}} selected
+                    </span>
+                </div>
+
+                <!-- Loading State -->
+                <div *ngIf="isLoadingInstructors" class="loading-state">
+                    <div class="spinner-small"></div>
+                    <span>Loading instructors...</span>
+                </div>
+
+                <!-- Instructors List -->
+                <div *ngIf="!isLoadingInstructors" class="instructors-list">
+                    <div *ngFor="let instructor of filteredInstructors" class="instructor-item"
+                        [class.selected]="selectedInstructors.has(instructor._id)"
+                        [class.disabled]="instructor.isAlreadyShared"
+                        (click)="!instructor.isAlreadyShared && toggleInstructorSelection(instructor)">
+                        <div class="instructor-checkbox">
+                            <input type="checkbox"
+                                [checked]="selectedInstructors.has(instructor._id) || instructor.isAlreadyShared"
+                                [disabled]="instructor.isAlreadyShared" (click)="$event.stopPropagation()">
+                        </div>
+                        <div class="instructor-avatar">
+                            <img *ngIf="instructor.profilePicture" [src]="instructor.profilePicture"
+                                alt="{{instructor.name}}">
+                            <span *ngIf="!instructor.profilePicture" class="avatar-initial">
+                                {{instructor.name?.charAt(0) || 'I'}}
+                            </span>
+                        </div>
+                        <div class="instructor-details">
+                            <div class="instructor-name">{{instructor.name}}</div>
+                            <div class="instructor-email">{{instructor.email}}</div>
+                        </div>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div *ngIf="filteredInstructors.length === 0" class="empty-instructors">
+                        <i class="fas fa-users-slash"></i>
+                        <p>No instructors found</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Selected Instructors Preview -->
+            <div *ngIf="selectedInstructorsList.length > 0" class="selected-instructors-section">
+                <div class="section-header">
+                    <label class="modal-label">
+                        <i class="fas fa-user-check"></i>
+                        Selected Instructors ({{selectedInstructors.size}})
+                    </label>
+                </div>
+                <div class="selected-instructors-container">
+                    <div *ngFor="let instructor of selectedInstructorsList" class="selected-instructor-card">
+                        <div class="instructor-avatar">
+                            <img *ngIf="instructor.profilePicture" [src]="instructor.profilePicture"
+                                alt="{{instructor.name}}">
+                            <span *ngIf="!instructor.profilePicture" class="avatar-initial">
+                                {{instructor.name?.charAt(0) || 'I'}}
+                            </span>
+                        </div>
+                        <div class="instructor-info">
+                            <div class="instructor-name">{{instructor.name}}</div>
+                            <div class="instructor-email">{{instructor.email}}</div>
+                        </div>
+                        <button class="remove-instructor-btn" (click)="toggleInstructorSelection(instructor)"
+                            title="Remove">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Already Shared Instructors -->
+            <div *ngIf="allInstructors && allInstructors.length > 0" class="selected-instructors-section">
+                <div class="section-header">
+                    <label class="modal-label">
+                        <i class="fas fa-users"></i>
+                        Already Shared With ({{allInstructors.length}})
+                    </label>
+
+                    <button class="btn-delete-share" (click)="deleteSharedAssessment()"
+                        title="Remove all shared access">
+                        <i class="fas fa-trash-alt"></i>
+                        Unshare All
+                    </button>
+                </div>
+                <div class="selected-instructors-container">
+                    <div *ngFor="let instructor of allInstructors" class="selected-instructor-card already-shared">
+                        <div class="instructor-avatar">
+                            <img *ngIf="instructor.profilePicture" [src]="instructor.profilePicture"
+                                alt="{{instructor.name}}">
+                            <span *ngIf="!instructor.profilePicture" class="avatar-initial">
+                                {{instructor.name?.charAt(0) || 'I'}}
+                            </span>
+                        </div>
+                        <div class="instructor-info">
+                            <div class="instructor-name">{{instructor.name}}</div>
+                            <div class="instructor-email">{{instructor.email}}</div>
+                        </div>
+                        <button class="remove-instructor-btn remove-shared"
+                            (click)="removeInstructorFromShared(instructor._id)" title="Remove access">
+                            <i class="fas fa-user-minus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Share Message (Optional) -->
+            <div class="share-message-section">
+                <label class="modal-label">
+                    <i class="fas fa-comment-alt"></i>
+                    Add a message (Optional)
+                </label>
+                <textarea [(ngModel)]="shareMessage" placeholder="Add a note for the instructors..."
+                    class="share-textarea" maxlength="200"></textarea>
+                <div class="char-counter">{{shareMessage.length || 0}}/200</div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="modal-btn btn-cancel" (click)="closeShareModal()">
+                Cancel
+            </button>
+            <button class="modal-btn btn-share" [disabled]="selectedInstructors.size === 0"
+                (click)="confirmShareAssessment()">
+                <i class="fas fa-paper-plane"></i>
+                Share with {{selectedInstructors.size || 0}} instructor(s)
+            </button>
         </div>
     </div>
 </div>
