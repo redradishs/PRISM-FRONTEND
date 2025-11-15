@@ -22,7 +22,7 @@ interface PaginationParams {
 export class ApiService {
   // aiUrl = 'http://localhost:3000';
   // rtUrl = 'http://localhost:8000/rt';
-  // apiUrl = 'http://localhost:8000/instructor';
+  // apiUrl = 'http://localhost:8000/instructor'
 
   // aiUrl = 'https://redprismai.vercel.app';
   // rtUrl = 'https://prismapi2.onrender.com/rt';

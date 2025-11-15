@@ -183,7 +183,7 @@
                                         <button *ngIf="selectedAssessments.size > 0"
                                             class="change-selection-btn-enhanced" (click)="clearAssessmentSelection()">
                                             <i class="fas fa-sync-alt"></i>
-                                            <span>Change Selection</span>
+                                            <span *ngIf="!isMobile">Change Selection</span>
                                         </button>
                                     </div>
 

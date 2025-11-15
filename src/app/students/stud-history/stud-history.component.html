@@ -50,22 +50,26 @@
 
             <div class="main-container">
                 <!-- Header -->
-                <div class="genggengg">
-                    <div class="oknato-header" data-tour="history-welcome">
-                        <div class="oknato-icon-wrapper">
-                            <i class="fas fa-layer-group oknato-icon"></i>
+                <div class="page-header" data-tour="history-welcome">
+                    <div class="header-background-gradient"></div>
+                    <div class="header-content-wrapper">
+                        <div class="header-left">
+                            <div class="header-icon-modern">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <div class="header-text">
+                                <h1 class="header-title">Assessment History</h1>
+                                <p class="header-subtitle">Track your progress and review past assessments</p>
+                            </div>
                         </div>
-                        <div class="oknato-header-content">
-                            <h1>Assessment History</h1>
-                            <p>View and manage all your assessment history</p>
+                        <div class="header-actions">
+                            <button class="modern-action-btn" [routerLink]="['/student/classes']">
+                                <span class="btn-icon-wrapper">
+                                    <i class="fas fa-users"></i>
+                                </span>
+                                <span class="btn-text">My Classes</span>
+                            </button>
                         </div>
-                    </div>
-
-                    <div class="publish-container">
-                        <button class="publish-button" [routerLink]="['/student/classes']">
-                            <i class="fas fa-plus"></i>
-                            My Classes
-                        </button>
                     </div>
                 </div>
 

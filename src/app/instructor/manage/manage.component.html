@@ -50,25 +50,28 @@
 
             <div class="main-container">
                 <!-- Header -->
-                <div class="genggengg" data-tour="instructor-manage-welcome">
-                    <div class="oknato-header">
-                        <div class="oknato-icon-wrapper">
-                            <i class="fas fa-layer-group oknato-icon"></i>
+                <div class="page-header" data-tour="history-welcome">
+                    <div class="header-background-gradient"></div>
+                    <div class="header-content-wrapper">
+                        <div class="header-left">
+                            <div class="header-icon-modern">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                            <div class="header-text">
+                                <h1 class="header-title">Manage Assessments</h1>
+                                <p class="header-subtitle">Manage and track all your assigned assessments</p>
+                            </div>
                         </div>
-                        <div class="oknato-header-content">
-                            <h1>Manage Assessments</h1>
-                            <p>Manage and track all your assigned assessments</p>
+                        <div class="header-actions">
+                            <button class="modern-action-btn" (click)="createNewAssessment()">
+                                <span class="btn-icon-wrapper">
+                                    <i class="fas fa-plus"></i>
+                                </span>
+                                <span class="btn-text">Assign Assessment</span>
+                            </button>
                         </div>
-                    </div>
-
-                    <div class="publish-container">
-                        <button class="publish-button" (click)="createNewAssessment()">
-                            <i class="fas fa-plus"></i>
-                            Assign Assessment
-                        </button>
                     </div>
                 </div>
-
 
 
                 <!-- Search and Filters -->

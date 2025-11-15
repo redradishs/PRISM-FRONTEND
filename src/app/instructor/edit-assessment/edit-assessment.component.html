@@ -71,55 +71,69 @@
             </div>
 
             <main class="p-2 md:p-4 w-full">
-                <div class="rpt">
-                    <div class="rpt2">
-                        <i class="fas fa-user-edit mr-2"></i>
-                        <div class="rpt2-det">
-                            <div *ngIf="!isEditingTitle">
-                                <p class="rpt2-title">{{titleA}}</p>
+                <div class="assessment-card-modern">
+                    <div class="card-accent-line"></div>
+                    <div class="card-body">
+                        <div class="title-row">
+                            <div class="title-section-modern">
+                                <div class="title-icon">
+                                    <i class="fas fa-file-invoice"></i>
+                                </div>
+                                <div class="title-content">
+                                    <div *ngIf="!isEditingTitle" class="title-view">
+                                        <h2 class="title-text">{{titleA}}</h2>
+                                        <button (click)="startEditingTitle()" class="btn-edit-title" title="Edit title">
+                                            <i class="fas fa-pen"></i>
+                                        </button>
+                                    </div>
+
+                                    <div *ngIf="isEditingTitle" class="title-edit-mode">
+                                        <input [(ngModel)]="titleA" class="title-input"
+                                            placeholder="Enter assessment title" maxlength="100"
+                                            (keyup.enter)="saveTitle()" (keyup.escape)="cancelTitleEdit()" #titleInput>
+                                        <div class="edit-controls">
+                                            <button (click)="saveTitle()" class="btn-confirm" title="Save">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button (click)="cancelTitleEdit()" class="btn-decline" title="Cancel">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div *ngIf="isEditingTitle" class="title-edit-mode">
-                                <input [(ngModel)]="titleA" class="title-input" placeholder="Enter assessment title"
-                                    maxlength="100" (keyup.enter)="saveTitle()" (keyup.escape)="cancelTitleEdit()"
-                                    #titleInput>
-                            </div>
-
-                            <div class="rpt-spans">
-                                <span class="span-questions">10 Questions</span>
-                                |
-                                <span class="span-points">{{totalPoints}} Total Points</span>
-                                <p class="category-separator">|</p>
-                                <span class="span-category mobile-hide">{{category}}</span>
+                            <div class="action-group" *ngIf="!isEditingTitle">
+                                <button (click)="updateAssessment()" class="action-btn primary">
+                                    <i class="fas fa-save"></i>
+                                    <span>Save Changes</span>
+                                </button>
+                                <button (click)="openExportModal()" class="action-btn secondary">
+                                    <i class="fas fa-download"></i>
+                                    <span>Export</span>
+                                </button>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="rpt-but-cont">
-                        <div *ngIf="isEditingTitle" class="title-action-buttons">
-                            <button (click)="saveTitle()" class="save-title-btn" title="Save Title">
-                                <i class="fas fa-check"></i>
-                                Save Title
-                            </button>
-                            <button (click)="cancelTitleEdit()" class="cancel-title-btn" title="Cancel">
-                                <i class="fas fa-times"></i>
-                                Cancel
-                            </button>
-                        </div>
-
-                        <div *ngIf="!isEditingTitle" class="main-action-buttons">
-                            <button (click)="startEditingTitle()" class="edit-title-btn" title="Edit Title">
-                                <i class="fas fa-edit"></i>
-                                Edit Title
-                            </button>
-                            <button (click)="openExportModal()" class="export-btn" title="Export Assessment">
-                                <i class="fas fa-download"></i>
-                                Export
-                            </button>
-                            <button class="rpt-but" (click)="updateAssessment()">
-                                <i class="fas fa-save"></i>
-                                Save
-                            </button>
+                        <div class="meta-badges">
+                            <div class="badge-item">
+                                <div class="badge-icon questions">
+                                    <i class="fas fa-list-ol"></i>
+                                </div>
+                                <span class="badge-text">{{questions.length}} Questions</span>
+                            </div>
+                            <div class="badge-item">
+                                <div class="badge-icon points">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <span class="badge-text">{{totalPoints}} Points</span>
+                            </div>
+                            <div class="badge-item hide-mobile">
+                                <div class="badge-icon category">
+                                    <i class="fas fa-tag"></i>
+                                </div>
+                                <span class="badge-text">{{category}}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
