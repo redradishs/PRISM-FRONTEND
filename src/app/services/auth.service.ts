@@ -35,9 +35,16 @@ export class AuthService {
   // private prism_public = 'https://prismapi2.onrender.com/public';
 
   // Google Cloud Console 
-  private baseUrl = 'https://api.prismgcccs.live/user';
-  private prism_set = 'https://api.prismgcccs.live/settings';
-  private prism_public = 'https://api.prismgcccs.live/public';
+  // private baseUrl = 'https://api.prismgcccs.live/user';
+  // private prism_set = 'https://api.prismgcccs.live/settings';
+  // private prism_public = 'https://api.prismgcccs.live/public';
+
+
+
+  //VPS BACKUP
+  private baseUrl = 'https://api.prismgcccs.app/user';
+  private prism_set = 'https://api.prismgcccs.app/settings';
+  private prism_public = 'https://api.prismgcccs.app/public';
 
   private tokenKey = 'jwt';
   private currentUserSubject: BehaviorSubject<any> = new BehaviorSubject<any>(

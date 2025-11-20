@@ -34,12 +34,17 @@ export class ApiService {
 
 
   // Google Cloud Console
-  rtUrl = 'https://api.prismgcccs.live/rt';
-  apiUrl = 'https://api.prismgcccs.live/instructor';
+  // rtUrl = 'https://api.prismgcccs.live/rt';
+  // apiUrl = 'https://api.prismgcccs.live/instructor';
 
   // VPS Server
   // rtUrl = 'https://vps.prismgcccs.live/rt';
   // apiUrl = 'https://vps.prismgcccs.live/instructor';
+
+
+  //VPS 2 SERVER
+  rtUrl = 'https://api.prismgcccs.app/rt';
+  apiUrl = 'https://api.prismgcccs.app/instructor';
 
 
 
