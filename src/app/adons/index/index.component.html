@@ -1,0 +1,354 @@
+<div class="landing-page">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo-section">
+                    <div class="prism-logo cursor-pointer">
+                        <img src="/prism_logo.webp" alt="PRISM Logo" class="logo-image">
+                        <span class="logo-text">PRISM</span>
+                    </div>
+                </div>
+
+                <div class="nav-links">
+                    <a href="#features" class="nav-link">Features</a>
+                    <a href="#about" class="nav-link">About</a>
+                    <a href="#who-for" class="nav-link">Who is this for</a>
+                    <a href="#cta" class="nav-link">Get Started</a>
+                </div>
+
+                <button class="login-btn" (click)="navigateToLogin()">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg">
+            <div class="gradient-orb orb-left"></div>
+            <div class="gradient-orb orb-right"></div>
+        </div>
+        <div class="container">
+            <div class="hero-center">
+                <h1 class="hero-heading">
+                    Transform Assessments with
+                    <span class="heading-gradient">PRISM</span>
+                </h1>
+
+                <p class="hero-tagline">
+                    Platform for Real-time Intelligent Student Measurement System
+                </p>
+
+                <p class="hero-text">
+                    Empower educators and students with intelligent assessment tools. Create, manage, and analyze
+                    with AI-driven insights that enhance learning outcomes.
+                </p>
+
+                <div class="hero-buttons">
+                    <button class="hero-btn btn-main" (click)="navigateToLogin()">
+                        <span>Get Started Free</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button class="hero-btn btn-outline" (click)="scrollToFeatures()">
+                        <i class="fas fa-play-circle"></i>
+                        <span>Learn More</span>
+                    </button>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">Concurrent Users</div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <div class="stat-number">100+</div>
+                        <div class="stat-label">Assessment per Account</div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <div class="stat-number">98%</div>
+                        <div class="stat-label">Less workload</div>
+                    </div>
+                </div>
+
+                <!-- Feature Badges -->
+                <div class="feature-badges">
+                    <div class="feature-badge">
+                        <i class="fas fa-bolt"></i>
+                        <span>Real-time Feedback</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Encrypted Data</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-robot"></i>
+                        <span>AI Powered Analytics</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-clock"></i>
+                        <span>Reduce Workload</span>
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Anti Cheating</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="section-header">
+                <div class="partner-2">
+                    <img src="/gclogo.webp" class="about-logos-2" alt="PRISM">
+                    <span class="section-badge">About PRISM</span>
+                    <img src="/ccslogo.webp" class="about-logos-2" alt="PRISM">
+                </div>
+                <div class="about-seg">
+                    <img src="/gclogo.webp" class="about-logos" alt="PRISM">
+                    <div>
+                        <h2 class="section-title">Revolutionizing Assessment Management</h2>
+                        <p class="section-description">
+                            PRISM is Gordon College's innovative assessment platform, designed to empower educators with
+                            intelligent tools for creating, managing, and analyzing student assessments in real-time.
+                        </p>
+                    </div>
+                    <img src="/ccslogo.webp" class="about-logos" alt="PRISM">
+                </div>
+            </div>
+
+            <div class="about-content">
+                <div class="about-card">
+                    <div class="about-icon">🎯</div>
+                    <h3>Our Mission</h3>
+                    <p>To revolutionize educational assessment through AI-powered technology, making evaluation more
+                        efficient, insightful, and accessible for both educators and students.</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">🚀</div>
+                    <h3>Our Vision</h3>
+                    <p>To become the leading assessment platform that transforms how institutions measure and improve
+                        student learning outcomes through intelligent automation.</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">💡</div>
+                    <h3>Our Values</h3>
+                    <p>Innovation, accessibility, data-driven insights, and commitment to enhancing the educational
+                        experience for all stakeholders.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Features</span>
+                <h2 class="section-title">Powerful Tools for Modern Education</h2>
+                <p class="section-description">
+                    Discover the comprehensive features that make PRISM the ultimate assessment management solution.
+                </p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card" *ngFor="let feature of features; let i = index"
+                    [style.animation-delay.s]="i * 0.1">
+                    <div class="feature-icon">{{feature.icon}}</div>
+                    <h3 class="feature-title">{{feature.title}}</h3>
+                    <p class="feature-description">{{feature.description}}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Who is this for Section -->
+    <section id="who-for" class="who-for">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Who Is This For</span>
+                <h2 class="section-title">Designed for Everyone in Education</h2>
+                <p class="section-description">
+                    PRISM empowers both Instructors and Students at Gordon College CCS with powerful, intuitive tools
+                    tailored to their unique
+                    needs.
+                </p>
+            </div>
+
+            <div class="who-for-grid">
+                <!-- Instructors Card -->
+                <div class="who-for-card instructor-card">
+                    <div class="who-for-icon">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <h3 class="who-for-title">For Instructors</h3>
+                    <p class="who-for-description">
+                        Create, manage, analyze assessment with intgrated AI powered analytics.
+                        Track you student's progress in real-time and gain actionable insights.
+                    </p>
+                    <ul class="who-for-features">
+                        <li><i class="fas fa-check-circle"></i> Create AI-powered assessments</li>
+                        <li><i class="fas fa-check-circle"></i> Real-time analytics dashboard</li>
+                        <li><i class="fas fa-check-circle"></i> Automated grading & feedback</li>
+                        <li><i class="fas fa-check-circle"></i> Anit Cheating Detection</li>
+                    </ul>
+                    <button class="who-for-btn instructor-btn" (click)="navigateToLogin()">
+                        <span>Start Teaching</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- Students Card -->
+                <div class="who-for-card student-card">
+                    <div class="who-for-icon">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <h3 class="who-for-title">For Students</h3>
+                    <p class="who-for-description">
+                        Take assessments, track you progress, and get results right away with AI checking and insights.
+                    </p>
+                    <ul class="who-for-features">
+                        <li><i class="fas fa-check-circle"></i> Instant assessment feedback</li>
+                        <li><i class="fas fa-check-circle"></i> Progress tracking</li>
+                        <li><i class="fas fa-check-circle"></i> Performance analytics</li>
+                        <li><i class="fas fa-check-circle"></i> User Friendly interface</li>
+                    </ul>
+                    <button class="who-for-btn student-btn" (click)="navigateToLogin()">
+                        <span>Start Learning</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section - Redesigned -->
+    <section id="cta" class="cta">
+        <div class="container">
+            <div class="cta-wrapper">
+                <div class="cta-grid">
+                    <div class="cta-left">
+                        <div class="cta-badge">
+                            <span class="badge-pulse"></span>
+                            <i class="fas fa-sparkles"></i>
+                            <span>Start Your Journey</span>
+                        </div>
+                        <h2 class="cta-heading">
+                            Experience the Future of
+                            <span class="highlight-text">Online Assessment</span>
+                        </h2>
+                        <p class="cta-text">
+                            From creating, assigning, grading, up to analytics PRISM got you covered.
+                            <br>
+                            Experince PRISM today.
+                        </p>
+
+                        <div class="cta-actions">
+                            <button class="btn-get-started" (click)="navigateToLogin()">
+                                <span class="btn-text">Get Started Free</span>
+                                <span class="btn-icon">
+                                    <i class="fas fa-arrow-right"></i>
+                                </span>
+                            </button>
+
+                            <div class="cta-stats-mini">
+                                <div class="mini-stat">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>No credit card required</span>
+                                </div>
+                                <div class="mini-stat">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Instant setup</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cta-right">
+                        <div class="cta-visual">
+                            <div class="visual-card card-1">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Real-time Analytics</span>
+                            </div>
+                            <div class="visual-card card-2">
+                                <i class="fas fa-brain"></i>
+                                <span>AI-Powered</span>
+                            </div>
+                            <div class="visual-card card-3">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Secure Platform</span>
+                            </div>
+                            <div class="glow-effect"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <span class="logo-icon"><img src="/prism_logo.webp" alt="PRISM Logo" class="logo-image"></span>
+                        <span class="logo-text">PRISM</span>
+                    </div>
+                    <p class="footer-tagline">Empowering education through intelligent assessment.</p>
+                    <div class="footer-social">
+                        <a href="https://www.facebook.com/share/1B4WPFZGLi" target="_blank" class="social-link"><i
+                                class="fab fa-facebook-f"></i></a>
+                        <a class="social-link" [attr.disabled]="true"><i class="fab fa-twitter"></i></a>
+                        <a class="social-link" [attr.disabled]="true"><i class="fab fa-linkedin-in"></i></a>
+                        <a class="social-link" [attr.disabled]="true"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Platform</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a (click)="navigateToLogin()">Login</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">About</a></li>
+                        <li><a (click)="openPrivacyPolicy()">Privacy Policy</a></li>
+                        <li><a (click)="openTermsConditions()">Terms of Service</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul class="contact-list">
+                        <li><i class="fas fa-envelope"></i> <a
+                                href="mailto:administrator&#64;prismgcccs.live">administrator&#64;prismgcccs.live</a>
+                        </li>
+                        <!-- <li><i class="fas fa-phone"></i> +63 (47) 222-2121</li> -->
+                        <li><i class="fas fa-map-marker-alt"></i> Olongapo City, Zambales, Philippines</li>
+                    </ul>
+                </div>
+            </div>
+
+            <app-privacy-policy></app-privacy-policy>
+            <app-terms-conditions></app-terms-conditions>
+
+
+            <div class="footer-bottom">
+                <p>&copy; {{getCurrentYear()}} PRISM - Gordon College CCS. All rights reserved.</p>
+                <p class="footer-credit">Developed by ICTe Solutions</p>
+            </div>
+        </div>
+    </footer>
+</div>

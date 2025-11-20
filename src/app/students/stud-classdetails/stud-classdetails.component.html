@@ -3,10 +3,10 @@
         <app-sidebar></app-sidebar>
         <div class="flex-1 ml-0 md:ml-20 w-full">
             <header class="bg-white shadow-sm fixed top-0 right-0 w-full md:w-[calc(100%-80px)] z-40">
-                <div class="w-full px-4 md:px-6 py-3 md:py-4">
+                <div class="w-full px-3 md:px-6 py-2 md:py-4">
                     <div class="flex items-center justify-between">
-                        <h1 class="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">Class Overview</h1>
-                        <div class="flex items-center">
+                        <h1 class="text-base md:text-xl lg:text-2xl font-semibold text-gray-900">Class Overview</h1>
+                        <div class="flex items-center gap-2">
                             <div class="hidden md:flex items-center mr-4">
                                 <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
                                 <button (click)="setActiveTab('completed')"
@@ -46,7 +46,7 @@
                 </div>
             </header>
 
-            <div class="h-[65px] md:h-[68px] w-full"></div>
+            <div class="h-[50px] md:h-[68px] w-full"></div>
 
 
             <div *ngIf="!loaded"
@@ -66,7 +66,7 @@
                 </div>
             </div>
 
-            <div class="p-4 md:p-6 lg:p-8 w-full">
+            <div class="p-2 md:p-6 lg:p-4 w-full">
                 <!-- Student Info Card -->
                 <div class="aukona">
                     <div class="hawtdog">
@@ -81,9 +81,8 @@
                             <div class="instructor">
                                 <img [src]="studentStats.instructor?.profilePicture" alt="Instructor" />
                                 <div>
-                                    <p>Instructor</p>
-                                    <p style="font-weight: 600; font-size: 1rem; margin: 0;">
-                                        {{studentStats.instructor?.name}}</p>
+                                    <p class="instructor-label">Instructor</p>
+                                    <p class="instructor-name">{{studentStats.instructor?.name}}</p>
                                 </div>
                             </div>
 
@@ -94,8 +93,7 @@
                                 </div>
                                 <div class="statlab">
                                     <p class="label">Your Rank</p>
-                                    <p class="value">#{{studentStats.classDetails?.ranking}} <span
-                                            style="font-size: 0.875rem;">of
+                                    <p class="value">#{{studentStats.classDetails?.ranking}} <span class="rank-total">of
                                             {{studentStats.classDetails?.totalStudents}}</span></p>
                                 </div>
                             </div>

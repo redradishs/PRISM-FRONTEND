@@ -106,6 +106,12 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
     return this.expandedQuestions.has(questionId);
   }
 
+  get reversedAttemptsHistory(): any[] {
+    return this.assessmentDetails?.student?.attemptsHistory
+      ? [...this.assessmentDetails.student.attemptsHistory].reverse()
+      : [];
+  }
+
   toggleSidebar() {
     if (this.sidebar) {
       this.sidebar.toggleSidebar();

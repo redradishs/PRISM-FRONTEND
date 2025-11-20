@@ -231,5 +231,13 @@ export class AuthService {
     return this.http.post(`${this.prism_public}/class`, data);
   }
 
+  addVisitCount() {
+    return this.http.post(`${this.prism_public}/visit`, {});
+  }
+
+  getVisitCounts() {
+    return this.http.get(`${this.prism_public}/visitors`);
+  }
+
 
 }

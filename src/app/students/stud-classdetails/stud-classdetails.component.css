@@ -1,16 +1,24 @@
 .aukona {
   display: grid;
-  padding: 0.8rem 0.3rem;
-  gap: 1rem;
+  padding: 0.5rem 0.25rem;
+  gap: 0.35rem;
   grid-template-columns: 1fr;
   opacity: 0;
   animation: slideUpFadeIn 0.8s ease-out forwards;
   animation-delay: 0.1s;
 }
 
+@media (min-width: 768px) {
+  .aukona {
+    padding: 0.75rem 0.5rem;
+    gap: 1rem;
+  }
+}
+
 @media (min-width: 1024px) {
   .aukona {
     grid-template-columns: repeat(12, 1fr);
+    padding: 0.8rem 0.3rem;
   }
 }
 
@@ -22,18 +30,38 @@
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.08);
   position: relative;
   overflow: hidden;
-  padding: 1rem;
+  padding: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .hawtdog {
+    padding: 1rem;
+  }
 }
 
 @media (min-width: 1024px) {
   .hawtdog {
     grid-column: span 8;
+    padding: 1.25rem;
   }
 }
 
 .welcome-text {
-  font-size: 1.2rem !important;
+  font-size: 0.875rem !important;
   color: #ffffffe7 !important;
+  line-height: 1.4;
+}
+
+@media (min-width: 768px) {
+  .welcome-text {
+    font-size: 1rem !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .welcome-text {
+    font-size: 1.2rem !important;
+  }
 }
 
 .hawtdog .bubble1,
@@ -68,36 +96,124 @@
 }
 
 .hawtdog h3 {
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: bold;
   margin-bottom: 0.25rem;
 }
 
+@media (min-width: 768px) {
+  .hawtdog h3 {
+    font-size: 1.125rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hawtdog h3 {
+    font-size: 1.25rem;
+  }
+}
+
 .hawtdog p {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: #e9d5ff;
   margin: 0.25rem 0;
+}
+
+@media (min-width: 768px) {
+  .hawtdog p {
+    font-size: 0.8rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hawtdog p {
+    font-size: 0.85rem;
+  }
 }
 
 .hawtdog .instructor {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-top: 0.75rem;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .hawtdog .instructor {
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
 }
 
 .hawtdog .instructor img {
-  width: 3rem;
-  height: 3rem;
+  width: 2.25rem;
+  height: 2.25rem;
   border-radius: 9999px;
   border: 2px solid white;
+}
+
+@media (min-width: 768px) {
+  .hawtdog .instructor img {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hawtdog .instructor img {
+    width: 3rem;
+    height: 3rem;
+  }
+}
+
+.instructor-label {
+  font-size: 0.7rem !important;
+  margin: 0 !important;
+}
+
+@media (min-width: 768px) {
+  .instructor-label {
+    font-size: 0.75rem !important;
+  }
+}
+
+.instructor-name {
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  margin: 0 !important;
+}
+
+@media (min-width: 768px) {
+  .instructor-name {
+    font-size: 0.95rem !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .instructor-name {
+    font-size: 1rem !important;
+  }
 }
 
 .hawtdog .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .hawtdog .grid {
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hawtdog .grid {
+    gap: 1rem;
+    margin-top: 1rem;
+  }
 }
 
 .hawtdog .grid p {
@@ -105,38 +221,109 @@
 }
 
 .hawtdog .grid .label {
-  font-size: 0.75rem;
+  font-size: 0.625rem;
   color: #ddd6fe;
 }
 
+@media (min-width: 768px) {
+  .hawtdog .grid .label {
+    font-size: 0.7rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hawtdog .grid .label {
+    font-size: 0.75rem;
+  }
+}
+
 .hawtdog .grid .value {
-  font-size: 1.5rem;
+  font-size: 1.125rem;
   font-weight: bold;
+}
+
+@media (min-width: 768px) {
+  .hawtdog .grid .value {
+    font-size: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hawtdog .grid .value {
+    font-size: 1.5rem;
+  }
+}
+
+.rank-total {
+  font-size: 0.75rem !important;
+}
+
+@media (min-width: 768px) {
+  .rank-total {
+    font-size: 0.8125rem !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .rank-total {
+    font-size: 0.875rem !important;
+  }
 }
 
 .gengengeng {
   grid-column: span 12;
   background-color: white;
   border-radius: 0.5rem;
-  padding: 1rem;
+  padding: 0.75rem;
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.08);
+}
+
+@media (min-width: 768px) {
+  .gengengeng {
+    padding: 0.875rem;
+  }
 }
 
 @media (min-width: 1024px) {
   .gengengeng {
     grid-column: span 4;
+    padding: 1rem;
   }
 }
 
 .gengengeng h3 {
   font-weight: 600;
   color: #111827;
-  font-size: 1rem;
+  font-size: 0.875rem;
   margin: 0;
 }
 
+@media (min-width: 768px) {
+  .gengengeng h3 {
+    font-size: 0.95rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .gengengeng h3 {
+    font-size: 1rem;
+  }
+}
+
 .gengengeng .section {
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+  .gengengeng .section {
+    margin-bottom: 1.125rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .gengengeng .section {
+    margin-bottom: 1.25rem;
+  }
 }
 
 .gengengeng .section:last-child {
@@ -144,8 +331,22 @@
 }
 
 .gengengeng .icon {
-  width: 1rem;
-  height: 1rem;
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+@media (min-width: 768px) {
+  .gengengeng .icon {
+    width: 0.95rem;
+    height: 0.95rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .gengengeng .icon {
+    width: 1rem;
+    height: 1rem;
+  }
 }
 
 .gengengeng .progress-bar {
@@ -164,24 +365,61 @@
 }
 
 .gengengeng .text-xs {
-  font-size: 0.75rem;
+  font-size: 0.625rem;
   color: #6b7280;
   margin: 0;
 }
 
+@media (min-width: 768px) {
+  .gengengeng .text-xs {
+    font-size: 0.7rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .gengengeng .text-xs {
+    font-size: 0.75rem;
+  }
+}
+
 .gengengeng .text-3xl {
-  font-size: 1.5rem;
+  font-size: 1.125rem;
   font-weight: bold;
   color: #7c3aed;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.375rem;
+}
+
+@media (min-width: 768px) {
+  .gengengeng .text-3xl {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .gengengeng .text-3xl {
+    font-size: 1.5rem;
+  }
 }
 
 .gengengeng .score-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 0.25rem;
-  font-size: 0.75rem;
+  font-size: 0.625rem;
   color: #6b7280;
+}
+
+@media (min-width: 768px) {
+  .gengengeng .score-grid {
+    font-size: 0.7rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .gengengeng .score-grid {
+    font-size: 0.75rem;
+  }
 }
 
 .gengengeng .score-grid .label {
@@ -199,7 +437,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.375rem;
+}
+
+@media (min-width: 768px) {
+  .holder {
+    margin-bottom: 0.5rem;
+  }
 }
 
 .statlab .label {
@@ -213,8 +457,20 @@
 
 .r-text {
   color: black !important;
-  font-size: 1.2rem !important;
+  font-size: 0.875rem !important;
   font-weight: 600 !important;
+}
+
+@media (min-width: 768px) {
+  .r-text {
+    font-size: 1rem !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .r-text {
+    font-size: 1.2rem !important;
+  }
 }
 
 
@@ -400,8 +656,8 @@ button.active {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  margin: 0.9rem 0;
+  gap: 0.625rem;
+  margin: 0.5rem 0;
   opacity: 0;
   animation: fadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
   animation-delay: 0.1s;
@@ -411,6 +667,14 @@ button.active {
   .assessment-controls {
       flex-direction: row;
       align-items: center;
+      gap: 1rem;
+      margin: 0.75rem 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .assessment-controls {
+      margin: 0.9rem 0;
   }
 }
 
@@ -558,14 +822,42 @@ button.active {
 .section-title {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 1.25rem;
+  gap: 0.375rem;
+  font-size: 1rem;
   font-weight: 600;
-  margin-bottom: 1rem;
+  margin-bottom: 0.625rem;
+}
+
+@media (min-width: 768px) {
+  .section-title {
+    gap: 0.5rem;
+    font-size: 1.125rem;
+    margin-bottom: 0.875rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
 }
 
 .section-title i {
   color: #f59e0b;
+  font-size: 0.875rem;
+}
+
+@media (min-width: 768px) {
+  .section-title i {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-title i {
+    font-size: 1.125rem;
+  }
 }
 
 .section-title i.fa-check-circle {
@@ -582,16 +874,15 @@ button.active {
   overflow-x: hidden;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 768px) {
   .assessment-items {
     gap: 0.75rem;
   }
 }
 
-@media (max-width: 480px) {
+@media (min-width: 1024px) {
   .assessment-items {
-    gap: 0.5rem;
-    padding: 0 0.125rem;
+    gap: 1rem;
   }
 }
 
@@ -599,11 +890,11 @@ button.active {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: start;
-  gap: 1.5rem;
-  padding: 1.25rem;
+  gap: 0.75rem;
+  padding: 0.625rem;
   background-color: white;
-  border-left: 0.30rem solid #4f46e5 !important;
-  border-right: 0.30rem solid #4f46e5 !important;
+  border-left: 0.20rem solid #4f46e5 !important;
+  border-right: 0.20rem solid #4f46e5 !important;
   border: 1px solid #e5e7eb;
   border-radius: 0.5rem;
   opacity: 0;
@@ -614,6 +905,24 @@ button.active {
   transition: all 0.2s ease;
   width: 100%;
   box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .assessment-item {
+    gap: 1rem;
+    padding: 0.875rem;
+    border-left: 0.25rem solid #4f46e5 !important;
+    border-right: 0.25rem solid #4f46e5 !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .assessment-item {
+    gap: 1.5rem;
+    padding: 1.25rem;
+    border-left: 0.30rem solid #4f46e5 !important;
+    border-right: 0.30rem solid #4f46e5 !important;
+  }
 }
 
 .assessment-item:hover {
@@ -643,14 +952,14 @@ button.active {
 
 /* Status */
 .assessment-status .status-dot {
-  width: 2rem;
-  height: 2rem;
+  width: 1.75rem;
+  height: 1.75rem;
   border-radius: 20%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 0.5rem;
-  font-size: 1rem;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
   transition: width 0.2s, height 0.2s, font-size 0.2s;
 }
 
@@ -671,9 +980,18 @@ button.active {
 
 @media (min-width: 640px) {
   .assessment-status .status-dot {
-    width: 2.7rem;
-    height: 2.7rem;
-    font-size: 1.2rem;
+    width: 2rem;
+    height: 2rem;
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .assessment-status .status-dot {
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 1.1rem;
+    margin-top: 0.375rem;
   }
 }
 
@@ -682,6 +1000,7 @@ button.active {
     width: 2.5rem;
     height: 2.5rem;
     font-size: 1.4rem;
+    margin-top: 0.5rem;
   }
 }
 
@@ -700,17 +1019,44 @@ button.active {
 }
 
 .assessment-title {
-  font-size: 1rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: #111827;
   margin: 0;
+  line-height: 1.3;
+}
+
+@media (min-width: 768px) {
+  .assessment-title {
+    font-size: 0.95rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .assessment-title {
+    font-size: 1rem;
+  }
 }
 
 .status-badge {
-  font-size: 0.75rem;
-  padding: 0.25rem 0.75rem;
+  font-size: 0.625rem;
+  padding: 0.1875rem 0.5rem;
   border-radius: 1rem;
   white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+  .status-badge {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.625rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .status-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+  }
 }
 
 .status-badge.passed {
@@ -729,17 +1075,42 @@ button.active {
 }
 
 .assessment-subject {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   color: #6b7280;
   margin: 0;
+}
+
+@media (min-width: 768px) {
+  .assessment-subject {
+    font-size: 0.8125rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .assessment-subject {
+    font-size: 0.875rem;
+  }
 }
 
 /* Assessment Details */
 .assessment-details {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding-left: 2rem;
+  gap: 0.5rem;
+  padding-left: 0;
+}
+
+@media (min-width: 768px) {
+  .assessment-details {
+    gap: 0.75rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .assessment-details {
+    gap: 1rem;
+    padding-left: 2rem;
+  }
 }
 
 .detail-group {
@@ -749,29 +1120,53 @@ button.active {
 }
 
 .detail-group .value {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: #020202bf !important;
 }
 
+@media (min-width: 768px) {
+  .detail-group .value {
+    font-size: 0.8125rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .detail-group .value {
+    font-size: 0.875rem;
+  }
+}
+
 .detail-group .label {
-  font-size: 0.75rem;
+  font-size: 0.625rem;
   font-weight: 600;
   color: #6b7280;
+}
+
+@media (min-width: 768px) {
+  .detail-group .label {
+    font-size: 0.7rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .detail-group .label {
+    font-size: 0.75rem;
+  }
 }
 
 /* View Button */
 .view-button {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1.2rem;
+  gap: 0.375rem;
+  padding: 0.375rem 0.875rem;
   background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
   color: #fff;
-  font-size: 0.95rem;
+  font-size: 0.75rem;
   font-weight: 600;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 0.375rem;
   box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08);
   cursor: pointer;
   transition: 
@@ -782,8 +1177,36 @@ button.active {
   outline: none;
 }
 
+@media (min-width: 768px) {
+  .view-button {
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    border-radius: 0.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .view-button {
+    padding: 0.5rem 1.2rem;
+    font-size: 0.95rem;
+  }
+}
+
 .view-button i {
-  font-size: 1.1rem;
+  font-size: 0.875rem;
+}
+
+@media (min-width: 768px) {
+  .view-button i {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .view-button i {
+    font-size: 1.1rem;
+  }
 }
 
 .view-button:hover,
@@ -805,9 +1228,9 @@ button.active {
   .assessment-item {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-    padding: 0.875rem;
-    border-left: 0.25rem solid #4f46e5 !important;
+    gap: 0.5rem;
+    padding: 0.625rem;
+    border-left: 0.20rem solid #4f46e5 !important;
     border-right: none !important;
     width: 100%;
     box-sizing: border-box;
@@ -827,13 +1250,13 @@ button.active {
   .assessment-header {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    gap: 0.375rem;
+    margin-bottom: 0.375rem;
     width: 100%;
   }
 
   .assessment-title {
-    font-size: 1rem;
+    font-size: 0.875rem;
     font-weight: 600;
     line-height: 1.3;
     margin: 0;
@@ -845,21 +1268,21 @@ button.active {
   .badge-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.375rem;
+    gap: 0.25rem;
     width: 100%;
   }
 
   .status-badge,
   .assessment-type {
-    font-size: 0.6875rem;
-    padding: 0.1875rem 0.5rem;
+    font-size: 0.625rem;
+    padding: 0.1875rem 0.4375rem;
     white-space: nowrap;
     flex-shrink: 0;
   }
 
   .assessment-subject {
-    font-size: 0.8125rem;
-    margin: 0 0 0.5rem 0;
+    font-size: 0.75rem;
+    margin: 0 0 0.375rem 0;
     color: #6b7280;
     width: 100%;
   }
@@ -868,10 +1291,10 @@ button.active {
     order: 2;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
-    padding: 0.75rem;
+    gap: 0.375rem;
+    padding: 0.5rem;
     background: #f8fafc;
-    border-radius: 0.5rem;
+    border-radius: 0.375rem;
     margin: 0;
     width: 100%;
     box-sizing: border-box;
@@ -881,12 +1304,12 @@ button.active {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.25rem;
+    gap: 0.1875rem;
     min-width: 0;
   }
 
   .detail-group .label {
-    font-size: 0.6875rem;
+    font-size: 0.625rem;
     color: #6b7280;
     font-weight: 500;
     text-transform: uppercase;
@@ -894,7 +1317,7 @@ button.active {
   }
 
   .detail-group .value {
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: #374151;
     margin: 0;
@@ -904,10 +1327,10 @@ button.active {
 
   .view-button {
     grid-column: 1 / -1;
-    padding: 0.625rem 1rem;
-    font-size: 0.8125rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
     border-radius: 0.375rem;
-    margin-top: 0.5rem;
+    margin-top: 0.375rem;
     width: 100%;
     box-sizing: border-box;
   }
@@ -916,37 +1339,37 @@ button.active {
 /* Small Mobile - Ultra compact */
 @media (max-width: 480px) {
   .assessment-item {
-    padding: 0.625rem;
-    gap: 0.5rem;
-    border-radius: 0.5rem;
-    margin: 0 0.125rem;
+    padding: 0.5rem;
+    gap: 0.375rem;
+    border-radius: 0.375rem;
+    margin: 0;
   }
 
   .assessment-header {
-    margin-bottom: 0.375rem;
-    gap: 0.375rem;
+    margin-bottom: 0.25rem;
+    gap: 0.25rem;
   }
 
   .assessment-title {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     line-height: 1.3;
   }
 
   .assessment-subject {
-    font-size: 0.75rem;
-    margin-bottom: 0.375rem;
+    font-size: 0.6875rem;
+    margin-bottom: 0.25rem;
   }
 
   .status-badge,
   .assessment-type {
-    font-size: 0.625rem;
-    padding: 0.125rem 0.375rem;
+    font-size: 0.5625rem;
+    padding: 0.125rem 0.3125rem;
     border-radius: 0.25rem;
   }
 
   .assessment-details {
-    padding: 0.5rem;
-    gap: 0.375rem;
+    padding: 0.375rem;
+    gap: 0.25rem;
     border-radius: 0.375rem;
     grid-template-columns: 1fr;
   }
@@ -956,8 +1379,8 @@ button.active {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.25rem 0;
+    gap: 0.375rem;
+    padding: 0.1875rem 0;
     border-bottom: 1px solid #f1f5f9;
   }
 
@@ -966,24 +1389,24 @@ button.active {
   }
 
   .detail-group .label {
-    font-size: 0.625rem;
+    font-size: 0.5625rem;
     flex-shrink: 0;
   }
 
   .detail-group .value {
-    font-size: 0.75rem;
+    font-size: 0.6875rem;
     text-align: right;
   }
 
   .view-button {
-    padding: 0.625rem;
-    font-size: 0.75rem;
-    margin-top: 0.375rem;
+    padding: 0.5rem;
+    font-size: 0.6875rem;
+    margin-top: 0.25rem;
   }
 
   .joining-code {
-    font-size: 0.6875rem;
-    padding: 0.25rem 0.5rem;
+    font-size: 0.625rem;
+    padding: 0.1875rem 0.375rem;
   }
 }
 
@@ -1010,24 +1433,36 @@ button.active {
   }
 }
 
-@media (max-width: 640px) {
-  .welcome-text {
-    font-size: 0.95rem !important;
-    color: #ffffffe7 !important;
-  }
-}
-
 .badge-container {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.375rem;
   align-items: center;
 }
 
+@media (min-width: 768px) {
+  .badge-container {
+    gap: 0.5rem;
+  }
+}
+
 .assessment-type {
-  padding: 0.25rem 0.5rem;
+  padding: 0.1875rem 0.4375rem;
   border-radius: 0.25rem;
-  font-size: 0.75rem;
+  font-size: 0.625rem;
   font-weight: 500;
+}
+
+@media (min-width: 768px) {
+  .assessment-type {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .assessment-type {
+    font-size: 0.75rem;
+  }
 }
 
 .type-amber {
@@ -1048,10 +1483,23 @@ button.active {
 .joining-code {
   background-color: #e3f2fd;
   color: #1976d2;
-  padding: 0.25rem 0.5rem;
+  padding: 0.1875rem 0.375rem;
   border-radius: 0.25rem;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 500;
+}
+
+@media (min-width: 768px) {
+  .joining-code {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8125rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .joining-code {
+    font-size: 0.875rem;
+  }
 }
 
 @keyframes slideUpFadeIn {

@@ -4,6 +4,7 @@ import { SidebarComponent } from '../../adons/sidebar/sidebar.component';
 import { AuthService } from '../../services/auth.service';
 import { ApiService } from '../../services/api.service';
 import { FormsModule } from '@angular/forms';
+import { AnalyticsPdfExportService } from './analytics-pdf-export.service';
 
 @Component({
   selector: 'app-analytics',
@@ -74,7 +75,11 @@ export class AnalyticsComponent implements OnInit {
   topicGeneratedDate: string = '';
 
 
-  constructor(private auth: AuthService, private api: ApiService) {
+  constructor(
+    private auth: AuthService,
+    private api: ApiService,
+    private pdfExportService: AnalyticsPdfExportService
+  ) {
 
   }
 
@@ -405,6 +410,46 @@ export class AnalyticsComponent implements OnInit {
       }
     })
 
+  }
+
+  exportPDFReport() {
+    if (this.mobileTab === 'platform') {
+      this.exportPlatformOverviewPDF();
+    } else {
+      this.exportIndividualClassPDF();
+    }
+  }
+
+  private exportIndividualClassPDF() {
+    const selectedClassObj = this.classes.find(c => c.classCode === this.selectedClassCode);
+
+    this.pdfExportService.exportIndividualClassPDF({
+      classStats: this.classStats,
+      selectedClassCode: this.selectedClassCode,
+      selectedClassName: selectedClassObj?.className || '',
+      performers: this.performers,
+      topPerformers: this.topPerformers,
+      leastPerformers: this.leastPerformers,
+      performanceDistribution: this.performanceDistribution,
+      topicDistribution: this.topicDistribution,
+      topicGeneratedDate: this.topicGeneratedDate
+    });
+  }
+
+  private exportPlatformOverviewPDF() {
+    const presetLabel = this.startDatePresets.find(p => p.value === this.selectedPreset)?.label || '';
+
+    this.pdfExportService.exportPlatformOverviewPDF({
+      selectedPreset: this.selectedPreset,
+      presetLabel: presetLabel,
+      platformOverviewData: this.platformOverviewData,
+      overallClassPerformanceData: this.overallClassPerformanceData,
+      topTopics: this.topTopics,
+      leastTopics: this.leastTopics,
+      performanceTrendData: this.performanceTrendData,
+      topicDistribution: this.topicDistribution,
+      topicGeneratedDate: this.topicGeneratedDate
+    });
   }
 
 

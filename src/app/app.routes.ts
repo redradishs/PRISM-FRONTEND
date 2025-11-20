@@ -8,11 +8,23 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { CompleteProfileComponent } from './adons/complete-profile/complete-profile.component';
 import { JoinAssessmentComponent } from './adons/join-assessment/join-assessment.component';
 import { JoinClassComponent } from './adons/join-class/join-class.component';
+import { IndexComponent } from './adons/index/index.component';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'login',
+    component: IndexComponent,
+    data: {
+      seo: {
+        title: 'PRISM - AI-Powered Assessment Platform | Gordon College CCS',
+        description: "PRISM (Platform for Real-time Intelligent Student Measurement System) is Gordon College CCS' advanced AI-powered assessment platform. Create, manage, and analyze assessments with real-time analytics and AI assistance",
+        keywords: 'PRISM, Platform for RealTime Intelligent Student Measurement System, PRISM GC, Gordon College, assessment platform, CCS'
+      }
+    }
+  },
+  {
+    path: 'index',
+    redirectTo: '',
     pathMatch: 'full'
   },
   {

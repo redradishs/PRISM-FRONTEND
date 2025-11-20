@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
@@ -10,15 +10,19 @@ import { GoogleAuthProvider, signInWithPopup } from '@angular/fire/auth';
 import { Auth } from '@angular/fire/auth';
 import { SeoService } from '../../services/seo.service';
 import { PwaService } from '../../services/pwa.service';
+import { PrivacyPolicyComponent } from '../../shared/components/privacy-policy/privacy-policy.component';
+import { TermsConditionsComponent } from '../../shared/components/terms-conditions/terms-conditions.component';
 
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink, PrivacyPolicyComponent, TermsConditionsComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
 export class LoginComponent implements OnInit {
+  @ViewChild(PrivacyPolicyComponent) privacyPolicyModal!: PrivacyPolicyComponent;
+  @ViewChild(TermsConditionsComponent) termsConditionsModal!: TermsConditionsComponent;
   loginForm: FormGroup;
   signupForm: FormGroup;
   errorMessage: string = '';
@@ -769,149 +773,10 @@ export class LoginComponent implements OnInit {
   }
 
   openTerms(): void {
-    Swal.fire({
-      title: 'Terms & Conditions',
-      html: `
-        <div style="text-align:left; max-height:60vh; overflow:auto; padding-right:8px; line-height:1.5; font-size:14px">
-          <p><strong>Acceptance:</strong> By using PRISM, you agree to these Terms & Conditions and all applicable institutional policies.</p>
-
-          <h3 style="margin:12px 0 6px; font-size:16px;">1. Eligibility</h3>
-          <ul style="margin:0 0 8px 18px;">
-            <li>You must be enrolled or affiliated in Gordon College to use PRISM.</li>
-            <li>Provide truthful information during registration.</li>
-            <li>Use the correct role (Student, Instructor, Admin).</li>
-          </ul>
-
-          <h3 style="margin:12px 0 6px; font-size:16px;">2. Account & Security</h3>
-          <ul style="margin:0 0 8px 18px;">
-            <li>Keep your credentials confidential and do not share accounts.</li>
-            <li>Do not share information with others.</li>
-            <li>Notify administrators immediately of any unauthorized access or suspected compromise.</li>
-          </ul>
-
-          <h3 style="margin:12px 0 6px; font-size:16px;">3. Acceptable Use</h3>
-          <ul style="margin:0 0 8px 18px;">
-            <li>Students must only use the platform for academic purposes and must not cheat, plagiarize, or manipulate the system.</li>
-            <li>Instructors are responsible for ensuring accuray of assessment content and fair evaluation of students.</li>
-            <li>No user shall exploit bugs, reverse-engineer, or disrupt the system.</li>
-          </ul>
-
-          <h3 style="margin:12px 0 6px; font-size:16px;">4. AI Generated Content</h3>
-          <ul style="margin:0 0 8px 18px;">
-            <li>AI Generated Assessment or Materials are for educational purposes only.</li>
-            <li>The plaform is not responsible for any inaccuracies or errors in AI generated contents. Instructors should review all AI Generated Materials before assigning them.</li>
-          </ul>
-
-          <h3 style="margin:12px 0 6px; font-size:16px;">5. Prohibited Activities</h3>
-          <ul style="margin:0 0 8px 18px;">
-            <li>Impersonation, sharing answers, or facilitating cheating.</li>
-            <li>Uploading malicious content or attempting to gain unauthorized access.</li>
-            <li>Harassment, abuse, or any activity violating law or policy.</li>
-          </ul>
-
-          <h3 style="margin:12px 0 6px; font-size:16px;">7. Data & Privacy</h3>
-          <ul style="margin:0 0 8px 18px;">
-            <li>All Platform code, design, and non user content are owned by PRISM.</li>
-            <li>You may not copy, modify, or redistribute any part of PRISM without permission.</li>
-            <li>You retain rights over the contents you upload but grant PRISM a license to display it for educational purposes.</li>
-          </ul>
-
-          <h3 style="margin:12px 0 6px; font-size:16px;">8. Modifiation to Terms</h3>
-          <ul style="margin:0 0 8px 18px;">
-            <li>PRISM administrator may update these Terms at any time. Continued to use the platform after changes means you accept the updated terms.</li>
-          </ul>
-
-          <h3 style="margin:12px 0 6px; font-size:16px;">9. Availability & Maintenance</h3>
-          <ul style="margin:0 0 8px 18px;">
-            <li>Service may be unavailable during maintenance or due to technical issues. Reasonable efforts will be made to restore access.</li>
-          </ul>
-
-          <h3 style="margin:12px 0 6px; font-size:16px;">13. Contact</h3>
-          <p style="margin:0 0 8px;">For questions and clarifications, contact <a href="mailto:administrator@prismgcccs.live">administrator@prismgcccs.live</a>.</p>
-
-          <h3 style="margin:12px 0 6px; font-size:16px; text-align:right;">Effective Date</h3>
-          <p style="margin:0; text-align:right;"><strong>August 1, 2025</strong></p>
-        </div>
-      `,
-      confirmButtonText: 'Close',
-      confirmButtonColor: '#1976D2',
-      width: '600px'
-    });
+    this.termsConditionsModal?.open();
   }
 
   openPrivacy(): void {
-    Swal.fire({
-      title: 'Privacy Policy',
-      html: `
-        <div style="text-align:left; max-height:60vh; overflow:auto; padding-right:8px; line-height:1.5; font-size:14px">
-          <p><strong>Overview:</strong> This Privacy Policy explains what data PRISM collects, how it is used, and your choices.</p>
-
-          <h3 style="margin:12px 0 6px; font-size:16px;">1. Data We Collect</h3>
-          <ul style="margin:0 0 8px 18px;">
-            <li>Account Information: name, school email, role (Student, Instructor, Admin).</li>
-            <li>Institutional Affiliation: program/department, coordinator status (if applicable).</li>
-            <li>Authentication Data: login timestamps, verification status, tokens (e.g., from Google sign-in).</li>
-            <li>Device & Technical Data: browser type/version, OS, device identifiers, IP address, error logs.</li>
-          </ul>
-
-          <h3 style="margin:12px 0 6px; font-size:16px;">2. How We Use Your Data</h3>
-          <ul style="margin:0 0 8px 18px;">
-            <li>Provide and operate PRISM services, including assessments and analytics.</li>
-            <li>Authenticate users and secure accounts; detect, prevent, and investigate misuse.</li>
-            <li>Personalize experience (e.g., role-based features) and improve platform performance.</li>
-            <li>Provide support, respond to requests, and send important service notices.</li>
-            <li>Comply with institutional policies and applicable laws.</li>
-          </ul>
-
-          <h3 style="margin:12px 0 6px; font-size:16px;">3. Legal Basis</h3>
-          <ul style="margin:0 0 8px 18px;">
-            <li>Institutional necessity to deliver academic services.</li>
-            <li>Consent (e.g., Google sign-in) where required.</li>
-            <li>Legitimate interests, such as platform security and service improvement.</li>
-          </ul>
-
-          <h3 style="margin:12px 0 6px; font-size:16px;">4. Third-Party Services</h3>
-          <ul style="margin:0 0 8px 18px;">
-            <li>Authentication providers (e.g., Google) to facilitate secure sign-in.</li>
-            <li>AI (Meta Llama 3.1-8B-Instruct) for Assisted Generation and Recommendation of Resources.</li>
-            <li>Hosting and infrastructure providers to deliver the service.</li>
-            <li>These providers process data on our behalf under appropriate safeguards.</li>
-          </ul>
-
-          <h3 style="margin:12px 0 6px; font-size:16px;">5. Data Retention</h3>
-          <ul style="margin:0 0 8px 18px;">
-            <li>We retain data for as long as necessary to provide services and meet legal/academic obligations.</li>
-            <li>Backups and logs may persist for a limited period after account changes or deletion.</li>
-          </ul>
-
-          <h3 style="margin:12px 0 6px; font-size:16px;">6. Data Security</h3>
-          <ul style="margin:0 0 8px 18px;">
-            <li>We implement administrative, technical, and organizational measures to protect your data.</li>
-            <li>No method of transmission or storage is 100% secure. We continuously improve our safeguards.</li>
-          </ul>
-
-          <h3 style="margin:12px 0 6px; font-size:16px;">7. Your Rights & Choices</h3>
-          <ul style="margin:0 0 8px 18px;">
-            <li>Access, correction, deletion, restriction, and portability, where applicable.</li>
-            <li>You may request account or data changes by contacting the administrator.</li>
-          </ul>
-
-          <h3 style="margin:12px 0 6px; font-size:16px;">8. International Transfers</h3>
-          <p style="margin:0 0 8px;">Data may be processed on servers outside your region. We use appropriate safeguards consistent with institutional requirements.</p>
-
-          <h3 style="margin:12px 0 6px; font-size:16px;">11. Changes to this Policy</h3>
-          <p style="margin:0 0 8px;">We may update this Privacy Policy from time to time. Continued use of PRISM constitutes acceptance of the updated policy.</p>
-
-          <h3 style="margin:12px 0 6px; font-size:16px;">12. Contact</h3>
-          <p style="margin:0 0 8px;">For data requests or concerns, contact <a href="mailto:administrator@prismgcccs.live">administrator@prismgcccs.live</a>.</p>
-
-          <h3 style="margin:12px 0 6px; font-size:16px; text-align:right;">Effective Date</h3>
-          <p style="margin:0; text-align:right;"><strong>August 1, 2025</strong></p>
-        </div>
-      `,
-      confirmButtonText: 'Close',
-      confirmButtonColor: '#1976D2',
-      width: '600px'
-    });
+    this.privacyPolicyModal?.open();
   }
 }

@@ -1,0 +1,108 @@
+@if (isVisible()) {
+<div class="modal-overlay" (click)="onBackdropClick($event)">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2>Terms & Conditions</h2>
+            <button class="close-btn" (click)="close()" aria-label="Close terms and conditions">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="modal-content">
+            <p class="intro">
+                By using PRISM, you agree to these terms. We comply with the Data Privacy Act of 2012 (Republic Act No.
+                10173) and all applicable laws.
+            </p>
+
+            <section>
+                <h3>1. Account Access</h3>
+                <ul>
+                    <li>You must be enrolled or affiliated with Gordon College.</li>
+                    <li>Keep your login credentials secure and do not share your account with others.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>2. Acceptable Use</h3>
+                <ul>
+                    <li><strong>Students:</strong> Use the platform only for academic purposes. Cheating, plagiarism, or
+                        system manipulation is prohibited.</li>
+                    <li><strong>Instructors:</strong> Ensure assessment content is accurate and evaluate students
+                        fairly.</li>
+                    <li><strong>All Users:</strong> Do not exploit bugs, reverse-engineer, or disrupt the system.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>3. AI-Generated Content</h3>
+                <ul>
+                    <li>AI-generated assessments are for educational purposes only.</li>
+                    <li>PRISM is not responsible for inaccuracies.</li>
+                    <li>Instructors must review all AI-generated materials before use.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>4. Prohibited Activities</h3>
+                <ul>
+                    <li>Impersonation, sharing answers, or facilitating cheating.</li>
+                    <li>Uploading malicious content or attempting to gain unauthorized access.</li>
+                    <li>Harassment, abuse, or any activity violating law or policy.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>5. Privacy & Data Protection</h3>
+                <ul>
+                    <li>Your personal data is protected under <strong>Republic Act No. 10173 (Data Privacy Act of
+                            2012)</strong>.</li>
+                    <li>You have the right to access, correct, and request deletion of your personal information.</li>
+                    <li>See our Privacy Policy for details.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>6. Intellectual Property</h3>
+                <ul>
+                    <li>PRISM's platform code and design are proprietary.</li>
+                    <li>You retain rights to content you upload but grant PRISM a license to display it for educational
+                        purposes.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>7. System Availability</h3>
+                <ul>
+                    <li>The service may be unavailable during maintenance or technical issues.</li>
+                    <li>We will make reasonable efforts to restore access promptly.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>8. Changes to Terms</h3>
+                <ul>
+                    <li>We may update these terms at any time.</li>
+                    <li>Continued use means you accept the updated terms.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>9. Contact Us</h3>
+                <p>For questions, contact <a
+                        href="mailto:administrator@prismgcccs.live">administrator&#64;prismgcccs.live</a></p>
+            </section>
+
+            <section class="effective-date">
+                <p><strong>Effective Date: August 1, 2025</strong></p>
+            </section>
+        </div>
+
+        <div class="modal-footer">
+            <button class="primary-btn" (click)="close()">
+                <i class="fas fa-check"></i>
+                I Understand
+            </button>
+        </div>
+    </div>
+</div>
+}

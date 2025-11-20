@@ -1,0 +1,129 @@
+@if (isVisible()) {
+<div class="modal-overlay" (click)="onBackdropClick($event)">
+    <div class="modal-container">
+        <div class="modal-header">
+            <div class="pp">
+                <h2>Privacy Policy</h2>
+            </div>
+            <button class="close-btn" (click)="close()" aria-label="Close privacy policy">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="modal-content">
+            <p class="overview">
+                <strong>Overview:</strong> This Privacy Policy explains what data PRISM collects, how it is used, and
+                your rights under the <strong>Data Privacy Act of 2012 (Republic Act No. 10173)</strong>.
+            </p>
+
+            <section>
+                <h3>1. Data We Collect</h3>
+                <ul>
+                    <li>Account Information: name, school email, role (Student, Instructor, Admin).</li>
+                    <li>Institutional Affiliation: program/department, coordinator status (if applicable).</li>
+                    <li>Authentication Data: login timestamps, verification status, tokens (e.g., from Google sign-in).
+                    </li>
+                    <li>Device & Technical Data: browser type/version, OS, device identifiers, IP address, error logs.
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>2. How We Use Your Data</h3>
+                <ul>
+                    <li>Provide and operate PRISM services, including assessments and analytics.</li>
+                    <li>Authenticate users and secure accounts; detect, prevent, and investigate misuse.</li>
+                    <li>Personalize experience (e.g., role-based features) and improve platform performance.</li>
+                    <li>Provide support, respond to requests, and send important service notices.</li>
+                    <li>Comply with institutional policies and applicable laws.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>3. Legal Basis & Compliance</h3>
+                <ul>
+                    <li><strong>Data Privacy Act of 2012 (RA 10173):</strong> We comply with all provisions of the
+                        Philippine Data Privacy Act.</li>
+                    <li>Institutional necessity to deliver academic services.</li>
+                    <li>Consent (e.g., Google sign-in) where required.</li>
+                    <li>Legitimate interests, such as platform security and service improvement.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>4. Third-Party Services</h3>
+                <ul>
+                    <li>Authentication providers (e.g., Google) to facilitate secure sign-in.</li>
+                    <li>AI (Meta Llama 3.1-8B-Instruct) for Assisted Generation and Recommendation of Resources.</li>
+                    <li>Hosting and infrastructure providers to deliver the service.</li>
+                    <li>These providers process data on our behalf under appropriate safeguards.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>5. Data Retention</h3>
+                <ul>
+                    <li>We retain data for as long as necessary to provide services and meet legal/academic obligations.
+                    </li>
+                    <li>Backups and logs may persist for a limited period after account changes or deletion.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>6. Data Security</h3>
+                <ul>
+                    <li>We implement administrative, technical, and organizational measures to protect your data.</li>
+                    <li>No method of transmission or storage is 100% secure. We continuously improve our safeguards.
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>7. Your Rights Under RA 10173</h3>
+                <p>Under the Data Privacy Act of 2012, you have the following rights:</p>
+                <ul>
+                    <li><strong>Right to be Informed:</strong> Know how your data is collected, used, and shared.</li>
+                    <li><strong>Right to Access:</strong> Request copies of your personal data.</li>
+                    <li><strong>Right to Correction:</strong> Update or correct inaccurate information.</li>
+                    <li><strong>Right to Erasure:</strong> Request deletion of your data (subject to legal
+                        requirements).</li>
+                    <li><strong>Right to Object:</strong> Object to processing in certain situations.</li>
+                    <li><strong>Right to Data Portability:</strong> Receive your data in a structured format.</li>
+                </ul>
+                <p>To exercise these rights, contact <a
+                        href="mailto:administrator@prismgcccs.live">administrator&#64;prismgcccs.live</a>.</p>
+            </section>
+
+            <section>
+                <h3>8. International Transfers</h3>
+                <p>Data may be processed on servers outside your region. We use appropriate safeguards consistent with
+                    institutional requirements.</p>
+            </section>
+
+            <section>
+                <h3>11. Changes to this Policy</h3>
+                <p>We may update this Privacy Policy from time to time. Continued use of PRISM constitutes acceptance of
+                    the updated policy.</p>
+            </section>
+
+            <section>
+                <h3>12. Contact</h3>
+                <p>For data requests or concerns, contact <a
+                        href="mailto:administrator@prismgcccs.live">administrator&#64;prismgcccs.live</a>.</p>
+            </section>
+
+            <section class="effective-date">
+                <h3>Effective Date</h3>
+                <p><strong>August 1, 2025</strong></p>
+            </section>
+        </div>
+
+        <div class="modal-footer">
+            <button class="primary-btn" (click)="close()">
+                <i class="fas fa-check"></i>
+                I Understand
+            </button>
+        </div>
+    </div>
+</div>
+}
