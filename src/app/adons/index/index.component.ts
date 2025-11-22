@@ -3,16 +3,19 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { PrivacyPolicyComponent, TermsConditionsComponent } from '../../shared/components';
+import { RollingNumberComponent } from '../../shared/components/rolling-number/rolling-number.component';
 
 @Component({
   selector: 'app-index',
-  imports: [CommonModule, PrivacyPolicyComponent, TermsConditionsComponent],
+  imports: [CommonModule, PrivacyPolicyComponent, TermsConditionsComponent, RollingNumberComponent],
   templateUrl: './index.component.html',
   styleUrl: './index.component.css'
 })
 export class IndexComponent implements OnInit {
   visitCount = signal(0);
   animatedCount = signal(0);
+
+  totalVisitCount: number = 0;
 
   features = [
     {
@@ -66,7 +69,7 @@ export class IndexComponent implements OnInit {
   addVisitCount(): void {
     this.api.addVisitCount().subscribe({
       next: (resp: any) => {
-        console.log(resp);
+        // console.log(resp);
         this.getVisitCounts();
       }, error: (err: any) => {
         console.error(err);
@@ -78,18 +81,12 @@ export class IndexComponent implements OnInit {
   getVisitCounts() {
     this.api.getVisitCounts().subscribe({
       next: (resp: any) => {
-        const visitCount = resp.data.total;
+        this.totalVisitCount = resp.data.total;
       }, error: (err: any) => {
         console.error(err);
       }
     })
   }
-
-
-
-
-
-
 
   animateCounter(): void {
     const target = this.visitCount();

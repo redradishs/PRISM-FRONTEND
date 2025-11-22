@@ -22,22 +22,7 @@ export class AnalyticsPdfExportService {
 
     constructor() { }
 
-    /**
-     * MAIN FUNCTION: Exports PDF report for an individual class
-     * 
-     * This function generates a comprehensive PDF report containing:
-     * - Class overview metrics (students, performance, passing rate)
-     * - Assessment performance timeline
-     * - Top performing students
-     * - Students needing attention
-     * - Performance distribution by grade
-     * - Topic analysis with recommendations
-     * 
-     * @param data Object containing all the analytics data for the class
-     * 
-     * To adjust spacing between sections: Look for "yPosition +=" statements
-     * To adjust page margins: Change the "margin: { left: X, right: X }" values in autoTable calls
-     */
+    // INDIVIDUAL CLASS PDF EXPORT - Generates comprehensive class analytics report
     async exportIndividualClassPDF(data: {
         classStats: any;
         selectedClassCode: string;
@@ -75,7 +60,7 @@ export class AnalyticsPdfExportService {
             { label: 'Passing Rate', value: `${data.classStats?.passingRate || 0}%`, icon: '', color: this.warningColor }
         ], yPosition);
 
-        yPosition += 30;
+        yPosition += 32;
 
         // Assessment Performance
         if (data.performers && data.performers.length > 0) {
@@ -93,15 +78,18 @@ export class AnalyticsPdfExportService {
 
             autoTable(doc, {
                 startY: yPosition,
-                head: [['Assessment Title', 'Date', 'Avg Score', 'Participation', 'Passing Rate', 'Submissions']],
+                head: [['Assessment Title', 'Date', 'Avg\nScore', 'Particip.', 'Pass\nRate', 'Submit.']],
                 body: assessmentData,
                 theme: 'plain',
                 headStyles: {
                     fillColor: [this.primaryColor[0], this.primaryColor[1], this.primaryColor[2]],
                     textColor: [255, 255, 255],
                     fontStyle: 'bold',
-                    fontSize: 9,
-                    cellPadding: { top: 4, right: 3, bottom: 4, left: 3 }
+                    fontSize: 8,
+                    cellPadding: { top: 3, right: 2, bottom: 3, left: 2 },
+                    valign: 'middle',
+                    halign: 'center',
+                    minCellHeight: 8
                 },
                 styles: {
                     fontSize: 8,
@@ -110,12 +98,12 @@ export class AnalyticsPdfExportService {
                     lineWidth: 0.1
                 },
                 columnStyles: {
-                    0: { cellWidth: 60 },
-                    1: { cellWidth: 30 },
+                    0: { cellWidth: 68, halign: 'left' },
+                    1: { cellWidth: 28, halign: 'center' },
                     2: { cellWidth: 22, halign: 'center' },
-                    3: { cellWidth: 28, halign: 'center' },
+                    3: { cellWidth: 26, halign: 'center' },
                     4: { cellWidth: 24, halign: 'center' },
-                    5: { cellWidth: 24, halign: 'center' }
+                    5: { cellWidth: 22, halign: 'center' }
                 },
                 alternateRowStyles: {
                     fillColor: [this.bgLight[0], this.bgLight[1], this.bgLight[2]]
@@ -162,11 +150,11 @@ export class AnalyticsPdfExportService {
                     cellPadding: 3
                 },
                 columnStyles: {
-                    0: { cellWidth: 18, halign: 'center' },
-                    1: { cellWidth: 95 },
-                    2: { cellWidth: 25, halign: 'center' },
-                    3: { cellWidth: 25, halign: 'center' },
-                    4: { cellWidth: 25, halign: 'center' }
+                    0: { cellWidth: 16, halign: 'center' },
+                    1: { cellWidth: 102 },
+                    2: { cellWidth: 24, halign: 'center' },
+                    3: { cellWidth: 24, halign: 'center' },
+                    4: { cellWidth: 24, halign: 'center' }
                 },
                 alternateRowStyles: {
                     fillColor: [240, 253, 244]
@@ -213,11 +201,11 @@ export class AnalyticsPdfExportService {
                     cellPadding: 3
                 },
                 columnStyles: {
-                    0: { cellWidth: 18, halign: 'center' },
-                    1: { cellWidth: 95 },
-                    2: { cellWidth: 25, halign: 'center' },
-                    3: { cellWidth: 25, halign: 'center' },
-                    4: { cellWidth: 25, halign: 'center' }
+                    0: { cellWidth: 16, halign: 'center' },
+                    1: { cellWidth: 102 },
+                    2: { cellWidth: 24, halign: 'center' },
+                    3: { cellWidth: 24, halign: 'center' },
+                    4: { cellWidth: 24, halign: 'center' }
                 },
                 alternateRowStyles: {
                     fillColor: [254, 242, 242]
@@ -259,11 +247,11 @@ export class AnalyticsPdfExportService {
                     cellPadding: 3
                 },
                 columnStyles: {
-                    0: { cellWidth: 20, halign: 'center' },
-                    1: { cellWidth: 28, halign: 'center' },
-                    2: { cellWidth: 30, halign: 'center' },
-                    3: { cellWidth: 30, halign: 'center' },
-                    4: { cellWidth: 80, halign: 'center' }
+                    0: { cellWidth: 18, halign: 'center' },
+                    1: { cellWidth: 26, halign: 'center' },
+                    2: { cellWidth: 28, halign: 'center' },
+                    3: { cellWidth: 28, halign: 'center' },
+                    4: { cellWidth: 90, halign: 'center' }
                 },
                 alternateRowStyles: {
                     fillColor: [this.bgLight[0], this.bgLight[1], this.bgLight[2]]
@@ -274,7 +262,7 @@ export class AnalyticsPdfExportService {
             yPosition = (doc as any).lastAutoTable.finalY + 15;
         }
 
-        // Topic Analysis
+        // Topic Analysis & Recommendations
         if (data.topicDistribution) {
             // Check if we need a new page for Topic Analysis
             if (yPosition > pageHeight - 60) {
@@ -290,46 +278,11 @@ export class AnalyticsPdfExportService {
             doc.text(`Last Updated: ${new Date(data.topicGeneratedDate).toLocaleDateString('en-US', {
                 month: 'long', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'
             })}`, 10, yPosition);
-            yPosition += 10;
+            yPosition += 8;
 
-            // Top Performing Topics
-            if (data.topicDistribution.top && data.topicDistribution.top.length > 0) {
-                this.addSubsectionTitle(doc, 'Top Performing Topics', yPosition, 14, this.successColor);
-                yPosition += 8;
-
-                data.topicDistribution.top.forEach((topic: any, index: number) => {
-                    if (yPosition > pageHeight - 40) {
-                        doc.addPage();
-                        yPosition = 20;
-                    }
-
-                    this.addTopicCard(doc, topic, yPosition, pageWidth, 'success');
-                    yPosition += 32;
-                });
-
-                yPosition += 5;
-            }
-
-            // Topics Needing Attention
-            if (data.topicDistribution.needs_attention && data.topicDistribution.needs_attention.length > 0) {
-                if (yPosition > pageHeight - 50) {
-                    doc.addPage();
-                    yPosition = 20;
-                }
-
-                this.addSubsectionTitle(doc, 'Topics Needing Attention', yPosition, 14, this.dangerColor);
-                yPosition += 8;
-
-                data.topicDistribution.needs_attention.forEach((topic: any, index: number) => {
-                    if (yPosition > pageHeight - 50) {
-                        doc.addPage();
-                        yPosition = 20;
-                    }
-
-                    this.addTopicCard(doc, topic, yPosition, pageWidth, 'danger');
-                    yPosition += 42;
-                });
-            }
+            // Use the same compact list style as platform overview
+            const finalY = this.addTopicDistributionList(doc, data.topicDistribution, yPosition, pageWidth, pageHeight);
+            yPosition = finalY;
         }
 
         // Footer on all pages
@@ -340,22 +293,7 @@ export class AnalyticsPdfExportService {
         doc.save(fileName);
     }
 
-    /**
-     * MAIN FUNCTION: Exports PDF report for platform-wide overview
-     * 
-     * This function generates a comprehensive PDF report containing:
-     * - Platform performance summary metrics
-     * - Class performance comparison across all classes
-     * - Topic performance analysis (top and commonly missed)
-     * - Performance trends over time
-     * - Detailed summary statistics
-     * - Topic distribution details
-     * 
-     * @param data Object containing all platform-wide analytics data
-     * 
-     * To adjust spacing between sections: Look for "yPosition +=" statements
-     * To adjust page margins: Change the "margin: { left: X, right: X }" values in autoTable calls
-     */
+    // PLATFORM OVERVIEW PDF EXPORT - Generates platform-wide analytics report with trends and comparisons
     async exportPlatformOverviewPDF(data: {
         selectedPreset: string;
         presetLabel: string;
@@ -383,8 +321,8 @@ export class AnalyticsPdfExportService {
         yPosition = 45;
 
         // Platform Metrics
-        this.addSectionTitle(doc, 'Platform Performance Summary', yPosition);
-        yPosition += 6;
+        this.addSectionTitle(doc, 'Platform Performance Summary', yPosition, 10, 'center');
+        yPosition += 7;
 
         this.addMetricCards(doc, [
             { label: 'Total Assessments', value: data.platformOverviewData.totalAssessments || 0, icon: '', color: this.primaryColor },
@@ -392,12 +330,12 @@ export class AnalyticsPdfExportService {
             { label: 'Total Classes', value: data.platformOverviewData.totalClasses || 0, icon: '', color: this.warningColor }
         ], yPosition);
 
-        yPosition += 30;
+        yPosition += 32;
 
         // Class Performance Comparison
         if (data.overallClassPerformanceData && data.overallClassPerformanceData.length > 0) {
             this.addSectionTitle(doc, 'Class Performance Comparison', yPosition);
-            yPosition += 8;
+            yPosition += 7;
 
             const classData = data.overallClassPerformanceData.slice(0, 8).map((c: any) => [
                 this.truncateText(c.className, 25),
@@ -411,28 +349,31 @@ export class AnalyticsPdfExportService {
 
             autoTable(doc, {
                 startY: yPosition,
-                head: [['Class Name', 'Avg Score', 'Participation', 'Pass Rate', 'Students', 'Assessments', 'Performance']],
+                head: [['Class Name', 'Avg\nScore', 'Particip.', 'Pass\nRate', 'Students', 'Assess.', 'Perform.']],
                 body: classData,
                 theme: 'plain',
                 headStyles: {
                     fillColor: [this.primaryColor[0], this.primaryColor[1], this.primaryColor[2]],
                     textColor: [255, 255, 255],
                     fontStyle: 'bold',
-                    fontSize: 8,
-                    cellPadding: 3
+                    fontSize: 7.5,
+                    cellPadding: { top: 2, right: 1.5, bottom: 2, left: 1.5 },
+                    valign: 'middle',
+                    halign: 'center',
+                    minCellHeight: 8
                 },
                 styles: {
                     fontSize: 7.5,
                     cellPadding: 2.5
                 },
                 columnStyles: {
-                    0: { cellWidth: 50 },
-                    1: { cellWidth: 23 },
-                    2: { cellWidth: 25 },
-                    3: { cellWidth: 21 },
-                    4: { cellWidth: 21 },
-                    5: { cellWidth: 25 },
-                    6: { cellWidth: 23 }
+                    0: { cellWidth: 60 },
+                    1: { cellWidth: 21, halign: 'center' },
+                    2: { cellWidth: 23, halign: 'center' },
+                    3: { cellWidth: 20, halign: 'center' },
+                    4: { cellWidth: 20, halign: 'center' },
+                    5: { cellWidth: 24, halign: 'center' },
+                    6: { cellWidth: 22, halign: 'center' }
                 },
                 alternateRowStyles: {
                     fillColor: [this.bgLight[0], this.bgLight[1], this.bgLight[2]]
@@ -449,14 +390,38 @@ export class AnalyticsPdfExportService {
             yPosition = 20;
         }
 
-        this.addSectionTitle(doc, 'Topic Performance Analysis', yPosition);
-        yPosition += 8;
+        // Topic Performance Analysis title on left, Commonly Missed Topics on right (same line)
+        doc.setFontSize(13);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(this.textDark[0], this.textDark[1], this.textDark[2]);
+        doc.text('Topic Performance Analysis', 10, yPosition);
 
-        // Top Topics (Full Width)
+        // Underline for left title
+        const leftTitleWidth = doc.getTextWidth('Topic Performance Analysis');
+        doc.setDrawColor(this.primaryColor[0], this.primaryColor[1], this.primaryColor[2]);
+        doc.setLineWidth(0.8);
+        doc.line(10, yPosition + 1, 10 + leftTitleWidth, yPosition + 1);
+
+        // Right title (Commonly Missed Topics) on same line
+        const rightTitle = 'Commonly Missed Topics';
+        const rightTitleWidth = doc.getTextWidth(rightTitle);
+        doc.setTextColor(this.dangerColor[0], this.dangerColor[1], this.dangerColor[2]);
+        doc.text(rightTitle, pageWidth - rightTitleWidth - 10, yPosition);
+
+        // Underline for right title
+        doc.setDrawColor(this.dangerColor[0], this.dangerColor[1], this.dangerColor[2]);
+        doc.line(pageWidth - rightTitleWidth - 10, yPosition + 1, pageWidth - 10, yPosition + 1);
+
+        yPosition += 2;
+
+        // Top Performing Topics subsection
         if (data.topTopics && data.topTopics.length > 0) {
-            this.addSubsectionTitle(doc, 'Top Performing Topics', yPosition, 14, this.successColor);
-            yPosition += 6;
+            this.addSubsectionTitle(doc, 'Top Performing Topics', yPosition, 10, this.successColor);
+        }
+        yPosition += 6;
 
+        // Top Topics Table
+        if (data.topTopics && data.topTopics.length > 0) {
             const topTopicsData = data.topTopics.slice(0, 8).map((t: any) => [
                 this.truncateText(t.categoryName, 40),
                 `${t.percentage}%`,
@@ -480,9 +445,9 @@ export class AnalyticsPdfExportService {
                     cellPadding: 3
                 },
                 columnStyles: {
-                    0: { cellWidth: 128 },
-                    1: { cellWidth: 30 },
-                    2: { cellWidth: 30 }
+                    0: { cellWidth: 134 },
+                    1: { cellWidth: 28 },
+                    2: { cellWidth: 28 }
                 },
                 alternateRowStyles: {
                     fillColor: [240, 253, 244]
@@ -490,7 +455,7 @@ export class AnalyticsPdfExportService {
                 margin: { left: 10, right: 10 }
             });
 
-            yPosition = (doc as any).lastAutoTable.finalY + 15;
+            yPosition = (doc as any).lastAutoTable.finalY + 10;
         }
 
         // Check if we need a new page for Missed Topics
@@ -499,10 +464,8 @@ export class AnalyticsPdfExportService {
             yPosition = 20;
         }
 
-        // Missed Topics (Full Width)
+        // Missed Topics Table
         if (data.leastTopics && data.leastTopics.length > 0) {
-            this.addSubsectionTitle(doc, 'Commonly Missed Topics', yPosition, 14, this.dangerColor);
-            yPosition += 6;
 
             const leastTopicsData = data.leastTopics.slice(0, 8).map((t: any) => [
                 this.truncateText(t.categoryName, 40),
@@ -527,9 +490,9 @@ export class AnalyticsPdfExportService {
                     cellPadding: 3
                 },
                 columnStyles: {
-                    0: { cellWidth: 128 },
-                    1: { cellWidth: 30 },
-                    2: { cellWidth: 30 }
+                    0: { cellWidth: 134 },
+                    1: { cellWidth: 28 },
+                    2: { cellWidth: 28 }
                 },
                 alternateRowStyles: {
                     fillColor: [254, 242, 242]
@@ -540,15 +503,26 @@ export class AnalyticsPdfExportService {
             yPosition = (doc as any).lastAutoTable.finalY + 15;
         }
 
-        // Performance Trend
+        // Performance Trend with Visual Graph
         if (data.performanceTrendData?.trends && data.performanceTrendData.trends.length > 0) {
             if (yPosition > pageHeight - 60) {
                 doc.addPage();
                 yPosition = 20;
             }
 
-            this.addSectionTitle(doc, 'Performance Trend Over Time', yPosition);
+            this.addSectionTitle(doc, 'Performance Trend Over Time', yPosition, 10, 'center');
             yPosition += 8;
+
+            // Add visual trend graph
+            const graphHeight = 60;
+            this.drawPerformanceTrendGraph(doc, data.performanceTrendData.trends, yPosition, pageWidth, graphHeight);
+            yPosition += graphHeight + 10;
+
+            // Check if we need a new page after graph
+            if (yPosition > pageHeight - 80) {
+                doc.addPage();
+                yPosition = 20;
+            }
 
             const trendData = data.performanceTrendData.trends.slice(0, 12).map((m: any) => [
                 m.period,
@@ -574,10 +548,10 @@ export class AnalyticsPdfExportService {
                     cellPadding: 3
                 },
                 columnStyles: {
-                    0: { cellWidth: 62 },
-                    1: { cellWidth: 42 },
-                    2: { cellWidth: 42 },
-                    3: { cellWidth: 42 }
+                    0: { cellWidth: 70 },
+                    1: { cellWidth: 40 },
+                    2: { cellWidth: 40 },
+                    3: { cellWidth: 40 }
                 },
                 alternateRowStyles: {
                     fillColor: [this.bgLight[0], this.bgLight[1], this.bgLight[2]]
@@ -586,6 +560,18 @@ export class AnalyticsPdfExportService {
             });
 
             yPosition = (doc as any).lastAutoTable.finalY + 12;
+        }
+
+        // Performance Summary & Insights Section
+        if (data.performanceTrendData?.summary && data.performanceTrendData?.insights) {
+            if (yPosition > pageHeight - 90) {
+                doc.addPage();
+                yPosition = 20;
+            }
+
+            // Draw Performance Summary & Key Insights Card
+            this.addPerformanceSummaryCard(doc, data.performanceTrendData.summary, data.performanceTrendData.insights, yPosition, pageWidth);
+            yPosition += 75;
         }
 
         // Trend Analysis Card
@@ -621,7 +607,8 @@ export class AnalyticsPdfExportService {
             doc.setFont('helvetica', 'bold');
             const improvementColor: [number, number, number] = improvement > 0 ? this.successColor : improvement < 0 ? this.dangerColor : this.textLight;
             doc.setTextColor(improvementColor[0], improvementColor[1], improvementColor[2]);
-            const improvementText = improvement > 0 ? `↑ ${Math.abs(improvement)}%` : improvement < 0 ? `↓ ${Math.abs(improvement)}%` : `→ ${Math.abs(improvement)}%`;
+            const improvementValue = Math.abs(Number(improvement)).toFixed(1);
+            const improvementText = improvement > 0 ? `+${improvementValue}%` : improvement < 0 ? `-${improvementValue}%` : `${improvementValue}%`;
             doc.text(improvementText, pageWidth - 18, yPosition + 14, { align: 'right' });
 
             yPosition += 28;
@@ -668,8 +655,8 @@ export class AnalyticsPdfExportService {
                     fillColor: [this.bgLight[0], this.bgLight[1], this.bgLight[2]]
                 },
                 columnStyles: {
-                    0: { cellWidth: 62 },
-                    1: { cellWidth: 35, fontStyle: 'bold', textColor: [this.primaryColor[0], this.primaryColor[1], this.primaryColor[2]] },
+                    0: { cellWidth: 65 },
+                    1: { cellWidth: 34, fontStyle: 'bold', textColor: [this.primaryColor[0], this.primaryColor[1], this.primaryColor[2]] },
                     2: { cellWidth: 91 }
                 },
                 margin: { left: 10, right: 10 }
@@ -685,11 +672,12 @@ export class AnalyticsPdfExportService {
                 yPosition = 20;
             }
 
-            this.addSectionTitle(doc, 'Topic Distribution Details', yPosition);
-            yPosition += 10;
+            this.addSectionTitle(doc, 'Topic Distribution Summary', yPosition);
+            yPosition += 6;
 
-            // Display as horizontal cards
-            this.addTopicDistributionCards(doc, data.topicDistribution, yPosition, pageWidth, pageHeight);
+            // Display as vertical list with cards
+            const finalY = this.addTopicDistributionList(doc, data.topicDistribution, yPosition, pageWidth, pageHeight);
+            yPosition = finalY + 10;
         }
 
         // Footer
@@ -700,21 +688,7 @@ export class AnalyticsPdfExportService {
         doc.save(fileName);
     }
 
-    /**
-     * HELPER FUNCTION: Adds a modern branded header to the PDF
-     * 
-     * Creates a two-tone gradient header with:
-     * - PRISM logo with rounded white background
-     * - Platform title and subtitle
-     * - Report title (right-aligned)
-     * - Current date
-     * - Decorative underline
-     * 
-     * To adjust header height: Change the rectangle heights (currently 38mm and 20mm)
-     * To adjust logo size: Change the addImage parameters (currently 22x22mm at position 14,8)
-     * To adjust logo border radius: Change the roundedRect radius parameter (currently 3)
-     * To change background colors: Modify the setFillColor RGB values
-     */
+    // MODERN HEADER - Creates branded header with PRISM logo, title, and date
     private async addModernHeader(doc: jsPDF, title: string, subtitle: string) {
         const pageWidth = doc.internal.pageSize.getWidth();
 
@@ -726,17 +700,31 @@ export class AnalyticsPdfExportService {
         doc.setFillColor(67, 56, 202);
         doc.rect(0, 0, pageWidth, 20, 'F');
 
-        // Add logo with rounded background
+        // Add logo with rounded background to mask original shape
         try {
             const logoPath = '/prism_logo.webp';
             const logoData = await this.loadImage(logoPath);
 
-            // White rounded rectangle background for logo (border radius = 3)
-            doc.setFillColor(255, 255, 255);
-            doc.roundedRect(14, 8, 22, 22, 3, 3, 'F');
+            const logoX = 14, logoY = 8, logoSize = 22, radius = 3;
 
-            // Add logo image on top of rounded background
-            doc.addImage(logoData, 'PNG', 14, 8, 22, 22);
+            // Draw white rounded rectangle background FIRST to mask logo edges
+            doc.setFillColor(255, 255, 255);
+            doc.roundedRect(logoX, logoY, logoSize, logoSize, radius, radius, 'F');
+
+            // Clip the image to rounded rectangle shape
+            doc.saveGraphicsState();
+
+            // Add clipping path (simulate with drawing operations)
+            const clipMargin = 0.5;
+            doc.addImage(logoData, 'PNG', logoX + clipMargin, logoY + clipMargin, logoSize - (clipMargin * 2), logoSize - (clipMargin * 2));
+
+            doc.restoreGraphicsState();
+
+            // Add stylish white border on top
+            doc.setDrawColor(255, 255, 255);
+            doc.setLineWidth(2);
+            doc.roundedRect(logoX, logoY, logoSize, logoSize, radius, radius, 'S');
+
         } catch (error) {
             console.warn('Logo not loaded, continuing without it', error);
         }
@@ -749,7 +737,7 @@ export class AnalyticsPdfExportService {
 
         doc.setFontSize(8);
         doc.setFont('helvetica', 'normal');
-        doc.text('Analytics Platform', 40, 24);
+        doc.text('Elevate your Assessment Needs with PRISM', 40, 24);
 
         // Report Title
         doc.setFontSize(16);
@@ -771,54 +759,49 @@ export class AnalyticsPdfExportService {
         const dateWidth = doc.getTextWidth(dateText);
         doc.text(dateText, pageWidth - dateWidth - 14, 30);
 
-        // Decorative line
+        // ⚙️ HEADER BORDER CUSTOMIZATION POINT ⚙️
+        // Decorative line at bottom of header
+        // TO ADJUST: Change the Y position (currently 36) to move the line up or down
+        // TO ADJUST: Change setLineWidth value (currently 0.5) for thicker/thinner line
+        // TO ADJUST: Change setDrawColor to modify line color (currently white: 255, 255, 255)
         doc.setDrawColor(255, 255, 255);
         doc.setLineWidth(0.5);
         doc.line(14, 36, pageWidth - 14, 36);
     }
 
-    /**
-     * HELPER FUNCTION: Adds a main section title with underline
-     * 
-     * Creates a bold, large title with a colored underline for major sections
-     * 
-     * @param doc The jsPDF document instance
-     * @param title The text to display as the section title
-     * @param yPosition Vertical position in mm from the top of the page
-     * @param xPosition Horizontal position in mm from the left (default: 10mm)
-     * 
-     * To adjust font size: Change setFontSize value (currently 13)
-     * To adjust underline thickness: Change setLineWidth value (currently 0.8)
-     * To adjust underline color: Modify the setDrawColor RGB values (uses primaryColor)
-     * To adjust title position: Change xPosition parameter
-     */
-    private addSectionTitle(doc: jsPDF, title: string, yPosition: number, xPosition: number = 10) {
+    // SECTION TITLE - Adds bold title with colored underline
+    // ⚙️ To adjust underline distance: Change "+ 1" in line() call (line 828)
+    private addSectionTitle(
+        doc: jsPDF,
+        title: string,
+        yPosition: number,
+        xPosition: number = 10,
+        align: 'left' | 'center' = 'left'
+    ) {
         doc.setFontSize(13);
         doc.setFont('helvetica', 'bold');
         doc.setTextColor(this.textDark[0], this.textDark[1], this.textDark[2]);
-        doc.text(title, xPosition, yPosition);
 
-        // Underline with primary color
-        const textWidth = doc.getTextWidth(title);
-        doc.setDrawColor(this.primaryColor[0], this.primaryColor[1], this.primaryColor[2]);
-        doc.setLineWidth(0.8);
-        doc.line(xPosition, yPosition + 1, xPosition + textWidth, yPosition + 1);
+        if (align === 'center') {
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const centerX = pageWidth / 2;
+            doc.text(title, centerX, yPosition, { align: 'center' });
+
+            const textWidth = doc.getTextWidth(title);
+            const lineStart = centerX - textWidth / 2;
+            doc.setDrawColor(this.primaryColor[0], this.primaryColor[1], this.primaryColor[2]);
+            doc.setLineWidth(0.8);
+            doc.line(lineStart, yPosition + 1, lineStart + textWidth, yPosition + 1);
+        } else {
+            doc.text(title, xPosition, yPosition);
+            const textWidth = doc.getTextWidth(title);
+            doc.setDrawColor(this.primaryColor[0], this.primaryColor[1], this.primaryColor[2]);
+            doc.setLineWidth(0.8);
+            doc.line(xPosition, yPosition + 1, xPosition + textWidth, yPosition + 1);
+        }
     }
 
-    /**
-     * HELPER FUNCTION: Adds a subsection title without underline
-     * 
-     * Creates a smaller, colored title for subsections within a major section
-     * 
-     * @param doc The jsPDF document instance
-     * @param title The text to display as the subsection title
-     * @param yPosition Vertical position in mm from the top of the page
-     * @param xPosition Horizontal position in mm from the left (default: 10mm)
-     * @param color RGB color array for the title text (default: primaryColor)
-     * 
-     * To adjust font size: Change setFontSize value (currently 11)
-     * To change text color: Pass a different color parameter
-     */
+    // SUBSECTION TITLE - Adds smaller colored title without underline
     private addSubsectionTitle(doc: jsPDF, title: string, yPosition: number, xPosition: number = 10, color: [number, number, number] = this.primaryColor) {
         doc.setFontSize(11);
         doc.setFont('helvetica', 'bold');
@@ -826,27 +809,7 @@ export class AnalyticsPdfExportService {
         doc.text(title, xPosition, yPosition);
     }
 
-    /**
-     * HELPER FUNCTION: Adds a row of metric cards for overview statistics
-     * 
-     * Creates 3 evenly-spaced cards displaying key metrics with:
-     * - Light gray background with colored border
-     * - Uppercase label text
-     * - Large, bold, colored value
-     * - Optional icon (currently not used)
-     * 
-     * @param doc The jsPDF document instance
-     * @param metrics Array of metric objects with label, value, icon, and color
-     * @param yPosition Vertical position in mm from the top of the page
-     * 
-     * To adjust card width: Change the calculation (pageWidth - 40) / 3
-     * To adjust card height: Change cardHeight value (currently 22mm)
-     * To adjust spacing between cards: Change the "+ 10" value at the end
-     * To adjust card border radius: Change roundedRect radius (currently 2)
-     * To adjust label font size: Change the first setFontSize (currently 8)
-     * To adjust value font size: Change the second setFontSize (currently 16)
-     * To adjust overall card positioning: Change xPosition initial value (currently 10mm)
-     */
+    // METRIC CARDS - Creates 3 summary cards with labels and values
     private addMetricCards(doc: jsPDF, metrics: Array<{ label: string, value: any, icon: string, color: [number, number, number] }>, yPosition: number) {
         const pageWidth = doc.internal.pageSize.getWidth();
         const cardWidth = (pageWidth - 40) / 3; // Width calculation: (total width - margins) / 3 cards
@@ -889,263 +852,219 @@ export class AnalyticsPdfExportService {
         });
     }
 
-    /**
-     * HELPER FUNCTION: Adds a topic analysis card with recommendations
-     * 
-     * Creates a full-width card for individual topic analysis displaying:
-     * - Topic title (can wrap to multiple lines)
-     * - Status reason/explanation
-     * - Health score badge (colored, rounded)
-     * - Recommended actions (only for "danger" type topics)
-     * 
-     * @param doc The jsPDF document instance
-     * @param topic Object containing topic data (title, status_reason, health_score, recommended_actions)
-     * @param yPosition Vertical position in mm from the top of the page
-     * @param pageWidth Width of the page for full-width card calculation
-     * @param type 'success' for top performers (green), 'danger' for needs attention (red)
-     * 
-     * To adjust card height: Change cardHeight value (28mm for success, 38mm for danger)
-     * To adjust card margins: Change the "pageWidth - 20" calculation (currently 10mm margins)
-     * To adjust title font size: Change the first setFontSize (currently 10)
-     * To adjust health score badge size: Change the roundedRect dimensions (currently 24x8mm)
-     */
-    private addTopicCard(doc: jsPDF, topic: any, yPosition: number, pageWidth: number, type: 'success' | 'danger') {
-        const bgColor: [number, number, number] = type === 'success' ? [240, 253, 244] : [254, 242, 242];
-        const borderColor: [number, number, number] = type === 'success' ? this.successColor : this.dangerColor;
-        const cardHeight = type === 'danger' ? 38 : 28;
+    // TOPIC DISTRIBUTION LIST - Shows topics in vertical sections with modern card design
+    private addTopicDistributionList(doc: jsPDF, topicDistribution: any, yPosition: number, pageWidth: number, pageHeight: number): number {
+        let currentY = yPosition;
+        const cardMargin = 10;
+        const cardWidth = pageWidth - (cardMargin * 2);
 
-        // Card
-        doc.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
-        doc.roundedRect(10, yPosition, pageWidth - 20, cardHeight, 2, 2, 'F');
-
-        doc.setDrawColor(borderColor[0], borderColor[1], borderColor[2]);
-        doc.setLineWidth(0.3);
-        doc.roundedRect(10, yPosition, pageWidth - 20, cardHeight, 2, 2, 'S');
-
-        // Title
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'bold');
-        doc.setTextColor(this.textDark[0], this.textDark[1], this.textDark[2]);
-        const titleLines = doc.splitTextToSize(topic.title, pageWidth - 40);
-        doc.text(titleLines, 14, yPosition + 6);
-
-        // Status
-        doc.setFontSize(8);
-        doc.setFont('helvetica', 'normal');
-        doc.setTextColor(this.textLight[0], this.textLight[1], this.textLight[2]);
-        const statusLines = doc.splitTextToSize(topic.status_reason || '', pageWidth - 40);
-        doc.text(statusLines, 14, yPosition + 13);
-
-        // Health Score Badge
-        doc.setFillColor(borderColor[0], borderColor[1], borderColor[2]);
-        doc.roundedRect(pageWidth - 34, yPosition + 5, 24, 8, 1, 1, 'F');
-        doc.setFontSize(9);
-        doc.setFont('helvetica', 'bold');
-        doc.setTextColor(255, 255, 255);
-        doc.text(`${topic.health_score}`, pageWidth - 22, yPosition + 10, { align: 'center' });
-
-        // Recommendation (for danger type)
-        if (type === 'danger' && topic.recommended_actions) {
-            doc.setFontSize(7);
-            doc.setTextColor(59, 130, 246);
-            doc.setFont('helvetica', 'italic');
-            const actionLines = doc.splitTextToSize(`Recommendation: ${topic.recommended_actions}`, pageWidth - 40);
-            doc.text(actionLines, 14, yPosition + 26);
-        }
-    }
-
-    /**
-     * HELPER FUNCTION: Adds a horizontal row of 3 topic distribution summary cards
-     * 
-     * Creates three side-by-side cards showing topic distribution overview:
-     * 1. Top Titles (green) - High performing topics
-     * 2. Average Titles (yellow) - Moderately performing topics
-     * 3. Needs Attention (red) - Low performing topics
-     * 
-     * Each card displays:
-     * - Colored header with title
-     * - Topic count
-     * - First 3 topics listed
-     * - "+X more..." indicator if there are additional topics
-     * 
-     * @param doc The jsPDF document instance
-     * @param topicDistribution Object with top, average, and needs_attention arrays
-     * @param yPosition Vertical position in mm from the top of the page
-     * @param pageWidth Width of the page for card width calculation
-     * @param pageHeight Height of the page (currently unused)
-     * 
-     * To adjust card width: Change the calculation (pageWidth - 40) / 3
-     * To adjust card height: Change cardHeight value (currently 45mm)
-     * To adjust spacing between cards: Change the "+ 10" at xPosition increment
-     * To adjust number of topics shown: Change the .slice(0, 3) parameter
-     * To adjust card border radius: Change roundedRect radius (currently 3)
-     */
-    private addTopicDistributionCards(doc: jsPDF, topicDistribution: any, yPosition: number, pageWidth: number, pageHeight: number) {
-        const cardWidth = (pageWidth - 40) / 3; // Width for 3 cards with margins
-        const cardHeight = 45; // Card height in mm
-        let xPosition = 10; // Starting position from left
-
-        // Top Titles Card
+        // Top Topics Section - Modern Card Design
         if (topicDistribution.top && topicDistribution.top.length > 0) {
-            doc.setFillColor(240, 253, 244); // Light green background
-            doc.roundedRect(xPosition, yPosition, cardWidth, cardHeight, 3, 3, 'F');
+            if (currentY > pageHeight - 30) {
+                doc.addPage();
+                currentY = 20;
+            }
+
+            const boxHeight = Math.min(topicDistribution.top.length, 5) * 5.5 + 12;
+
+            // Modern card with white background and colored accent
+            doc.setFillColor(255, 255, 255);
+            doc.roundedRect(cardMargin, currentY, cardWidth, boxHeight, 3, 3, 'F');
+
+            // Colored left accent bar
+            doc.setFillColor(this.successColor[0], this.successColor[1], this.successColor[2]);
+            doc.roundedRect(cardMargin, currentY, 4, boxHeight, 3, 3, 'F');
+
+            // Subtle border
             doc.setDrawColor(this.successColor[0], this.successColor[1], this.successColor[2]);
             doc.setLineWidth(0.5);
-            doc.roundedRect(xPosition, yPosition, cardWidth, cardHeight, 3, 3, 'S');
+            doc.roundedRect(cardMargin, currentY, cardWidth, boxHeight, 3, 3, 'S');
 
-            // Card header
-            doc.setFillColor(this.successColor[0], this.successColor[1], this.successColor[2]);
-            doc.roundedRect(xPosition + 2, yPosition + 2, cardWidth - 4, 10, 2, 2, 'F');
+            // Header with count badge
             doc.setFontSize(10);
             doc.setFont('helvetica', 'bold');
-            doc.setTextColor(255, 255, 255);
-            doc.text('Top Titles', xPosition + cardWidth / 2, yPosition + 8, { align: 'center' });
-
-            // Topics count
-            doc.setFontSize(8);
-            doc.setFont('helvetica', 'normal');
             doc.setTextColor(this.textDark[0], this.textDark[1], this.textDark[2]);
-            doc.text(`${topicDistribution.top.length} topics`, xPosition + 5, yPosition + 18);
+            doc.text('Top Performing Topics', cardMargin + 7, currentY + 6);
 
-            // Topics list (first 3)
-            let itemY = yPosition + 24;
-            topicDistribution.top.slice(0, 3).forEach((topic: any) => {
-                doc.setFontSize(7);
-                doc.text(`• ${this.truncateText(topic.title, 25)}`, xPosition + 5, itemY);
-                itemY += 5;
+            // Count badge
+            doc.setFillColor(this.successColor[0], this.successColor[1], this.successColor[2]);
+            doc.roundedRect(cardMargin + cardWidth - 22, currentY + 2, 18, 6, 2, 2, 'F');
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(255, 255, 255);
+            doc.text(String(topicDistribution.top.length), cardMargin + cardWidth - 13, currentY + 6, { align: 'center' });
+
+            // Separator line
+            doc.setDrawColor(229, 231, 235);
+            doc.setLineWidth(0.3);
+            doc.line(cardMargin + 7, currentY + 9, cardMargin + cardWidth - 7, currentY + 9);
+
+            // Topics list with alternating backgrounds
+            let itemY = currentY + 13;
+            topicDistribution.top.slice(0, 5).forEach((topic: any, idx: number) => {
+                // Alternating background for better readability
+                if (idx % 2 === 0) {
+                    doc.setFillColor(248, 250, 252);
+                    doc.rect(cardMargin + 6, itemY - 2.5, cardWidth - 12, 5, 'F');
+                }
+
+                doc.setFontSize(8);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(this.textDark[0], this.textDark[1], this.textDark[2]);
+                doc.text(`${idx + 1}. ${this.truncateText(topic.title, 70)}`, cardMargin + 8, itemY);
+                itemY += 5.5;
             });
 
-            if (topicDistribution.top.length > 3) {
+            if (topicDistribution.top.length > 5) {
                 doc.setFontSize(7);
+                doc.setFont('helvetica', 'italic');
                 doc.setTextColor(this.textLight[0], this.textLight[1], this.textLight[2]);
-                doc.text(`+${topicDistribution.top.length - 3} more...`, xPosition + 5, itemY);
+                doc.text(`+${topicDistribution.top.length - 5} more topics...`, cardMargin + 8, itemY);
             }
 
-            xPosition += cardWidth + 10;
+            currentY += boxHeight + 5;
         }
 
-        // Average Titles Card
+        // Average Topics Section - Modern Card Design
         if (topicDistribution.average && topicDistribution.average.length > 0) {
-            doc.setFillColor(254, 252, 232); // Light yellow background
-            doc.roundedRect(xPosition, yPosition, cardWidth, cardHeight, 3, 3, 'F');
+            if (currentY > pageHeight - 30) {
+                doc.addPage();
+                currentY = 20;
+            }
+
+            const boxHeight = Math.min(topicDistribution.average.length, 5) * 5.5 + 12;
+
+            // Modern card with white background
+            doc.setFillColor(255, 255, 255);
+            doc.roundedRect(cardMargin, currentY, cardWidth, boxHeight, 3, 3, 'F');
+
+            // Colored left accent bar
+            doc.setFillColor(this.warningColor[0], this.warningColor[1], this.warningColor[2]);
+            doc.roundedRect(cardMargin, currentY, 4, boxHeight, 3, 3, 'F');
+
+            // Subtle border
             doc.setDrawColor(this.warningColor[0], this.warningColor[1], this.warningColor[2]);
             doc.setLineWidth(0.5);
-            doc.roundedRect(xPosition, yPosition, cardWidth, cardHeight, 3, 3, 'S');
+            doc.roundedRect(cardMargin, currentY, cardWidth, boxHeight, 3, 3, 'S');
 
-            // Card header
-            doc.setFillColor(this.warningColor[0], this.warningColor[1], this.warningColor[2]);
-            doc.roundedRect(xPosition + 2, yPosition + 2, cardWidth - 4, 10, 2, 2, 'F');
+            // Header
             doc.setFontSize(10);
             doc.setFont('helvetica', 'bold');
-            doc.setTextColor(255, 255, 255);
-            doc.text('Average Titles', xPosition + cardWidth / 2, yPosition + 8, { align: 'center' });
-
-            // Topics count
-            doc.setFontSize(8);
-            doc.setFont('helvetica', 'normal');
             doc.setTextColor(this.textDark[0], this.textDark[1], this.textDark[2]);
-            doc.text(`${topicDistribution.average.length} topics`, xPosition + 5, yPosition + 18);
+            doc.text('Average Performance Topics', cardMargin + 7, currentY + 6);
 
-            // Topics list (first 3)
-            let itemY = yPosition + 24;
-            topicDistribution.average.slice(0, 3).forEach((topic: any) => {
-                doc.setFontSize(7);
-                doc.text(`• ${this.truncateText(topic.title, 25)}`, xPosition + 5, itemY);
-                itemY += 5;
+            // Count badge
+            doc.setFillColor(this.warningColor[0], this.warningColor[1], this.warningColor[2]);
+            doc.roundedRect(cardMargin + cardWidth - 22, currentY + 2, 18, 6, 2, 2, 'F');
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(255, 255, 255);
+            doc.text(String(topicDistribution.average.length), cardMargin + cardWidth - 13, currentY + 6, { align: 'center' });
+
+            // Separator line
+            doc.setDrawColor(229, 231, 235);
+            doc.setLineWidth(0.3);
+            doc.line(cardMargin + 7, currentY + 9, cardMargin + cardWidth - 7, currentY + 9);
+
+            // Topics list
+            let itemY = currentY + 13;
+            topicDistribution.average.slice(0, 5).forEach((topic: any, idx: number) => {
+                if (idx % 2 === 0) {
+                    doc.setFillColor(248, 250, 252);
+                    doc.rect(cardMargin + 6, itemY - 2.5, cardWidth - 12, 5, 'F');
+                }
+
+                doc.setFontSize(8);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(this.textDark[0], this.textDark[1], this.textDark[2]);
+                doc.text(`${idx + 1}. ${this.truncateText(topic.title, 70)}`, cardMargin + 8, itemY);
+                itemY += 5.5;
             });
 
-            if (topicDistribution.average.length > 3) {
+            if (topicDistribution.average.length > 5) {
                 doc.setFontSize(7);
+                doc.setFont('helvetica', 'italic');
                 doc.setTextColor(this.textLight[0], this.textLight[1], this.textLight[2]);
-                doc.text(`+${topicDistribution.average.length - 3} more...`, xPosition + 5, itemY);
+                doc.text(`+${topicDistribution.average.length - 5} more topics...`, cardMargin + 8, itemY);
             }
 
-            xPosition += cardWidth + 10;
+            currentY += boxHeight + 5;
         }
 
-        // Needs Attention Card
+        // Needs Attention Section - Modern Card Design with Priority Indicator
         if (topicDistribution.needs_attention && topicDistribution.needs_attention.length > 0) {
-            doc.setFillColor(254, 242, 242); // Light red background
-            doc.roundedRect(xPosition, yPosition, cardWidth, cardHeight, 3, 3, 'F');
+            if (currentY > pageHeight - 30) {
+                doc.addPage();
+                currentY = 20;
+            }
+
+            const boxHeight = Math.min(topicDistribution.needs_attention.length, 5) * 5.5 + 12;
+
+            // Modern card with white background
+            doc.setFillColor(255, 255, 255);
+            doc.roundedRect(cardMargin, currentY, cardWidth, boxHeight, 3, 3, 'F');
+
+            // Colored left accent bar (thicker for attention)
+            doc.setFillColor(this.dangerColor[0], this.dangerColor[1], this.dangerColor[2]);
+            doc.roundedRect(cardMargin, currentY, 4, boxHeight, 3, 3, 'F');
+
+            // Subtle border
             doc.setDrawColor(this.dangerColor[0], this.dangerColor[1], this.dangerColor[2]);
             doc.setLineWidth(0.5);
-            doc.roundedRect(xPosition, yPosition, cardWidth, cardHeight, 3, 3, 'S');
+            doc.roundedRect(cardMargin, currentY, cardWidth, boxHeight, 3, 3, 'S');
 
-            // Card header
-            doc.setFillColor(this.dangerColor[0], this.dangerColor[1], this.dangerColor[2]);
-            doc.roundedRect(xPosition + 2, yPosition + 2, cardWidth - 4, 10, 2, 2, 'F');
+            // Header with warning indicator
             doc.setFontSize(10);
             doc.setFont('helvetica', 'bold');
-            doc.setTextColor(255, 255, 255);
-            doc.text('Needs Attention', xPosition + cardWidth / 2, yPosition + 8, { align: 'center' });
+            doc.setTextColor(this.dangerColor[0], this.dangerColor[1], this.dangerColor[2]);
+            doc.text('Topics Requiring Attention', cardMargin + 7, currentY + 6);
 
-            // Topics count
+            // Count badge with priority styling
+            doc.setFillColor(this.dangerColor[0], this.dangerColor[1], this.dangerColor[2]);
+            doc.roundedRect(cardMargin + cardWidth - 22, currentY + 2, 18, 6, 2, 2, 'F');
             doc.setFontSize(8);
-            doc.setFont('helvetica', 'normal');
-            doc.setTextColor(this.textDark[0], this.textDark[1], this.textDark[2]);
-            doc.text(`${topicDistribution.needs_attention.length} topics`, xPosition + 5, yPosition + 18);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(255, 255, 255);
+            doc.text(String(topicDistribution.needs_attention.length), cardMargin + cardWidth - 13, currentY + 6, { align: 'center' });
 
-            // Topics list (first 3)
-            let itemY = yPosition + 24;
-            topicDistribution.needs_attention.slice(0, 3).forEach((topic: any) => {
-                doc.setFontSize(7);
-                doc.text(`• ${this.truncateText(topic.title, 25)}`, xPosition + 5, itemY);
-                itemY += 5;
+            // Separator line
+            doc.setDrawColor(229, 231, 235);
+            doc.setLineWidth(0.3);
+            doc.line(cardMargin + 7, currentY + 9, cardMargin + cardWidth - 7, currentY + 9);
+
+            // Topics list with priority indicators
+            let itemY = currentY + 13;
+            topicDistribution.needs_attention.slice(0, 5).forEach((topic: any, idx: number) => {
+                if (idx % 2 === 0) {
+                    doc.setFillColor(254, 242, 242);
+                    doc.rect(cardMargin + 6, itemY - 2.5, cardWidth - 12, 5, 'F');
+                }
+
+                // Priority indicator dot
+                doc.setFillColor(this.dangerColor[0], this.dangerColor[1], this.dangerColor[2]);
+                doc.circle(cardMargin + 9, itemY - 1, 0.8, 'F');
+
+                doc.setFontSize(8);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(this.textDark[0], this.textDark[1], this.textDark[2]);
+                doc.text(`${idx + 1}. ${this.truncateText(topic.title, 68)}`, cardMargin + 11, itemY);
+                itemY += 5.5;
             });
 
-            if (topicDistribution.needs_attention.length > 3) {
+            if (topicDistribution.needs_attention.length > 5) {
                 doc.setFontSize(7);
+                doc.setFont('helvetica', 'italic');
                 doc.setTextColor(this.textLight[0], this.textLight[1], this.textLight[2]);
-                doc.text(`+${topicDistribution.needs_attention.length - 3} more...`, xPosition + 5, itemY);
+                doc.text(`+${topicDistribution.needs_attention.length - 5} more topics requiring immediate attention...`, cardMargin + 8, itemY);
             }
+
+            currentY += boxHeight;
         }
+
+        return currentY;
     }
 
-    private addTopicColumn(doc: jsPDF, title: string, topics: any[], xPosition: number, yPosition: number, width: number, color: [number, number, number]) {
-        // Column header
-        doc.setFillColor(color[0], color[1], color[2]);
-        doc.roundedRect(xPosition, yPosition, width, 8, 1, 1, 'F');
-
-        doc.setFontSize(9);
-        doc.setFont('helvetica', 'bold');
-        doc.setTextColor(255, 255, 255);
-        doc.text(title, xPosition + 4, yPosition + 5.5);
-
-        // Topics list
-        let itemY = yPosition + 12;
-        const bgColor: [number, number, number] = color === this.successColor ? [240, 253, 244] : color === this.dangerColor ? [254, 242, 242] : [254, 252, 232];
-
-        topics.slice(0, 10).forEach((topic: any, index: number) => {
-            if (index % 2 === 0) {
-                doc.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
-                doc.rect(xPosition, itemY - 3, width, 5, 'F');
-            }
-
-            doc.setFontSize(7);
-            doc.setFont('helvetica', 'normal');
-            doc.setTextColor(this.textDark[0], this.textDark[1], this.textDark[2]);
-            const topicText = this.truncateText(topic.title, 35);
-            doc.text(`• ${topicText}`, xPosition + 2, itemY);
-
-            itemY += 5;
-        });
-    }
-
-    /**
-     * HELPER FUNCTION: Adds footer to all pages of the PDF
-     * 
-     * Adds a consistent footer to every page containing:
-     * - Horizontal line separator
-     * - Copyright text on the left
-     * - Page numbers on the right
-     * 
-     * This function loops through all pages and stamps the footer on each one
-     * 
-     * To adjust footer position: Change the "pageHeight - X" values
-     * To adjust line position: Change the line() Y coordinate (currently pageHeight - 12)
-     * To adjust text position: Change the text() Y coordinate (currently pageHeight - 7)
-     * To change footer text: Modify the copyright text string
-     */
+    // FOOTER - Adds consistent footer with page numbers to all pages
     private addFooter(doc: jsPDF) {
         const totalPages = doc.getNumberOfPages();
         const pageWidth = doc.internal.pageSize.getWidth();
@@ -1170,50 +1089,217 @@ export class AnalyticsPdfExportService {
         }
     }
 
-    /**
-     * UTILITY FUNCTION: Formats a number as a percentage string
-     * 
-     * Simple helper that adds a "%" symbol to numeric values
-     * 
-     * @param value The numeric value to format
-     * @returns String with percentage symbol (e.g., "85%")
-     */
+    // PERFORMANCE TREND GRAPH - Draws multi-line chart with Average Score, Passing Rate, and Consistency
+    private drawPerformanceTrendGraph(doc: jsPDF, trends: any[], yPosition: number, pageWidth: number, graphHeight: number) {
+        const margin = 10;
+        const graphWidth = pageWidth - (margin * 2);
+        const graphX = margin;
+        const graphY = yPosition;
+        const plotHeight = graphHeight - 20; // Reserve space for labels
+
+        // Filter out months with no submissions
+        const validTrends = trends.filter(t => t.totalSubmissions > 0);
+        if (validTrends.length === 0) return;
+
+        // Draw graph background
+        doc.setFillColor(249, 250, 251);
+        doc.roundedRect(graphX, graphY, graphWidth, graphHeight, 2, 2, 'F');
+        doc.setDrawColor(229, 231, 235);
+        doc.setLineWidth(0.3);
+        doc.roundedRect(graphX, graphY, graphWidth, graphHeight, 2, 2, 'S');
+
+        // Calculate scales
+        const maxValue = 100; // Percentage max
+        const minValue = 0;
+        const dataPoints = validTrends.length;
+        const xStep = (graphWidth - 20) / Math.max(dataPoints - 1, 1);
+        const yScale = plotHeight / (maxValue - minValue);
+
+        // Draw grid lines
+        doc.setDrawColor(229, 231, 235);
+        doc.setLineWidth(0.1);
+        for (let i = 0; i <= 4; i++) {
+            const y = graphY + 5 + (plotHeight * i / 4);
+            doc.line(graphX + 10, y, graphX + graphWidth - 10, y);
+
+            // Y-axis labels
+            doc.setFontSize(7);
+            doc.setTextColor(this.textLight[0], this.textLight[1], this.textLight[2]);
+            doc.text(`${100 - (i * 25)}%`, graphX + 3, y + 1);
+        }
+
+        // Helper function to draw a line
+        const drawLine = (data: number[], color: [number, number, number], lineWidth: number = 1.5) => {
+            doc.setDrawColor(color[0], color[1], color[2]);
+            doc.setLineWidth(lineWidth);
+
+            for (let i = 0; i < data.length - 1; i++) {
+                const x1 = graphX + 10 + (i * xStep);
+                const y1 = graphY + 5 + plotHeight - (data[i] * yScale);
+                const x2 = graphX + 10 + ((i + 1) * xStep);
+                const y2 = graphY + 5 + plotHeight - (data[i + 1] * yScale);
+
+                doc.line(x1, y1, x2, y2);
+
+                // Draw points
+                doc.setFillColor(color[0], color[1], color[2]);
+                doc.circle(x1, y1, 1.5, 'F');
+                if (i === data.length - 2) {
+                    doc.circle(x2, y2, 1.5, 'F');
+                }
+            }
+        };
+
+        // Extract data series
+        const avgScores = validTrends.map(t => t.averagePercentage);
+        const passingRates = validTrends.map(t => t.passingRate);
+        const consistency = validTrends.map(t => t.consistency);
+
+        // Draw lines
+        drawLine(consistency, [156, 163, 175], 1.2); // Gray for consistency
+        drawLine(passingRates, this.successColor, 1.5); // Green for passing rate
+        drawLine(avgScores, this.primaryColor, 2); // Bold primary for avg score
+
+        // X-axis labels (months)
+        doc.setFontSize(7);
+        doc.setTextColor(this.textDark[0], this.textDark[1], this.textDark[2]);
+        validTrends.forEach((trend, i) => {
+            const x = graphX + 10 + (i * xStep);
+            const monthLabel = trend.period.split(' ')[0].substring(0, 3); // First 3 letters of month
+            doc.text(monthLabel, x, graphY + graphHeight - 8, { align: 'center' });
+        });
+
+        // Legend
+        const legendY = graphY + graphHeight - 3;
+        const legendStartX = graphX + graphWidth / 2 - 45;
+
+        // Avg Score legend
+        doc.setDrawColor(this.primaryColor[0], this.primaryColor[1], this.primaryColor[2]);
+        doc.setLineWidth(2);
+        doc.line(legendStartX, legendY, legendStartX + 8, legendY);
+        doc.setFontSize(7);
+        doc.setTextColor(this.textDark[0], this.textDark[1], this.textDark[2]);
+        doc.text('Avg Score', legendStartX + 10, legendY + 1);
+
+        // Passing Rate legend
+        doc.setDrawColor(this.successColor[0], this.successColor[1], this.successColor[2]);
+        doc.setLineWidth(1.5);
+        doc.line(legendStartX + 35, legendY, legendStartX + 43, legendY);
+        doc.text('Passing', legendStartX + 45, legendY + 1);
+
+        // Consistency legend
+        doc.setDrawColor(156, 163, 175);
+        doc.setLineWidth(1.2);
+        doc.line(legendStartX + 68, legendY, legendStartX + 76, legendY);
+        doc.text('Consistency', legendStartX + 78, legendY + 1);
+    }
+
+    // PERFORMANCE SUMMARY CARD - Creates dashboard-style card with metrics grid and key insights
+    private addPerformanceSummaryCard(doc: jsPDF, summary: any, insights: any, yPosition: number, pageWidth: number) {
+        const cardX = 10;
+        const cardWidth = pageWidth - 20;
+        const cardHeight = 70;
+
+        // Main card background with gradient effect
+        doc.setFillColor(247, 250, 252);
+        doc.roundedRect(cardX, yPosition, cardWidth, cardHeight, 3, 3, 'F');
+        doc.setDrawColor(this.primaryColor[0], this.primaryColor[1], this.primaryColor[2]);
+        doc.setLineWidth(0.5);
+        doc.roundedRect(cardX, yPosition, cardWidth, cardHeight, 3, 3, 'S');
+
+        // Header bar
+        doc.setFillColor(this.primaryColor[0], this.primaryColor[1], this.primaryColor[2]);
+        doc.roundedRect(cardX + 2, yPosition + 2, cardWidth - 4, 8, 2, 2, 'F');
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(255, 255, 255);
+        doc.text('Performance Summary & Key Insights', cardX + 5, yPosition + 7.5);
+
+        let contentY = yPosition + 14;
+
+        // Summary Metrics Grid (2 rows x 4 columns)
+        const metricsData = [
+            { label: 'OVERALL AVERAGE', value: `${summary.overallAveragePercentage}%`, icon: '', color: this.primaryColor },
+            { label: 'TOTAL SUBMISSIONS', value: summary.totalSubmissions.toLocaleString(), icon: '', color: this.successColor },
+            { label: 'PASSING RATE', value: `${summary.averagePassingRate}%`, icon: '', color: this.warningColor },
+            { label: 'CONSISTENCY', value: `${summary.overallConsistency}%`, icon: '', color: [59, 130, 246] },
+            { label: 'HIGH PERFORMERS', value: `${summary.averageHighPerformerRate}%`, icon: '', color: this.successColor },
+            { label: 'NEED SUPPORT', value: `${summary.averageLowPerformerRate}%`, icon: '', color: this.dangerColor },
+            { label: 'ACTIVE MONTHS', value: `${summary.activeMonths}/${summary.totalMonthsInRange}`, icon: '', color: [107, 114, 128] },
+            { label: '', value: '', icon: '', color: [0, 0, 0] } // Empty space
+        ];
+
+        // Draw metrics in grid
+        const metricBoxWidth = (cardWidth - 12) / 4;
+        const metricBoxHeight = 12;
+
+        for (let i = 0; i < 8; i++) {
+            if (!metricsData[i].label) continue;
+
+            const row = Math.floor(i / 4);
+            const col = i % 4;
+            const boxX = cardX + 4 + (col * metricBoxWidth);
+            const boxY = contentY + (row * (metricBoxHeight + 2));
+
+            // Metric box background
+            doc.setFillColor(255, 255, 255);
+            doc.roundedRect(boxX, boxY, metricBoxWidth - 2, metricBoxHeight, 2, 2, 'F');
+            doc.setDrawColor(229, 231, 235);
+            doc.setLineWidth(0.2);
+            doc.roundedRect(boxX, boxY, metricBoxWidth - 2, metricBoxHeight, 2, 2, 'S');
+
+            // Label
+            doc.setFontSize(7);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(this.textLight[0], this.textLight[1], this.textLight[2]);
+            doc.text(metricsData[i].label, boxX + 2, boxY + 4);
+
+            // Value
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(metricsData[i].color[0], metricsData[i].color[1], metricsData[i].color[2]);
+            doc.text(String(metricsData[i].value), boxX + 2, boxY + 9);
+        }
+
+        contentY += 30;
+
+        // Key Insights Section
+        doc.setFillColor(254, 249, 195);
+        doc.roundedRect(cardX + 4, contentY, cardWidth - 8, 22, 2, 2, 'F');
+        doc.setDrawColor(this.warningColor[0], this.warningColor[1], this.warningColor[2]);
+        doc.setLineWidth(0.3);
+        doc.roundedRect(cardX + 4, contentY, cardWidth - 8, 22, 2, 2, 'S');
+
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(this.textDark[0], this.textDark[1], this.textDark[2]);
+        doc.text('KEY INSIGHTS', cardX + 7, contentY + 5);
+
+        doc.setFontSize(7.5);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(this.textDark[0], this.textDark[1], this.textDark[2]);
+
+        const insight1 = `• Most Productive: ${insights.mostProductiveMonth}`;
+        const insight2 = `• Best Performance: ${insights.bestPerformanceMonth}`;
+        const insight3 = `• Most Consistent: ${insights.mostConsistentMonth}`;
+
+        doc.text(insight1, cardX + 7, contentY + 11);
+        doc.text(insight2, cardX + 7, contentY + 15.5);
+        doc.text(insight3, cardX + 7, contentY + 20);
+    }
+
+    // FORMAT PERCENTAGE - Adds "%" symbol to numeric values
     private formatPercentageCell(value: number): string {
         return `${value}%`;
     }
 
-    /**
-     * UTILITY FUNCTION: Truncates long text strings for table cells
-     * 
-     * Prevents text overflow in table cells by cutting off long strings
-     * and adding ellipsis (...) to indicate truncation
-     * 
-     * @param text The text string to truncate
-     * @param maxLength Maximum number of characters before truncation
-     * @returns Truncated string with "..." if longer than maxLength
-     * 
-     * To adjust truncation point for specific tables:
-     * - Assessment titles: maxLength = 35
-     * - Student names: maxLength = 30
-     * - Topic names: maxLength = 25-40 depending on column width
-     */
+    // TRUNCATE TEXT - Cuts off long text and adds "..." for table cells
     private truncateText(text: string, maxLength: number): string {
         if (text.length <= maxLength) return text;
         return text.substring(0, maxLength - 3) + '...';
     }
 
-    /**
-     * UTILITY FUNCTION: Loads and processes images for PDF embedding
-     * 
-     * Loads an image file and converts it to a data URL format that jsPDF can use
-     * Adds a white background to transparent images to prevent black backgrounds
-     * 
-     * @param path Path to the image file (relative to public folder)
-     * @returns Promise<string> Base64-encoded image data URL
-     * 
-     * To change logo path: Update the logoPath in addModernHeader()
-     * To adjust white background: Modify the fillStyle color (currently '#FFFFFF')
-     */
+    // LOAD IMAGE - Loads image with white background and converts to base64 for PDF embedding
     private loadImage(path: string): Promise<string> {
         return new Promise((resolve, reject) => {
             const img = new Image();

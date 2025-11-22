@@ -9,6 +9,7 @@ import { Title } from '@angular/platform-browser';
 import Swal from 'sweetalert2';
 import { saveAs } from 'file-saver';
 import * as QRCode from 'qrcode';
+import { RollingNumberComponent } from '../../shared/components/rolling-number/rolling-number.component';
 
 
 interface Student {
@@ -38,7 +39,7 @@ interface SubmissionStatus {
 
 @Component({
   selector: 'app-result',
-  imports: [CommonModule, ReactiveFormsModule, SidebarComponent, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, SidebarComponent, FormsModule, RollingNumberComponent],
   templateUrl: './result.component.html',
   styleUrl: './result.component.css'
 })

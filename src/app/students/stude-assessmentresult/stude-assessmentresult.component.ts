@@ -7,6 +7,7 @@ import { AuthService } from '../../services/auth.service';
 import { ApiService } from '../../services/api.service';
 import { StudentService } from '../../services/student.service';
 import Swal from 'sweetalert2';
+import { RollingNumberComponent } from '../../shared/components/rolling-number/rolling-number.component';
 
 interface Question {
   questionId: string;
@@ -76,7 +77,7 @@ interface AssessmentResult {
 @Component({
   selector: 'app-stude-assessmentresult',
   standalone: true,
-  imports: [SidebarComponent, CommonModule, FormsModule],
+  imports: [SidebarComponent, CommonModule, FormsModule, RollingNumberComponent],
   templateUrl: './stude-assessmentresult.component.html',
   styleUrl: './stude-assessmentresult.component.css'
 })

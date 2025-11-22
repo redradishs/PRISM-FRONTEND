@@ -57,6 +57,8 @@ export class AnalyticsComponent implements OnInit {
   leastTopics: any = [];
   performanceTrendData: any = [];
 
+  analyticsGenerating: boolean = false;
+
 
   ///classes variables
   classStats: any = null;
@@ -344,6 +346,8 @@ export class AnalyticsComponent implements OnInit {
 
 
   analyticsTopicParser() {
+    if (this.analyticsGenerating) return;
+    this.analyticsGenerating = true;
     let monthRange = 0;
     switch (this.selectedPreset) {
       case '6months':
@@ -364,6 +368,7 @@ export class AnalyticsComponent implements OnInit {
       },
       error: (err) => {
         console.log(err);
+        this.analyticsGenerating = false;
       }
     });
   }
@@ -378,9 +383,11 @@ export class AnalyticsComponent implements OnInit {
         this.topicDistribution = resp.formattedResponse;
         this.topicGeneratedDate = new Date().toISOString();
         this.saveSnapshot(resp.formattedResponse);
+        this.analyticsGenerating = false;
       },
       error: (err) => {
         console.log(err);
+        this.analyticsGenerating = false;
       }
     })
   }

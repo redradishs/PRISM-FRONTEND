@@ -370,7 +370,7 @@
                         <div class="stats-cont">
                             <div class="box-cont">
                                 <span><i class="fa-solid fa-star"></i></span>
-                                <ng-container *ngIf="topicDistribution?.top?.length > 9; else topEmptyState">
+                                <ng-container *ngIf="topicDistribution?.top?.length; else topEmptyState">
                                     <p *ngFor="let a of topicDistribution?.top">{{a.title}}</p>
                                 </ng-container>
                                 <ng-template #topEmptyState>
@@ -389,7 +389,7 @@
 
                             <div class="box-cont">
                                 <span><i class="fa-solid fa-star-half-stroke"></i></span>
-                                <ng-container *ngIf="topicDistribution?.average?.length > 9; else averageEmptyState">
+                                <ng-container *ngIf="topicDistribution?.average?.length; else averageEmptyState">
                                     <p *ngFor="let a of topicDistribution?.average">{{a.title}}</p>
                                 </ng-container>
                                 <ng-template #averageEmptyState>
@@ -711,7 +711,7 @@
                         <div class="stats-cont">
                             <div class="box-cont">
                                 <span><i class="fa-solid fa-star"></i></span>
-                                <ng-container *ngIf="topicDistribution?.top?.length > 9; else topEmptyState">
+                                <ng-container *ngIf="topicDistribution?.top?.length; else topEmptyState">
                                     <p *ngFor="let a of topicDistribution?.top">{{a.title}}</p>
                                 </ng-container>
                                 <ng-template #topEmptyState>
@@ -730,7 +730,7 @@
 
                             <div class="box-cont">
                                 <span><i class="fa-solid fa-star-half-stroke"></i></span>
-                                <ng-container *ngIf="topicDistribution?.average?.length > 9; else averageEmptyState">
+                                <ng-container *ngIf="topicDistribution?.average?.length; else averageEmptyState">
                                     <p *ngFor="let a of topicDistribution?.average">{{a.title}}</p>
                                 </ng-container>
                                 <ng-template #averageEmptyState>

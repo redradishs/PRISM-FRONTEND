@@ -179,19 +179,23 @@
                             </div>
                             <div class="overview-grid">
                                 <div class="overview-stat">
-                                    <div class="stat-value">{{classOverview.totalStudents}}</div>
+                                    <div class="stat-value"> <app-rolling-number
+                                            [value]="classOverview.totalStudents"></app-rolling-number></div>
                                     <div class="stat-label">Total Students</div>
                                 </div>
                                 <div class="overview-stat">
-                                    <div class="stat-value">{{classOverview.averageScore}}%</div>
+                                    <div class="stat-value"><app-rolling-number
+                                            [value]="classOverview.averageScore"></app-rolling-number>%</div>
                                     <div class="stat-label">Average Score</div>
                                 </div>
                                 <div class="overview-stat">
-                                    <div class="stat-value highest">{{classOverview.highestScore}}%</div>
+                                    <div class="stat-value highest"><app-rolling-number
+                                            [value]="classOverview.highestScore"></app-rolling-number>%</div>
                                     <div class="stat-label">Highest Score</div>
                                 </div>
                                 <div class="overview-stat">
-                                    <div class="stat-value lowest">{{classOverview.lowestScore}}%</div>
+                                    <div class="stat-value lowest"><app-rolling-number
+                                            [value]="classOverview.lowestScore"></app-rolling-number>%</div>
                                     <div class="stat-label">Lowest Score</div>
                                 </div>
                             </div>

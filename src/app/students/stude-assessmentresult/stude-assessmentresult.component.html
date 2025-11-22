@@ -138,8 +138,9 @@
                                         </div>
                                         <div class="score-info">
                                             <div class="score-title-group">
-                                                <h2 class="score-value">{{(result.score / result.totalItems *
-                                                    100).toFixed(0)}}%</h2>
+                                                <h2 class="score-value"><app-rolling-number
+                                                        [value]="result.score / result.totalItems * 100" [decimals]="0"
+                                                        [duration]="1500" suffix="%"></app-rolling-number></h2>
                                                 <span class="status-badge"
                                                     [class.status-passed]="(result.score / result.totalItems * 100) >= result.passingScore"
                                                     [class.status-failed]="(result.score / result.totalItems * 100) < result.passingScore">
@@ -188,7 +189,9 @@
                                             'public' ? 'participants' : 'students'}}</div>
                                     </div>
                                     <div class="stat-card">
-                                        <div class="stat-value">{{result.score}} / {{result.totalItems}}</div>
+                                        <div class="stat-value"> <app-rolling-number [value]="result.score"
+                                                [duration]="2500"></app-rolling-number> / {{result.totalItems}}
+                                        </div>
                                         <div class="stat-label">Score</div>
                                         <div class="stat-detail">Your raw score out of total items</div>
                                     </div>
@@ -297,8 +300,11 @@
                                                 [style.--percentage]="calculatePercentile(result.ranking.rank, result.ranking.totalStudents) + '%'">
                                             </div>
                                             <div class="circle-content">
-                                                <div class="percentile">{{calculatePercentile(result.ranking.rank,
-                                                    result.ranking.totalStudents)}}%</div>
+                                                <div class="percentile">
+                                                    <app-rolling-number [value]="calculatePercentile(result.ranking.rank,
+                                                    result.ranking.totalStudents)" [decimals]="0" [duration]="1500"
+                                                        suffix="%"></app-rolling-number>
+                                                </div>
                                                 <div class="percentile-label">Percentile</div>
                                                 <div class="rank-info">
                                                     <i class="fas fa-trophy icon-gold"></i>

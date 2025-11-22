@@ -3,12 +3,12 @@
     <nav class="navbar">
         <div class="container">
             <div class="nav-content">
-                <div class="logo-section">
+                <a class="logo-section" href="#hero">
                     <div class="prism-logo cursor-pointer">
                         <img src="/prism_logo.webp" alt="PRISM Logo" class="logo-image">
                         <span class="logo-text">PRISM</span>
                     </div>
-                </div>
+                </a>
 
                 <div class="nav-links">
                     <a href="#features" class="nav-link">Features</a>
@@ -26,7 +26,7 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero">
+    <section class="hero" id="hero">
         <div class="hero-bg">
             <div class="gradient-orb orb-left"></div>
             <div class="gradient-orb orb-right"></div>
@@ -60,17 +60,20 @@
 
                 <div class="hero-stats">
                     <div class="stat-item">
-                        <div class="stat-number">500+</div>
-                        <div class="stat-label">Concurrent Users</div>
+                        <!-- <div class="stat-number">{{totalVisitCount}}+</div> -->
+                        <div class="stat-number"><app-rolling-number [value]="totalVisitCount"></app-rolling-number> +
+                        </div>
+
+                        <div class="stat-label">Current Visits</div>
                     </div>
                     <div class="stat-divider"></div>
                     <div class="stat-item">
-                        <div class="stat-number">100+</div>
+                        <div class="stat-number"><app-rolling-number [value]="100"></app-rolling-number>+</div>
                         <div class="stat-label">Assessment per Account</div>
                     </div>
                     <div class="stat-divider"></div>
                     <div class="stat-item">
-                        <div class="stat-number">98%</div>
+                        <div class="stat-number"><app-rolling-number [value]="98"></app-rolling-number>%</div>
                         <div class="stat-label">Less workload</div>
                     </div>
                 </div>
