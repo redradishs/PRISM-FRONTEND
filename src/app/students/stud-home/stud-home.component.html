@@ -184,7 +184,7 @@
                                     </div>
 
                                     <div class="ongoing-footer">
-                                        <span>Due: {{assessment.endDate | date:'MMM d, y h:mm a':'UTC'}}</span>
+                                        <span>Due: {{assessment.endDate | date:'MMM d, y h:mm a':'PHT'}}</span>
 
                                         <span class="mode-badge" [ngClass]="{
                                             'mode-assessment': assessment.mode === 'assessment',
@@ -288,8 +288,8 @@
                                             </div>
                                         </div>
                                         <div class="ongoing-footer flex-between">
-                                            <span>Start: {{assessment.startDate | date:'MMM d, y h:mm a':'UTC'}}</span>
-                                            <span>Due: {{assessment.endDate | date:'MMM d, y h:mm a':'UTC'}}</span>
+                                            <span>Start: {{assessment.startDate | date:'MMM d, y h:mm a':'PHT'}}</span>
+                                            <span>Due: {{assessment.endDate | date:'MMM d, y h:mm a':'PHT'}}</span>
                                         </div>
                                     </div>
                                     <a *ngIf="upcomingAssessments.length >= 5" routerLink="/student/history"
@@ -357,7 +357,7 @@
                                             </div>
                                         </div>
                                         <div class="ongoing-footer flex-between">
-                                            <span>Ended: {{assessment.endDate | date:'MMM d, y h:mm a':'UTC'}}</span>
+                                            <span>Ended: {{assessment.endDate | date:'MMM d, y h:mm a':'PHT'}}</span>
                                         </div>
                                     </div>
                                     <a *ngIf="completedAssessments.length >= 5" routerLink="/student/history"

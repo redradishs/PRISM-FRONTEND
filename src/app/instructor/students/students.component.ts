@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { saveAs } from 'file-saver';
 import * as QRCode from 'qrcode';
+import * as XLSX from 'xlsx';
 
 
 interface Student {
@@ -615,17 +616,37 @@ export class StudentsComponent implements OnInit {
     }
   }
 
+  hasNoSubmissions(completion: string): boolean {
+    if (!completion) return true;
+
+    try {
+      const [completed] = completion.split('/').map(Number);
+      return completed === 0;
+    } catch (error) {
+      return false;
+    }
+  }
+
   getInitials(name: string) {
     const names = name.split(' ');
     return names[0][0] + names[names.length - 1][0];
   }
 
-  getStatusClass(status: string): string {
+  getStatusClass(status: string, isCompleted?: boolean, completion?: string): string {
     if (!status) return 'status-unknown';
 
     const normalizedStatus = status.toLowerCase();
 
+    // Check for no submissions first
+    if (completion && this.hasNoSubmissions(completion)) {
+      return 'status-no-submission';
+    }
+
+    // Handle completed status with partial completion check
     if (normalizedStatus === 'completed') {
+      if (isCompleted === false) {
+        return 'status-partially-completed';
+      }
       return 'status-completed';
     } else if (normalizedStatus === 'ongoing') {
       return 'status-ongoing';
@@ -647,17 +668,38 @@ export class StudentsComponent implements OnInit {
 
   onFileSelected(event: any): void {
     const file = event.target.files[0];
-    if (file && file.type === 'text/csv') {
-      this.selectedFile = file;
+    if (file) {
+      const validTypes = [
+        'text/csv',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-excel',
+        'application/excel',
+        'application/x-excel',
+      ];
+      const validExtensions = ['.csv', '.xlsx', '.xls'];
+      const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+
+      if (validTypes.includes(file.type) || validExtensions.includes(fileExtension)) {
+        this.selectedFile = file;
+        this.parseFilePreview(file);
+      } else {
+        Swal.fire({
+          title: 'Invalid File Type',
+          text: 'Please select a CSV, XLSX, or XLS file.',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      }
+    }
+    event.target.value = '';
+  }
+
+  private parseFilePreview(file: File): void {
+    const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+    if (fileExtension === '.csv') {
       this.parseCSVPreview(file);
-    } else if (file) {
-      Swal.fire({
-        title: 'Invalid File Type',
-        text: 'Please select a CSV file.',
-        icon: 'error',
-        confirmButtonText: 'OK'
-      });
-      event.target.value = '';
+    } else if (fileExtension === '.xlsx' || fileExtension === '.xls') {
+      this.parseExcelPreview(file);
     }
   }
 
@@ -679,15 +721,46 @@ export class StudentsComponent implements OnInit {
 
       if (lines.length > 0) {
         // Parse headers
-        this.csvHeaders = lines[0].split(',').map(header => header.trim().replace(/"/g, ''));
+        this.csvHeaders = lines[4].split(',').map(header => header.trim().replace(/"/g, ''));
 
         // Parse data rows
-        this.csvPreviewData = lines.slice(1).map(line =>
+        this.csvPreviewData = lines.slice(5).map(line =>
           line.split(',').map(cell => cell.trim().replace(/"/g, ''))
         );
       }
     };
     reader.readAsText(file);
+  }
+
+
+  private async parseExcelPreview(file: File): Promise<void> {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = new Uint8Array(e.target?.result as ArrayBuffer);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+        if (jsonData.length > 0) {
+          //getting the headers
+          this.csvHeaders = (jsonData[4] as any[]).map(header => String(header).trim());
+          //getting the data rows
+          this.csvPreviewData = jsonData.slice(5).map((row: any) =>
+            this.csvHeaders.map((_, index) => String(row[index] || '').trim())
+          );
+        }
+      } catch (error) {
+        Swal.fire({
+          title: 'Error Reading File',
+          text: 'Failed to parse Excel file. Please ensure it\'s a valid Excel file.',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      }
+    };
+    reader.readAsArrayBuffer(file);
   }
 
   importClassList(): void {
@@ -722,9 +795,13 @@ export class StudentsComponent implements OnInit {
         this.isImporting = false;
         Swal.fire({
           title: 'Import Successful',
-          text: `Successfully imported ${response.imported || 'students'} to ${this.selectedClass.className}.`,
+          text: `Successfully imported ${response.data.totalProcessed} students to ${this.selectedClass.className}.`,
           icon: 'success',
-          confirmButtonText: 'OK'
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+          toast: true,
+          position: 'top-end'
         });
         this.toggleImportClassListModal();
         this.getClasses();
@@ -783,6 +860,9 @@ export class StudentsComponent implements OnInit {
     this.isLoading = true;
     this.api.createClass(data).subscribe({
       next: (resp: any) => {
+        const newClassCode = resp.data.classCode;
+        localStorage.setItem('classCode', newClassCode);
+        this.initialClassCodeToSelect = newClassCode;
         this.getClasses();
         this.toggleCreateClassModal();
         this.isThereClasses = true;
@@ -855,12 +935,13 @@ export class StudentsComponent implements OnInit {
 
 
   toggleAssignAssessmentModal() {
-    this.showAssignAssessmentModal = !this.showAssignAssessmentModal;
-    if (!this.showAssignAssessmentModal) {
-      this.resetAssignAssessmentModal();
-    } else {
-      this.loadOwnAssessments();
-    }
+    this.router.navigate(['/instructor/assign']);
+    // this.showAssignAssessmentModal = !this.showAssignAssessmentModal;
+    // if (!this.showAssignAssessmentModal) {
+    //   this.resetAssignAssessmentModal();
+    // } else {
+    //   this.loadOwnAssessments();
+    // }
   }
 
   resetAssignAssessmentModal() {
@@ -1298,7 +1379,7 @@ export class StudentsComponent implements OnInit {
   }
 
   removeStudent(student: any) {
-    console.log("This is the student", student);
+    // console.log("This is the student", student);
     const data = {
       studentId: student._id,
       classCode: this.selectedClass.classCode
@@ -1318,15 +1399,16 @@ export class StudentsComponent implements OnInit {
           next: (resp: any) => {
             this.getStudentList();
             this.statsClass();
-            console.log('Student removed successfully');
+            // console.log('Student removed successfully');
             Swal.fire({
               title: `${student.name} Removed!`,
               text: 'Student has been removed from the class.',
               icon: 'success',
-              confirmButtonColor: '#3b82f6',
+              showConfirmButton: false,
               position: 'top-end',
-              timer: 3000,
-              toast: true
+              timer: 2000,
+              toast: true,
+              timerProgressBar: true,
             })
           }, error: (error) => {
             console.error('Failed to remove student:', error);

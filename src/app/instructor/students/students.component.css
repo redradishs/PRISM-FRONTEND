@@ -1982,6 +1982,30 @@ input:checked + .toggle-slider:before {
   transition: all 0.2s ease;
 }
 
+.status-no-submission {
+  background-color: #fee2e2;
+  color: #991b1b;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  display: inline-block;
+  border: 1px solid #fecaca;
+  transition: all 0.2s ease;
+}
+
+.status-partially-completed {
+  background-color: #fef3c7;
+  color: #92400e;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  display: inline-block;
+  border: 1px solid #fde68a;
+  transition: all 0.2s ease;
+}
+
 .assessment-mode-badge {
   display: inline-block;
   padding: 0.25rem 0.75rem;
@@ -2012,7 +2036,9 @@ input:checked + .toggle-slider:before {
   .status-completed,
   .status-ongoing,
   .status-scheduled,
-  .status-unknown {
+  .status-unknown,
+  .status-no-submission,
+  .status-partially-completed {
     font-size: 0.875rem;
   }
 }

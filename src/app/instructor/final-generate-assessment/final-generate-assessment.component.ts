@@ -114,7 +114,8 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
   };
   basicInfoError: string | null = null;
   extractedText: string = '';
-  selectedFileName: string = '';
+  selectedFiles: File[] = [];
+  maxFiles: number = 2;
   showUploadSection = false;
   showCategories = false;
   isSortedByType = false;
@@ -1089,81 +1090,150 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
 
   //for the upload document function
   async onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if (!file) return;
-    this.errorMessage = '';
-    this.extractedText = '';
-    this.selectedFileName = file.name;
-    // console.log('File selected:', file);
-    // console.log('File type:', file.type);
-    // console.log('File name:', file.name);
-    try {
-      if (file.type === 'application/pdf') {
-        await this.extractPdfText(file);
-      } else if (
-        file.type ===
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-      ) {
-        await this.extractDocxText(file);
-      } else {
-        this.errorMessage = 'Please select a PDF or DOCX file.';
-      }
-    } catch (error: any) {
-      console.error('Error extracting text:', error);
-      this.errorMessage =
-        error.message || 'Error extracting text from file. Please try again.';
+    const files = Array.from(event.target.files) as File[];
+    if (!files || files.length === 0) return;
+
+    // Check file limit
+    if (this.selectedFiles.length + files.length > this.maxFiles) {
+      Swal.fire({
+        title: 'Limit Reached',
+        text: `Maximum ${this.maxFiles} files allowed`,
+        icon: 'warning',
+        toast: true,
+        position: 'top-end',
+        timer: 2000
+      });
+      event.target.value = '';
+      return;
     }
+
+    this.errorMessage = '';
+    const validFiles: File[] = [];
+
+    // Validate and add files
+    for (const file of files) {
+      const isValid = this.isValidFile(file);
+      if (isValid) {
+        validFiles.push(file);
+      }
+    }
+
+    this.selectedFiles = [...this.selectedFiles, ...validFiles];
+    await this.extractAllFiles();
+    event.target.value = '';
   }
 
-  private async extractPdfText(file: File): Promise<void> {
-    try {
-      const arrayBuffer = await file.arrayBuffer();
-      const typedArray = new Uint8Array(arrayBuffer);
+  isValidFile(file: File): boolean {
+    const validTypes = ['.pdf', '.docx', '.pptx'];
+    const ext = '.' + file.name.split('.').pop()?.toLowerCase();
+    if (!validTypes.includes(ext)) {
+      Swal.fire({
+        title: 'Invalid File',
+        text: `${file.name} is not supported. Use PDF, DOCX, or PPTX.`,
+        icon: 'error',
+        toast: true,
+        position: 'top-end',
+        timer: 2000
+      });
+      return false;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      Swal.fire({
+        title: 'File Too Large',
+        text: `${file.name} exceeds 10MB limit`,
+        icon: 'error',
+        toast: true,
+        position: 'top-end',
+        timer: 2000
+      });
+      return false;
+    }
+    return true;
+  }
 
-      const pdfDoc = await pdfjsLib.getDocument({ data: typedArray }).promise;
+  async extractAllFiles() {
+    this.extractedText = '';
+    const texts: string[] = [];
+
+    for (const file of this.selectedFiles) {
+      try {
+        let text = '';
+        const ext = file.name.split('.').pop()?.toLowerCase();
+
+        if (ext === 'pdf') {
+          text = await this.extractPdfText(file);
+        } else if (ext === 'docx') {
+          text = await this.extractDocxText(file);
+        } else if (ext === 'pptx') {
+          text = await this.extractPptxText(file);
+        }
+
+        if (text) {
+          texts.push(`[${file.name}]\n${text}`);
+        }
+      } catch (error: any) {
+        console.error(`Error extracting ${file.name}:`, error);
+      }
+    }
+
+    this.extractedText = texts.join('\n\n---\n\n');
+  }
+
+  private async extractPdfText(file: File): Promise<string> {
+    const arrayBuffer = await file.arrayBuffer();
+    const typedArray = new Uint8Array(arrayBuffer);
+    const pdfDoc = await pdfjsLib.getDocument({ data: typedArray }).promise;
+    let text = '';
+
+    for (let i = 1; i <= pdfDoc.numPages; i++) {
+      const page = await pdfDoc.getPage(i);
+      const textContent = await page.getTextContent();
+      text += textContent.items.map((item: any) => item.str).join(' ') + '\n';
+    }
+
+    if (!text.trim()) {
+      throw new Error('No text extracted from PDF');
+    }
+    return text;
+  }
+
+  private async extractDocxText(file: File): Promise<string> {
+    const arrayBuffer = await file.arrayBuffer();
+    const result = await mammoth.extractRawText({ arrayBuffer });
+    if (!result.value.trim()) {
+      throw new Error('No text extracted from DOCX');
+    }
+    return result.value;
+  }
+
+  private async extractPptxText(file: File): Promise<string> {
+    try {
+      const JSZip = (await import('jszip')).default;
+
+      const arrayBuffer = await file.arrayBuffer();
+      const zip = await JSZip.loadAsync(arrayBuffer);
       let text = '';
 
-      for (let i = 1; i <= pdfDoc.numPages; i++) {
-        const page = await pdfDoc.getPage(i);
-        const textContent = await page.getTextContent();
-        const pageText = textContent.items
-          .map((item: any) => item.str)
-          .join(' ');
-        text += `Page ${i}:\n${pageText}\n\n`;
+      //to get all the slides in the pptx
+      const slideFiles = Object.keys(zip.files)
+        .filter(name => name.startsWith('ppt/slides/slide') && name.endsWith('.xml'))
+        .sort();
+
+      // process
+      for (const slideFile of slideFiles) {
+        const content = await zip.files[slideFile].async('string');
+        const matches = content.match(/<a:t[^>]*>([^<]*)<\/a:t>/g);
+        if (matches) {
+          text += matches.map((m: string) => m.replace(/<[^>]*>/g, '')).join(' ') + '\n';
+        }
       }
 
       if (!text.trim()) {
-        throw new Error(
-          'No text could be extracted from the PDF. The file might be scanned or protected.'
-        );
+        throw new Error('No text extracted from PPTX');
       }
-
-      this.extractedText = text;
-      // console.log('Extracted text:', this.extractedText);
+      return text;
     } catch (error: any) {
-      console.error('PDF extraction error:', error);
-      throw new Error(
-        'Failed to extract text from PDF. Please make sure the file is not corrupted or password protected.'
-      );
-    }
-  }
-
-  private async extractDocxText(file: File) {
-    try {
-      const arrayBuffer = await file.arrayBuffer();
-      const result = await mammoth.extractRawText({ arrayBuffer });
-
-      if (!result.value.trim()) {
-        throw new Error('No text could be extracted from the DOCX file.');
-      }
-
-      this.extractedText = result.value;
-      // console.log('Extracted text:', this.extractedText);
-    } catch (error: any) {
-      console.error('DOCX extraction error:', error);
-      throw new Error(
-        'Failed to extract text from DOCX file. Please make sure the file is not corrupted.'
-      );
+      throw new Error(`PPTX extraction failed: ${error.message}`);
     }
   }
 
@@ -1171,9 +1241,9 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
     this.showUploadSection = !this.showUploadSection;
   }
 
-  deleteFile() {
-    this.selectedFileName = '';
-    this.extractedText = '';
+  deleteFile(index: number) {
+    this.selectedFiles.splice(index, 1);
+    this.extractAllFiles();
   }
 
   scrollToSection(section: number) {
@@ -1502,7 +1572,7 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
     this.questions = [];
     this.selectedTypes = [];
     this.extractedText = '';
-    this.selectedFileName = '';
+    this.selectedFiles = [];
     this.showUploadSection = false;
     this.generated = false;
     this.errorMessage = null;

@@ -532,18 +532,26 @@
                                                 </div>
                                             </td>
                                             <td class="demo-table-cell">
-                                                <!-- <span
-                                                    [ngClass]="getStatusClass(student.status)">{{student.status}}</span> -->
+                                                <!-- No Submission Status -->
+                                                <span *ngIf="hasNoSubmissions(student.completion)"
+                                                    [ngClass]="getStatusClass('no-submission', undefined, student.completion)">
+                                                    No Submission
+                                                </span>
 
-                                                <span *ngIf="student.status !== 'completed'"
-                                                    [ngClass]="getStatusClass(student.status)">{{student.status.charAt(0).toUpperCase()
-                                                    + student.status.slice(1)}}</span>
+                                                <!-- Non-completed statuses -->
+                                                <span
+                                                    *ngIf="student.status !== 'completed' && !hasNoSubmissions(student.completion)"
+                                                    [ngClass]="getStatusClass(student.status)">
+                                                    {{student.status.charAt(0).toUpperCase() + student.status.slice(1)}}
+                                                </span>
 
-
-                                                <span *ngIf="student.status === 'completed'"
-                                                    [ngClass]="getStatusClass(student.status)">{{student.status ===
-                                                    'completed' && student.isCompleted ? 'Completed' : 'Partially
-                                                    Completed'}}</span>
+                                                <!-- Completed statuses -->
+                                                <span
+                                                    *ngIf="student.status === 'completed' && !hasNoSubmissions(student.completion)"
+                                                    [ngClass]="getStatusClass(student.status, student.isCompleted, student.completion)">
+                                                    {{student.status === 'completed' && student.isCompleted ?
+                                                    'Completed' : 'Partially Completed'}}
+                                                </span>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -579,8 +587,11 @@
                                                 </span>
                                                 <span
                                                     class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium"
-                                                    [ngClass]="getStatusClass(student.status)">
-                                                    {{student.status}}
+                                                    [ngClass]="hasNoSubmissions(student.completion) ? getStatusClass('no-submission', undefined, student.completion) : getStatusClass(student.status, student.isCompleted, student.completion)">
+                                                    {{hasNoSubmissions(student.completion) ? 'No Submission' :
+                                                    (student.status === 'completed' && student.isCompleted ? 'Completed'
+                                                    : (student.status === 'completed' ? 'Partially Completed' :
+                                                    student.status.charAt(0).toUpperCase() + student.status.slice(1)))}}
                                                 </span>
                                             </div>
                                         </div>
@@ -841,10 +852,10 @@
             <form (ngSubmit)="importClassList()">
                 <!-- File Upload Section -->
                 <div class="form-group">
-                    <label for="csvFile">CSV File</label>
+                    <label for="csvFile">Excel/CSV File</label>
                     <div class="file-upload-wrapper">
-                        <input type="file" id="csvFile" name="csvFile" accept=".csv" (change)="onFileSelected($event)"
-                            class="file-input" required #fileInput>
+                        <input type="file" id="csvFile" name="csvFile" accept=".csv,.xlsx,.xls"
+                            (change)="onFileSelected($event)" class="file-input" required #fileInput>
                         <div class="file-upload-display" [class.has-file]="selectedFile" (click)="fileInput.click()">
                             <div class="file-upload-content">
                                 <i class="fas fa-cloud-upload-alt" *ngIf="!selectedFile"></i>
@@ -863,7 +874,7 @@
                         </div>
                     </div>
                     <small class="file-help-text">
-                        Upload a CSV file with columns: Name, Email, Student ID (optional)
+                        Upload a CSV, XLSX, or XLS file with columns: Name, Email, Student ID (optional)
                     </small>
                 </div>
 

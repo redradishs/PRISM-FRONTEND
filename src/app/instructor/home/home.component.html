@@ -182,7 +182,7 @@
                                 <div class="assessment-info">
                                     <p class="due-date">
                                         <i class="fas fa-clock"></i>
-                                        Due: {{ass.dueDate | date: 'MMM d, y h:mm a':'UTC'}}
+                                        Due: {{ass.dueDate | date: 'MMM d, y h:mm a':'PHT'}}
                                     </p>
                                     <p class="progress-text" *ngIf="ass.type !== 'Public Assessment'">
                                         <i class="fas fa-chart-line"></i>
@@ -254,7 +254,7 @@
                                 <div class="assessment-info">
                                     <p class="due-date">
                                         <i class="fas fa-calendar-day"></i>
-                                        Starts: {{ass.startDate | date: 'MMM d, y h:mm a':'UTC'}}
+                                        Starts: {{ass.startDate | date: 'MMM d, y h:mm a':'PHT'}}
                                     </p>
                                     <p class="progress-text" *ngIf="ass.type !== 'Public Assessment'">
                                         <i class="fas fa-chart-line"></i>

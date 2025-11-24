@@ -253,7 +253,7 @@
                         <div data-tour="instructor-create-upload">
                             <div *ngIf="!isGenerating && !showUploadSection" class="shower"
                                 (click)="toggleUploadSection()">
-                                <span>UPLOAD A DOCUMENT</span>
+                                <span>UPLOAD DOCUMENTS</span>
                                 <i class="fas fa-chevron-down"></i>
                             </div>
 
@@ -261,53 +261,48 @@
                             <div class="upload-sections" [class.show]="showUploadSection">
                                 <div class="genform-field">
                                     <div class="upload-actions">
-                                        <label for="instructions">Upload Document <span class="file-info"
-                                                *ngIf="!isMobile && selectedFileName">
-                                                Uploaded: {{ selectedFileName }}
-                                            </span></label>
-
-                                        <button (click)="deleteFile()">
+                                        <label>Upload Documents ({{ selectedFiles.length }}/{{ maxFiles }})</label>
+                                        <button *ngIf="selectedFiles.length > 0"
+                                            (click)="selectedFiles = []; extractedText = ''">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
 
+                                    <!-- Simple file list -->
+                                    <div *ngIf="selectedFiles.length > 0" class="simple-file-list">
+                                        <div *ngFor="let file of selectedFiles; let i = index" class="simple-file-item">
+                                            <i class="fas" [ngClass]="file.name.endsWith('.pdf') ? 'fa-file-pdf' : 
+                                                          file.name.endsWith('.docx') ? 'fa-file-word' : 
+                                                          'fa-file-powerpoint'">
+                                            </i>
+                                            <span>{{ file.name }}</span>
+                                            <button (click)="deleteFile(i)" class="simple-delete-btn">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
 
                                     <div class="file-upload-wrapper">
-                                        <label for="document" class="file-upload-label">
+                                        <label for="document" class="file-upload-label"
+                                            [class.disabled]="selectedFiles.length >= maxFiles">
                                             <div class="upload-left">
                                                 <i class="fas fa-cloud-upload-alt"></i>
                                             </div>
                                             <div class="upload-right">
-                                                <div *ngIf="!selectedFileName" class="upload-content">
-                                                    <span class="upload-text">Choose PDF or DOCX file</span>
-                                                    <span class="upload-hint">Maximum file size: 10MB</span>
-                                                    <span class="upload-hintplus">You can only upload one file at a
-                                                        time,
-                                                        after
-                                                        generating you may upload another reference for new set of
-                                                        questions.</span>
+                                                <div class="upload-content">
+                                                    <span class="upload-text">
+                                                        {{ selectedFiles.length === 0 ? 'Choose PDF, DOCX, or PPTX
+                                                        files' :
+                                                        selectedFiles.length < maxFiles ? 'Add more files'
+                                                            : 'Maximum files reached' }} </span>
+                                                            <span class="upload-hint">Max {{ maxFiles }} files, 10MB
+                                                                each</span>
                                                 </div>
-
-                                                <div *ngIf="selectedFileName" class="upload-content">
-                                                    <span class="upload-text">Click here to change the Uploaded
-                                                        File</span>
-                                                    <span class="upload-hint">Current: {{ selectedFileName }}</span>
-                                                    <span class="upload-hintplus">You can only upload one file at a
-                                                        time,
-                                                        after
-                                                        generating you may upload another reference for new set of
-                                                        questions.</span>
-                                                    <span class="upload-hintplus tip">By uploading a document, PRISM
-                                                        will
-                                                        use the content of the document to generate questions.</span>
-                                                </div>
-                                                <span class="file-info" *ngIf="isMobile && selectedFileName">
-                                                    Selected: {{ selectedFileName }}
-                                                </span>
                                             </div>
                                         </label>
                                         <input type="file" id="document" class="file-upload-input"
-                                            (change)="onFileSelected($event)" accept=".pdf,.docx" />
+                                            (change)="onFileSelected($event)" accept=".pdf,.docx,.pptx"
+                                            [multiple]="true" [disabled]="selectedFiles.length >= maxFiles" />
                                     </div>
                                 </div>
                             </div>

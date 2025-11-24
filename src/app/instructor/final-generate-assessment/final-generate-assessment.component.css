@@ -1806,6 +1806,94 @@
     background: #f5f3ff;
     border-radius: 0.375rem;
     color: #6366f1;
+  }
+
+  .uploaded-files-list {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .uploaded-file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 1rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+  }
+
+  .uploaded-file-item:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+  }
+
+  .file-item-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .file-item-info i {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  .file-item-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #1e293b;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+  }
+
+  .file-item-type {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+    background: #e2e8f0;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  .file-item-delete {
+    background: transparent;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .file-item-delete:hover {
+    background: #fee2e2;
+    color: #dc2626;
+    transform: scale(1.1);
+  }
+
+  .file-upload-label.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .file-upload-label.disabled:hover {
+    border-color: #adaeeb;
+    background: white;
     font-weight: 500;
     font-size: 0.875rem;
     text-align: center;
@@ -1819,6 +1907,52 @@
   .file-upload-label:hover {
     border-color: #8b5cf6;
     background: #f5f3ff;
+  }
+
+  .file-upload-label.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .simple-file-list {
+    margin-bottom: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .simple-file-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: #f8fafc;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+  }
+
+  .simple-file-item i {
+    color: #6366f1;
+    width: 16px;
+  }
+
+  .simple-file-item span {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .simple-delete-btn {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    padding: 0.25rem;
+  }
+
+  .simple-delete-btn:hover {
+    color: #dc2626;
   }
   
   .file-upload-input {

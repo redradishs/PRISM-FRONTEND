@@ -204,7 +204,7 @@
                                     <i class="fas fa-calendar meta-icon"></i>
                                     <div class="meta-text">
                                         <span class="meta-label">Date: </span>
-                                        <span>{{result.submittedAt | date: 'MMM d, y, h:mm a':'PHT'}}</span>
+                                        <span>{{result.submittedAt | date: 'MMM d, y, h:mm a':'UTC'}}</span>
                                     </div>
                                 </div>
                                 <div class="meta-item">
@@ -424,7 +424,7 @@
                     </section>
 
                     <div *ngIf="!isFinished" class="notify">
-                        <h1>The Assessment data will be available once the assessment is completed</h1>
+                        <h1>The Assessment data will be available once the assessment is completed.</h1>
                     </div>
 
                     <!-- Question Review Section -->
