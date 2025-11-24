@@ -1,0 +1,97 @@
+<div *ngIf="assessment" class="assessment-details-panel">
+  <div class="details-panel-header">
+    <div class="details-header-content">
+      <h3 class="details-title">
+        <i class="fas fa-clipboard-list"></i>
+        Assessment Questions
+      </h3>
+      <p class="details-subtitle">{{assessment.title}} - {{questions.length}} Questions</p>
+    </div>
+  </div>
+
+  <div class="details-panel-body">
+    <!-- Loading State -->
+    <div *ngIf="isLoadingQuestions" class="questions-loading">
+      <div class="loading-spinner"></div>
+      <span>Loading questions...</span>
+    </div>
+
+    <!-- Questions List -->
+    <div *ngIf="!isLoadingQuestions && questions.length > 0" class="questions-list">
+      <div *ngFor="let question of questions; let i = index" class="question-item">
+        <div class="question-item-header">
+          <div class="question-meta">
+            <span class="question-number">Question {{i + 1}}</span>
+            <div class="question-badge points">
+              <i class="fas fa-star"></i>
+              <span>{{question.points > 1 ? question.points + ' points' : question.points + ' point'}}</span>
+            </div>
+            <div class="question-badge type">
+              <i [class]="'fas ' + getQuestionTypeIcon(question.type)"></i>
+              <span>{{getFriendlyTypeName(question.type)}}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="question-content">
+          <div class="question-text">{{question.questionText}}</div>
+
+          <!-- Multiple Choice Options -->
+          <div *ngIf="question.type === 'multiple-choice' && question.options" class="question-answers">
+            <div class="options-list">
+              <div *ngFor="let option of question.options; let optionIndex = index" class="option-item"
+                [class.correct-answer]="question.correctAnswer === getOptionLetter(optionIndex)">
+                <span class="option-letter">{{getOptionLetter(optionIndex)}}.</span>
+                <span class="option-text">{{option}}</span>
+                <i *ngIf="question.correctAnswer === getOptionLetter(optionIndex)"
+                  class="fas fa-check correct-icon"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- True/False Answer -->
+          <div *ngIf="question.type === 'true-false'" class="question-answers">
+            <div class="answer-display">
+              <div class="answer-label">Correct Answer:</div>
+              <div class="answer-value">{{formatAnswer(question.correctAnswer)}}</div>
+            </div>
+          </div>
+
+          <!-- Short Answer -->
+          <div *ngIf="question.type === 'short-answer'" class="question-answers">
+            <div class="answer-display">
+              <div class="answer-label">Correct Answer:</div>
+              <div class="answer-value">{{formatAnswer(question.correctAnswer)}}</div>
+            </div>
+          </div>
+
+          <!-- Enumeration Answers -->
+          <div *ngIf="question.type === 'enumeration'" class="question-answers">
+            <div class="answer-display">
+              <div class="answer-label">Correct Answers:</div>
+              <div class="answer-value enumeration">{{formatAnswer(question.correctAnswer)}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoadingQuestions && questions.length === 0" class="questions-empty">
+      <i class="fas fa-inbox"></i>
+      <p>No questions found</p>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="details-panel-footer">
+    <button class="details-action-btn preview-btn" (click)="onPreview()">
+      <i class="fas fa-eye"></i>
+      Preview Full Assessment
+    </button>
+    <button *ngIf="!assessment.sharedBy" class="details-action-btn share-btn" (click)="onShare()">
+      <i class="fas fa-share-alt"></i>
+      Share Assessment
+    </button>
+  </div>
+</div>

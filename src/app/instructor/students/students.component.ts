@@ -511,13 +511,13 @@ export class StudentsComponent implements OnInit {
   rejectRequest(student: any) {
     console.log(student);
     Swal.fire({
-      title: 'Reject Request?',
-      text: `Are you sure you want to reject "${student.name}" request to join this class?`,
+      title: 'Decline Request?',
+      text: `Are you sure you want to decline "${student.name}'s" request to join this class?`,
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#3b82f6',
       cancelButtonColor: '#d1d5db',
-      confirmButtonText: 'Yes, reject',
+      confirmButtonText: 'Yes, decline',
       cancelButtonText: 'Cancel'
     }).then((result) => {
       if (result.isConfirmed) {

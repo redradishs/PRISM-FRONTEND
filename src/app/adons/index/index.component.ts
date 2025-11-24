@@ -62,6 +62,10 @@ export class IndexComponent implements OnInit {
   @ViewChild(TermsConditionsComponent) termsConditionsModal!: TermsConditionsComponent;
 
   ngOnInit(): void {
+    const jwt = localStorage.getItem('jwt');
+    if (jwt) {
+      this.router.navigate(['/home']);
+    }
     this.addVisitCount();
     this.animateCounter();
   }

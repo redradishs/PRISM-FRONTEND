@@ -663,6 +663,48 @@ html {
     transform: rotate(90deg);
   }
   
+  /* Two-column layout container */
+  .assessment-layout-container {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    animation: containerFadeIn 0.4s ease-out;
+  }
+
+  .assessment-layout-container.has-selection {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+  }
+
+  /* Two-column layout wrapper */
+  .assessment-layout-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .assessment-layout-wrapper.has-selection {
+    display: grid;
+    grid-template-columns: 1fr 430px;
+    gap: 1rem;
+    align-items: start;
+  }
+
+  .assessment-layout-wrapper.single-assessment {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+
+
+  /* Left column wrapper */
+  .assessment-cards-wrapper {
+    flex: 1;
+    min-width: 0;
+  }
+
   .assessment-grid-container {
     animation: containerFadeIn 0.4s ease-out;
   }
@@ -678,8 +720,12 @@ html {
   
   .assessment-cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 1rem;
+  }
+
+  .assessment-cards-grid.only-one-column {
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
   }
   
   .assessment-card-enhanced {
@@ -692,6 +738,9 @@ html {
     transition: all 0.2s ease;
     animation: cardFadeIn 0.3s ease-out forwards;
     opacity: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
   }
   
   @keyframes cardFadeIn {
@@ -1000,6 +1049,7 @@ html {
     gap: 0.5rem;
     padding-top: 0.875rem;
     border-top: 1px solid #e5e7eb;
+    margin-top: auto;
   }
   
   .assessment-card-enhanced.selected .card-actions-enhanced {
@@ -1035,6 +1085,16 @@ html {
   .preview-btn-enhanced:hover {
     background: #f9fafb;
     border-color: #9ca3af;
+  }
+
+  /* Desktop Preview Button - visible on desktop, hidden on mobile */
+  .preview-btn-desktop {
+    display: flex;
+  }
+
+  /* Mobile Preview Button - hidden on desktop, visible on mobile */
+  .preview-btn-mobile {
+    display: none;
   }
   
   .share-btn-enhanced {
@@ -1112,6 +1172,10 @@ html {
   }
   
   @media (max-width: 1024px) {
+    .assessment-layout-container.has-selection {
+      grid-template-columns: 1fr 350px;
+    }
+
     .assessment-cards-grid {
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 0.875rem;
@@ -1123,6 +1187,15 @@ html {
   }
   
   @media (max-width: 768px) {
+    .assessment-layout-wrapper.has-selection {
+      grid-template-columns: 1fr;
+    }
+
+    /* Hide details panel on mobile */
+    .assessment-details-panel-wrapper {
+      display: none !important;
+    }
+
     .search-filter-bar-enhanced {
       flex-direction: column;
       gap: 0.75rem;
@@ -2755,6 +2828,15 @@ html {
     
     .modern-assessment-list {
         max-height: 500px;
+    }
+
+    /* Show mobile Preview button, hide desktop Preview button on mobile */
+    .preview-btn-desktop {
+        display: none !important;
+    }
+
+    .preview-btn-mobile {
+        display: flex !important;
     }
 }
 

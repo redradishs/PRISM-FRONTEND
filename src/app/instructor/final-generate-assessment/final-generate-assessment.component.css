@@ -635,6 +635,7 @@
   .genform-title-wrapper {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 0.75rem;
     margin-bottom: 0.25rem;
   }
@@ -649,10 +650,19 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.375rem 0.75rem;
-    background-color: #9757ad;
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
     color: white;
     border-radius: 9999px;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+  }
+
+  .genform-ai-badge img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
   }
   
   .genform-title-group p {

@@ -7,6 +7,7 @@ import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink, RouterModule } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { StudentService } from '../../services/student.service';
+import { AssessmentDetailsPanelComponent } from './assessment-details-panel.component';
 import Swal from 'sweetalert2';
 
 interface Student {
@@ -85,7 +86,7 @@ interface AssignmentData {
 
 @Component({
   selector: 'app-assign-assessment',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, SidebarComponent, RouterModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, SidebarComponent, RouterModule, AssessmentDetailsPanelComponent],
   templateUrl: './assign-assessment.component.html',
   styleUrls: ['./assign-assessment.component.css'],
   standalone: true
@@ -116,6 +117,8 @@ export class AssignAssessmentComponent implements OnInit {
   enableDatabank: boolean = false;
   questionsToServe: number = 0;
   assessment: any;
+
+  showDetailsPanel: boolean = false;
 
   // Mastery mode settings
   masteryScore: number = 90;
@@ -359,11 +362,22 @@ export class AssignAssessmentComponent implements OnInit {
       this.totalQuestions = 0;
       this.enableDatabank = false;
       this.questionsToServe = 0;
+      this.showDetailsPanel = false;
+      this.assessment = null;
     } else {
+      const wasPanelOpen = this.showDetailsPanel;
       this.selectedAssessments.clear();
       this.selectedAssessments.add(assessmentId);
-      this.assessment = this.assessments.find(a => a._id === assessmentId);
+      const newAssessment = this.assessments.find(a => a._id === assessmentId);
+
+      // Create new object reference to ensure change detection triggers
+      this.assessment = newAssessment ? { ...newAssessment } : null;
       this.totalQuestions = this.assessment ? this.assessment.totalQuestions : 0;
+
+      // Keep panel open if it was already open, so it updates with new assessment
+      if (wasPanelOpen) {
+        this.showDetailsPanel = true;
+      }
 
       if (!this.canbeDatabanked()) {
         this.enableDatabank = false;
@@ -380,6 +394,12 @@ export class AssignAssessmentComponent implements OnInit {
   }
   clearAssessmentSelection() {
     this.selectedAssessments.clear();
+    this.assessment = null;
+    this.selectedAssessmentPoints = 0;
+    this.totalQuestions = 0;
+    this.enableDatabank = false;
+    this.questionsToServe = 0;
+    this.showDetailsPanel = false;
   }
 
   isClassSelected(classId: string): boolean {

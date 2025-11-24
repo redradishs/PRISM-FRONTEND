@@ -401,6 +401,11 @@
                                         <i class="fas fa-user-edit"></i>
                                         Manual Grade
                                     </span>
+
+                                    <span class="ai-rectified-badge" *ngIf="q.method === 'ai_rectified'">
+                                        <i class="fas fa-wand-magic-sparkles"></i>
+                                        AI Rectified
+                                    </span>
                                     <div class="status-badge" [class.correct]="q.isCorrect === true"
                                         [class.incorrect]="q.isCorrect === false"
                                         [class.partial]="q.pointsEarned > 0 && q.pointsEarned < q.maxPoints">

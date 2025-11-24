@@ -187,123 +187,150 @@
                                         </button>
                                     </div>
 
-                                    <!-- Assessment Cards -->
-                                    <div class="assessment-cards-grid">
-                                        <div *ngFor="let assessment of displayedAssessments; let i = index"
-                                            class="assessment-card-enhanced"
-                                            [class.selected]="isAssessmentSelected(assessment._id)"
-                                            [class.hidden]="selectedAssessments.size > 0 && !isAssessmentSelected(assessment._id)"
-                                            (click)="toggleAssessmentSelection(assessment._id)"
-                                            [style.animation-delay.ms]="i * 50">
+                                    <!-- Two-Column Layout -->
+                                    <div class="assessment-layout-wrapper"
+                                        [class.has-selection]="showDetailsPanel && !isMobile"
+                                        [class.single-assessment]="showDetailsPanel && displayedAssessments.length === 1 && !isMobile">
 
-                                            <!-- Selection Indicator -->
-                                            <div class="card-selection-indicator">
-                                                <div class="selection-checkmark">
-                                                    <i class="fas fa-check"></i>
+                                        <!-- Left Column: Assessment Cards -->
+                                        <div class="assessment-cards-wrapper">
+                                            <!-- Assessment Cards -->
+                                            <div class="assessment-cards-grid"
+                                                [class.only-one-column]="displayedAssessments.length === 1 && !isMobile">
+                                                <div *ngFor="let assessment of displayedAssessments; let i = index"
+                                                    class="assessment-card-enhanced"
+                                                    [class.selected]="isAssessmentSelected(assessment._id)"
+                                                    [class.hidden]="isMobile && selectedAssessments.size > 0 && !isAssessmentSelected(assessment._id)"
+                                                    (click)="toggleAssessmentSelection(assessment._id)"
+                                                    [style.animation-delay.ms]="i * 50">
+
+                                                    <!-- Selection Indicator -->
+                                                    <div class="card-selection-indicator">
+                                                        <div class="selection-checkmark">
+                                                            <i class="fas fa-check"></i>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Card Header -->
+                                                    <div class="card-header-enhanced">
+                                                        <div class="card-title-wrapper">
+                                                            <h3 class="card-title-enhanced">{{assessment.title}}</h3>
+                                                            <div class="card-meta">
+                                                                <i class="far fa-calendar-alt"></i>
+                                                                <span>{{assessment.createdAt | date:'MMM dd,
+                                                                    yyyy'}}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Card Body -->
+                                                    <div class="card-body-enhanced">
+                                                        <!-- Stats Row -->
+                                                        <div class="card-stats-enhanced">
+                                                            <div class="stat-enhanced">
+                                                                <div class="stat-icon questions">
+                                                                    <i class="fas fa-question-circle"></i>
+                                                                </div>
+                                                                <div class="stat-details">
+                                                                    <span
+                                                                        class="stat-value">{{assessment.totalQuestions}}</span>
+                                                                    <span class="stat-label">Questions</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="stat-divider"></div>
+                                                            <div class="stat-enhanced">
+                                                                <div class="stat-icon points">
+                                                                    <i class="fas fa-star"></i>
+                                                                </div>
+                                                                <div class="stat-details">
+                                                                    <span
+                                                                        class="stat-value">{{assessment.totalPoints}}</span>
+                                                                    <span class="stat-label">Points</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Category Badge -->
+                                                        <div class="card-category-enhanced" *ngIf="assessment.category">
+                                                            <i class="fas fa-tag"></i>
+                                                            <span>{{assessment.category}}</span>
+                                                        </div>
+
+                                                        <!-- Question Types -->
+                                                        <div class="card-question-types-enhanced"
+                                                            *ngIf="assessment.questionTypes">
+                                                            <div class="question-type-badge"
+                                                                *ngFor="let type of getQuestionTypes(assessment.questionTypes)"
+                                                                [class]="'type-' + type.type.split(' ')[0].toLowerCase()">
+                                                                <span class="type-name">{{type.type | titlecase}}</span>
+                                                                <span class="type-count">{{type.count}}</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="card-shared-by-enhanced"
+                                                            *ngIf="assessment.sharedBy">
+                                                            <div class="shared-by-meta">
+                                                                <i class="fas fa-share-alt"></i>
+                                                                <span class="shared-by-label">Shared by
+                                                                    {{assessment.sharedBy}}</span>
+                                                            </div>
+                                                            <span class="shared-by-date">
+                                                                {{assessment.sharedAt | date:'MMM dd, yyyy'}}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Card Actions -->
+                                                    <div class="card-actions-enhanced">
+                                                        <button
+                                                            class="action-btn preview-btn-enhanced preview-btn-desktop"
+                                                            (click)="!selectedAssessments.has(assessment._id) && toggleAssessmentSelection(assessment._id); showDetailsPanel = !showDetailsPanel; $event.stopPropagation()"
+                                                            title="Preview Assessment">
+                                                            <i class="fas fa-eye"></i>
+                                                            <span>Preview</span>
+                                                        </button>
+                                                        <button
+                                                            class="action-btn preview-btn-enhanced preview-btn-mobile"
+                                                            (click)="viewAssessment(assessment._id); $event.stopPropagation()"
+                                                            title="Preview Assessment">
+                                                            <i class="fas fa-eye"></i>
+                                                            <span>Preview</span>
+                                                        </button>
+                                                        <button *ngIf="!assessment.sharedBy"
+                                                            class="action-btn share-btn-enhanced"
+                                                            (click)="shareAssessment(assessment._id); $event.stopPropagation()"
+                                                            title="Share Assessment">
+                                                            <i class="fas fa-share-alt"></i>
+                                                            <span>Share</span>
+                                                        </button>
+                                                    </div>
+
+                                                    <!-- Hover Effect Overlay -->
+                                                    <div class="card-hover-overlay"></div>
                                                 </div>
                                             </div>
 
-                                            <!-- Card Header -->
-                                            <div class="card-header-enhanced">
-                                                <div class="card-title-wrapper">
-                                                    <h3 class="card-title-enhanced">{{assessment.title}}</h3>
-                                                    <div class="card-meta">
-                                                        <i class="far fa-calendar-alt"></i>
-                                                        <span>{{assessment.createdAt | date:'MMM dd, yyyy'}}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- Card Body -->
-                                            <div class="card-body-enhanced">
-                                                <!-- Stats Row -->
-                                                <div class="card-stats-enhanced">
-                                                    <div class="stat-enhanced">
-                                                        <div class="stat-icon questions">
-                                                            <i class="fas fa-question-circle"></i>
-                                                        </div>
-                                                        <div class="stat-details">
-                                                            <span
-                                                                class="stat-value">{{assessment.totalQuestions}}</span>
-                                                            <span class="stat-label">Questions</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="stat-divider"></div>
-                                                    <div class="stat-enhanced">
-                                                        <div class="stat-icon points">
-                                                            <i class="fas fa-star"></i>
-                                                        </div>
-                                                        <div class="stat-details">
-                                                            <span class="stat-value">{{assessment.totalPoints}}</span>
-                                                            <span class="stat-label">Points</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Category Badge -->
-                                                <div class="card-category-enhanced" *ngIf="assessment.category">
-                                                    <i class="fas fa-tag"></i>
-                                                    <span>{{assessment.category}}</span>
-                                                </div>
-
-                                                <!-- Question Types -->
-                                                <div class="card-question-types-enhanced"
-                                                    *ngIf="assessment.questionTypes">
-                                                    <div class="question-type-badge"
-                                                        *ngFor="let type of getQuestionTypes(assessment.questionTypes)"
-                                                        [class]="'type-' + type.type.split(' ')[0].toLowerCase()">
-                                                        <span class="type-name">{{type.type | titlecase}}</span>
-                                                        <span class="type-count">{{type.count}}</span>
-                                                    </div>
-                                                </div>
-
-                                                <div class="card-shared-by-enhanced" *ngIf="assessment.sharedBy">
-                                                    <div class="shared-by-meta">
-                                                        <i class="fas fa-share-alt"></i>
-                                                        <span class="shared-by-label">Shared by
-                                                            {{assessment.sharedBy}}</span>
-                                                    </div>
-                                                    <span class="shared-by-date">
-                                                        {{assessment.sharedAt | date:'MMM dd, yyyy'}}
+                                            <!-- Load More -->
+                                            <div class="load-more-section-enhanced" *ngIf="remainingCount > 0">
+                                                <button class="load-more-btn-enhanced" (click)="toggleShowAll()">
+                                                    <span *ngIf="!showingAll">
+                                                        <i class="fas fa-plus-circle"></i>
+                                                        Show {{remainingCount}} More Assessments
                                                     </span>
-                                                </div>
-                                            </div>
-
-                                            <!-- Card Actions -->
-                                            <div class="card-actions-enhanced">
-                                                <button class="action-btn preview-btn-enhanced"
-                                                    (click)="viewAssessment(assessment._id); $event.stopPropagation()"
-                                                    title="Preview Assessment">
-                                                    <i class="fas fa-eye"></i>
-                                                    <span>Preview</span>
-                                                </button>
-                                                <button *ngIf="!assessment.sharedBy"
-                                                    class="action-btn share-btn-enhanced"
-                                                    (click)="shareAssessment(assessment._id); $event.stopPropagation()"
-                                                    title="Share Assessment">
-                                                    <i class="fas fa-share-alt"></i>
-                                                    <span>Share</span>
+                                                    <span *ngIf="showingAll">
+                                                        <i class="fas fa-minus-circle"></i>
+                                                        Show Less
+                                                    </span>
                                                 </button>
                                             </div>
-
-                                            <!-- Hover Effect Overlay -->
-                                            <div class="card-hover-overlay"></div>
                                         </div>
-                                    </div>
 
-                                    <!-- Load More -->
-                                    <div class="load-more-section-enhanced"
-                                        *ngIf="remainingCount > 0 && selectedAssessments.size === 0">
-                                        <button class="load-more-btn-enhanced" (click)="toggleShowAll()">
-                                            <span *ngIf="!showingAll">
-                                                <i class="fas fa-plus-circle"></i>
-                                                Show {{remainingCount}} More Assessments
-                                            </span>
-                                            <span *ngIf="showingAll">
-                                                <i class="fas fa-minus-circle"></i>
-                                                Show Less
-                                            </span>
-                                        </button>
+                                        <!-- Right Column: Assessment Details Panel -->
+                                        <app-assessment-details-panel
+                                            *ngIf="showDetailsPanel && assessment && !isMobile"
+                                            [assessment]="assessment" (previewClick)="viewAssessment($event)"
+                                            (shareClick)="shareAssessment($event)">
+                                        </app-assessment-details-panel>
                                     </div>
                                 </div>
                             </div>
@@ -497,7 +524,8 @@
                                                     <div class="student-year">
                                                         <span *ngIf="student.yearLevel">{{student.yearLevel}}</span>
                                                         <span *ngIf="!student.yearLevel"
-                                                            class="text-gray-400 italic">Not specified</span>
+                                                            class="text-gray-400 italic">Not
+                                                            specified</span>
                                                     </div>
                                                     <div class="student-email d-none d-md-block">{{student.email}}</div>
                                                 </div>
