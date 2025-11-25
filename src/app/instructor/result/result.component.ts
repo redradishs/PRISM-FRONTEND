@@ -563,11 +563,10 @@ export class ResultComponent implements OnInit, OnDestroy {
       if (result.isConfirmed) {
         const currentDT = new Date();
         const extended = new Date(currentDT.getTime() + 60 * 60 * 1000);
-        const phTime = new Date(extended.getTime() + (8 * 60 * 60 * 1000));
         const data = {
           instructorId: this.userId,
           assignedAssessmentId: this.assessmentId,
-          endDate: phTime
+          endDate: extended
         }
         this.api.extendNow(data).subscribe({
           next: (resp: any) => {

@@ -115,11 +115,11 @@ export class AssessmentSettingsComponent implements OnInit {
     }
 
     // PHT TO UTC
-    const startDateUTC = this.convertFromPhilippineTime(new Date(populateData.startDate));
-    const endDateUTC = this.convertFromPhilippineTime(new Date(populateData.endDate));
+    this.startDate = this.formatDate(new Date(populateData.startDate));
+    this.dueDate = this.formatDate(new Date(populateData.endDate));
 
-    this.startDate = this.formatDateFromString(startDateUTC);
-    this.dueDate = this.formatDateFromString(endDateUTC);
+    // this.startDate = this.formatDateFromString(startDateUTC);
+    // this.dueDate = this.formatDateFromString(endDateUTC);
 
     this.showResults = populateData.modeSettings.showResults || 'immediate';
     this.attemptsAllowed = populateData.maxAttempts || 1;
@@ -257,8 +257,8 @@ export class AssessmentSettingsComponent implements OnInit {
   }
 
   saveSettings() {
-    const startDatePH = this.convertToPhilippineTime(new Date(this.startDate));
-    const dueDatePH = this.convertToPhilippineTime(new Date(this.dueDate));
+    const startDatePH = this.formatDate(new Date(this.startDate));
+    const dueDatePH = this.formatDate(new Date(this.dueDate));
 
     const data: any = {
       id: this.assignedAssessmentId,
