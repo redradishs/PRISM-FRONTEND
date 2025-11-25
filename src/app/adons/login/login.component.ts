@@ -394,9 +394,13 @@ export class LoginComponent implements OnInit {
         if (err.error && err.error.message && err.error.message.includes('Too many authentication attempts')) {
           this.loading = false;
           this.clicked = false;
+          let minutesLeft = err.error.retryAfter ? Math.ceil(err.error.retryAfter / 60) : 0;
+          if (minutesLeft < 1) {
+            minutesLeft = 1;
+          }
           Swal.fire({
             title: 'Too Many Attempts',
-            text: 'You have tried to login too many times. Please wait 3 minutes before trying again.',
+            text: `You have tried to login too many times. Please wait ${minutesLeft} minute(s) before trying again.`,
             icon: 'error',
             showConfirmButton: false,
             allowOutsideClick: false,

@@ -369,8 +369,14 @@
                                 <i class="fas fa-lightbulb"></i>
                             </div>
                             <div class="insight-title">
-                                <h1>Performance Insights</h1>
-                                <span>Personalized Learning Analytics</span>
+                                <div>
+                                    <h1>Performance Insights</h1>
+                                    <span>Personalized Learning Analytics</span>
+                                </div>
+                                <span class="genform-ai-badge">
+                                    <img src="https://img.icons8.com/fluency/48/bard.png" alt="AI">
+                                    <p>POWERED BY AI</p>
+                                </span>
                             </div>
                         </div>
 
@@ -443,13 +449,18 @@
                                         <span class="question-number">Question {{i + 1}}</span>
                                         <div class="points-badge">
                                             <i class="fas fa-star"></i>
-                                            <span>{{question.points}} points</span>
+                                            <span>{{question.points}} {{question.points > 1 ? 'points' :
+                                                'point'}}</span>
                                         </div>
                                         <div class="type-badge">
                                             <i [class]="'fas ' + getQuestionTypeIcon(question.type)"></i>
                                             <span>{{getFriendlyTypeName(question.type)}}</span>
                                         </div>
                                     </div>
+                                    <span class="ai-rectified-badge" *ngIf="question?.aiRectified">
+                                        <i class="fas fa-wand-magic-sparkles"></i>
+                                        AI Rectified
+                                    </span>
                                     <div class="status-badge" [class.correct]="question.isCorrect"
                                         [class.incorrect]="!question.isCorrect">
                                         <i class="fas" [class.fa-check-circle]="question.isCorrect"

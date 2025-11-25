@@ -650,7 +650,7 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.375rem 0.75rem;
-    background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+    background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
     color: white;
     border-radius: 9999px;
     font-size: 0.8125rem;

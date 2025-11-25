@@ -108,6 +108,7 @@ export class StudConfirmationComponent {
           this.hasStarted = this.confirmationData.hasStarted;
           this.hasCompleted = this.confirmationData.hasSubmitted;
           this.isLoading = false;
+          // console.log('Confirmation Data:', resp.data)
         } else {
           console.error('Invalid response format');
           this.isLoading = false;

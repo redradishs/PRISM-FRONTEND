@@ -166,33 +166,55 @@
                                         <p>{{confirmationData.student.email}}</p>
                                         <div class="student-details">
                                             <span>ID: {{confirmationData.student.email.split('@')[0]}}</span>
-                                            <span>BSIT 3A</span>
+                                            <span>{{confirmationData.student.program | uppercase}}
+                                                {{confirmationData.student.yearLevel}}{{confirmationData.student.block |
+                                                uppercase}}</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="important-notes">
-                                <h3><i class="fa-solid fa-triangle-exclamation"></i> Important Notes</h3>
-                                <ul>
-                                    <li><i class="fa-solid fa-xmark"></i> Do not refesh or navigate away when you enter
-                                        the assessment page.
-                                    </li>
-                                    <li><i class="fa-solid fa-xmark"></i> Do not open other tabs or applications during
-                                        the assessment</li>
-                                    <li><i class="fa-solid fa-xmark"></i> Copying or sharing assessment content is
-                                        strictly
-                                        prohibited</li>
-                                    <li *ngIf="confirmationData.typeAss !== 'mastery'"><i class="fa-solid fa-check"></i>
-                                        Your answers are automatically saved as you
-                                        click the next button.</li>
-                                    <li *ngIf="confirmationData.typeAss === 'mastery'"><i class="fa-solid fa-check"></i>
-                                        You can review and change your answers before
-                                        final
-                                        submission</li>
-                                    <li><i class="fa-solid fa-check"></i> The assessment page will be monitored any tab
-                                        switching, screenshots, and keyboard combinations will be monitored.</li>
-                                </ul>
+                                <h3><i class="fa-solid fa-triangle-exclamation"></i> Important Notes & Monitored
+                                    Activities</h3>
+                                <div class="scrollable-list">
+                                    <ul>
+                                        <li><i class="fa-solid fa-xmark"></i> Do not refresh or navigate away from the
+                                            assessment page</li>
+                                        <li><i class="fa-solid fa-xmark"></i> Do not switch tabs or open other
+                                            applications during the assessment</li>
+                                        <li><i class="fa-solid fa-xmark"></i> Do not use Alt+Tab to switch between
+                                            windows (Max 3 allowed)</li>
+                                        <li><i class="fa-solid fa-xmark"></i> Do not lose window focus repeatedly (Max 3
+                                            allowed)</li>
+                                        <li><i class="fa-solid fa-xmark"></i> Do not take screenshots (Print Screen or
+                                            Ctrl+Shift+S)</li>
+                                        <li><i class="fa-solid fa-xmark"></i> Do not copy, paste, cut, or select all
+                                            text (Ctrl+C/V/X/A)</li>
+                                        <li><i class="fa-solid fa-xmark"></i> Do not open developer tools (F12,
+                                            Ctrl+Shift+I/J)</li>
+                                        <li><i class="fa-solid fa-xmark"></i> Do not resize the window significantly
+                                        </li>
+                                        <li><i class="fa-solid fa-xmark"></i> Do not use shortcuts like Save, Print,
+                                            Find, Refresh, or View Source</li>
+                                        <li><i class="fa-solid fa-xmark"></i> Do not tamper with browser storage or
+                                            clear browsing data</li>
+                                        <li><i class="fa-solid fa-xmark"></i> Do not remain inactive for extended
+                                            periods (>3 minutes)</li>
+                                        <li><i class="fa-solid fa-xmark"></i> Copying or sharing assessment content is
+                                            strictly prohibited</li>
+                                        <li *ngIf="confirmationData.typeAss !== 'mastery'"><i
+                                                class="fa-solid fa-check"></i>
+                                            Your answers are automatically saved as you click the next button</li>
+                                        <li *ngIf="confirmationData.typeAss === 'mastery'"><i
+                                                class="fa-solid fa-check"></i>
+                                            You can review and change your answers before final submission</li>
+                                    </ul>
+                                </div>
+                                <div class="violation-notice">
+                                    <li><i class="fa-solid fa-info-circle"></i> All violations are automatically logged
+                                        and reported to your instructor</li>
+                                </div>
                             </div>
                         </div>
                     </div>
