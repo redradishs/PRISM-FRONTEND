@@ -71,6 +71,8 @@ export class ResultComponent implements OnInit, OnDestroy {
 
   searchTerm: string = '';
   selectedStatus: string = 'all';
+  sortOrder: string = 'default';
+  timeLeft: string = '';
   allStudents: any[] = [];
   filteredStudents: any[] = [];
   currentPage: number = 1;
@@ -125,6 +127,8 @@ export class ResultComponent implements OnInit, OnDestroy {
   private fabTimeoutId: any = null;
   private readonly FAB_TIMEOUT_DURATION = 10000;
 
+  private timeLeftInterval: any;
+
   constructor(
     private api: ApiService,
     private auth: AuthService,
@@ -166,6 +170,10 @@ export class ResultComponent implements OnInit, OnDestroy {
 
     if (this.fabTimeoutId) {
       clearTimeout(this.fabTimeoutId);
+    }
+
+    if (this.timeLeftInterval) {
+      clearInterval(this.timeLeftInterval);
     }
   }
 
@@ -270,6 +278,13 @@ export class ResultComponent implements OnInit, OnDestroy {
           this.getItemAnalysis(this.assessmentId);
           this.insights = resp.data.insights;
         }
+
+        if (this.classOverview.endDate) {
+          this.updateTimeLeft();
+          this.timeLeftInterval = setInterval(() => {
+            this.updateTimeLeft();
+          }, 1000);
+        }
         // console.log('Assessment Title:', this.assessmentTitle);
         // console.log('Class Code:', this.classCode);
         // console.log('Class Overview:', this.classOverview);
@@ -358,18 +373,46 @@ export class ResultComponent implements OnInit, OnDestroy {
       const statusA = a.status.toLowerCase();
       const statusB = b.status.toLowerCase();
 
-      // for sorting of students, if not started they will be at the bottom
-      if (statusA === 'not_started' && statusB !== 'not_started') {
-        return 1;
+
+      if (this.sortOrder === 'default') {
+        // for sorting of students, if not started they will be at the bottom
+        if (statusA === 'not_started' && statusB !== 'not_started') {
+          return 1;
+        }
+        if (statusB === 'not_started' && statusA !== 'not_started') {
+          return -1;
+        }
+        //null sort by name
+        if (statusA === 'not_started' && statusB === 'not_started') {
+          return a.name.localeCompare(b.name);
+        }
+        return b.score - a.score; // Higher scores come first
       }
-      if (statusB === 'not_started' && statusA !== 'not_started') {
-        return -1;
+
+      switch (this.sortOrder) {
+        case 'surname':
+          if (statusA === 'not-started' && statusB !== 'not_started') return 1;
+          if (statusB === 'not-started' && statusB !== 'not_started') return -1;
+
+          const lastNameA = this.getLastName(a.name).toLowerCase();
+          const lastNameB = this.getLastName(b.name).toLowerCase();
+          return lastNameA.localeCompare(lastNameB);
+
+        case 'score-high':
+          if (statusA === 'not-started' && statusB !== 'not_started') return 1;
+          if (statusB === 'not-started' && statusB !== 'not_started') return -1;
+
+          return (b.score || 0) - (a.score || 0);
+
+        case 'score-low':
+          if (statusA === 'not-started' && statusB !== 'not_started') return 1;
+          if (statusB === 'not-started' && statusB !== 'not_started') return -1;
+
+          return (a.score || 0) - (b.score || 0);
+
+        default:
+          return 0;
       }
-      //null sort by name
-      if (statusA === 'not_started' && statusB === 'not_started') {
-        return a.name.localeCompare(b.name);
-      }
-      return b.score - a.score; // Higher scores come first
     });
     this.filteredStudents = filtered;
   }
@@ -387,6 +430,43 @@ export class ResultComponent implements OnInit, OnDestroy {
     // console.log('Selected Type:', this.selectedQuestionType);
   }
 
+  private updateTimeLeft(): void {
+    if (!this.classOverview.endDate) {
+      this.timeLeft = 'N/A';
+      return;
+    }
+
+    const now = new Date(Date.now() + 60 * 60 * 10 * 1000);
+    const endDate = new Date(this.classOverview.endDate);
+
+    // console.log('Current Time:', now);
+    // console.log('End Date:', endDate);
+    const difference = endDate.getTime() - now.getTime();
+
+    if (difference <= 0) {
+      this.timeLeft = 'Expired';
+      if (this.timeLeftInterval) {
+        clearInterval(this.timeLeftInterval);
+      }
+      return;
+    }
+
+    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+    if (days > 0) {
+      this.timeLeft = `${days}d ${hours}h ${minutes}m`;
+    } else if (hours > 0) {
+      this.timeLeft = `${hours}h ${minutes}m ${seconds}s`;
+    } else if (minutes > 0) {
+      this.timeLeft = `${minutes}m ${seconds}s`;
+    } else {
+      this.timeLeft = `${seconds}s`;
+    }
+  }
+
 
   prismInsights() {
     const data = {
@@ -396,7 +476,7 @@ export class ResultComponent implements OnInit, OnDestroy {
     }
     this.api.analyzeResult(data).subscribe({
       next: (resp: any) => {
-        console.log('Prism Insights:', resp.analysis);
+        // console.log('Prism Insights:', resp.analysis);
         this.insights = resp.analysis || [
           {
             primary: "AI analysis not available",

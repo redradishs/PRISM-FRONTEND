@@ -518,6 +518,17 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+.time-value {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: white;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    padding: 0.3rem 0.6rem;
+    border-radius: 0.375rem;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
 .overview-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
