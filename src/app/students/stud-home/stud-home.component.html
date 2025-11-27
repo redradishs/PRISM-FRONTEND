@@ -159,8 +159,8 @@
                                             </div>
                                             <div>
                                                 <h4 class="ongoing-title">{{assessment.title}}</h4>
-                                                <p class="ongoing-code">{{assessment.className && assessment.classCode ?
-                                                    assessment.className + ' - ' + assessment.classCode : 'No Code'}}
+                                                <p class="ongoing-code">{{assessment.className ?
+                                                    assessment.className : '' }}
                                                 </p>
                                             </div>
                                         </div>
@@ -267,9 +267,8 @@
                                                 </div>
                                                 <div>
                                                     <p class="ongoing-title">{{assessment.title}}</p>
-                                                    <p class="ongoing-code">{{assessment.className &&
-                                                        assessment.classCode ? assessment.className + ' - ' +
-                                                        assessment.classCode : 'No Code'}}</p>
+                                                    <p class="ongoing-code">{{assessment.className ?
+                                                        assessment.className : ''}}</p>
                                                 </div>
                                             </div>
                                             <div class="flex flex-col items-end">
@@ -328,9 +327,8 @@
                                                 <div>
                                                     <p class="ongoing-title">{{assessment.title}}</p>
                                                     <p class="ongoing-code">
-                                                        {{assessment.className && assessment.classCode ?
-                                                        assessment.className + ' - ' + assessment.classCode : 'No
-                                                        Code'}}
+                                                        {{assessment.className ?
+                                                        assessment.className : ''}}
                                                     </p>
                                                 </div>
                                             </div>

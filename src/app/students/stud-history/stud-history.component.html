@@ -246,8 +246,7 @@
                                             {{assessment.timeLimit}} minutes
                                         </span>
                                         <span *ngIf="assessment.class">
-                                            <i class="fas fa-users"></i>
-                                            {{assessment.class.classCode}} - {{assessment.class.className}}
+                                            <i class="fas fa-users"></i> {{assessment.class.className}}
                                         </span>
                                         <span *ngIf="assessment.studentStatus === 'submitted'">
                                             <i class="fas fa-check-circle"></i>
@@ -453,8 +452,7 @@
                                         </div>
                                         <div class="detail-item" *ngIf="assessment.type !== 'Public Assessment'">
                                             <i class="fas fa-users"></i>
-                                            <span>{{assessment.class?.classCode}} -
-                                                {{assessment.class?.className}}</span>
+                                            <span> {{assessment.class?.className}}</span>
                                         </div>
                                         <div class="detail-item"
                                             *ngIf="assessment.type === 'Public Assessment' && assessment.modeSettings?.joiningCode">
