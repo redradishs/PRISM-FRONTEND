@@ -10,6 +10,7 @@ import { Title } from '@angular/platform-browser';
 import { AfterViewInit } from '@angular/core';
 import { TutorialService } from '../../services/tutorial.service';
 import { TutorialPromptComponent } from '../../shared/components/tutorial-prompt/tutorial-prompt.component';
+import { AnalyticsPdfExportService } from '../analytics/analytics-pdf-export.service';
 
 interface AssessmentProgress {
   id: string;
@@ -78,6 +79,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   dueThisWeek: number = 0;
   isMobile = window.innerWidth < 768;
   isLoading: boolean = true;
+  showExportDropdown: boolean = false;
+  selectedTimeRange: string = '6 months';
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
   @ViewChild('barChart') barChart?: BaseChartDirective;
   @ViewChild('pieChart') pieChart?: BaseChartDirective;
@@ -90,7 +93,15 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resizeCharts();
   }
 
-  constructor(private api: ApiService, private auth: AuthService, private router: Router, private titleService: Title, private tutorialService: TutorialService, private ngZone: NgZone) {
+  constructor(
+    private api: ApiService,
+    private auth: AuthService,
+    private router: Router,
+    private titleService: Title,
+    private tutorialService: TutorialService,
+    private ngZone: NgZone,
+    private pdfExportService: AnalyticsPdfExportService
+  ) {
     this.titleService.setTitle('PRISM | Home');
   }
 
@@ -416,6 +427,89 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   addStudent() {
     this.router.navigate(['instructor/students']);
+  }
+
+  toggleExportDropdown() {
+    this.showExportDropdown = !this.showExportDropdown;
+  }
+
+  selectTimeRange(range: string) {
+    this.selectedTimeRange = range;
+    this.showExportDropdown = false;
+    this.exportPlatformOverviewPDF(range);
+  }
+
+  exportPlatformOverviewPDF(timeRange: string) {
+    // Calculate date range based on selection
+    let startDate: Date;
+    const endDate = new Date();
+    
+    if (timeRange === '6 months') {
+      startDate = new Date(endDate.getTime() - 6 * 30 * 24 * 60 * 60 * 1000);
+    } else { // 1 year
+      startDate = new Date(endDate.getTime() - 12 * 30 * 24 * 60 * 60 * 1000);
+    }
+
+    const requestData = {
+      instructorId: this.userId,
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+      timeRange: timeRange === '6 months' ? '6months' : '1year'
+    };
+
+    // Fetch all required data for PDF export
+    this.fetchPlatformOverviewData(requestData, timeRange);
+  }
+
+  private fetchPlatformOverviewData(requestData: any, timeRange: string) {
+    // Fetch platform overview
+    this.api.analyticsPlatformOverview(requestData).subscribe({
+      next: (platformResp: any) => {
+        // Fetch class performance
+        this.api.analyticsClassPerformance(requestData).subscribe({
+          next: (classResp: any) => {
+            // Fetch topic analysis
+            this.api.analyticsTopicAnalysis(requestData).subscribe({
+              next: (topicResp: any) => {
+                // Fetch performance trend
+                this.api.analyticsPerformanceTrend(requestData).subscribe({
+                  next: (trendResp: any) => {
+                    // Generate PDF with all data
+                    this.generatePDF({
+                      selectedPreset: requestData.timeRange,
+                      presetLabel: timeRange === '6 months' ? '6 Months' : '1 Year',
+                      platformOverviewData: platformResp.data,
+                      overallClassPerformanceData: classResp.data.classesPerformance,
+                      topTopics: topicResp.data.topPerforming,
+                      leastTopics: topicResp.data.lowPerforming,
+                      performanceTrendData: trendResp.data,
+                      topicDistribution: platformResp.data.snapshotData || [],
+                      topicGeneratedDate: platformResp.data.snapshotGeneratedAt || new Date().toISOString()
+                    });
+                  },
+                  error: (err) => console.error('Error fetching performance trend:', err)
+                });
+              },
+              error: (err) => console.error('Error fetching topic analysis:', err)
+            });
+          },
+          error: (err) => console.error('Error fetching class performance:', err)
+        });
+      },
+      error: (err) => console.error('Error fetching platform overview:', err)
+    });
+  }
+
+  private generatePDF(data: any) {
+    this.pdfExportService.exportPlatformOverviewPDF(data);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.export-dropdown-container')) {
+      this.showExportDropdown = false;
+    }
   }
 
   getAssessmentTypeLabel(assessment: any): string {

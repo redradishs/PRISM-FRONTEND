@@ -749,6 +749,10 @@
   }
 }
 
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
 .assessment-card-scheduled .progress {
   background-color: #ec4899;
 }
