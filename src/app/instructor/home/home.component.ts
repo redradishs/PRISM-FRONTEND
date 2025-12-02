@@ -443,7 +443,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     // Calculate date range based on selection
     let startDate: Date;
     const endDate = new Date();
-    
+
     if (timeRange === '6 months') {
       startDate = new Date(endDate.getTime() - 6 * 30 * 24 * 60 * 60 * 1000);
     } else { // 1 year

@@ -6,7 +6,9 @@ import { Injectable } from '@angular/core';
 })
 export class AdminService {
   // apiUrl = 'https://prismapi2.onrender.com/admin'
-  apiUrl = 'https://api.prismgcccs.live/admin'
+  // apiUrl = 'https://api.prismgcccs.live/admin'
+  apiUrl = 'https://vps.prismgcccs.live/admin'
+
   // apiUrl = 'http://localhost:8000/admin'
 
 
