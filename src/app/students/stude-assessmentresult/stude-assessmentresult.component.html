@@ -329,7 +329,7 @@
                                                     [class.negative]="result.score < getAverageScore()">
                                                     <i
                                                         [class]="result.score > getAverageScore() ? 'fas fa-arrow-up' : 'fas fa-arrow-down'"></i>
-                                                    <span>{{Math.abs(result.score - getAverageScore())}}
+                                                    <span>{{Math.abs(result.score - getAverageScore()).toFixed(2)}}
                                                         points
                                                         difference</span>
                                                 </div>

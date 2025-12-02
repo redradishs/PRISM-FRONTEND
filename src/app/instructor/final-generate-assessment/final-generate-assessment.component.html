@@ -334,11 +334,13 @@
                                 <span *ngIf="isGenerating">Generating...</span>
                             </button>
 
+                            <!-- Export Questions
                             <button *ngIf="questions.length > 0" class="genform-export-btn"
                                 (click)="exportQuestionsAsJson()">
                                 <i class="fas fa-shield-check"></i>
                                 <span>Verify Questions</span>
                             </button>
+                             -->
 
                         </div>
 
@@ -733,10 +735,12 @@
 
                         <!-- Action Buttons -->
                         <div class="fab-actions" [class.show]="fabOpen">
+                            <!-- Export Questions
                             <button class="fab-action fab-verify" (click)="exportQuestionsAsJson(); closeFab()">
                                 <i class="fas fa-shield"></i>
                                 <span class="fab-tooltip">Verify Questions</span>
                             </button>
+                             as JSON Button -->
 
                             <button class="fab-action fab-delete" (click)="clearQuestions(); closeFab()">
                                 <i class="fas fa-trash"></i>
