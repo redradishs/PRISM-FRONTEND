@@ -169,6 +169,10 @@
                                     <i class="fas fa-download demo-icon"></i>
                                     Export Results
                                 </button>
+                                <button class="demo-button-secondary" (click)="exportClassPerformance()">
+                                    <i class="fas fa-file-pdf demo-icon"></i>
+                                    Export Performance
+                                </button>
                                 <button class="demo-button-secondary" (click)="toggleClassSettingsModal()">
                                     <i class="fas fa-gear demo-icon"></i>
                                     Class Settings
@@ -183,7 +187,10 @@
                         <div class="demo-stat-content">
                             <div class="demo-stat-info">
                                 <span class="demo-stat-label">PERFORMANCE</span>
-                                <div class="demo-stat-value">{{performanceOverall}}%</div>
+                                <!-- <div class="demo-stat-value">{{performanceOverall}}%</div> -->
+                                <div class="demo-stat-value">{{this.performanceLevelClass(this.currentStudentsInfo)}}%
+                                </div>
+
                                 <p class="demo-stat-description">Performance of this class</p>
                             </div>
                             <div class="demo-stat-icon performance">

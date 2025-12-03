@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 import { saveAs } from 'file-saver';
 import * as QRCode from 'qrcode';
 import * as XLSX from 'xlsx';
+import { AnalyticsPdfExportService } from '../analytics/analytics-pdf-export.service';
 
 
 interface Student {
@@ -91,6 +92,7 @@ interface ClassScoreResponse {
 
 @Component({
   selector: 'app-students',
+  standalone: true,
   imports: [SidebarComponent, CommonModule, FormsModule],
   templateUrl: './students.component.html',
   styleUrl: './students.component.css'
@@ -233,11 +235,26 @@ export class StudentsComponent implements OnInit {
     severity: ''
   };
 
+  // Class performance export properties
+  classStats: any = null;
+  performers: any[] = [];
+  topPerformers: any[] = [];
+  leastPerformers: any[] = [];
+  performanceDistribution: any = [];
+  topicDistribution: any[] = [];
+  topicGeneratedDate: string = '';
+
   private lastNamePrefixes = [
     'De', 'Del', 'Dela', 'De la', 'De los', 'San', 'Santa', 'Sta.'
   ];
 
-  constructor(private api: ApiService, private auth: AuthService, private titleService: Title, private router: Router) {
+  constructor(
+    private api: ApiService,
+    private auth: AuthService,
+    private titleService: Title,
+    private router: Router,
+    private pdfExportService: AnalyticsPdfExportService
+  ) {
     this.titleService.setTitle('PRISM | Students');
 
     const navigation = this.router.getCurrentNavigation();
@@ -1695,6 +1712,138 @@ export class StudentsComponent implements OnInit {
             });
             this.toggleReportStudentModal();
           }
+        });
+      }
+    });
+  }
+
+
+  performanceLevelClass(student: any): Number {
+    if (!student || student.length === 0) return 0;
+    const performances = student
+      .map((a: any) => a.performancePercent || 0)
+      .filter((perf: number) => !isNaN(perf));
+
+    if (performances.length === 0) return 0;
+
+    const totalPerformance = performances.reduce((a: number, b: number) => a + b, 0);
+    const averagePerformance = totalPerformance / performances.length;
+    return Math.round(averagePerformance)
+  }
+
+
+
+
+
+
+
+  exportClassPerformance() {
+    if (!this.selectedClass) {
+      Swal.fire({
+        title: 'No Class Selected',
+        text: 'Please select a class to export performance data.',
+        icon: 'warning',
+        timer: 2000,
+        showConfirmButton: false
+      });
+      return;
+    }
+
+    Swal.fire({
+      title: 'Generating Report...',
+      text: 'Please wait while we gather class performance data',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    const requestData = {
+      instructorId: this.userId,
+      classCode: this.selectedClass.classCode
+    };
+
+    // Fetch class stats
+    this.api.analyticsIndividualClassPerformance(requestData).subscribe({
+      next: (statsResp: any) => {
+        this.classStats = statsResp.data;
+        this.topicDistribution = statsResp.data.snapshotData || [];
+        this.topicGeneratedDate = statsResp.data.snapshotGeneratedAt || new Date().toISOString();
+
+        // Fetch performers
+        this.api.analyticsIndividualPerformers(requestData).subscribe({
+          next: (performersResp: any) => {
+            this.performers = performersResp.data.assessments || [];
+
+            // Fetch top and low performers
+            this.api.topandlowPerformers(requestData).subscribe({
+              next: (topLowResp: any) => {
+                this.topPerformers = topLowResp.data.topPerformers || [];
+                this.leastPerformers = topLowResp.data.leastPerformers || [];
+
+                // Fetch performance distribution
+                this.api.analyticsIndividualPerformanceDistribution(requestData).subscribe({
+                  next: (distResp: any) => {
+                    this.performanceDistribution = distResp.data || [];
+
+                    // Generate PDF
+                    Swal.close();
+                    this.pdfExportService.exportIndividualClassPDF({
+                      classStats: this.classStats,
+                      selectedClassCode: this.selectedClass.classCode,
+                      selectedClassName: this.selectedClass.className,
+                      performers: this.performers,
+                      topPerformers: this.topPerformers,
+                      leastPerformers: this.leastPerformers,
+                      performanceDistribution: this.performanceDistribution,
+                      topicDistribution: this.topicDistribution,
+                      topicGeneratedDate: this.topicGeneratedDate
+                    });
+
+                    Swal.fire({
+                      title: 'Report Generated!',
+                      text: 'Class performance report has been downloaded.',
+                      icon: 'success',
+                      timer: 2000,
+                      showConfirmButton: false
+                    });
+                  },
+                  error: (err) => {
+                    console.error('Error fetching performance distribution:', err);
+                    Swal.fire({
+                      title: 'Error',
+                      text: 'Failed to fetch performance distribution data.',
+                      icon: 'error'
+                    });
+                  }
+                });
+              },
+              error: (err) => {
+                console.error('Error fetching top/low performers:', err);
+                Swal.fire({
+                  title: 'Error',
+                  text: 'Failed to fetch performer data.',
+                  icon: 'error'
+                });
+              }
+            });
+          },
+          error: (err) => {
+            console.error('Error fetching performers:', err);
+            Swal.fire({
+              title: 'Error',
+              text: 'Failed to fetch assessment performance data.',
+              icon: 'error'
+            });
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error fetching class stats:', err);
+        Swal.fire({
+          title: 'Error',
+          text: 'Failed to fetch class statistics.',
+          icon: 'error'
         });
       }
     });
