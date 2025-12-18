@@ -181,12 +181,11 @@
   overflow: hidden;
   border-radius: 0.5rem;
   width: 100%;
-  max-width: 800px;
+  /* max-width: 800px; */
   margin: 0;
   animation: slideInRightFade 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
 }
 
-/* Gradient Background */
 .card-gradient {
   position: relative;
   background: linear-gradient(135deg, #6366f1 30%, #8b5cf6 70%);
@@ -200,7 +199,6 @@
 
 }
 
-/* Overlay Pattern */
 .card-overlay {
   position: absolute;
   inset: 0;

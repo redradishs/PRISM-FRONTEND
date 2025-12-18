@@ -36,6 +36,10 @@ export class CompleteProfileComponent implements OnInit {
   userId: string = '';
   newUser = false;
 
+  method: string = '';
+  hasSetPassword: boolean = false;
+  needsPasswordSetup: boolean = false;
+
 
   // Program data
   programs: Program[] = [
@@ -80,6 +84,9 @@ export class CompleteProfileComponent implements OnInit {
       this.userName = user.name;
       this.userId = user.id;
       this.newUser = user.newUser;
+      this.method = user.authProvider;
+      this.hasSetPassword = user.hasSetPassword;
+      this.needsPasswordSetup = this.method === 'google' && !this.hasSetPassword;
       if (!this.newUser) {
         this.router.navigate(['/dashboard']);
       } else {
@@ -200,14 +207,18 @@ export class CompleteProfileComponent implements OnInit {
       next: (resp: any) => {
         // console.log(resp);
         this.auth.setToken(resp.data.jwt);
-        this.auth.getCurrentUser().subscribe((user: any) => {
-          localStorage.setItem("showTutorial", 'true');
-          if (user.role === "student") {
-            this.router.navigate(['/student/dashboard']);
-          } else {
-            this.router.navigate(['/instructor/dashboard']);
-          }
-        })
+        if (this.needsPasswordSetup) {
+          this.router.navigate(['complete-profile/password']);
+        } else {
+          this.auth.getCurrentUser().subscribe((user: any) => {
+            localStorage.setItem("showTutorial", 'true');
+            if (user.role === "student") {
+              this.router.navigate(['/student/dashboard']);
+            } else {
+              this.router.navigate(['/instructor/dashboard']);
+            }
+          })
+        }
       },
       error: (err: any) => {
         console.error('Profile completion error:', err);

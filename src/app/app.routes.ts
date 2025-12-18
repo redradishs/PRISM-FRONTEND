@@ -9,6 +9,7 @@ import { CompleteProfileComponent } from './adons/complete-profile/complete-prof
 import { JoinAssessmentComponent } from './adons/join-assessment/join-assessment.component';
 import { JoinClassComponent } from './adons/join-class/join-class.component';
 import { IndexComponent } from './adons/index/index.component';
+import { SetpasswordComponent } from './adons/setpassword/setpassword.component';
 
 export const routes: Routes = [
   {
@@ -67,6 +68,17 @@ export const routes: Routes = [
       seo: {
         title: 'PRISM | Complete Profile',
         description: 'Complete your PRISM profile setup to access assessment tools',
+        keywords: 'PRISM profile, Gordon College CCS, PRISM GC, PRISM Student, profile setup, account completion, PRISM'
+      }
+    }
+  },
+  {
+    path: 'complete-profile/password',
+    component: SetpasswordComponent,
+    data: {
+      seo: {
+        title: 'PRISM | Set Password',
+        description: 'Set your PRISM account password to access assessment tools',
         keywords: 'PRISM profile, Gordon College CCS, PRISM GC, PRISM Student, profile setup, account completion, PRISM'
       }
     }

@@ -724,7 +724,7 @@ export class LoginComponent implements OnInit {
 
       let errorMessage = 'Failed to sign in with Google. Please try again.';
       if (error.message === 'INVALID_EMAIL') {
-        errorMessage = 'Please use your Gordon College email address.';
+        errorMessage = 'Please use your Gordon College Domain Email Address.';
       }
 
       Swal.fire({

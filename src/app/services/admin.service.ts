@@ -24,6 +24,10 @@ export class AdminService {
     return this.http.get(`${this.apiUrl}/dbData`);
   }
 
+  getRecentActivities() {
+    return this.http.get(`${this.apiUrl}/recentacts`)
+  }
+
 
   //usermanagement
   getAllUsers(role: string, limit: number, program: string, page: number, status?: string, isBanned?: boolean) {

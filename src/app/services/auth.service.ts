@@ -228,6 +228,10 @@ export class AuthService {
     return this.http.get(`${this.baseUrl}/loginHistory/${userId}`);
   }
 
+  authSetPassword(data: any) {
+    return this.http.post(`${this.baseUrl}/oauth/setpassword`, data);
+  }
+
   //PUBLIC JOIN ENDPOINTS
 
   getPublicAssessmentData(data: any) {

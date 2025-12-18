@@ -9,11 +9,11 @@
                         <div class="flex items-center">
                             <div class="hidden md:flex items-center mr-4">
                                 <span class="text-sm text-gray-500 mr-2">Quick Actions:</span>
-                                <button
+                                <button [routerLink]="['/admin/users']"
                                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors mr-2">
                                     User Management
                                 </button>
-                                <button
+                                <button [routerLink]="['/admin/settings']"
                                     class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
                                     Settings
                                 </button>
@@ -81,7 +81,7 @@
                 </div>
 
                 <div class="tabs" [class.animate-in]="!isLoading">
-                    <div [routerLink]="['/instructor/students']" class="card1">
+                    <div [routerLink]="['/admin/users']" class="card1">
                         <div class="card-content">
                             <p class="card-title">Total Students</p>
                             <div class="card-numbers">
@@ -100,7 +100,7 @@
                             <p class="card-title">Total Instructors</p>
                             <div class="card-numbers">
                                 <h1>{{basicData?.totalInstructors}}</h1>
-                                <p>999</p>
+                                <!-- <p>999</p> -->
                             </div>
                             <p class="card-status">On track</p>
                         </div>
@@ -109,12 +109,12 @@
                         </div>
                     </div>
 
-                    <div [routerLink]="['/instructor/students']" class="card3">
+                    <div [routerLink]="['/users']" class="card3">
                         <div class="card-content">
                             <p class="card-title">Total Assessments</p>
                             <div class="card-numbers">
                                 <h1>{{basicData?.totalAssessments}}</h1>
-                                <p>with {{basicData?.totalAssignedAssessments}} assigned</p>
+                                <p>assigned {{basicData?.totalAssignedAssessments}} times</p>
                             </div>
                             <p class="card-status">All active</p>
                         </div>
@@ -133,7 +133,31 @@
                         </div>
 
                         <div class="c-conts">
-                            <div class="activity-item">
+
+                            <div *ngFor="let ra of recentActivities" class="activity-item">
+                                <div class="activity-icon" [ngClass]="getActivityIcon(ra.action).class">
+                                    <i class="fas" [ngClass]="getActivityIcon(ra.action).icon"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-text">
+                                        <span class="activity-action">{{ra.action}}</span>
+                                        <span class="activity-detail">{{ra.userName}} - {{ra.role.toUpperCase()}}</span>
+                                    </div>
+                                    <div class="activity-time">{{getRelativeTime(ra.timestamp)}}</div>
+                                </div>
+                            </div>
+
+                            <div *ngIf="!recentActivities || recentActivities.length === 0" class="activity-item">
+                                <div class="activity-content">
+                                    <div class="activity-text">
+                                        <span class="activity-detail" style="text-align: center; width: 100%;">No recent
+                                            activities</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Backup static items for demonstration (remove these if not needed) -->
+                            <div *ngIf="false" class="activity-item">
                                 <div class="activity-icon activity-user">
                                     <i class="fas fa-user-plus"></i>
                                 </div>
@@ -146,7 +170,7 @@
                                 </div>
                             </div>
 
-                            <div class="activity-item">
+                            <!-- <div class="activity-item">
                                 <div class="activity-icon activity-assessment">
                                     <i class="fas fa-file-alt"></i>
                                 </div>
@@ -237,7 +261,7 @@
                                     </div>
                                     <div class="activity-time">8 hours ago</div>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                         <div class="view-all-activity">
                             <button class="btn-view-all">View All Activity</button>

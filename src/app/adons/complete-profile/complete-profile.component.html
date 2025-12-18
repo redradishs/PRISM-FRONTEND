@@ -75,13 +75,7 @@
                             </select>
                         </div>
                         <div class="form-group form-group-flex">
-                            <div class="form-group" style="flex:1; min-width: 0;">
-                                <label for="blockSelect" class="form-label">Block Section</label>
-                                <select id="blockSelect" formControlName="block" class="form-select">
-                                    <option value="">Select your block</option>
-                                    <option *ngFor="let block of blocks" [value]="block.id">{{block.name}}</option>
-                                </select>
-                            </div>
+
                             <div class="form-group" style="flex:1; min-width: 0; margin-left: 0.20rem;">
                                 <label for="yearLevelSelect" class="form-label">Year Level</label>
                                 <select id="yearLevelSelect" formControlName="yearLevel" class="form-select">
@@ -90,6 +84,15 @@
                                     <option value="2">2nd year</option>
                                     <option value="3">3rd year</option>
                                     <option value="4">4th year</option>
+                                </select>
+                            </div>
+
+
+                            <div class="form-group" style="flex:1; min-width: 0;">
+                                <label for="blockSelect" class="form-label">Block Section</label>
+                                <select id="blockSelect" formControlName="block" class="form-select">
+                                    <option value="">Select your block</option>
+                                    <option *ngFor="let block of blocks" [value]="block.id">{{block.name}}</option>
                                 </select>
                             </div>
                         </div>
