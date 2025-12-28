@@ -84,31 +84,21 @@
                                 placeholder="Enter assessment title">
                         </div>
 
-                        <div class="basicform-field category-section">
+                        <div class="basicform-field category-section-compact">
                             <div class="category-header">
                                 <label>Subject/Category</label>
-                                <button type="button" class="toggle-btn" (click)="toggleCategories()">
-                                    {{ showCategories ? 'Hide' : 'Show' }} Categories
-                                    <i class="fas" [ngClass]="showCategories ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                                <button type="button" class="clear-selection" *ngIf="selectedCategory"
+                                    (click)="clearCategory()">
+                                    <i class="fas fa-times"></i> Clear
                                 </button>
                             </div>
-
-                            <div class="selected-pills" *ngIf="getSelectedCount() > 0">
-                                <span class="pill" *ngFor="let cat of getSelectedCategories()">
-                                    {{ cat }}
-                                    <i class="fas fa-times" (click)="deselectCategory(cat)"></i>
-                                </span>
-                                <span class="count-badge" *ngIf="getSelectedCount() > 3">+{{ getSelectedCount() - 3 }}
-                                    more</span>
-                            </div>
-
-                            <div class="categories-container" [class.hidden]="!showCategories">
-                                <div class="categories-grid">
-                                    <label class="category-item" *ngFor="let cat of categoryOptions">
-                                        <input type="checkbox" [(ngModel)]="cat.selected">
-                                        <span class="checkmark"></span>
-                                        <span class="label-text">{{ cat.label }}</span>
-                                    </label>
+                            <div class="category-selector">
+                                <div class="category-chips">
+                                    <button type="button" class="category-chip" *ngFor="let cat of categoryOptions"
+                                        [class.active]="cat.selected" (click)="selectCategory(cat)">
+                                        <i class="fas fa-check chip-check" *ngIf="cat.selected"></i>
+                                        {{ cat.label }}
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -119,9 +109,10 @@
                                 [(ngModel)]="assessmentData.passingScore">
                         </div>
 
-                        <div *ngIf="questions.length > 0 && assessmentData.title !== '' && this.getSelectedCount() > 0"
-                            class="save-final">
-                            <button class="final-save" (click)="confirmPublish()">SAVE ASSESSMENT</button>
+                        <div class="save-final">
+                            <button class="final-save" [disabled]="!isFormValid()" [class.disabled]="!isFormValid()"
+                                (click)="confirmPublish()">SAVE
+                                ASSESSMENT</button>
                         </div>
                     </div>
 
@@ -178,11 +169,13 @@
                                 </select>
                             </div>
                             <div class="genform-field">
-                                <label for="questionCount">Questions to be Generated</label>
-                                <!-- <input type="number" id="questionCount" class="genform-input" placeholder="5" min="1"
-                                    max="20" [(ngModel)]="aiGeneration.questionCount" disabled> -->
-                                <input type="number" id="questionCount" class="genform-input"
-                                    [value]="getTotalAiSelectedQuestions()" disabled>
+                                <label>Questions to be Generated</label>
+                                <div class="question-count-display"
+                                    [class.has-questions]="getTotalAiSelectedQuestions() > 0">
+                                    <span class="count-value">{{ getTotalAiSelectedQuestions() }}</span>
+                                    <span class="count-label">{{ getTotalAiSelectedQuestions() === 1 ? 'question' :
+                                        'questions' }}</span>
+                                </div>
                             </div>
                         </div>
 

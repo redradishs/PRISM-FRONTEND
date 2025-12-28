@@ -117,7 +117,6 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
   selectedFiles: File[] = [];
   maxFiles: number = 2;
   showUploadSection = false;
-  showCategories = false;
   isSortedByType = false;
 
   questionTypes = [
@@ -152,27 +151,16 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
   ];
 
   categoryOptions = [
-    { value: 'programming', label: 'Programming Fundamentals', selected: false },
-    { value: 'datastructures', label: 'Data Structures', selected: false },
-    { value: 'algorithms', label: 'Algorithms', selected: false },
+    { value: 'computing', label: 'Computing Fundamentals', selected: false },
+    { value: 'programming', label: 'Programming', selected: false },
+    { value: 'softwaredev', label: 'Software Development', selected: false },
+    { value: 'dsa', label: 'Data Structures and Algorithms', selected: false },
+    { value: 'robotics', label: 'Robotics', selected: false },
     { value: 'networking', label: 'Networking', selected: false },
-    { value: 'os', label: 'Operating Systems', selected: false },
-    { value: 'databases', label: 'Databases', selected: false },
-    { value: 'webdevelopment', label: 'Web Development', selected: false },
-    { value: 'cybersecurity', label: 'Cybersecurity', selected: false },
-    { value: 'softwareengineering', label: 'Software Engineering', selected: false },
-    { value: 'discrete', label: 'Discrete Mathematics', selected: false },
-    { value: 'ai', label: 'Artificial Intelligence', selected: false },
-    { value: 'machinelearning', label: 'Machine Learning', selected: false },
-    { value: 'humancomputerinteraction', label: 'Human-Computer Interaction', selected: false },
-    { value: 'itfundamentals', label: 'IT Fundamentals', selected: false },
-    { value: 'mobiledevelopment', label: 'Mobile Development', selected: false },
-    { value: 'cloudcomputing', label: 'Cloud Computing', selected: false },
-    { value: 'devops', label: 'DevOps', selected: false },
-    { value: 'ethics', label: 'Ethics and IT Law', selected: false },
-    { value: 'iot', label: 'Internet of Things (IoT)', selected: false },
-    { value: 'robotics', label: 'Robotics', selected: false }
+    { value: 'cybersecurity', label: 'Cybersecurity', selected: false }
   ];
+
+  selectedCategory: string = '';
 
   constructor(private api: ApiService, private router: Router, private auth: AuthService, private titleService: Title) {
     this.titleService.setTitle('PRISM | Create');
@@ -799,6 +787,10 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
     return this.questions.length;
   }
 
+  isFormValid(): Boolean {
+    return this.questions.length > 0 && this.assessmentData.title !== '' && this.getSelectedCount() > 0;
+  }
+
   getPointLabel(type: string): string {
     const totalPoints = this.getTotalPointsByType(type);
 
@@ -1297,29 +1289,24 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
     }
   }
 
-  toggleCategories() {
-    this.showCategories = !this.showCategories;
+  selectCategory(category: { value: string; label: string; selected: boolean }) {
+    this.categoryOptions.forEach(cat => cat.selected = false);
+    category.selected = true;
+    this.selectedCategory = category.label;
+  }
+
+  clearCategory() {
+    this.categoryOptions.forEach(cat => cat.selected = false);
+    this.selectedCategory = '';
   }
 
   getSelectedCount(): number {
-    return this.categoryOptions.filter(c => c.selected).length;
+    return this.selectedCategory ? 1 : 0;
   }
 
   getSelectedCategories(): string[] {
-    return this.categoryOptions
-      .filter(c => c.selected)
-      .map(c => c.label)
-      .slice(0, 3);
+    return this.selectedCategory ? [this.selectedCategory] : [];
   }
-
-  deselectCategory(label: string) {
-    const category = this.categoryOptions.find(c => c.label === label);
-    if (category) {
-      category.selected = false;
-    }
-  }
-
-
 
 
 
@@ -1569,6 +1556,8 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
       }
     };
 
+    this.clearCategory();
+    this.step = 1;
     this.questions = [];
     this.selectedTypes = [];
     this.extractedText = '';

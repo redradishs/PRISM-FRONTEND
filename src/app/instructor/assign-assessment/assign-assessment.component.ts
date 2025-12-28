@@ -374,6 +374,8 @@ export class AssignAssessmentComponent implements OnInit {
       this.assessment = newAssessment ? { ...newAssessment } : null;
       this.totalQuestions = this.assessment ? this.assessment.totalQuestions : 0;
 
+      // console.log(this.assessment);
+
       // Keep panel open if it was already open, so it updates with new assessment
       if (wasPanelOpen) {
         this.showDetailsPanel = true;

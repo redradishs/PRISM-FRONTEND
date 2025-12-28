@@ -687,7 +687,7 @@
                                                 <i class="fas fa-lightbulb"></i>
                                                 <span>Leave blank to use the original assessment title:
                                                     <strong *ngIf="filteredAssessments.length > 0">
-                                                        "{{filteredAssessments[0].title}}"
+                                                        "{{assessment.title}}"
                                                     </strong>
                                                 </span>
                                             </div>
@@ -1295,6 +1295,13 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- floatin next button only if can proceed and current step is less than 4 -->
+                <button *ngIf="canProceed() && currentStep === 1" class="floating-next-btn"
+                    (click)="onNext(); scrollToTop()">
+                    <span>Next</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
             </div>
         </div>
     </div>
