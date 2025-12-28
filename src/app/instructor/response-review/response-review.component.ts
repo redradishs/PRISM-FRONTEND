@@ -29,6 +29,9 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
   isLoading: boolean = true;
   totalPoints: number = 0;
 
+  filteredQuestions: any[] = [];
+  activeFilter: string = 'all';
+
 
   @HostListener('window:resize')
   onResize() {
@@ -94,12 +97,28 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
     this.api.getDetailedAnswers(this.assignedAssessmentId, this.studentId).subscribe({
       next: (resp: any) => {
         this.qna = resp.data;
-        // console.log('Assessment data:', this.qna);
         this.isLoading = false;
+        const hasReported = this.assessmentDetails?.student?.questionstoReview?.length > 0;
+        this.viewFilter(hasReported ? 'reported' : 'all');
       }, error: (error) => {
         console.error('Error fetching assessment data:', error);
       }
     })
+  }
+
+  viewFilter(filterType: string) {
+    this.activeFilter = filterType;
+    const reportedIds = this.assessmentDetails?.student?.questionstoReview ?? [];
+
+    if (filterType === 'all') {
+      this.filteredQuestions = this.qna;
+    } else if (filterType === 'correct') {
+      this.filteredQuestions = this.qna.filter(question => question.isCorrect);
+    } else if (filterType === 'incorrect') {
+      this.filteredQuestions = this.qna.filter(question => !question.isCorrect);
+    } else if (filterType === 'reported') {
+      this.filteredQuestions = this.qna.filter(question => reportedIds.includes(question.questionId));
+    }
   }
 
   isExpanded(questionId: string | number): boolean {
@@ -194,6 +213,27 @@ export class ResponseReviewComponent implements OnInit, OnDestroy {
           iconColor: '#3b82f6'
         });
       }
+    });
+  }
+
+
+  endDisputeRequest() {
+    this.api.endDisputeRequest(this.assignedAssessmentId, this.studentId, { instructorId: this.userId }).subscribe({
+      next: (response) => {
+        // console.log('Dispute ended successfully:', response);
+        this.assessmentData();
+      },
+      error: (error) => {
+        console.error('Error ending dispute:', error);
+      }
+    });
+    Swal.fire({
+      title: 'Dispute Ended',
+      text: 'The dispute has been ended successfully',
+      icon: 'success',
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
     });
   }
 

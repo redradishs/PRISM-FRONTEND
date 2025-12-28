@@ -48,6 +48,11 @@
 
             <div class="h-[65px] md:h-[68px] w-full"></div>
 
+            <div class="endDispute" *ngIf="assessmentDetails.student?.reportStatus === 'pending'">
+                <button class="button primary" (click)="endDisputeRequest()" title="End Dispute without Changes">END
+                    DISPUTE</button>
+            </div>
+
             <div *ngIf="isLoading"
                 class="flex items-center justify-center min-h-[calc(100vh-68px)] bg-white transition-colors duration-900">
                 <div class="text-center animate-fade-in">
@@ -373,9 +378,33 @@
                         Question Review
                     </h2>
 
+                    <div class="filter-container">
+                        <button class="filter-btn" [class.active]="activeFilter === 'all'" (click)="viewFilter('all')">
+                            <i class="fas fa-list-ul"></i>
+                            All
+                        </button>
+                        <button class="filter-btn" [class.active]="activeFilter === 'correct'"
+                            (click)="viewFilter('correct')">
+                            <i class="fas fa-check-circle"></i>
+                            Correct
+                        </button>
+                        <button class="filter-btn" [class.active]="activeFilter === 'incorrect'"
+                            (click)="viewFilter('incorrect')">
+                            <i class="fas fa-times-circle"></i>
+                            Incorrect
+                        </button>
+                        <button *ngIf="assessmentDetails?.student?.questionstoReview?.length > 0"
+                            class="filter-btn reported" [class.active]="activeFilter === 'reported'"
+                            (click)="viewFilter('reported')">
+                            <i class="fas fa-flag"></i>
+                            Reported
+                        </button>
+                    </div>
+
                     <!-- Individual Question Cards -->
                     <div class="questions-container">
-                        <div *ngFor="let q of qna; let i = index" class="question-card" [id]="'question-' + i">
+                        <div *ngFor="let q of filteredQuestions; let i = index" class="question-card"
+                            [id]="'question-' + i">
                             <div class="question-card-header">
                                 <div class="question-info">
                                     <span class="question-number">Question {{i + 1}}</span>

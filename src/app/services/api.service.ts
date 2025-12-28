@@ -473,6 +473,15 @@ export class ApiService {
     );
   }
 
+  endDisputeRequest(assignedAssessmentId: string, studentId: string, data: {
+    instructorId: string;
+  }) {
+    return this.http.put(
+      `${this.apiUrl}/assessment/endDispute/${assignedAssessmentId}/${studentId}`,
+      data
+    );
+  }
+
   getAttemptHistory(data: any) {
     return this.http.post(`${this.apiUrl}/attemptHistory/specific`, data);
   }
