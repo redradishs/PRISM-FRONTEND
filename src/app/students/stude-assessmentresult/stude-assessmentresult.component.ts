@@ -241,11 +241,26 @@ export class StudeAssessmentresultComponent implements OnInit {
     this.api.getObjectBased(data).subscribe({
       next: (resp: any) => {
         // console.log('Object Based Questions:', resp);
-        this.submitNonObjectBased(resp.data);
+        const transformedData = this.transfromArray(resp.data);
+        console.log('Transformed data:', transformedData);
+        this.submitNonObjectBased(transformedData);
       }, error: (error: any) => {
         console.error('Error fetching object based questions:', error);
       }
     })
+  }
+
+  transfromArray(data: any) {
+    return data.filter((item: any) => !item.studentAnswer.isCorrect)
+      .map((item: any) => {
+        return {
+          questionId: item.questionId,
+          questionText: item.questionText,
+          correctAnswer: item.correctAnswer,
+          questionType: item.questionType,
+          studentAnswer: item.studentAnswer.givenAnswer,
+        }
+      })
   }
 
   submitNonObjectBased(data: any) {

@@ -28,6 +28,9 @@ export class ApiService {
   // rtUrl = 'https://prismapi2.onrender.com/rt';
   // apiUrl = 'https://prismapi2.onrender.com/instructor';
 
+  //AI LOCAL
+  // aiFinal = 'http://127.0.0.1:8787/api'
+
   //AI Routes 
   aiFinal = 'https://prism-ai-worker.asherjamesmayson.workers.dev/api'
   aiUrl = 'https://ai.prismgcccs.live';
