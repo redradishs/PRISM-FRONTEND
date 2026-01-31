@@ -375,6 +375,7 @@ export class StudClassesComponent implements OnInit {
                 htmlContainer: 'text-sm'
               }
             })
+            this.joinClassForm.reset();
           }
         },
         error: (err) => {

@@ -146,7 +146,7 @@ export class StudHistoryComponent {
     private titleService: Title,
     private ts: TutorialService
   ) {
-    this.titleService.setTitle('PRISM | Manage');
+    this.titleService.setTitle('PRISM | History');
 
     this.searchSubject.pipe(
       debounceTime(300),

@@ -1,3 +1,27 @@
+.announcement {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #0166b3;
+    color: white;
+    font-weight: 600;
+    width: 100%;
+    padding: 0.5rem;
+    text-align: center;
+    z-index: 99999;
+}
+
+.announcement-link {
+    text-decoration: underline;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.announcement-link:hover {
+    color: #f2eb18;
+}
+
 .piper {
     display: flex;
     min-height: 100vh;
@@ -343,6 +367,11 @@ select.form-input {
 
 
 @media (max-width: 768px) {
+    .announcement {
+        font-size: 0.70rem;
+        padding: 0.30rem;
+    }
+
     .piper {
         flex-direction: column;
         height: auto;

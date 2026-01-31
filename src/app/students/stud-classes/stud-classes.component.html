@@ -141,8 +141,8 @@
                                 </div>
                                 <div class="apply-group">
                                     <form [formGroup]="joinClassForm">
-                                        <input type="text" placeholder="Enter class code" class="code-input"
-                                            formControlName="classCode">
+                                        <input type="text" [placeholder]="isMobile ? 'Code' : 'Enter class code'"
+                                            class="code-input" formControlName="classCode" autocomplete="off">
                                         <button class="apply-button" (click)="onSubmitJoinClass()">Apply</button>
                                     </form>
                                 </div>
