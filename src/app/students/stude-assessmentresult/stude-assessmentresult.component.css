@@ -1866,8 +1866,11 @@ header {
 
 .question-number {
     font-weight: 600;
-    color: #374151;
+    color: #fefefe;
     font-size: 0.9rem;
+    background-color: rgb(35, 34, 34);
+    border-radius: 6px;
+    padding: 0.4rem 0.5rem;
 }
 
 .question-badges {
@@ -2029,8 +2032,9 @@ header {
     }
     
     .question-number {
-        font-size: 1rem;
+        font-size: 0.80rem;
         padding-right: 0.75rem;
+        padding: 0.3rem 0.4rem;
     }
     
     .question-number::after {
