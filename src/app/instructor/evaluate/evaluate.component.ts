@@ -481,7 +481,7 @@ export class EvaluateComponent implements OnInit {
   triggerRecommendationTab() {
     if (this.recommendationList.length > 0) return;
 
-    // this.generateSearch(this.searchData);
+    this.generateSearch(this.searchData);
   }
 
   generateSearch(searchData: any) {
