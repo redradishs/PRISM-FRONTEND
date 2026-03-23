@@ -107,6 +107,12 @@ export class StudentService {
     return this.http.post(`${this.apiUrl}/assessment/pAIr`, data);
   }
 
+
+  saveInsights(data: any) {
+    return this.http.post(`${this.apiUrl}/assessment/insights`, data);
+  }
+
+
   //Student History Page
 
   totalAssessments(studentId: String) {

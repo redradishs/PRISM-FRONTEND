@@ -72,6 +72,10 @@ interface AssessmentResult {
   };
   violationCount?: number;
   violationDetails?: Violation[];
+  insights?: {
+    feedback: string;
+    resources: string[];
+  }
 }
 
 @Component({
@@ -123,6 +127,7 @@ export class StudeAssessmentresultComponent implements OnInit {
   isSubmittingReport = false;
 
   showViolationsModal = false;
+  studentInsightsAvailable = false;
 
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
 
@@ -147,11 +152,9 @@ export class StudeAssessmentresultComponent implements OnInit {
       this.userId = user.id;
       this.username = user.name;
       this.profile = user.profilePicture;
-      // console.log('Username:', this.username);
       this.enableStudentFeedback = user.enableStudentFeedback;
       this.getResult();
       this.getPerformancePerQuestion();
-      // console.log('User ID:', this.userId);
     });
   }
 
@@ -167,6 +170,11 @@ export class StudeAssessmentresultComponent implements OnInit {
           if (this.result.status === 'completed') {
             this.viewAllQuestions();
             this.isFinished = true;
+          }
+          if (this.result.insights?.resources && this.result.insights.resources.length > 0) {
+            this.studentInsightsAvailable = true;
+            this.insights = this.result.insights?.feedback;
+            this.searchResults = this.result.insights?.resources;
           }
           if (this.result?.masteryAchieved) {
             this.showMasteryCelebration = true;
@@ -218,7 +226,7 @@ export class StudeAssessmentresultComponent implements OnInit {
           if (resp.data && resp.data.questions) {
             this.analysis = resp.data.questions;
 
-            if (this.enableStudentFeedback) {
+            if (this.enableStudentFeedback && !this.studentInsightsAvailable) {
               this.getAssessmentInsights();
             }
           }
@@ -240,9 +248,7 @@ export class StudeAssessmentresultComponent implements OnInit {
     }
     this.api.getObjectBased(data).subscribe({
       next: (resp: any) => {
-        // console.log('Object Based Questions:', resp);
         const transformedData = this.transfromArray(resp.data);
-        console.log('Transformed data:', transformedData);
         this.submitNonObjectBased(transformedData);
       }, error: (error: any) => {
         console.error('Error fetching object based questions:', error);
@@ -266,7 +272,6 @@ export class StudeAssessmentresultComponent implements OnInit {
   submitNonObjectBased(data: any) {
     this.ai.nonObjectChecking(data).subscribe({
       next: (resp: any) => {
-        // console.log('Non-Object Based Results:', resp);
         this.processAIRectification(resp.results);
 
       }, error: (error: any) => {
@@ -465,10 +470,8 @@ export class StudeAssessmentresultComponent implements OnInit {
     const data = {
       questions: this.analysis
     }
-    // console.log('This is the result of this assessment', this.analysis)
     this.ai.analyzeStudent(data).subscribe({
       next: (resp: any) => {
-        // console.log('Successfully analyzed the assessment', resp);
         this.insights = resp.feedback;
         if (resp.search_queries) {
           this.search = resp.search_queries;
@@ -504,11 +507,31 @@ export class StudeAssessmentresultComponent implements OnInit {
     this.ai.materialsValidator(data).subscribe({
       next: (resp: any) => {
         this.searchResults = resp.results
+        this.saveInsights(resp.results);
       }, error: (error: any) => {
         console.error('Error searching for materials:', error);
       }
     })
 
+  }
+
+
+  saveInsights(result: any) {
+    const data = {
+      studentId: this.userId,
+      assignedAssessmentId: this.assignedAssessmentId,
+      insights: {
+        feedback: this.insights,
+        resources: result
+      }
+    }
+    this.api.saveInsights(data).subscribe({
+      next: (resp: any) => {
+        this.studentInsightsAvailable = true;
+      }, error: (error: any) => {
+        console.error('Error saving insights:', error);
+      }
+    })
   }
 
   openResource(url: string) {

@@ -292,6 +292,10 @@ export class ProfileInstComponent implements OnInit {
             icon: 'success',
             title: 'Success!',
             text: 'Profile updated successfully',
+            toast: true,
+            position: 'top-end',
+            timerProgressBar: true,
+            showConfirmButton: false,
             timer: 1500
           });
         },
