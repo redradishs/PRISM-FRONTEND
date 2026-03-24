@@ -286,7 +286,6 @@ export class LoginComponent implements OnInit {
             confirmButtonColor: '#1976D2',
           }).then((result) => {
             if (result.isConfirmed) {
-              console.log('Navigating to verify-email page');
               this.router.navigate(['/verify-email']);
             }
           });
@@ -389,7 +388,7 @@ export class LoginComponent implements OnInit {
         }
       },
       error: (err) => {
-        console.error('Login error:', err);
+        // console.error('Login error:', err);
 
         if (err.error && err.error.message && err.error.message.includes('Too many authentication attempts')) {
           this.loading = false;
@@ -447,6 +446,7 @@ export class LoginComponent implements OnInit {
         this.formError = 'Invalid Email or Password';
         this.loading = false;
         this.clicked = false;
+        this.loginForm.get('password')?.reset();
       },
       complete: () => {
         console.log('Login request completed! Welcome to PRISM!');
@@ -724,7 +724,7 @@ export class LoginComponent implements OnInit {
 
       let errorMessage = 'Failed to sign in with Google. Please try again.';
       if (error.message === 'INVALID_EMAIL') {
-        errorMessage = 'Please use your Gordon College Domain Email Address.';
+        errorMessage = 'Please use your Gordon College Domain Email Address. (gordoncollege.edu.ph)';
       }
 
       Swal.fire({

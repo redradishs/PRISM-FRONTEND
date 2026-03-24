@@ -183,7 +183,7 @@
                                 <div class="stats-grid">
                                     <div class="stat-card">
                                         <div class="stat-value">{{getRankingDisplay().rank}}</div>
-                                        <div class="stat-label">{{result.mode === 'public' ? 'Global Rank' : 'Your
+                                        <div class="stat-label">{{result.mode === 'public' ? 'Public Rank' : 'Your
                                             Rank'}}</div>
                                         <div class="stat-detail">out of {{getRankingDisplay().total}} {{result.mode ===
                                             'public' ? 'participants' : 'students'}}</div>
@@ -407,7 +407,8 @@
                                 'fa-file-alt': r.contentType === 'Tutorial',
                                 'fa-video': r.contentType === 'Video',
                                 'fa-laptop-code': r.contentType === 'Practice',
-                                'fa-book': r.contentType === 'Article'
+                                'fa-book': r.contentType === 'Article',
+                                'fa-chalkboard-teacher': r.contentType === 'Course'
                                 }"></i>
                                             </div>
                                             <div class="resource-content">
@@ -531,7 +532,8 @@
                                                 <h4>Correct Answer</h4>
                                             </div>
                                             <div *ngIf="!question.isCorrect" class="answer-content correct">
-                                                {{formatAnswer(question.correctAnswer)}}
+                                                {{formatAnswer(question.correctAnswer.toLowerCase() === 'true' ? 'True'
+                                                : 'False')}}
                                             </div>
                                         </div>
 

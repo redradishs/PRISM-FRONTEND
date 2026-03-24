@@ -486,6 +486,12 @@
     margin-bottom: 5px;
 }
 
+.progress-header label {
+    font-size: 1rem;
+    color: #363434;
+    font-weight: bold;
+}
+
 .progress-bar {
     height: 8px;
     background-color: #eee;
@@ -527,6 +533,12 @@
 /* Subject Performance */
 .subject-performance {
     margin-top: 20px;
+}
+
+.subject-performance h4 {
+    font-size: 1rem;
+    color: #363434;
+    font-weight: bold;
 }
 
 .subject-list {

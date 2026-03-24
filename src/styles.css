@@ -1,10 +1,9 @@
 @import "tailwindcss";
 @plugin "flowbite/plugin";
 
-/* Intro.js Tutorial Styles */
 @import 'intro.js/introjs.css';
 
-/* Custom Tutorial Styles */
+
 .introjs-overlay {
   background: transparent !important;
   opacity: 0 !important;
@@ -30,7 +29,6 @@
   padding: 16px !important;
 }
 
-/* Simplified Tutorial Header */
 .tutorial-header {
   display: flex !important;
   justify-content: space-between !important;
@@ -182,12 +180,11 @@
   border-radius: 4px !important;
 }
 
-/* Dark overlay customization */
+
 .introjs-overlay {
   background: rgba(0, 0, 0, 0.6) !important;
 }
 
-/* Mobile responsive adjustments */
 @media (max-width: 768px) {
   .introjs-tooltip {
     max-width: calc(100vw - 30px) !important;
@@ -205,13 +202,15 @@
     font-size: 14px !important;
     line-height: 1.5 !important;
     margin-bottom: 16px !important;
-    padding-right: 60px !important; /* Space for skip button */
+    padding-right: 60px !important; 
+    
   }
   
   .introjs-tooltip-title {
     font-size: 16px !important;
     margin-bottom: 12px !important;
-    padding-right: 60px !important; /* Space for skip button */
+    padding-right: 60px !important; 
+    
   }
   
   .introjs-tooltipbuttons {
@@ -277,4 +276,23 @@
     margin-top: 12px !important;
     padding-top: 12px !important;
   }
+}
+
+html, body {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+
+input,
+textarea,
+select,
+[contenteditable='true'] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+img {
+  -webkit-user-drag: none;
+  user-select: none;
 }
