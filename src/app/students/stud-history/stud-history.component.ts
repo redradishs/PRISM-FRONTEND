@@ -105,7 +105,7 @@ export class StudHistoryComponent {
   profile: string = '';
   isMobile = window.innerWidth < 768;
 
-  // Search and Filter Properties
+  // Search and Filter Properties 
   searchQuery: string = '';
   selectedMode: string = '';
   sortBy: string = 'newest';
@@ -508,21 +508,6 @@ export class StudHistoryComponent {
 
 
 
-  editAssessment(assessment: Assessment) {
-    this.router.navigate(['/instructor/edit', assessment.assessmentId]);
-  }
-
-  viewAssessmentDetails(assessment: Assessment) {
-    this.router.navigate(['/instructor/assessment', assessment.assessmentId]);
-  }
-
-  duplicateAssessment(assessment: Assessment) {
-    // console.log('Duplicating assessment:', assessment.assessmentId);
-  }
-
-  deleteAssessment(assessment: Assessment) {
-    // console.log('Deleting assessment:', assessment.assessmentId);
-  }
   setViewMode(mode: 'grid' | 'list') {
     this.viewMode = mode;
     localStorage.setItem('assessmentViewMode', mode);

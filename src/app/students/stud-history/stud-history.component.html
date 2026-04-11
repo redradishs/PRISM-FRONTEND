@@ -343,7 +343,7 @@
                                 </span>
                                 <button
                                     *ngIf="(assessment.status === 'ongoing' || assessment.status === 'scheduled') || (assessment.status === 'completed' && assessment.studentStatus === 'submitted')"
-                                    class="btn btn-primary" (click)="viewAssessmentDetails(assessment)">
+                                    class="btn btn-primary" (click)="gotoResult(assessment)">
                                     {{ assessment.status === 'completed' ? 'View Result' : 'View Assessment' }}
                                 </button>
                             </div>
@@ -468,7 +468,7 @@
                                 <div class="actions-container">
                                     <button
                                         *ngIf="(assessment.status === 'ongoing' || assessment.status === 'scheduled') || (assessment.status === 'completed' && assessment.studentStatus === 'submitted')"
-                                        class="btn btn-primary" (click)="viewAssessmentDetails(assessment)">
+                                        class="btn btn-primary" (click)="gotoResult(assessment)">
                                         {{ assessment.status === 'completed' ? 'View Result' : 'View Assessment' }}
                                     </button>
 

@@ -46,6 +46,7 @@ export class StudHomeComponent implements OnInit, OnDestroy {
   totalActiveAssessments: number = 0;
   totalClasses: number = 0;
   totalCompletedAssessments: number = 0;
+  weekLoad: number = 0;
   onGoingAssessments: any[] = [];
   upcomingAssessments: any[] = [];
   completedAssessments: any[] = [];
@@ -120,6 +121,7 @@ export class StudHomeComponent implements OnInit, OnDestroy {
         this.dueThisWeek = this.getDueThisWeek(this.onGoingAssessments);
         this.upcomingAssessments = resp.data.scheduled;
         this.completedAssessments = resp.data.completed;
+        this.currentLoad(resp.data.scheduled);
         this.isLoading = false;
       },
       error: (err) => {
@@ -238,18 +240,32 @@ export class StudHomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  getDueThisWeek(assessments: any[]): number {
+  private getWeekStartAndEnd() {
     const now = new Date();
-
     const day = now.getDay();
     const diffToMonday = day === 0 ? -6 : 1 - day;
     const startOfWeek = new Date(now);
     startOfWeek.setDate(now.getDate() + diffToMonday);
     startOfWeek.setHours(0, 0, 0, 0);
-
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
     endOfWeek.setHours(23, 59, 59, 999);
+
+    return { startOfWeek, endOfWeek };
+  }
+
+  currentLoad(assessments: any) {
+    const { startOfWeek, endOfWeek } = this.getWeekStartAndEnd();
+
+    const list = Array.isArray(assessments) ? assessments : [];
+    this.weekLoad = list.filter((ass: any) => {
+      const startDate = new Date(ass.startDate);
+      return startDate >= startOfWeek && startDate <= endOfWeek;
+    }).length;
+  }
+
+  getDueThisWeek(assessments: any[]): number {
+    const { startOfWeek, endOfWeek } = this.getWeekStartAndEnd();
 
     const dueThisWeek = assessments.filter(assessment => {
       const dueDate = new Date(assessment.endDate);
