@@ -33,7 +33,7 @@ export class ApiService {
 
   //AI Routes 
   aiFinal = 'https://prism-ai-worker.asherjamesmayson.workers.dev/api'
-  aiUrl = 'https://ai.prismgcccs.live';
+  aiUrl = 'https://ai.prismgcccs.app';
 
 
   // Google Cloud Console
