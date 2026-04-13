@@ -22,9 +22,9 @@ export class StudentService {
 
 
   // VPS Server
-  apiUrl = 'https://vps.prismgcccs.live/student';
-  Assessment = 'https://vps.prismgcccs.live/submission';
-  rtUrl = 'https://vps.prismgcccs.live/rt';
+  apiUrl = 'https://vps.prismgcccs.app/student';
+  Assessment = 'https://vps.prismgcccs.app/submission';
+  rtUrl = 'https://vps.prismgcccs.app/rt';
 
 
   constructor(private http: HttpClient) { }

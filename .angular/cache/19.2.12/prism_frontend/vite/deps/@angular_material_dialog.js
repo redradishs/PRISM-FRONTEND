@@ -1,4 +1,3 @@
-import "./chunk-GMRBXDFH.js";
 import {
   A,
   ALT,
@@ -27,7 +26,12 @@ import {
   coerceElement,
   coerceNumberProperty,
   hasModifierKey
-} from "./chunk-4K7NHH73.js";
+} from "./chunk-6JHROUZL.js";
+import {
+  BidiModule,
+  Directionality
+} from "./chunk-FH53N4F2.js";
+import "./chunk-GMRBXDFH.js";
 import {
   BasePortalOutlet,
   CdkPortalOutlet,
@@ -35,10 +39,6 @@ import {
   PortalModule,
   TemplatePortal
 } from "./chunk-VTZKZU6H.js";
-import {
-  BidiModule,
-  Directionality
-} from "./chunk-FH53N4F2.js";
 import "./chunk-2L5FQVAE.js";
 import {
   DOCUMENT
