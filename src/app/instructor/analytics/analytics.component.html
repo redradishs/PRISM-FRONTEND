@@ -66,7 +66,7 @@
             </div>
 
             <main class="p-2 md:p-5 w-full">
-                <div class="genggengg" data-tour="instructor-manage-welcome">
+                <div class="analytics-page-header" data-tour="instructor-manage-welcome">
                     <div class="oknato-header">
                         <div class="oknato-icon-wrapper">
                             <i class="fa-solid fa-chart-simple oknato-icon"></i>
@@ -76,43 +76,57 @@
                             <p>Comprehensive insights into assessment performance and student engagement.</p>
                         </div>
                     </div>
+                </div>
 
-                    <div class="publish-container">
-                        <div *ngIf="mobileTab === 'platform'" class="input-butt">
-                            <select name="" id="" [(ngModel)]="selectedPreset" (change)="datePresetChange($event)">
+                <div class="analytics-toolbar">
+                    <div class="toolbar-tabs">
+                        <button (click)="onTabChange('platform')"
+                            class="toolbar-tab" [class.toolbar-tab--active]="mobileTab === 'platform'">
+                            <i class="fas fa-chart-simple"></i>
+                            <span>Platform Overview</span>
+                        </button>
+                        <button (click)="onTabChange('individual')"
+                            class="toolbar-tab" [class.toolbar-tab--active]="mobileTab === 'individual'">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Individual Class</span>
+                        </button>
+                    </div>
+
+                    <div class="toolbar-controls">
+                        <div class="input-butt range-select">
+                            <select [(ngModel)]="selectedPreset" (change)="onPresetSelectionChange()">
                                 <option *ngFor="let p of startDatePresets" [value]="p.value">{{p.label}}</option>
                             </select>
                         </div>
 
+                        <ng-container *ngIf="selectedPreset === 'custom'">
+                            <input type="date" class="custom-date-input" [(ngModel)]="customStartDate">
+                            <span class="custom-range-sep">to</span>
+                            <input type="date" class="custom-date-input" [(ngModel)]="customEndDate"
+                                [min]="customStartDate">
+                            <button type="button" class="apply-range-button" (click)="applyCustomDateRange()">
+                                Apply
+                            </button>
+                        </ng-container>
+
                         <div *ngIf="mobileTab === 'individual'" class="input-butt">
-                            <select name="" id="" [(ngModel)]="selectedClassCode" (change)="onClassCodeChange()">
+                            <select [(ngModel)]="selectedClassCode" (change)="onClassCodeChange()">
                                 <option *ngFor="let c of classes" [value]="c.classCode">{{c.className}} -
                                     {{c.classCode}}</option>
                             </select>
                         </div>
 
-                        <button class="publish-button" (click)="exportPDFReport()">
+                        <button class="toolbar-export-btn" (click)="exportPDFReport()"
+                            [disabled]="!canExport"
+                            [class.toolbar-export-btn--disabled]="!canExport">
                             <i class="fa-solid fa-download"></i>
-                            <span>Export PDF Report</span>
+                            <span>Export PDF</span>
                         </button>
                     </div>
-                </div>
 
-                <div class="flex border-b border-gray-200 mb-3">
-                    <button (click)="onTabChange('platform')" [class.text-indigo-600]="mobileTab === 'platform'"
-                        [class.border-transparent]="mobileTab !== 'platform'"
-                        [class.text-gray-500]="mobileTab !== 'platform'"
-                        class="flex-1 py-3 px-4 text-sm font-medium border-b-2 transition-colors duration-200 flex items-center justify-center gap-2">
-                        <i class="fas fa-chart-simple"></i>
-                        <span>Platform Overview</span>
-                    </button>
-                    <button (click)="onTabChange('individual')" [class.text-indigo-600]="mobileTab === 'individual'"
-                        [class.border-transparent]="mobileTab !== 'individual'"
-                        [class.text-gray-500]="mobileTab !== 'individual'"
-                        class="flex-1 py-3 px-4 text-sm font-medium border-b-2 transition-colors duration-200 flex items-center justify-center gap-2">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Individual Class</span>
-                    </button>
+                    <p *ngIf="selectedPreset === 'custom' && dateRangeError" class="custom-range-error">
+                        {{dateRangeError}}
+                    </p>
                 </div>
 
                 <div *ngIf="mobileTab === 'platform'" class="demo-stats-grid">
@@ -120,7 +134,7 @@
                         <div class="demo-stat-content">
                             <div class="demo-stat-info">
                                 <span class="demo-stat-label">TOTAL ASSESSMENTS</span>
-                                <div class="demo-stat-value">{{platformOverviewData.totalAssessments}}</div>
+                                <div class="demo-stat-value">{{platformOverviewData?.totalAssessments ?? 0}}</div>
                                 <p class="demo-stat-description">Total Assessments</p>
                             </div>
                             <div class="demo-stat-icon performance">
@@ -133,7 +147,7 @@
                         <div class="demo-stat-content">
                             <div class="demo-stat-info">
                                 <span class="demo-stat-label">AVERAGE SCORE</span>
-                                <div class="demo-stat-value">{{platformOverviewData.averageScore}}%</div>
+                                <div class="demo-stat-value">{{platformOverviewData?.averageScore ?? 0}}%</div>
                                 <p class="demo-stat-description">Average Score</p>
                             </div>
                             <div class="demo-stat-icon admitted">
@@ -146,7 +160,7 @@
                         <div class="demo-stat-content">
                             <div class="demo-stat-info">
                                 <span class="demo-stat-label">TOTAL CLASS INVOLVED</span>
-                                <div class="demo-stat-value">{{platformOverviewData.totalClasses}}</div>
+                                <div class="demo-stat-value">{{platformOverviewData?.totalClasses ?? 0}}</div>
                                 <p class="demo-stat-description">Total classes covered</p>
                             </div>
                             <div class="demo-stat-icon pending">
@@ -162,7 +176,7 @@
                         <div class="demo-stat-content">
                             <div class="demo-stat-info">
                                 <span class="demo-stat-label">TOTAL STUDENTS</span>
-                                <div class="demo-stat-value">{{classStats?.totalStudents}}</div>
+                                <div class="demo-stat-value">{{classStats?.totalStudents ?? 0}}</div>
                                 <p class="demo-stat-description">Total students in this class</p>
                             </div>
                             <div class="demo-stat-icon performance">
@@ -175,7 +189,7 @@
                         <div class="demo-stat-content">
                             <div class="demo-stat-info">
                                 <span class="demo-stat-label">PERFORMANCE</span>
-                                <div class="demo-stat-value">{{classStats?.overallPerformance}}</div>
+                                <div class="demo-stat-value">{{classStats?.overallPerformance ?? 'N/A'}}</div>
                                 <p class="demo-stat-description">Performance of this class</p>
                             </div>
                             <div class="demo-stat-icon admitted">
@@ -188,7 +202,7 @@
                         <div class="demo-stat-content">
                             <div class="demo-stat-info">
                                 <span class="demo-stat-label">PASSING RATE</span>
-                                <div class="demo-stat-value">{{classStats?.passingRate}}%</div>
+                                <div class="demo-stat-value">{{classStats?.passingRate ?? 0}}%</div>
                                 <p class="demo-stat-description">Passing Rate</p>
                             </div>
                             <div class="demo-stat-icon pending">
@@ -253,10 +267,25 @@
                             </tbody>
                         </table>
                         <div *ngIf="overallClassPerformanceData.length === 0" class="empty-state">
-                            <i class="fas fa-chart-bar text-gray-300 text-6xl mb-4"></i>
-                            <h3 class="text-xl font-semibold text-gray-600 mb-2">No Class Data Available</h3>
-                            <p class="text-gray-500">There are no classes with assessment data for the selected time
-                                period.</p>
+                            <div class="flex flex-col items-center justify-center py-12 px-6">
+                                <div class="relative mb-6">
+                                    <div class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-chart-bar text-3xl text-indigo-400"></i>
+                                    </div>
+                                    <div class="absolute -top-1 -right-1 w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-search text-xs text-yellow-600"></i>
+                                    </div>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-2">No Class Data Available</h3>
+                                <p class="text-gray-500 text-center max-w-md leading-relaxed">
+                                    There are no classes with assessment data for the selected time period.
+                                    Try adjusting your date range or check back once assessments are completed.
+                                </p>
+                                <div class="mt-6 flex items-center space-x-2 text-sm text-gray-400">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>Data updates automatically as new assessments are submitted</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -267,18 +296,17 @@
                         <div class="class-performance-comparison">
                             <h2 class="table-title">Topic Analysis</h2>
 
-                            <div class="item-cont" [attr.data-level]="getTopicDataLevel(t.percentage)"
+                            <div class="item-cont item-cont--top"
                                 *ngFor="let t of topTopics">
                                 <div class="upper">
                                     <p class="title">{{t.categoryName}}</p>
-                                    <p class="percentage">{{t.percentage}}%</p>
+                                    <p class="percentage percentage--top">{{t.percentage}}%</p>
                                 </div>
 
                                 <div class="upper">
                                     <p class="dets">{{t.totalAssessments}} Assessments</p>
-                                    <p class="dets-value">{{getTopicPerformanceLabel(t.percentage)}}</p>
                                 </div>
-                                <div class="bar" [style.width.%]="t.percentage"></div>
+                                <div class="bar bar--top" [style.width.%]="t.percentage"></div>
                             </div>
 
                             <div *ngIf="topTopics.length === 0" class="empty-state">
@@ -309,18 +337,17 @@
                         <div class="class-performance-comparison">
                             <h2 class="table-title">Commonly Missed Topics</h2>
 
-                            <div class="item-cont" [attr.data-missed-level]="getMissedTopicLevel(m.percentage)"
+                            <div class="item-cont item-cont--missed"
                                 *ngFor="let m of leastTopics">
                                 <div class="upper">
                                     <p class="title">{{m.categoryName}}</p>
-                                    <p class="percentage">{{m.percentage}}%</p>
+                                    <p class="percentage percentage--missed">{{m.percentage}}%</p>
                                 </div>
 
                                 <div class="upper">
                                     <p class="dets">{{m.totalAssessments}} Assessments</p>
-                                    <p class="dets-value">{{getMissedTopicPerformanceLabel(m.percentage)}}</p>
                                 </div>
-                                <div class="bar" [style.width.%]="m.percentage"></div>
+                                <div class="bar bar--missed" [style.width.%]="m.percentage"></div>
                             </div>
 
                             <div *ngIf="leastTopics.length === 0" class="empty-state">
@@ -435,8 +462,7 @@
 
                     <div class="class-performance-comparison mt-6">
                         <h2 class="table-title">Performance Trend Over Time</h2>
-                        <div *ngIf="performanceTrendData.trends && performanceTrendData.trends.length > 0"
-                            class="performance-trend-cont">
+                        <div *ngIf="performanceTrendData?.trends?.length > 0" class="performance-trend-cont">
                             <div class="monthly" *ngFor="let m of performanceTrendData.trends">
                                 <p class="month">{{m.period}}</p>
                                 <span class="perc">{{m.averagePercentage}}%</span>
@@ -446,14 +472,29 @@
                             </div>
                         </div>
 
-                        <div *ngIf="!performanceTrendData.trends || performanceTrendData.trends.length === 0"
-                            class="empty-state">
-                            <i class="fas fa-chart-line text-gray-300 text-6xl mb-4"></i>
-                            <h3 class="text-xl font-semibold text-gray-600 mb-2">No Performance Trend Data</h3>
-                            <p class="text-gray-500">There is no trend data available for the selected time period.</p>
+                        <div *ngIf="!performanceTrendData?.trends?.length" class="empty-state">
+                            <div class="flex flex-col items-center justify-center py-12 px-6">
+                                <div class="relative mb-6">
+                                    <div class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-chart-line text-3xl text-indigo-400"></i>
+                                    </div>
+                                    <div class="absolute -top-1 -right-1 w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-search text-xs text-yellow-600"></i>
+                                    </div>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-2">No Performance Trend Data</h3>
+                                <p class="text-gray-500 text-center max-w-md leading-relaxed">
+                                    There is no trend data available for the selected time period.
+                                    Trends will appear here once students begin submitting assessments.
+                                </p>
+                                <div class="mt-6 flex items-center space-x-2 text-sm text-gray-400">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>Data updates automatically as new assessments are submitted</span>
+                                </div>
+                            </div>
                         </div>
 
-                        <div *ngIf="performanceTrendData && performanceTrendData.trendAnalysis" class="analysis-cont"
+                        <div *ngIf="hasRealTrendData && performanceTrendData.trendAnalysis" class="analysis-cont"
                             [ngClass]="{
                                 'trend-improving': performanceTrendData.trendAnalysis.improvement > 0,
                                 'trend-declining': performanceTrendData.trendAnalysis.improvement < 0,
@@ -474,7 +515,7 @@
                         </div>
 
                         <!-- Summary Statistics -->
-                        <div *ngIf="performanceTrendData && performanceTrendData.summary" class="summary-stats-grid">
+                        <div *ngIf="hasRealTrendData && performanceTrendData.summary" class="summary-stats-grid">
                             <div class="summary-stat-card">
                                 <div class="stat-icon">
                                     <i class="fas fa-chart-bar"></i>
@@ -545,7 +586,7 @@
                         </div>
 
                         <!-- Key Insights -->
-                        <div *ngIf="performanceTrendData && performanceTrendData.insights" class="insights-section">
+                        <div *ngIf="hasRealTrendData && performanceTrendData.insights" class="insights-section">
                             <h3 class="insights-title">Key Insights</h3>
                             <div class="insights-grid">
                                 <div class="insight-card productive">
@@ -590,7 +631,7 @@
 
                     <div class="box">
                         <h2 class="table-title">Assessment Performance Over Time</h2>
-                        <table>
+                        <table *ngIf="performers?.length > 0">
                             <thead>
                                 <tr>
                                     <th>Assessment</th>
@@ -612,6 +653,27 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <div *ngIf="!performers || performers.length === 0" class="empty-state">
+                            <div class="flex flex-col items-center justify-center py-12 px-6">
+                                <div class="relative mb-6">
+                                    <div class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-clipboard-list text-3xl text-indigo-400"></i>
+                                    </div>
+                                    <div class="absolute -top-1 -right-1 w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-search text-xs text-yellow-600"></i>
+                                    </div>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-2">No Assessment Data</h3>
+                                <p class="text-gray-500 text-center max-w-md leading-relaxed">
+                                    There are no assessments available for this class in the selected time period.
+                                    Try selecting a different class or adjusting your date range.
+                                </p>
+                                <div class="mt-6 flex items-center space-x-2 text-sm text-gray-400">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>Data updates automatically as new assessments are submitted</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="topic-analysis">
@@ -628,15 +690,12 @@
                                             <p class="rank-name">{{p.name}}</p>
                                             <p class="rank-title">Rank #{{i + 1}}</p>
                                         </div>
-
                                     </div>
-
                                     <div class="right-side">
                                         <span class="rank-percentage">{{p.passingRate}}%</span>
                                         <p class="rank-average">Passing Rate</p>
                                     </div>
                                 </div>
-
                                 <div class="student-stats">
                                     <div class="student-stats-cont">
                                         <p class="student-stats-number">{{p.completedAssessments}}</p>
@@ -653,6 +712,27 @@
                                 </div>
                             </div>
 
+                            <div *ngIf="!topPerformers || topPerformers.length === 0" class="empty-state">
+                                <div class="flex flex-col items-center justify-center py-12 px-6">
+                                    <div class="relative mb-6">
+                                        <div class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-trophy text-3xl text-indigo-400"></i>
+                                        </div>
+                                        <div class="absolute -top-1 -right-1 w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-search text-xs text-yellow-600"></i>
+                                        </div>
+                                    </div>
+                                    <h3 class="text-xl font-semibold text-gray-800 mb-2">No Top Performers Yet</h3>
+                                    <p class="text-gray-500 text-center max-w-md leading-relaxed">
+                                        There are no top performing students for this class in the selected time period.
+                                        Results will appear here once enough assessments have been completed.
+                                    </p>
+                                    <div class="mt-6 flex items-center space-x-2 text-sm text-gray-400">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span>Data updates automatically as new assessments are submitted</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="class-performance-comparison">
@@ -689,6 +769,48 @@
                                 </div>
                             </div>
 
+                            <div *ngIf="(!leastPerformers || leastPerformers.length === 0) && topPerformers?.length > 0" class="empty-state">
+                                <div class="flex flex-col items-center justify-center py-12 px-6">
+                                    <div class="relative mb-6">
+                                        <div class="w-20 h-20 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-check-circle text-3xl text-green-400"></i>
+                                        </div>
+                                        <div class="absolute -top-1 -right-1 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-thumbs-up text-xs text-green-600"></i>
+                                        </div>
+                                    </div>
+                                    <h3 class="text-xl font-semibold text-gray-800 mb-2">All Students Performing Well</h3>
+                                    <p class="text-gray-500 text-center max-w-md leading-relaxed">
+                                        No students currently need attention in this class for the selected time period.
+                                        Your students are performing well across all assessments.
+                                    </p>
+                                    <div class="mt-6 flex items-center space-x-2 text-sm text-gray-400">
+                                        <i class="fas fa-star"></i>
+                                        <span>Keep up the excellent teaching work!</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="(!leastPerformers || leastPerformers.length === 0) && (!topPerformers || topPerformers.length === 0)" class="empty-state">
+                                <div class="flex flex-col items-center justify-center py-12 px-6">
+                                    <div class="relative mb-6">
+                                        <div class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-users text-3xl text-indigo-400"></i>
+                                        </div>
+                                        <div class="absolute -top-1 -right-1 w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-search text-xs text-yellow-600"></i>
+                                        </div>
+                                    </div>
+                                    <h3 class="text-xl font-semibold text-gray-800 mb-2">No Student Data Yet</h3>
+                                    <p class="text-gray-500 text-center max-w-md leading-relaxed">
+                                        There is not enough assessment data to identify students needing attention.
+                                        Results will appear here once enough assessments have been completed.
+                                    </p>
+                                    <div class="mt-6 flex items-center space-x-2 text-sm text-gray-400">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span>Data updates automatically as new assessments are submitted</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                     </div>
@@ -777,6 +899,29 @@
                     <div class="box mt-6">
                         <h2 class="table-title">Student Performance Distribution</h2>
 
+                        <div *ngIf="!performanceDistribution?.performanceRanges" class="empty-state">
+                            <div class="flex flex-col items-center justify-center py-12 px-6">
+                                <div class="relative mb-6">
+                                    <div class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-chart-bar text-3xl text-indigo-400"></i>
+                                    </div>
+                                    <div class="absolute -top-1 -right-1 w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-search text-xs text-yellow-600"></i>
+                                    </div>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-2">No Distribution Data</h3>
+                                <p class="text-gray-500 text-center max-w-md leading-relaxed">
+                                    There is no performance distribution data available for this class in the selected time period.
+                                    Distribution will populate once students complete assessments.
+                                </p>
+                                <div class="mt-6 flex items-center space-x-2 text-sm text-gray-400">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>Data updates automatically as new assessments are submitted</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <ng-container *ngIf="performanceDistribution?.performanceRanges">
                         <div class="progress-students grade-a">
                             <div class="progress-student">
                                 <div class="left-side">
@@ -963,6 +1108,7 @@
                                     *ngFor="let e of performanceDistribution?.performanceRanges?.poor?.students">{{e.name}}</span>
                             </div>
                         </div>
+                        </ng-container>
                     </div>
 
 

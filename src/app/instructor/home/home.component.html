@@ -15,28 +15,10 @@
                                     Manage Assessments
                                 </button>
 
-                                <div class="relative export-dropdown-container">
-                                    <button (click)="toggleExportDropdown()"
-                                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors flex items-center gap-2">
-                                        <span>Export Report</span>
-                                        <i class="fas fa-chevron-down text-xs"
-                                            [class.rotate-180]="showExportDropdown"></i>
-                                    </button>
-
-                                    <div *ngIf="showExportDropdown"
-                                        class="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg border border-gray-200 z-50">
-                                        <div class="py-1">
-                                            <button (click)="selectTimeRange('6 months')"
-                                                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                                <span>6 Months</span>
-                                            </button>
-                                            <button (click)="selectTimeRange('1 year')"
-                                                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                                <span>1 Year</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                                <button [routerLink]="['/instructor/analytics']"
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors">
+                                    Analytics Overview
+                                </button>
                             </div>
                             <div *ngIf="!isMobile" class="flex items-center">
                                 <div class="relative mr-3">
