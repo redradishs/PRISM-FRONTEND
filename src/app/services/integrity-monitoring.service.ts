@@ -52,6 +52,12 @@ export class IntegrityMonitoringService {
   private devToolsDetected = false;
   private devToolsCheckInterval: any;
 
+  // Window resize tracking
+  private initialWidth = window.innerWidth;
+  private initialHeight = window.innerHeight;
+  private resizeTimer: any;
+  private readonly RESIZE_SHRINK_THRESHOLD = 0.6;
+
   // Public observables
   public cheatingCount$: Observable<number> =
     this._cheatingCount.asObservable();
@@ -184,6 +190,10 @@ export class IntegrityMonitoringService {
       clearInterval(this.devToolsCheckInterval);
       this.devToolsCheckInterval = null;
     }
+    if (this.resizeTimer) {
+      clearTimeout(this.resizeTimer);
+      this.resizeTimer = null;
+    }
 
     // Remove all event listeners that were added
     document.removeEventListener('mousemove', this.handleMouseMove);
@@ -252,26 +262,6 @@ export class IntegrityMonitoringService {
     }
   }
 
-  private onWindowResize() {
-    // Check if it's a mobile device
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-    if (!isMobile) {
-      // For desktop: check for significant resizing that might indicate dev tools
-      const widthThreshold = window.outerWidth - window.innerWidth > 160;
-      const heightThreshold = window.outerHeight - window.innerHeight > 160;
-
-      if (widthThreshold || heightThreshold) {
-        this.registerViolation('Developer tools or window resize detected', 'medium');
-      }
-    } else {
-      // For mobile: only trigger if window becomes extremely small
-      // Most mobile devices won't go below these dimensions
-      if (window.innerWidth < 280 || window.innerHeight < 400) {
-        this.registerViolation('Suspicious window resizing detected', 'medium');
-      }
-    }
-  }
 
   private beforeUnloadHandler(event: BeforeUnloadEvent) {
     event.returnValue =
@@ -613,16 +603,33 @@ export class IntegrityMonitoringService {
   };
 
   private handleWindowResize = () => {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-    if (!isMobile) {
-      const widthThreshold = window.outerWidth - window.innerWidth > 160;
-      const heightThreshold = window.outerHeight - window.innerHeight > 160;
-
-      if (widthThreshold || heightThreshold) {
-        this.registerViolation('Developer tools or window resize detected', 'medium');
-      }
+    if (this.resizeTimer) {
+      clearTimeout(this.resizeTimer);
     }
+
+    this.resizeTimer = setTimeout(() => {
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const currentWidth = window.innerWidth;
+      const currentHeight = window.innerHeight;
+
+      // DevTools gap detection (desktop only)
+      if (!isMobile) {
+        const widthGap = window.outerWidth - currentWidth > 160;
+        const heightGap = window.outerHeight - currentHeight > 160;
+
+        if (widthGap || heightGap) {
+          this.registerViolation('Developer tools detected via resize', 'medium');
+        }
+      }
+
+      // Sudden shrink detection — e.g. window snapped to half-screen
+      const widthRatio = currentWidth / this.initialWidth;
+      const heightRatio = currentHeight / this.initialHeight;
+
+      if (widthRatio < this.RESIZE_SHRINK_THRESHOLD || heightRatio < this.RESIZE_SHRINK_THRESHOLD) {
+        this.registerViolation('Suspicious window resizing detected', 'medium');
+      }
+    }, 300);
   };
 
   private handleCopy = (e: Event) => {

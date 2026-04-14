@@ -7,6 +7,8 @@
     height: 100vh;
     background: linear-gradient(to bottom, #f8fafc, #f1f5f9, #ffffff);
     color: #1e293b;
+    -webkit-user-select: text;
+    user-select: text;
 }
 
 /* Header styles */
