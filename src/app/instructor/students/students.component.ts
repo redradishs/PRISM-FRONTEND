@@ -1797,7 +1797,9 @@ export class StudentsComponent implements OnInit {
                       leastPerformers: this.leastPerformers,
                       performanceDistribution: this.performanceDistribution,
                       topicDistribution: this.topicDistribution,
-                      topicGeneratedDate: this.topicGeneratedDate
+                      topicGeneratedDate: this.topicGeneratedDate,
+                      instructorName: this.username,
+                      dateRangeLabel: 'All Time'
                     });
 
                     Swal.fire({

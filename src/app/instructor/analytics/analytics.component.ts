@@ -525,7 +525,9 @@ export class AnalyticsComponent implements OnInit {
       leastPerformers: this.leastPerformers,
       performanceDistribution: this.performanceDistribution,
       topicDistribution: this.topicDistribution,
-      topicGeneratedDate: this.topicGeneratedDate
+      topicGeneratedDate: this.topicGeneratedDate,
+      instructorName: this.username,
+      dateRangeLabel: this.getSelectedRangeLabel()
     });
   }
 
@@ -541,7 +543,9 @@ export class AnalyticsComponent implements OnInit {
       leastTopics: this.leastTopics,
       performanceTrendData: this.performanceTrendData,
       topicDistribution: this.topicDistribution,
-      topicGeneratedDate: this.topicGeneratedDate
+      topicGeneratedDate: this.topicGeneratedDate,
+      instructorName: this.username,
+      dateRangeLabel: presetLabel
     });
   }
 
