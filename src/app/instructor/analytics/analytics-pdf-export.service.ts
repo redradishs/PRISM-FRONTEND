@@ -381,9 +381,8 @@ export class AnalyticsPdfExportService {
         // ── Class Performance Comparison ──
         if (data.overallClassPerformanceData && data.overallClassPerformanceData.length > 0) {
             yPosition = this.ensureSpace(doc, yPosition, 25, pageHeight);
-
-            this.addSectionTitle(doc, 'Class Performance Comparison', yPosition);
-            yPosition += 6;
+            this.addSectionTitle(doc, 'Class Performance Comparison', yPosition, 10, 'center');
+            yPosition += 5;
 
             const classData = data.overallClassPerformanceData.slice(0, 8).map((c: any) => [
                 this.truncateText(c.className, 25),
@@ -432,48 +431,48 @@ export class AnalyticsPdfExportService {
                 margin: { left: 10, right: 10 }
             });
 
-            yPosition = (doc as any).lastAutoTable.finalY + 6;
+            yPosition = (doc as any).lastAutoTable.finalY + 4;
         }
 
         // ── Trend Analysis Banner ──
         if (data.performanceTrendData?.trendAnalysis) {
-            yPosition = this.ensureSpace(doc, yPosition, 22, pageHeight);
+            yPosition = this.ensureSpace(doc, yPosition, 16, pageHeight);
 
             const improvement = data.performanceTrendData.trendAnalysis.improvement;
             const bgColor: [number, number, number] = improvement > 0 ? [220, 252, 231] : improvement < 0 ? [254, 242, 242] : [243, 244, 246];
             const borderColor: [number, number, number] = improvement > 0 ? this.successColor : improvement < 0 ? this.dangerColor : this.textLight;
 
             doc.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
-            doc.roundedRect(10, yPosition, pageWidth - 20, 18, 3, 3, 'F');
+            doc.roundedRect(10, yPosition, pageWidth - 20, 12, 2, 2, 'F');
             doc.setDrawColor(borderColor[0], borderColor[1], borderColor[2]);
             doc.setLineWidth(0.5);
-            doc.roundedRect(10, yPosition, pageWidth - 20, 18, 3, 3, 'S');
+            doc.roundedRect(10, yPosition, pageWidth - 20, 12, 2, 2, 'S');
 
-            doc.setFontSize(10);
+            doc.setFontSize(9);
             doc.setFont('helvetica', 'bold');
             doc.setTextColor(this.textDark[0], this.textDark[1], this.textDark[2]);
-            doc.text('Trend Analysis', 14, yPosition + 6);
+            doc.text('Trend Analysis', 14, yPosition + 5);
 
-            doc.setFontSize(8);
+            doc.setFontSize(7);
             doc.setFont('helvetica', 'normal');
             doc.setTextColor(this.textLight[0], this.textLight[1], this.textLight[2]);
             const detailLines = doc.splitTextToSize(data.performanceTrendData.trendAnalysis.details, pageWidth - 65);
-            doc.text(detailLines, 14, yPosition + 11);
+            doc.text(detailLines[0] || '', 14, yPosition + 9.5);
 
-            doc.setFontSize(14);
+            doc.setFontSize(12);
             doc.setFont('helvetica', 'bold');
             doc.setTextColor(borderColor[0], borderColor[1], borderColor[2]);
             const improvementValue = Math.abs(Number(improvement)).toFixed(1);
             const improvementText = improvement > 0 ? `+${improvementValue}%` : improvement < 0 ? `-${improvementValue}%` : `${improvementValue}%`;
-            doc.text(improvementText, pageWidth - 16, yPosition + 11, { align: 'right' });
+            doc.text(improvementText, pageWidth - 16, yPosition + 8, { align: 'right' });
 
-            yPosition += 22;
+            yPosition += 18;
         }
 
         // ── Topic Performance Analysis (side-by-side) ──
         yPosition = this.ensureSpace(doc, yPosition, 30, pageHeight);
         this.addSectionTitle(doc, 'Topic Performance Analysis', yPosition, 10, 'center');
-        yPosition += 6;
+        yPosition += 5;
 
         const halfW = (pageWidth - 24) / 2;
         const leftX = 10;
@@ -515,7 +514,7 @@ export class AnalyticsPdfExportService {
             rightFinalY = (doc as any).lastAutoTable.finalY;
         }
 
-        yPosition = Math.max(leftFinalY, rightFinalY) + 6;
+        yPosition = Math.max(leftFinalY, rightFinalY) + 8;
 
         // ── Performance Trend Graph + Detailed Trend Table ──
         if (data.performanceTrendData?.trends && data.performanceTrendData.trends.length > 0) {
@@ -582,16 +581,16 @@ export class AnalyticsPdfExportService {
             yPosition = this.ensureSpace(doc, yPosition, 70, pageHeight);
 
             this.addPerformanceSummaryCard(doc, data.performanceTrendData.summary, data.performanceTrendData.insights, yPosition, pageWidth);
-            yPosition += 72;
+            yPosition += 74;
         }
 
         // ── AI Topic Health Analysis (3-column card layout) ──
         if (data.topicDistribution) {
-            yPosition += 6;
+            yPosition += 4;
             yPosition = this.ensureSpace(doc, yPosition, 40, pageHeight);
 
             this.addSectionTitle(doc, 'AI Topic Health Analysis', yPosition, 10, 'center');
-            yPosition += 5;
+            yPosition += 9;
 
             const hasGenDate = !!data.topicGeneratedDate;
             const hasSummary = !!data.topicDistribution.summary;
