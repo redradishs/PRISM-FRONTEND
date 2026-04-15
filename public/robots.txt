@@ -27,7 +27,7 @@ Disallow: /component-testing
 Disallow: /api/
 
 # Sitemap location
-Sitemap: https://prismgcccs.live/sitemap.xml
+Sitemap: https://prismgcccs.app/sitemap.xml
 
 # Crawl-delay for respectful crawling
 Crawl-delay: 5
