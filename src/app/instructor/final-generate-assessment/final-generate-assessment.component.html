@@ -242,6 +242,20 @@
                                 placeholder="Enter any specific instructions or context for the AI"
                                 class="genform-textarea" [(ngModel)]="aiGeneration.instructions"></textarea>
                         </div>
+                        <div class="genform-field ai-model-field">
+                            <span class="genform-field-label" id="aiModel-label">AI Model</span>
+                            <div class="ai-model-buttons" role="group" aria-labelledby="aiModel-label">
+                                <button type="button" class="ai-model-btn" [disabled]="isGenerating"
+                                    [class.active]="aiGeneration.aiProvider === 'nebius'"
+                                    [attr.aria-pressed]="aiGeneration.aiProvider === 'nebius'"
+                                    (click)="aiGeneration.aiProvider = 'nebius'">Metta</button>
+                                <button type="button" class="ai-model-btn" [disabled]="isGenerating"
+                                    [class.active]="aiGeneration.aiProvider === 'groq'"
+                                    [attr.aria-pressed]="aiGeneration.aiProvider === 'groq'"
+                                    (click)="aiGeneration.aiProvider = 'groq'">Groq</button>
+                            </div>
+                        </div>
+
 
                         <div data-tour="instructor-create-upload">
                             <div *ngIf="!isGenerating && !showUploadSection" class="shower"

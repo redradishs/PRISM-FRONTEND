@@ -49,6 +49,9 @@ export class ApiService {
   rtUrl = 'https://api.prismgcccs.app/rt';
   apiUrl = 'https://api.prismgcccs.app/instructor';
 
+  //AI SERVER LINUX
+  aihostedserver = 'https://prismai.prismgcccs.app';
+
 
 
 
@@ -60,6 +63,10 @@ export class ApiService {
 
   bulkfinalGenerateAssessment(data: any) {
     return this.http.post(`${this.aiFinal}/assessment/bulk-generate`, data);
+  }
+
+  groqGenerateAssessment(data: any) {
+    return this.http.post(`${this.aihostedserver}/generate`, data);
   }
 
 

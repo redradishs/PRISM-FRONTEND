@@ -57,6 +57,7 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
 
   aiGeneration = {
     topic: '',
+    aiProvider: 'nebius',
     difficulty: 'medium',
     questionCount: '5',
     instructions: '',
@@ -279,7 +280,8 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
         topic: this.aiGeneration.topic,
         numberOfQuestions: count,
         questionTypes: [questionType],
-        difficulty: this.aiGeneration.difficulty
+        difficulty: this.aiGeneration.difficulty,
+        aiProvider: this.aiGeneration.aiProvider
       };
 
       if (this.extractedText && this.extractedText.trim() !== '') {
@@ -306,13 +308,19 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
     this.showSuccessMessage();
   }
 
+  private pickGenerationApiCall(requestData: any, questionCount: number) {
+    if (requestData.aiProvider === 'groq') {
+      return this.api.groqGenerateAssessment(requestData);
+    }
+    return questionCount > 20
+      ? this.api.bulkfinalGenerateAssessment(requestData)
+      : this.api.finalGenerateAssessment(requestData);
+  }
 
   private generateSingleWithRetry(requestData: any, maxRetries: number, currentAttempt: number = 1): Promise<void> {
     return new Promise((resolve, reject) => {
       const questionCount = Number(requestData.numberOfQuestions);
-      const apiCall = questionCount > 20
-        ? this.api.bulkfinalGenerateAssessment(requestData)
-        : this.api.finalGenerateAssessment(requestData);
+      const apiCall = this.pickGenerationApiCall(requestData, questionCount);
 
       apiCall.subscribe({
         next: (response: any) => {
@@ -446,9 +454,7 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
 
   private generateQuestionsWithRetry(requestData: any, maxRetries: number, currentAttempt: number = 1): void {
     const questionCount = Number(this.aiGeneration.questionCount);
-    const apiCall = questionCount > 20
-      ? this.api.bulkfinalGenerateAssessment(requestData)
-      : this.api.finalGenerateAssessment(requestData);
+    const apiCall = this.pickGenerationApiCall(requestData, questionCount);
 
     apiCall.subscribe({
       next: (response: any) => {
@@ -1545,6 +1551,7 @@ export class FinalGenerateAssessmentComponent implements OnInit, OnDestroy {
 
     this.aiGeneration = {
       topic: '',
+      aiProvider: 'nebius',
       difficulty: 'medium',
       questionCount: '5',
       instructions: '',
