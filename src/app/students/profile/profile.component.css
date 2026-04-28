@@ -445,6 +445,7 @@
 /* Buttons */
 .save-button,
 .update-button,
+.view-button,
 .logout-all-button {
     padding: 8px 16px;
     border-radius: 4px;
@@ -457,6 +458,12 @@
 .update-button {
     background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
     color: #fff;
+}
+
+.view-button {
+    background-color: #f5f7fa;
+    color: #333;
+    border: 1px solid #ddd;
 }
 
 .logout-all-button {

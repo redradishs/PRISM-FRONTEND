@@ -245,20 +245,22 @@
                                         <h4>Performance Summary</h4>
                                         <div class="stats-grid">
                                             <div class="stat-card">
-                                                <div class="stat-value one">{{performance.totalAssessmentTaken || 0}}
-                                                </div>
+                                                <div class="stat-value one">{{performance.totalAssessmentTaken}}</div>
                                                 <div class="stat-label">Assessments Taken</div>
                                             </div>
                                             <div class="stat-card">
-                                                <div class="stat-value two">{{performance.averageScore || 0}}%</div>
+                                                <div class="stat-value two">{{performance.averageScore}}%</div>
                                                 <div class="stat-label">Average Score</div>
                                             </div>
                                             <div class="stat-card">
-                                                <div class="stat-value two">{{performance.completionRate || 0}}%</div>
+                                                <div class="stat-value two">{{performance.completionRate}}%</div>
                                                 <div class="stat-label">Completion Rate</div>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="card-footer">
+                                    <button class="view-button">View Full Academic Record</button>
                                 </div>
                             </div>
                         </div>
@@ -445,15 +447,15 @@
 
                                         <div class="stats-grid">
                                             <div class="stat-card">
-                                                <div class="stat-value">{{performance?.totalAssessmentTaken || 0}}</div>
+                                                <div class="stat-value">{{performance?.totalAssessmentTaken}}</div>
                                                 <div class="stat-label">Assessments Taken</div>
                                             </div>
                                             <div class="stat-card">
-                                                <div class="stat-value">{{performance?.averageScore || 0}}%</div>
+                                                <div class="stat-value">{{performance?.averageScore}}%</div>
                                                 <div class="stat-label">Average Score</div>
                                             </div>
                                             <div class="stat-card">
-                                                <div class="stat-value">{{performance?.completionRate || 0 }}%</div>
+                                                <div class="stat-value">{{performance?.completionRate}}%</div>
                                                 <div class="stat-label">Completion Rate</div>
                                             </div>
                                         </div>
@@ -479,20 +481,12 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div *ngIf="getCategoryBreakdownEntries().length === 0"
-                                                class="empty-state-container">
-                                                <div class="empty-state-icon-wrapper">
-                                                    <div class="empty-state-circle"></div>
-                                                    <i class="fa-solid fa-check empty-state-icon"></i>
-                                                </div>
-                                                <h3 class="empty-state-title">You're all caught up!</h3>
-                                                <p class="empty-state-description">You haven't taken any assessments
-                                                    yet.</p>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
-
+                                <div class="card-footer">
+                                    <button class="view-button">View Detailed Analytics</button>
+                                </div>
                             </div>
 
                             <div class="activity-cards">
