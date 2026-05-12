@@ -1,0 +1,94 @@
+name: Ingest GitHub context
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version (number, e.g. 1)"
+        required: true
+        default: "1"
+      build:
+        description: "Build number (number, e.g. 42)"
+        required: true
+        default: "1"
+      file_extension:
+        required: true
+        default: "zip"
+      file_name:
+        required: true
+        default: "artifact.zip"
+      file_size:
+        description: "Size in bytes"
+        required: true
+        default: "0"
+      gcs_path:
+        required: true
+        default: "gs://bucket/path/artifact.zip"
+      summary:
+        required: false
+        default: "Ingested from GitHub Actions"
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: POST context to API
+        env:
+          API_URL: https://dev2.devserver.tech/api/ingest/github-context
+        run: |
+          REPO="${{ github.repository }}"
+          SHA="${{ github.sha }}"
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          PAYLOAD=$(jq -n \
+            --argjson version "${{ inputs.version }}" \
+            --argjson build "${{ inputs.build }}" \
+            --arg file_extension "${{ inputs.file_extension }}" \
+            --arg file_name "${{ inputs.file_name }}" \
+            --argjson file_size "${{ inputs.file_size }}" \
+            --arg gcs_path "${{ inputs.gcs_path }}" \
+            --arg upload_date "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --arg summary "${{ inputs.summary }}" \
+            --arg bugFixes "" \
+            --arg changesEnhancements "" \
+            --arg deprecatedRemoved "" \
+            --arg featuresAdded "" \
+            --arg additionalNotes "" \
+            --arg linked_ticket_id "" \
+            --arg repo "$REPO" \
+            --arg workFlow "${{ github.workflow }}" \
+            --arg run_id "${{ github.run_id }}" \
+            --arg run_number "${{ github.run_number }}" \
+            --arg run_attempt "${{ github.run_attempt }}" \
+            --arg run_url "$RUN_URL" \
+            --arg commit_sha "$SHA" \
+            --arg branch "${{ github.ref_name }}" \
+            --arg artifact_name "${{ inputs.file_name }}" \
+            '{
+              version: $version,
+              build: $build,
+              file_extension: $file_extension,
+              file_name: $file_name,
+              file_size: $file_size,
+              gcs_path: $gcs_path,
+              upload_date: $upload_date,
+              summary: $summary,
+              bugFixes: $bugFixes,
+              changesEnhancements: $changesEnhancements,
+              deprecatedRemoved: $deprecatedRemoved,
+              featuresAdded: $featuresAdded,
+              additionalNotes: $additionalNotes,
+              linked_ticket_id: $linked_ticket_id,
+              repo: $repo,
+              workFlow: $workFlow,
+              run_id: $run_id,
+              run_number: $run_number,
+              run_attempt: $run_attempt,
+              run_url: $run_url,
+              commit_sha: $commit_sha,
+              branch: $branch,
+              artifact_name: $artifact_name
+            }')
+          echo "$PAYLOAD" | curl -sS -X POST "$API_URL" \
+            -H "Content-Type: application/json" \
+            -d @- \
+            -w "\nHTTP %{http_code}\n"
