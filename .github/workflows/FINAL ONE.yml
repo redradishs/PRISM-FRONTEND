@@ -1,38 +1,36 @@
-name: OTA github-build
-
 on:
   workflow_dispatch:
     inputs:
-      gcs_path:
-        description: Full object path (e.g. gs://bucket/path/file.apk)
+      version:
+        description: "App version"
         required: true
-        type: string
-      file_extension:
-        description: Package type (no leading dot required)
-        required: false
-        default: apk
-        type: string
+      build:
+        description: "Build number"
+        required: true
 
 jobs:
-  post-github-build:
+  send-build:
     runs-on: ubuntu-latest
     steps:
-      - name: POST /api/github-build
+      - name: Send build metadata to OTA server
         run: |
-          set -euo pipefail
-          VERSION="${GITHUB_REF_NAME}@${GITHUB_SHA:0:7}"
-          ARTIFACT_NAME="run-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
-
-          BODY="$(jq -nc \
-            --arg version "$VERSION" \
-            --arg build "$GITHUB_RUN_NUMBER" \
-            --arg file_extension "${{ inputs.file_extension }}" \
-            --arg gcs_path "${{ inputs.gcs_path }}" \
-            --arg repo "$GITHUB_REPOSITORY" \
-            --argjson run_id "$GITHUB_RUN_ID" \
-            --arg artifact_name "$ARTIFACT_NAME" \
-            '{version: $version, build: $build, file_extension: $file_extension, gcs_path: $gcs_path, repo: $repo, run_id: $run_id, artifact_name: $artifact_name}')"
-
-          curl -sS -f -X POST "http://152.42.179.225:6500/api/github-build" \
+          curl -X POST "http://152.42.179.225:6500/api/github-build" \
             -H "Content-Type: application/json" \
-            -d "$BODY"
+            -d '{
+              "version": "'"${{ github.event.inputs.version }}"'",
+              "build": "'"${{ github.event.inputs.build }}"'",
+              "file_extension": "ipa",
+              "fileName": "MyApp.ipa",
+              "filesize": "123456789",
+              "gcs_path": "gs://your-bucket/path/MyApp.ipa",
+
+              "repo": "'"${{ github.repository }}"'",
+              "workflow": "'"${{ github.workflow }}"'",
+              "run_id": "'"${{ github.run_id }}"'",
+              "run_number": "'"${{ github.run_number }}"'",
+              "run_attempt": "'"${{ github.run_attempt }}"'",
+              "run_url": "'"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"'",
+              "commit_sha": "'"${{ github.sha }}"'",
+              "branch": "'"${{ github.ref_name }}"'",
+              "artifact_name": "MyApp.ipa"
+            }'
