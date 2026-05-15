@@ -1,0 +1,119 @@
+name: OTA — POST github-build
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release / app version (required)"
+        required: true
+        type: string
+      build:
+        description: "Build id or number (required)"
+        required: true
+        type: string
+      file_extension:
+        description: "e.g. apk or ipa"
+        required: true
+        type: string
+      gcs_path:
+        description: "Full GCS path, e.g. gs://bucket/path/file.apk"
+        required: true
+        type: string
+      artifact_name:
+        description: "Artifact name (required; used with repo+run_id for dedup)"
+        required: true
+        type: string
+      fileName:
+        description: "Optional display file name"
+        required: false
+        type: string
+      filesize:
+        description: "Optional size in bytes"
+        required: false
+        type: string
+      summary:
+        required: false
+        type: string
+      bugFixes:
+        required: false
+        type: string
+      changesEnhancements:
+        required: false
+        type: string
+      deprecatedRemoved:
+        required: false
+        type: string
+      featuresAdded:
+        required: false
+        type: string
+      additionalNotes:
+        required: false
+        type: string
+      linked_ticket_id:
+        required: false
+        type: string
+
+jobs:
+  post-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: POST /api/github-build
+        env:
+          OTA_INGEST_URL: ${{ secrets.OTA_INGEST_URL }}
+        run: |
+          set -euo pipefail
+          test -n "${OTA_INGEST_URL:-}" || { echo "Set secret OTA_INGEST_URL"; exit 1; }
+
+          BODY="$(jq -nc \
+            --arg version "${{ inputs.version }}" \
+            --arg build "${{ inputs.build }}" \
+            --arg file_extension "${{ inputs.file_extension }}" \
+            --arg gcs_path "${{ inputs.gcs_path }}" \
+            --arg artifact_name "${{ inputs.artifact_name }}" \
+            --arg repo "${{ github.repository }}" \
+            --argjson run_id "${{ github.run_id }}" \
+            --arg workflow "${{ github.workflow }}" \
+            --argjson run_number "${{ github.run_number }}" \
+            --argjson run_attempt "${{ github.run_attempt }}" \
+            --arg run_url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --arg commit_sha "${{ github.sha }}" \
+            --arg branch "${{ github.ref_name }}" \
+            --arg fileName "${{ inputs.fileName }}" \
+            --arg filesize "${{ inputs.filesize }}" \
+            --arg summary "${{ inputs.summary }}" \
+            --arg bugFixes "${{ inputs.bugFixes }}" \
+            --arg changesEnhancements "${{ inputs.changesEnhancements }}" \
+            --arg deprecatedRemoved "${{ inputs.deprecatedRemoved }}" \
+            --arg featuresAdded "${{ inputs.featuresAdded }}" \
+            --arg additionalNotes "${{ inputs.additionalNotes }}" \
+            --arg linked_ticket_id "${{ inputs.linked_ticket_id }}" \
+            '{
+              version: $version,
+              build: $build,
+              file_extension: $file_extension,
+              gcs_path: $gcs_path,
+              artifact_name: $artifact_name,
+              repo: $repo,
+              run_id: $run_id,
+              workflow: $workflow,
+              run_number: $run_number,
+              run_attempt: $run_attempt,
+              run_url: $run_url,
+              commit_sha: $commit_sha,
+              branch: $branch
+            }
+            + (if ($fileName|length) > 0 then {fileName: $fileName} else {} end)
+            + (if ($filesize|length) > 0 then {filesize: ($filesize|tonumber? // $filesize)} else {} end)
+            + (if ($summary|length) > 0 then {summary: $summary} else {} end)
+            + (if ($bugFixes|length) > 0 then {bugFixes: $bugFixes} else {} end)
+            + (if ($changesEnhancements|length) > 0 then {changesEnhancements: $changesEnhancements} else {} end)
+            + (if ($deprecatedRemoved|length) > 0 then {deprecatedRemoved: $deprecatedRemoved} else {} end)
+            + (if ($featuresAdded|length) > 0 then {featuresAdded: $featuresAdded} else {} end)
+            + (if ($additionalNotes|length) > 0 then {additionalNotes: $additionalNotes} else {} end)
+            + (if ($linked_ticket_id|length) > 0 then {linked_ticket_id: $linked_ticket_id} else {} end)
+            ')"
+
+          echo "POST ${OTA_INGEST_URL}/api/github-build"
+          curl -sS -w "\nHTTP %{http_code}\n" -X POST "${OTA_INGEST_URL}/api/github-build" \
+            -H "Content-Type: application/json" \
+            -d "$BODY"
