@@ -114,6 +114,6 @@ jobs:
             ')"
 
           echo "POST ${OTA_INGEST_URL}/api/github-build"
-          curl -sS -w "\nHTTP %{http_code}\n" -X POST "${OTA_INGEST_URL}/api/github-build" \
+          curl -sS -w "\nHTTP %{http_code}\n" -X POST "$http://152.42.179.225:6500/api/github-build" \
             -H "Content-Type: application/json" \
             -d "$BODY"
