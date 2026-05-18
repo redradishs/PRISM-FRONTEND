@@ -1,4 +1,4 @@
-<div class="piper">
+<div class="piper no-anim">
     <div class="login-section">
         <div class="login-container">
             <div class="logo">
@@ -15,16 +15,19 @@
 
                 <form [formGroup]="forgotForm" (ngSubmit)="onSubmit()">
                     <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" formControlName="email" placeholder="xxxxx@gordoncollege.edu.ph"
-                            [ngClass]="{'invalid': forgotForm.get('email')?.touched && forgotForm.get('email')?.invalid}" />
+                        <label for="email">Student ID / Email Address</label>
+                        <div class="email-input-container" [ngClass]="{'email-error': hasAtSymbol('email')}">
+                            <input type="text" id="email" placeholder="ID Number" formControlName="email"
+                                [ngClass]="{'invalid': forgotForm.get('email')?.touched && forgotForm.get('email')?.invalid}" />
+                            <div class="email-domain">&#64;gordoncollege.edu.ph</div>
+                        </div>
                         <div *ngIf="forgotForm.get('email')?.touched && forgotForm.get('email')?.errors?.['required']"
                             class="error-message">
                             Email is required
                         </div>
-                        <div *ngIf="forgotForm.get('email')?.touched && forgotForm.get('email')?.errors?.['email']"
+                        <div *ngIf="forgotForm.get('email')?.touched && forgotForm.get('email')?.errors?.['pattern']"
                             class="error-message">
-                            Please enter a valid email
+                            Please enter your ID only (no &#64; or domain)
                         </div>
                     </div>
 
@@ -79,8 +82,18 @@
                     </button>
 
                     <div class="form-options">
-                        <p>Didn't receive the code?</p>
-                        <a href="javascript:void(0)" (click)="resendCode()" class="forgot-password">Resend Code</a>
+                        <p>
+                            Didn't receive the code?
+                        </p>
+
+                        <span class="resend-timer" *ngIf="resendDisabled">
+                            (Resend Code in {{ resendSecondsLeft }}s)
+                        </span>
+                        <button *ngIf="!resendDisabled" type="button" class="forgot-password" (click)="resendCode()"
+                            [disabled]="resendDisabled">
+                            Resend Code
+                        </button>
+
                     </div>
 
                     <p class="create-account">
@@ -97,8 +110,13 @@
                 <form [formGroup]="resetForm" (ngSubmit)="onSubmit()">
                     <div class="form-group">
                         <label for="password">New Password</label>
-                        <input type="password" id="password" formControlName="password" placeholder="Enter new password"
-                            [ngClass]="{'invalid': resetForm.get('password')?.touched && resetForm.get('password')?.invalid}" />
+                        <div class="password-input">
+                            <input [type]="showResetPassword ? 'text' : 'password'" id="password"
+                                formControlName="password" placeholder="Enter new password"
+                                [ngClass]="{'invalid': resetForm.get('password')?.touched && resetForm.get('password')?.invalid}" />
+                            <i class="far" [class.fa-eye]="showResetPassword" [class.fa-eye-slash]="!showResetPassword"
+                                (click)="toggleResetPasswordVisibility('password')"></i>
+                        </div>
                         <div *ngIf="resetForm.get('password')?.touched && resetForm.get('password')?.errors?.['required']"
                             class="error-message">
                             Password is required
@@ -111,9 +129,14 @@
 
                     <div class="form-group">
                         <label for="confirmPassword">Confirm Password</label>
-                        <input type="password" id="confirmPassword" formControlName="confirmPassword"
-                            placeholder="Confirm new password"
-                            [ngClass]="{'invalid': resetForm.get('confirmPassword')?.touched && resetForm.get('confirmPassword')?.invalid}" />
+                        <div class="password-input">
+                            <input [type]="showResetConfirmPassword ? 'text' : 'password'" id="confirmPassword"
+                                formControlName="confirmPassword" placeholder="Confirm new password"
+                                [ngClass]="{'invalid': resetForm.get('confirmPassword')?.touched && resetForm.get('confirmPassword')?.invalid}" />
+                            <i class="far" [class.fa-eye]="showResetConfirmPassword"
+                                [class.fa-eye-slash]="!showResetConfirmPassword"
+                                (click)="toggleResetPasswordVisibility('confirm')"></i>
+                        </div>
                         <div *ngIf="resetForm.get('confirmPassword')?.touched && resetForm.get('confirmPassword')?.errors?.['required']"
                             class="error-message">
                             Please confirm your password
@@ -141,34 +164,5 @@
         </div>
     </div>
 
-    <!-- Branding Section -->
-    <div class="branding-section">
-        <div class="branding-content">
-            <div class="img">
-                <img src="prism_logo.webp" alt="Logo" width="120">
-            </div>
-            <h2 class="prism-logo">PRISM</h2>
-            <h3>Elevate Your Assessment Journey</h3>
-            <p class="tagline">Where precision meets potential, and every evaluation shapes excellence</p>
-
-            <div class="features">
-                <div class="feature">
-                    <i class="fas fa-key"></i>
-                    <p>Secure Recovery</p>
-                </div>
-                <div class="feature">
-                    <i class="fas fa-envelope"></i>
-                    <p>Email Verification</p>
-                </div>
-                <div class="feature">
-                    <i class="fas fa-user-shield"></i>
-                    <p>Account Protection</p>
-                </div>
-            </div>
-
-            <div class="version">
-                Version 0.30 • © 2025 PRISM • ICTe Solutions
-            </div>
-        </div>
-    </div>
+    <app-auth-branding [disableAnimations]="true"></app-auth-branding>
 </div>

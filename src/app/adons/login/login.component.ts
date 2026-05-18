@@ -12,11 +12,12 @@ import { SeoService } from '../../services/seo.service';
 import { PwaService } from '../../services/pwa.service';
 import { PrivacyPolicyComponent } from '../../shared/components/privacy-policy/privacy-policy.component';
 import { TermsConditionsComponent } from '../../shared/components/terms-conditions/terms-conditions.component';
+import { AuthBrandingComponent } from '../../shared/components/auth-branding/auth-branding.component';
 
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink, PrivacyPolicyComponent, TermsConditionsComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink, PrivacyPolicyComponent, TermsConditionsComponent, AuthBrandingComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })

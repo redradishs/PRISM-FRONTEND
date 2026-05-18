@@ -13,7 +13,7 @@
 
 .login-section {
     flex: 1;
-    padding: 2rem;
+    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -27,6 +27,14 @@
     margin: 0 auto;
     padding: 1rem;
     animation: fadeIn 0.6s ease-out;
+}
+
+.no-anim .login-container,
+.no-anim .login-section form,
+.no-anim .logo,
+.no-anim .wb,
+.no-anim .form-group {
+    animation: none !important;
 }
 
 /* Logo styling */
@@ -77,7 +85,7 @@ h1 {
 
 /* Form styling */
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.75rem;
 }
 
 .form-group label {
@@ -101,6 +109,69 @@ h1 {
     outline: none;
     border-color: #6C5CE7;
     box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.1);
+}
+
+.password-input {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-input input {
+    width: 100%;
+    padding-right: 2.5rem;
+}
+
+.password-input i {
+    position: absolute;
+    right: 1rem;
+    cursor: pointer;
+    color: #6b7280;
+    transition: color 0.2s;
+}
+
+.password-input i:hover {
+    color: #4b5563;
+}
+
+.email-input-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.email-input-container input {
+    flex: 1;
+    border: none;
+    border-radius: 0;
+    padding: 0.85rem;
+    font-size: 1rem;
+    outline: none;
+    box-shadow: none;
+}
+
+.email-input-container .email-domain {
+    background-color: #f1f5f9;
+    padding: 0.85rem 0.5rem;
+    color: #64748b;
+    font-size: 1rem;
+    white-space: nowrap;
+    border-left: 1px solid #e2e8f0;
+}
+
+.email-input-container:focus-within {
+    border-color: #6C5CE7;
+    box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.1);
+}
+
+.email-input-container.email-error {
+    border: 2px solid #f76371;
+    background-color: #fff5f5;
 }
 
 .invalid {
@@ -168,6 +239,41 @@ h1 {
 
 .create-account a:hover {
     text-decoration: underline;
+}
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.forgot-password {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #6C5CE7;
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.forgot-password:hover:not(:disabled) {
+    text-decoration: underline;
+}
+
+.forgot-password:disabled {
+    color: #9ca3af;
+    cursor: not-allowed;
+    text-decoration: none;
+}
+
+.resend-timer {
+    font-size: 0.85rem;
+    color: #9ca3af;
+    margin-left: 0.35rem;
 }
 
 /* Branding section */
@@ -363,4 +469,20 @@ h1 {
     .branding-section {
         display: none;
     }
+}
+
+@media (max-width: 480px) {
+  ::ng-deep .swal-compact {
+    width: 85% !important;
+    padding: 12px !important;
+    font-size: 12px !important;
+  }
+
+  ::ng-deep .swal-compact .swal2-title {
+    font-size: 14px !important;
+  }
+
+  ::ng-deep .swal-compact .swal2-html-container {
+    font-size: 12px !important;
+  }
 }
