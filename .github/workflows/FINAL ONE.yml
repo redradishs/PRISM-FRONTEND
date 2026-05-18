@@ -1,0 +1,36 @@
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "App version"
+        required: true
+      build:
+        description: "Build number"
+        required: true
+
+jobs:
+  send-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send build metadata to OTA server
+        run: |
+          curl -X POST "http://152.42.179.225:6500/api/github-build" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "version": "'"${{ github.event.inputs.version }}"'",
+              "build": "'"${{ github.event.inputs.build }}"'",
+              "file_extension": "ipa",
+              "fileName": "MyApp.ipa",
+              "filesize": "123456789",
+              "gcs_path": "gs://your-bucket/path/MyApp.ipa",
+
+              "repo": "'"${{ github.repository }}"'",
+              "workflow": "'"${{ github.workflow }}"'",
+              "run_id": "'"${{ github.run_id }}"'",
+              "run_number": "'"${{ github.run_number }}"'",
+              "run_attempt": "'"${{ github.run_attempt }}"'",
+              "run_url": "'"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"'",
+              "commit_sha": "'"${{ github.sha }}"'",
+              "branch": "'"${{ github.ref_name }}"'",
+              "artifact_name": "MyApp.ipa"
+            }'
