@@ -108,8 +108,8 @@ export class LoginComponent implements OnInit {
     if (seoData) {
       this.seoService.updateSEO({
         ...seoData,
-        url: 'https://prismgcccs.live/login',
-        image: 'https://prismgcccs.live/prism_logo.png'
+        url: this.authService.domainCaller('/login'),
+        image: this.authService.domainCaller('/prism_logo.png')
       });
     }
     this.title.setTitle('PRISM | Login');

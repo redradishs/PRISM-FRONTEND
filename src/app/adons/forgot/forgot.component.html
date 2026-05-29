@@ -54,27 +54,28 @@
             <!-- Step 2: Verify Code -->
             <div *ngIf="currentStep === 2">
                 <h1 class="wb">Verify Code</h1>
-                <p class="subtitle">Enter the 6-digit verification code sent to your email.</p>
 
                 <form [formGroup]="verifyForm" (ngSubmit)="onSubmit()">
                     <div class="form-group">
-                        <label for="code">Verification Code</label>
-                        <input type="text" id="code" formControlName="code" placeholder="Enter 6-digit code"
-                            maxlength="6"
-                            [ngClass]="{'invalid': verifyForm.get('code')?.touched && verifyForm.get('code')?.invalid}" />
-                        <div *ngIf="verifyForm.get('code')?.touched && verifyForm.get('code')?.errors?.['required']"
-                            class="error-message">
-                            Verification code is required
+                        <label class="code-label" for="code">Verification Code</label>
+                        <div class="code-inputs" aria-label="6-character verification code">
+                            <input *ngFor="let box of codeBoxes; index as i" #codeInput type="text" maxlength="1"
+                                [attr.aria-label]="'Character ' + (i + 1)" [formControlName]="'code' + i"
+                                [ngClass]="{'invalid': verifyForm.get('code' + i)?.touched && verifyForm.get('code' + i)?.invalid}"
+                                (input)="handleCodeInput($event, i)" (keydown)="handleCodeKeydown($event, i)"
+                                (paste)="handleCodePaste($event)" />
                         </div>
-                        <div *ngIf="verifyForm.get('code')?.touched && (verifyForm.get('code')?.errors?.['minlength'] || verifyForm.get('code')?.errors?.['maxlength'])"
-                            class="error-message">
-                            Code must be 6 digits
+                        <div *ngIf="verifyForm.touched && verifyForm.invalid" class="error-message">
+                            Code must be 6 characters
                         </div>
                     </div>
 
                     <div class="show-err">
                         <p class="error-message mb-3" *ngIf="errorMessage">{{ errorMessage }}</p>
                     </div>
+
+                    <p class="subtitle">Enter the 6-character verification code sent to your email.</p>
+
 
                     <button type="submit" class="sign-in-btn" [disabled]="verifyForm.invalid || isLoading">
                         <span *ngIf="!isLoading">Verify Code</span>

@@ -26,6 +26,7 @@ interface ProfileChanges {
   providedIn: 'root',
 })
 export class AuthService {
+  private hostedDomain = 'https://prismgcccs.app'
   // private baseUrl = 'http://localhost:8000/user';
   // private prism_set = 'http://localhost:8000/settings';
   // private prism_public = 'http://localhost:8000/public';
@@ -64,6 +65,11 @@ export class AuthService {
       }
     }
   }
+
+  domainCaller(path: string) {
+    return `${this.hostedDomain}${path}`
+  }
+
 
   platformWideSettings() {
     return this.http.get(`${this.prism_set}/prism_sws`);

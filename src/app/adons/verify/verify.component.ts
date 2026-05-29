@@ -35,16 +35,16 @@ export class VerifyComponent implements OnInit {
     if (seoData) {
       this.seoService.updateSEO({
         ...seoData,
-        url: 'https://prismgcccs.live/verify-email',
-        image: 'https://prismgcccs.live/prism_logo.png'
+        url: this.auth.domainCaller('/verify-email'),
+        image: this.auth.domainCaller('/prism_logo.png')
       });
     }
 
     this.userId = sessionStorage.getItem('pendingVerificationUserId');
-    if(!this.userId){
+    if (!this.userId) {
       this.router.navigate(['/login']);
     }
-   
+
   }
 
   onSubmit() {
@@ -86,9 +86,9 @@ export class VerifyComponent implements OnInit {
     if (!this.userId) {
       return;
     }
-    
+
     this.isLoading = true;
-    
+
     this.auth.resendVerificationCode(this.userId).subscribe({
       next: (resp) => {
         this.isLoading = false;

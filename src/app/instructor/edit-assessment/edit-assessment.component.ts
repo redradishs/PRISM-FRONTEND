@@ -105,6 +105,7 @@ export class EditAssessmentComponent {
           title: 'Assessment Updated!',
           text: 'Your assessment has been updated successfully.',
           icon: 'success',
+          showConfirmButton: false,
           toast: true,
           position: 'top-end',
           timer: 2000,

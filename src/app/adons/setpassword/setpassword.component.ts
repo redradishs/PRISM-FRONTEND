@@ -51,8 +51,8 @@ export class SetpasswordComponent {
     if (seoData) {
       this.seoService.updateSEO({
         ...seoData,
-        url: 'https://prismgcccs.live/complete-profile',
-        image: 'https://prismgcccs.live/prism_logo.png'
+        url: this.auth.domainCaller('/complete-profile'),
+        image: this.auth.domainCaller('/prism_logo.png')
       });
     }
 

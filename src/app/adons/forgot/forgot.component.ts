@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
@@ -25,6 +25,7 @@ export class ForgotComponent implements OnInit, OnDestroy {
   resendSecondsLeft = 0;
   showResetPassword = false;
   showResetConfirmPassword = false;
+  codeBoxes = Array(6).fill(0);
   private readonly resendCooldownKey = 'FRC';
   private readonly resendEmailKey = 'FRE';
   private readonly resendCooldownSeconds = 180;
@@ -34,6 +35,8 @@ export class ForgotComponent implements OnInit, OnDestroy {
   private email = '';
   private userId = '';
   private resetToken = '';
+
+  @ViewChildren('codeInput') codeInputs!: QueryList<ElementRef<HTMLInputElement>>;
 
   constructor(
     private fb: FormBuilder,
@@ -48,11 +51,10 @@ export class ForgotComponent implements OnInit, OnDestroy {
     if (seoData) {
       this.seoService.updateSEO({
         ...seoData,
-        url: 'https://prismgcccs.live/forgot-password',
-        image: 'https://prismgcccs.live/prism_logo.png'
+        url: this.authService.domainCaller('/forgot-password'),
+        image: this.authService.domainCaller('/prism_logo.png')
       });
     }
-
     this.initForms();
     this.restoreResendCooldown();
   }
@@ -72,7 +74,12 @@ export class ForgotComponent implements OnInit, OnDestroy {
 
     // Step 2: Verify reset code
     this.verifyForm = this.fb.group({
-      code: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(6)]]
+      code0: ['', [Validators.required]],
+      code1: ['', [Validators.required]],
+      code2: ['', [Validators.required]],
+      code3: ['', [Validators.required]],
+      code4: ['', [Validators.required]],
+      code5: ['', [Validators.required]]
     });
 
     // Step 3: Reset password
@@ -168,7 +175,9 @@ export class ForgotComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
     this.errorMessage = '';
-    const code = this.verifyForm.value.code;
+    const code = this.codeBoxes
+      .map((_, index) => this.verifyForm.get(`code${index}`)?.value)
+      .join('');
 
     const verifyData = {
       email: this.email,
@@ -180,6 +189,7 @@ export class ForgotComponent implements OnInit, OnDestroy {
         if (response?.remarks && response.remarks !== 'Success') {
           this.isLoading = false;
           this.errorMessage = response.message || 'Invalid or expired reset code.';
+          this.clearCodeInputs();
 
           Swal.fire({
             title: 'Error',
@@ -212,6 +222,7 @@ export class ForgotComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         console.error('Code verification error:', error);
         this.errorMessage = error.error?.message || 'Invalid verification code. Please try again.';
+        this.clearCodeInputs();
 
         Swal.fire({
           title: 'Error',
@@ -222,6 +233,74 @@ export class ForgotComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  handleCodeInput(event: Event, index: number): void {
+    const input = event.target as HTMLInputElement;
+    const value = input.value.slice(-1);
+    input.value = value;
+    this.verifyForm.get(`code${index}`)?.setValue(value, { emitEvent: false });
+
+    if (value && index < this.codeBoxes.length - 1) {
+      this.focusCodeInput(index + 1);
+    }
+  }
+
+  handleCodeKeydown(event: KeyboardEvent, index: number): void {
+    const input = event.target as HTMLInputElement;
+    if (event.key === 'Backspace' && !input.value && index > 0) {
+      this.focusCodeInput(index - 1);
+      return;
+    }
+    if (event.key === 'ArrowLeft' && index > 0) {
+      event.preventDefault();
+      this.focusCodeInput(index - 1);
+      return;
+    }
+    if (event.key === 'ArrowRight' && index < this.codeBoxes.length - 1) {
+      event.preventDefault();
+      this.focusCodeInput(index + 1);
+    }
+  }
+
+  handleCodePaste(event: ClipboardEvent): void {
+    const clipboard = event.clipboardData?.getData('text') ?? '';
+    const chars = clipboard.replace(/\s/g, '').slice(0, this.codeBoxes.length);
+    if (!chars) {
+      return;
+    }
+    event.preventDefault();
+    chars.split('').forEach((char, index) => {
+      this.verifyForm.get(`code${index}`)?.setValue(char, { emitEvent: false });
+      const input = this.codeInputs?.get(index)?.nativeElement;
+      if (input) {
+        input.value = char;
+      }
+    });
+    const lastIndex = Math.min(chars.length, this.codeBoxes.length) - 1;
+    if (lastIndex >= 0) {
+      this.focusCodeInput(lastIndex);
+    }
+  }
+
+  private focusCodeInput(index: number): void {
+    const inputs = this.codeInputs?.toArray();
+    const target = inputs?.[index];
+    target?.nativeElement.focus();
+    target?.nativeElement.select();
+  }
+
+  private clearCodeInputs(): void {
+    this.codeBoxes.forEach((_, index) => {
+      this.verifyForm.get(`code${index}`)?.reset('');
+      const input = this.codeInputs?.get(index)?.nativeElement;
+      if (input) {
+        input.value = '';
+      }
+    });
+    this.verifyForm.markAsPristine();
+    this.verifyForm.markAsUntouched();
+    this.focusCodeInput(0);
   }
 
   resetPassword(): void {

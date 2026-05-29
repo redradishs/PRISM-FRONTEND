@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { SeoService } from '../services/seo.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-not-found',
@@ -34,15 +35,16 @@ import { SeoService } from '../services/seo.service';
 export class NotFoundComponent implements OnInit {
   constructor(
     private seoService: SeoService,
-    private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute,
+    private auth: AuthService
+  ) { }
 
   ngOnInit() {
     const seoData = this.route.snapshot.data['seo'];
     if (seoData) {
       this.seoService.updateSEO({
         ...seoData,
-        image: 'https://prismgcccs.live/prism_logo.png'
+        image: this.auth.domainCaller('/prism_logo.png')
       });
     }
   }
