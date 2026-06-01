@@ -55,13 +55,20 @@ export class RollingNumberComponent implements OnInit, OnChanges, OnDestroy {
             const current = startValue + (endValue - startValue) * easeOut;
 
             this.currentValue = current;
-            this.displayValue = this.prefix + current.toFixed(this.decimals) + this.suffix;
+
+            const formattedValue = current.toLocaleString(undefined, {
+                minimumFractionDigits: this.decimals,
+                maximumFractionDigits: this.decimals
+            });
+
+            this.displayValue = this.prefix + formattedValue + this.suffix;
+
 
             if (progress < 1) {
                 this.animationFrame = requestAnimationFrame(animate);
             } else {
                 this.currentValue = endValue;
-                this.displayValue = this.prefix + endValue.toFixed(this.decimals) + this.suffix;
+                this.displayValue = this.prefix + formattedValue + this.suffix;
             }
         };
 
