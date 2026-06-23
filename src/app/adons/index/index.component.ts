@@ -130,4 +130,8 @@ export class IndexComponent implements OnInit {
   openTermsConditions(): void {
     this.termsConditionsModal?.open();
   }
+
+  openIMRADResearch(): void {
+    this.router.navigate(['/imrad-research']);
+  }
 }

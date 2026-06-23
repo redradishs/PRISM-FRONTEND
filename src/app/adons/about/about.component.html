@@ -1,1 +1,794 @@
-<p>about works!</p>
+<main class="min-h-screen about-page" style="background-color: #ffffff">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <a class="logo-section" routerLink="/">
+                    <div class="prism-logo cursor-pointer">
+                        <img src="/prism_logo.webp" alt="PRISM Logo" class="logo-image">
+                        <span class="logo-text">PRISM</span>
+                    </div>
+                </a>
+
+                <div class="nav-links">
+                    <a routerLink="/" class="nav-link">Home</a>
+                </div>
+
+                <button class="login-btn" (click)="navigateToLogin()">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Title Section -->
+    <section class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-12 md:pt-16 pb-4 md:pb-6">
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-4">
+            PRISM: Platform for Real-Time Intelligent Student Measurement System
+        </h1>
+        <p class="text-lg text-gray-700 leading-relaxed mb-6">
+            Design and Development of an AI-Integrated Real-Time Online Assessment and Performance Monitoring System for
+            Gordon College College of Computer Studies
+        </p>
+
+        <div class="text-base text-gray-600 space-y-1 mb-3">
+            <p><span class="font-semibold text-gray-800">Frederick S. Ancias</span> — 202210761&#64;gordoncollege.edu.ph
+            </p>
+            <p><span class="font-semibold text-gray-800">Menard Manlapaz</span> — menardmanlapaz1&#64;gmail.com</p>
+            <p><span class="font-semibold text-gray-800">Denise Lou Punzalan</span> —
+                punzalan.deniselou&#64;gordoncollege.edu.ph</p>
+        </div>
+
+        <p class="text-sm text-gray-500 italic">
+            College of Computer Studies, Gordon College, Olongapo City, Zambales, Philippines
+        </p>
+    </section>
+
+    <!-- Abstract Section -->
+    <section class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 md:py-16 border-b border-gray-200">
+        <div class="flex items-center gap-3 mb-8">
+            <i class="fas fa-book-open" style="font-size: 32px; color: #6366f1"></i>
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Abstract</h2>
+        </div>
+        <div class="space-y-6 text-gray-700">
+            <p class="text-lg leading-relaxed">
+                The educational landscape has undergone a significant shift toward technology-driven environments—a
+                transition accelerated by the COVID-19 pandemic. As institutions like Gordon College adapted to this
+                rapid change, the reliance on diverse digital tools inadvertently created inefficiencies and
+                <strong>"technostress"</strong> within the online assessment process. This study evaluates the impact of
+                platform fragmentation on students and faculty at the College of Computer Studies (CCS) while assessing
+                the readiness for PRISM.
+            </p>
+            <p class="text-lg leading-relaxed">
+                Utilizing a <strong>quantitative descriptive-developmental research design</strong>, data was gathered
+                through structured surveys from <strong>298 students and 19 CCS instructors</strong>. Results
+                highlighted significant concerns regarding academic integrity and cognitive load associated with
+                switching between scattered third-party tools like Google Forms and Quizizz (overall weighted mean of
+                <strong>3.34</strong>).
+            </p>
+            <p class="text-lg leading-relaxed">
+                Developed using the <strong>MEAN stack</strong> through <strong>Agile methodology</strong>, PRISM acts
+                as a centralized solution featuring <strong>real-time proctoring</strong> with default browser
+                tab-locking and <strong>automated, curriculum-based question generation</strong> utilizing
+                <strong>Retrieval-Augmented Generation (RAG)</strong>.
+            </p>
+            <p class="text-lg leading-relaxed">
+                Preliminary quantitative evaluations indicate high <strong>perceived usefulness (WM = 3.28)</strong> and
+                <strong>technological readiness (WM = 3.34)</strong> among students. Furthermore, quantitative faculty
+                validation confirmed the system's viability (<strong>OWM = 3.57</strong>), positioning PRISM as a highly
+                feasible, unified solution that effectively reduces administrative workload while restoring strict
+                assessment integrity.
+            </p>
+        </div>
+    </section>
+
+    <!-- Problem Statement Section -->
+    <section class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 md:py-16 border-b border-gray-200">
+        <h2 class="text-3xl md:text-4xl font-bold mb-8 text-gray-900">1. The Problem: Platform Fragmentation &
+            Technostress</h2>
+        <p class="text-lg text-gray-700 mb-8 leading-relaxed">
+            Gordon College's approach to online assessments remains fragmented, with instructors relying on a mix of
+            third-party tools rather than a standardized system. This lack of unified platform creates multiple
+            challenges:
+        </p>
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="p-8 rounded-lg border border-gray-200" style="background-color: #fafafa">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900">Cognitive Overload ("Technostress")</h3>
+                <p class="text-gray-700">
+                    Students must constantly adapt to different interfaces and systems (Google Forms, Quizizz, Kahoot).
+                    This fragmentation imposes heavy cognitive load and negatively impacts academic performance and
+                    satisfaction.
+                </p>
+            </div>
+            <div class="p-8 rounded-lg border border-gray-200" style="background-color: #fafafa">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900">Academic Integrity Concerns</h3>
+                <p class="text-gray-700">
+                    Faculty express significant skepticism regarding online assessment validity. Unproctored systems are
+                    perceived as significantly easier to exploit and lack robust features to detect cheating.
+                </p>
+            </div>
+            <div class="p-8 rounded-lg border border-gray-200" style="background-color: #fafafa">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900">Faculty Workload</h3>
+                <p class="text-gray-700">
+                    Manually grading assessments and creating unique exams requires significant effort. Instructors
+                    struggle to provide specific feedback due to time required to verify results across multiple
+                    platforms.
+                </p>
+            </div>
+            <div class="p-8 rounded-lg border border-gray-200" style="background-color: #fafafa">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900">Lack of Centralized Insights</h3>
+                <p class="text-gray-700">
+                    No unified dashboard exists to track student performance. Assessment data remains scattered across
+                    disconnected systems, preventing targeted interventions and personalized support.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 md:py-16 border-b border-gray-200">
+        <h2 class="text-3xl md:text-4xl font-bold mb-8 text-gray-900">2. The Solution: PRISM</h2>
+        <p class="text-lg text-gray-700 mb-12 leading-relaxed">
+            PRISM consolidates online assessment management into a single, unified platform that leverages Artificial
+            Intelligence to streamline question generation, automate grading, and provide deep analytics while
+            integrating intelligent monitoring features to detect and report cheating patterns.
+        </p>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="p-8 rounded-lg border border-gray-200"
+                style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #ffffff">
+                <div class="mb-4 w-12 h-12 rounded-lg flex items-center justify-center"
+                    style="background-color: rgba(255,255,255,0.2)">
+                    <i class="fas fa-database" style="font-size: 24px"></i>
+                </div>
+                <h3 class="font-semibold text-lg mb-3">Centralized Platform</h3>
+                <p>
+                    Unify creation, taking, and tracking of assessments into one interface. Single login, single
+                    dashboard—eliminates navigation between multiple platforms.
+                </p>
+            </div>
+
+            <div class="p-8 rounded-lg border border-gray-200"
+                style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #ffffff">
+                <div class="mb-4 w-12 h-12 rounded-lg flex items-center justify-center"
+                    style="background-color: rgba(255,255,255,0.2)">
+                    <i class="fas fa-microchip" style="font-size: 24px"></i>
+                </div>
+                <h3 class="font-semibold text-lg mb-3">AI-Assisted Generation (RAG)</h3>
+                <p>
+                    Generate assessments directly from uploaded lecture materials using Retrieval-Augmented Generation.
+                    Ensures context-aware questions with minimal faculty effort.
+                </p>
+            </div>
+
+            <div class="p-8 rounded-lg border border-gray-200"
+                style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #ffffff">
+                <div class="mb-4 w-12 h-12 rounded-lg flex items-center justify-center"
+                    style="background-color: rgba(255,255,255,0.2)">
+                    <i class="fas fa-lock" style="font-size: 24px"></i>
+                </div>
+                <h3 class="font-semibold text-lg mb-3">Real-Time Proctoring</h3>
+                <p>
+                    Automatically detects and logs cheating patterns including tab switching and unauthorized
+                    copy-pasting. Restores trust in online assessment integrity.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Research Methodology -->
+    <section class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 md:py-16 border-b border-gray-200">
+        <h2 class="text-3xl md:text-4xl font-bold mb-12 text-gray-900">3. Research Design & Methodology</h2>
+        <div class="grid md:grid-cols-2 gap-12 mb-12">
+            <div class="p-8 rounded-lg border border-gray-200" style="background-color: #fafafa">
+                <h3 class="text-xl font-semibold mb-6 text-gray-900">Research Approach</h3>
+                <ul class="space-y-4 text-gray-700">
+                    <li class="flex items-start gap-3">
+                        <i class="fas fa-check-circle"
+                            style="font-size: 20px; color: #6366f1; flex-shrink: 0; margin-top: 0.125rem"></i>
+                        <span><strong>Quantitative Descriptive-Developmental Design</strong> to evaluate implementation
+                            and effectiveness</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fas fa-check-circle"
+                            style="font-size: 20px; color: #6366f1; flex-shrink: 0; margin-top: 0.125rem"></i>
+                        <span><strong>Input-Process-Output (IPO) Model</strong> as primary conceptual framework</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fas fa-check-circle"
+                            style="font-size: 20px; color: #6366f1; flex-shrink: 0; margin-top: 0.125rem"></i>
+                        <span><strong>Technology Acceptance Model (TAM)</strong> integrated to predict user
+                            adoption</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fas fa-check-circle"
+                            style="font-size: 20px; color: #6366f1; flex-shrink: 0; margin-top: 0.125rem"></i>
+                        <span><strong>Structured Survey Questionnaires</strong> with 4-point Likert scale</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="p-8 rounded-lg border border-gray-200" style="background-color: #fafafa">
+                <h3 class="text-xl font-semibold mb-6 text-gray-900">Sample & Participants</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-4 rounded"
+                        style="background-color: #ffffff; border: 1px solid #e5e7eb">
+                        <span class="text-gray-700">Student Respondents</span>
+                        <span class="text-2xl font-bold" style="color: #6366f1">298</span>
+                    </div>
+                    <div class="flex items-center justify-between p-4 rounded"
+                        style="background-color: #ffffff; border: 1px solid #e5e7eb">
+                        <span class="text-gray-700">Faculty Instructors</span>
+                        <span class="text-2xl font-bold" style="color: #6366f1">19</span>
+                    </div>
+                    <div class="flex items-center justify-between p-4 rounded"
+                        style="background-color: #ffffff; border: 1px solid #e5e7eb">
+                        <span class="text-gray-700">Total Population (CCS)</span>
+                        <span class="text-2xl font-bold" style="color: #6366f1">1,183</span>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-4">
+                        Participants selected via simple random sampling (students) and purposive sampling (faculty)
+                        from Gordon College College of Computer Studies, AY 2025–2026.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-8 rounded-lg border border-gray-200" style="background-color: #fafafa">
+            <h3 class="text-xl font-semibold mb-6 text-gray-900">Development Methodology: Agile + MEAN Stack</h3>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h4 class="font-semibold text-gray-900 mb-4">Technology Stack</h4>
+                    <ul class="space-y-3 text-gray-700">
+                        <li class="flex items-center gap-3">
+                            <span style="color: #6366f1; font-weight: bold">•</span>
+                            <span><strong>MongoDB</strong> – Flexible document database for assessment data</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span style="color: #6366f1; font-weight: bold">•</span>
+                            <span><strong>Express.js</strong> – Backend framework for API development</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span style="color: #6366f1; font-weight: bold">•</span>
+                            <span><strong>Angular</strong> – Dynamic frontend for responsive UI</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span style="color: #6366f1; font-weight: bold">•</span>
+                            <span><strong>Node.js</strong> – JavaScript runtime for unified development</span>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-900 mb-4">Development Process</h4>
+                    <ul class="space-y-3 text-gray-700">
+                        <li class="flex items-center gap-3">
+                            <span style="color: #6366f1; font-weight: bold">•</span>
+                            <span><strong>Agile Methodology</strong> – Iterative cycles with continuous faculty
+                                feedback</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span style="color: #6366f1; font-weight: bold">•</span>
+                            <span><strong>Validation Phase</strong> – Initial interviews with instructors</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span style="color: #6366f1; font-weight: bold">•</span>
+                            <span><strong>Pilot Testing</strong> – Remote and face-to-face testing</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span style="color: #6366f1; font-weight: bold">•</span>
+                            <span><strong>Stress Testing</strong> – Confirmed operational stability under high
+                                load</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Research Findings -->
+    <section class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 md:py-16 border-b border-gray-200">
+        <h2 class="text-3xl md:text-4xl font-bold mb-12 text-gray-900">4. Demographic Profile & Key Findings</h2>
+
+        <div class="mb-12">
+            <h3 class="text-2xl font-semibold mb-8 text-gray-900">Student Demographics (N=298)</h3>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="p-8 rounded-lg border border-gray-200" style="background-color: #fafafa">
+                    <h4 class="font-semibold text-gray-900 mb-6">Gender Distribution</h4>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-700">Male</span>
+                                <span class="font-semibold text-gray-900">188 (63.09%)</span>
+                            </div>
+                            <div style="height: 8px; background-color: #e5e7eb; border-radius: 4px; overflow: hidden">
+                                <div
+                                    style="width: 63%; height: 100%; background: linear-gradient(135deg, #6366f1, #8b5cf6)">
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-700">Female</span>
+                                <span class="font-semibold text-gray-900">110 (36.91%)</span>
+                            </div>
+                            <div style="height: 8px; background-color: #e5e7eb; border-radius: 4px; overflow: hidden">
+                                <div
+                                    style="width: 37%; height: 100%; background: linear-gradient(135deg, #6366f1, #8b5cf6)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-8 rounded-lg border border-gray-200" style="background-color: #fafafa">
+                    <h4 class="font-semibold text-gray-900 mb-6">Age Distribution</h4>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-700">18-20 years</span>
+                                <span class="font-semibold text-gray-900">151 (50.67%)</span>
+                            </div>
+                            <div style="height: 8px; background-color: #e5e7eb; border-radius: 4px; overflow: hidden">
+                                <div
+                                    style="width: 50.67%; height: 100%; background: linear-gradient(135deg, #6366f1, #8b5cf6)">
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-700">21-25 years</span>
+                                <span class="font-semibold text-gray-900">147 (49.33%)</span>
+                            </div>
+                            <div style="height: 8px; background-color: #e5e7eb; border-radius: 4px; overflow: hidden">
+                                <div
+                                    style="width: 49.33%; height: 100%; background: linear-gradient(135deg, #6366f1, #8b5cf6)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-12">
+            <h3 class="text-2xl font-semibold mb-8 text-gray-900">Faculty Demographics (N=19)</h3>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="p-8 rounded-lg border border-gray-200" style="background-color: #fafafa">
+                    <h4 class="font-semibold text-gray-900 mb-4">Profile</h4>
+                    <ul class="space-y-3 text-gray-700">
+                        <li><strong>Male Instructors:</strong> 14 (73.68%)</li>
+                        <li><strong>Female Instructors:</strong> 5 (26.32%)</li>
+                        <li><strong>Primary Age Range:</strong> 25–30 years (11 or 57.89%)</li>
+                    </ul>
+                </div>
+                <div class="p-8 rounded-lg border border-gray-200" style="background-color: #fafafa">
+                    <h4 class="font-semibold text-gray-900 mb-4">AI Literacy Level</h4>
+                    <ul class="space-y-3 text-gray-700">
+                        <li><strong>Intermediate-Advanced:</strong> 84.22%</li>
+                        <li><strong>Expert Level:</strong> 10.52%</li>
+                        <li><strong>Result:</strong> Faculty technically qualified to assess AI features</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <h3 class="text-2xl font-semibold mb-8 text-gray-900">Problem Validation: Current System Assessment</h3>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="p-8 rounded-lg border border-gray-200" style="background-color: #fafafa">
+                    <h4 class="font-semibold text-gray-900 mb-6">Student Perspective (WM = 3.34, Agree)</h4>
+                    <ul class="space-y-4 text-gray-700">
+                        <li class="flex items-start gap-3">
+                            <span style="color: #6366f1; font-weight: bold">3.37</span>
+                            <span>Lack of centralized dashboard for results tracking (Rank 1)</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span style="color: #6366f1; font-weight: bold">3.36</span>
+                            <span>Concerns about cheating and ease of manipulation</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span style="color: #6366f1; font-weight: bold">3.33</span>
+                            <span>Multiple platforms cause inefficiency</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span style="color: #6366f1; font-weight: bold">3.32</span>
+                            <span>Switching between apps disrupts focus</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="p-8 rounded-lg border border-gray-200" style="background-color: #fafafa">
+                    <h4 class="font-semibold text-gray-900 mb-6">Faculty Perspective (WM = 3.54, Strongly Agree)</h4>
+                    <ul class="space-y-4 text-gray-700">
+                        <li class="flex items-start gap-3">
+                            <span style="color: #6366f1; font-weight: bold">3.84</span>
+                            <span>Academic integrity is a critical concern online (Rank 1)</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span style="color: #6366f1; font-weight: bold">3.63</span>
+                            <span>Overall assessment workflow needs improvement</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span style="color: #6366f1; font-weight: bold">3.58</span>
+                            <span>Manual grading takes excessive time</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span style="color: #6366f1; font-weight: bold">3.53</span>
+                            <span>Creating unique exams requires significant effort</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Readiness & Acceptance -->
+    <section class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 md:py-16 border-b border-gray-200">
+        <h2 class="text-3xl md:text-4xl font-bold mb-12 text-gray-900">5. Technical Readiness & Acceptance of PRISM</h2>
+
+        <div class="grid md:grid-cols-2 gap-8 mb-12">
+            <div class="p-8 rounded-lg border border-gray-200" style="background-color: #fafafa">
+                <h3 class="text-xl font-semibold mb-6 text-gray-900 flex items-center gap-2">
+                    <i class="fas fa-users" style="font-size: 24px; color: #6366f1"></i>
+                    Student Readiness & Acceptance
+                </h3>
+                <div class="space-y-6">
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-gray-700 font-medium">Technological Readiness</span>
+                            <span style="color: #6366f1; font-weight: bold">WM 3.34</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">Composite mean across device access, internet reliability,
+                            technical skills, and adaptability</p>
+                        <div style="height: 6px; background-color: #e5e7eb; border-radius: 3px; overflow: hidden">
+                            <div
+                                style="width: 83.5%; height: 100%; background: linear-gradient(135deg, #6366f1, #8b5cf6)">
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-gray-700 font-medium">Perceived Usefulness & Acceptance</span>
+                            <span style="color: #6366f1; font-weight: bold">WM 3.28</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">Composite mean for likelihood of use, AI usefulness, focus
+                            improvement, and willingness to learn</p>
+                        <div style="height: 6px; background-color: #e5e7eb; border-radius: 3px; overflow: hidden">
+                            <div
+                                style="width: 82%; height: 100%; background: linear-gradient(135deg, #6366f1, #8b5cf6)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-8 rounded-lg border border-gray-200" style="background-color: #fafafa">
+                <h3 class="text-xl font-semibold mb-6 text-gray-900 flex items-center gap-2">
+                    <i class="fas fa-users" style="font-size: 24px; color: #6366f1"></i>
+                    Faculty Readiness & Acceptance
+                </h3>
+                <div class="space-y-6">
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-gray-700 font-medium">Technological Readiness</span>
+                            <span style="color: #6366f1; font-weight: bold">WM 3.73</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">Hardware access, internet reliability, technical skills,
+                            AI comfort, workflow integration</p>
+                        <div style="height: 6px; background-color: #e5e7eb; border-radius: 3px; overflow: hidden">
+                            <div
+                                style="width: 93.25%; height: 100%; background: linear-gradient(135deg, #6366f1, #8b5cf6)">
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-gray-700 font-medium">System Acceptance & Value Recognition</span>
+                            <span style="color: #6366f1; font-weight: bold">WM 3.59</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">Willingness to adopt, time-saving potential, proctoring
+                            benefits, AI quality enhancement, real-time analytics value</p>
+                        <div style="height: 6px; background-color: #e5e7eb; border-radius: 3px; overflow: hidden">
+                            <div
+                                style="width: 89.75%; height: 100%; background: linear-gradient(135deg, #6366f1, #8b5cf6)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-8 rounded-lg border border-gray-200" style="background-color: #fafafa">
+            <h3 class="text-lg font-semibold mb-6 text-gray-900">Key Acceptance Drivers</h3>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="p-4 rounded" style="background-color: #ffffff; border: 1px solid #e5e7eb">
+                    <p class="text-sm text-gray-600 mb-2">Real-Time Analytics Value</p>
+                    <p style="color: #6366f1; font-weight: bold; font-size: 24px">3.68</p>
+                    <p class="text-xs text-gray-600 mt-2">Faculty's #1 valued feature</p>
+                </div>
+                <div class="p-4 rounded" style="background-color: #ffffff; border: 1px solid #e5e7eb">
+                    <p class="text-sm text-gray-600 mb-2">Automated Checking & Proctoring</p>
+                    <p style="color: #6366f1; font-weight: bold; font-size: 24px">3.63</p>
+                    <p class="text-xs text-gray-600 mt-2">Eliminates administrative bottlenecks</p>
+                </div>
+                <div class="p-4 rounded" style="background-color: #ffffff; border: 1px solid #e5e7eb">
+                    <p class="text-sm text-gray-600 mb-2">Comfort with Proctoring Features</p>
+                    <p style="color: #6366f1; font-weight: bold; font-size: 24px">3.43</p>
+                    <p class="text-xs text-gray-600 mt-2">Student acceptance of surveillance</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- System Features -->
+    <section class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 md:py-16 border-b border-gray-200">
+        <h2 class="text-3xl md:text-4xl font-bold mb-12 text-gray-900">6. PRISM Platform Features</h2>
+        <div class="space-y-8">
+            <div class="flex gap-6">
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 rounded-lg flex items-center justify-center"
+                        style="background: linear-gradient(135deg, #6366f1, #8b5cf6)">
+                        <i class="fas fa-database" style="font-size: 24px; color: #ffffff"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-900">Centralized Assessment Platform</h3>
+                    <p class="text-gray-700">Unify creation, taking, and tracking of assessments into a single
+                        interface. Students navigate one platform for all course assessments, eliminating platform
+                        fragmentation and reducing cognitive load.</p>
+                </div>
+            </div>
+
+            <div class="flex gap-6">
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 rounded-lg flex items-center justify-center"
+                        style="background: linear-gradient(135deg, #6366f1, #8b5cf6)">
+                        <i class="fas fa-microchip" style="font-size: 24px; color: #ffffff"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-900">AI-Assisted Question Generation (RAG)</h3>
+                    <p class="text-gray-700">Upload lecture materials and PRISM automatically generates curriculum-based
+                        assessment questions using Retrieval-Augmented Generation (RAG). Context-aware questions with
+                        minimal faculty effort—dramatically reduces question engineering workload.</p>
+                </div>
+            </div>
+
+            <div class="flex gap-6">
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 rounded-lg flex items-center justify-center"
+                        style="background: linear-gradient(135deg, #6366f1, #8b5cf6)">
+                        <i class="fas fa-lock" style="font-size: 24px; color: #ffffff"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-900">Real-Time Proctoring with Default Tab-Locking
+                    </h3>
+                    <p class="text-gray-700">Intelligent monitoring automatically detects suspicious behaviors including
+                        tab switching, unauthorized copy-pasting, and other cheating indicators. All incidents logged
+                        with comprehensive audit trails. Default browser tab-locking prevents examination navigation.
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex gap-6">
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 rounded-lg flex items-center justify-center"
+                        style="background: linear-gradient(135deg, #6366f1, #8b5cf6)">
+                        <i class="fas fa-chart-line" style="font-size: 24px; color: #ffffff"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-900">Real-Time Analytics & Performance Monitoring
+                    </h3>
+                    <p class="text-gray-700">Comprehensive dashboards identify student knowledge gaps and learning
+                        patterns. Faculty receive actionable insights to provide targeted interventions and personalized
+                        support. Longitudinal performance tracking eliminates scattered data.</p>
+                </div>
+            </div>
+
+            <div class="flex gap-6">
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 rounded-lg flex items-center justify-center"
+                        style="background: linear-gradient(135deg, #6366f1, #8b5cf6)">
+                        <i class="fas fa-bolt" style="font-size: 24px; color: #ffffff"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-900">Automated Grading & Feedback</h3>
+                    <p class="text-gray-700">Instant assessment grading reduces faculty workload and provides immediate
+                        feedback to students. Automated rubric-based evaluation ensures consistency and fairness across
+                        all assessments.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recommendations -->
+    <section class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 md:py-16 border-b border-gray-200">
+        <h2 class="text-3xl md:text-4xl font-bold mb-12 text-gray-900">7. Recommendations for Implementation</h2>
+        <div class="space-y-6">
+            <div class="p-8 rounded-lg border border-gray-200" style="background-color: #fafafa">
+                <h3 class="text-lg font-semibold mb-3 text-gray-900 flex items-center gap-2">
+                    <i class="fas fa-check-circle" style="font-size: 20px; color: #6366f1"></i>
+                    Official Platform Deployment
+                </h3>
+                <p class="text-gray-700">
+                    Gordon College CCS should officially adopt PRISM to replace the scattered ecosystem of third-party
+                    tools. Deploy on a dedicated, scalable virtual private server (DigitalOcean, AWS, or GCP) to
+                    guarantee zero downtime during concurrent departmental examinations.
+                </p>
+            </div>
+
+            <div class="p-8 rounded-lg border border-gray-200" style="background-color: #fafafa">
+                <h3 class="text-lg font-semibold mb-3 text-gray-900 flex items-center gap-2">
+                    <i class="fas fa-check-circle" style="font-size: 20px; color: #6366f1"></i>
+                    Structured Faculty Training Program
+                </h3>
+                <p class="text-gray-700">
+                    Implement dedicated technical onboarding workshops to integrate PRISM's AI generation and data
+                    management features into standard faculty testing workflows. Training should align with the high
+                    student readiness metric to ensure faculty competency.
+                </p>
+            </div>
+
+            <div class="p-8 rounded-lg border border-gray-200" style="background-color: #fafafa">
+                <h3 class="text-lg font-semibold mb-3 text-gray-900 flex items-center gap-2">
+                    <i class="fas fa-check-circle" style="font-size: 20px; color: #6366f1"></i>
+                    Institutional Infrastructure Support
+                </h3>
+                <p class="text-gray-700">
+                    Ensure stable internet connectivity within faculty rooms and laboratories. Stable internet
+                    infrastructure is critical for the system's cloud-based architecture and real-time proctoring to
+                    function without latency issues.
+                </p>
+            </div>
+
+            <div class="p-8 rounded-lg border border-gray-200" style="background-color: #fafafa">
+                <h3 class="text-lg font-semibold mb-3 text-gray-900 flex items-center gap-2">
+                    <i class="fas fa-check-circle" style="font-size: 20px; color: #6366f1"></i>
+                    Continuous AI & Infrastructure Optimization
+                </h3>
+                <p class="text-gray-700">
+                    Evolve the prototype into a market-ready product through continuous optimization of AI tracking
+                    capabilities. Future versions should explore advanced monitoring for secondary devices and consider
+                    deployment of a dedicated mobile application variant.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conclusion -->
+    <section class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 md:py-16 border-b border-gray-200">
+        <h2 class="text-3xl md:text-4xl font-bold mb-8 text-gray-900">8. Conclusion</h2>
+        <div class="space-y-6 text-gray-700 text-lg">
+            <p class="leading-relaxed">
+                Based on comprehensive quantitative survey findings from 317 respondents (298 students and 19 faculty),
+                PRISM successfully demonstrates the viability of a centralized AI-driven assessment platform to address
+                critical institutional challenges at Gordon College College of Computer Studies.
+            </p>
+
+            <div>
+                <h3 class="text-xl font-semibold mb-6 text-gray-900">Key Conclusions:</h3>
+                <ul class="space-y-4">
+                    <li class="flex items-start gap-3">
+                        <i class="fas fa-check-circle"
+                            style="font-size: 20px; color: #6366f1; flex-shrink: 0; margin-top: 0.125rem"></i>
+                        <span><strong>Platform Fragmentation Validated:</strong> Current scattered approach creates
+                            significant cognitive load and technostress (WM = 3.34, "Agree")</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fas fa-check-circle"
+                            style="font-size: 20px; color: #6366f1; flex-shrink: 0; margin-top: 0.125rem"></i>
+                        <span><strong>Academic Integrity Crisis:</strong> Faculty identify academic integrity as the
+                            absolute highest concern (WM = 3.84, "Strongly Agree")</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fas fa-check-circle"
+                            style="font-size: 20px; color: #6366f1; flex-shrink: 0; margin-top: 0.125rem"></i>
+                        <span><strong>High Perceived Usefulness:</strong> Stakeholders recognize significant benefits of
+                            centralized AI-driven system (WM = 3.28)</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fas fa-check-circle"
+                            style="font-size: 20px; color: #6366f1; flex-shrink: 0; margin-top: 0.125rem"></i>
+                        <span><strong>Exceptional Technical Readiness:</strong> Faculty report zero deployment barriers
+                            (WM = 3.73, "Strongly Agree")</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fas fa-check-circle"
+                            style="font-size: 20px; color: #6366f1; flex-shrink: 0; margin-top: 0.125rem"></i>
+                        <span><strong>Strong Adoption Likelihood:</strong> Students and faculty demonstrate high
+                            willingness to transition to unified platform</span>
+                    </li>
+                </ul>
+            </div>
+
+            <p class="leading-relaxed">
+                PRISM represents a comprehensive solution grounded in quantitative research, cutting-edge MEAN stack
+                technology, and adherence to rigorous development standards. The platform directly addresses platform
+                fragmentation, reduces faculty workload through AI-assisted question generation and automated grading,
+                restores academic integrity through real-time proctoring, and enables data-driven student support
+                through advanced analytics. With exceptional stakeholder acceptance metrics and zero identified
+                technical barriers, PRISM is positioned for successful institutional deployment and serves as a
+                replicable model for educational institutions worldwide.
+            </p>
+        </div>
+    </section>
+
+    <!-- Keywords -->
+    <section class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 md:py-16 border-b border-gray-200">
+        <h2 class="text-2xl font-semibold mb-8 text-gray-900">Research Keywords</h2>
+        <div class="flex flex-wrap gap-3">
+            <span *ngFor="let keyword of keywords"
+                class="px-4 py-2 rounded-full text-sm font-medium text-gray-900 border"
+                style="border-color: #6366f1; background-color: rgba(99, 102, 241, 0.05)">
+                {{ keyword }}
+            </span>
+        </div>
+    </section>
+
+    <!-- Institution Info -->
+    <section class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 md:py-16 border-b border-gray-200">
+        <h2 class="text-2xl font-semibold mb-8 text-gray-900">About Gordon College – College of Computer Studies</h2>
+        <div class="p-8 rounded-lg border border-gray-200" style="background-color: #fafafa">
+            <p class="text-gray-700 mb-6 leading-relaxed">
+                Located in City of Olongapo, Zambales, Philippines, the College of Computer Studies (CCS) at Gordon
+                College serves as the institution's premier technological innovation hub. The department serves a
+                diverse student population of over 1,183 individuals enrolled in the Academic Year 2025 - 2026.
+            </p>
+            <p class="text-gray-700 leading-relaxed">
+                This quantitative descriptive-developmental research study was conducted at Gordon College CCS to
+                address the unique assessment and monitoring challenges facing technology-focused higher education. The
+                findings and PRISM platform are grounded in real-world academic contexts with 317 respondents and are
+                directly applicable to similar institutions worldwide seeking to improve their online assessment
+                practices and strengthen academic integrity.
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-200 mt-24" style="background-color: #fafafa">
+        <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <h3 class="font-semibold text-gray-900 mb-4">PRISM Platform</h3>
+                    <p class="text-gray-600 text-sm">
+                        Platform for Real-Time Intelligent Student Measurement System
+                    </p>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-900 mb-4">Institution</h3>
+                    <p class="text-gray-600 text-sm">
+                        Gordon College<br />
+                        College of Computer Studies<br />
+                        Olongapo City, Zambales<br />
+                        Philippines
+                    </p>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-900 mb-4">Research Authors</h3>
+                    <p class="text-gray-600 text-sm">
+                        Frederick S. Ancias<br />
+                        Menard Manlapaz<br />
+                        Denise Lou Punzalan
+                    </p>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-900 mb-4">Technical Stack</h3>
+                    <p class="text-gray-600 text-sm">
+                        MEAN Stack<br />
+                        Retrieval-Augmented Generation<br />
+                        Real-Time Proctoring
+                    </p>
+                </div>
+            </div>
+            <div class="border-t border-gray-200 pt-8 text-center text-gray-600 text-sm space-y-2">
+                <p>© {{getCurrentYear()}} PRISM - Platform for Real-Time Intelligent Student Measurement System</p>
+                <p>Design and Development of an AI-Integrated Real-Time Online Assessment and Performance Monitoring
+                    System</p>
+                <p>Grounded in quantitative research and Technology Acceptance Model (TAM) integration</p>
+            </div>
+        </div>
+    </footer>
+</main>

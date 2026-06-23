@@ -63,12 +63,12 @@ export const routes: Routes = [
     }
   },
   {
-    path: 'about',
+    path: 'imrad-research',
     component: AboutComponent,
     data: {
       seo: {
-        title: 'PRISM | About',
-        description: 'Learn more about PRISM, the AI-powered assessment platform by Gordon College CCS',
+        title: 'PRISM | IMRAD Research',
+        description: 'Learn more about the IMRAD research behind PRISM, the AI-powered assessment platform by Gordon College CCS',
         keywords: 'PRISM About, about PRISM, PRISM platform, PRISM features'
       }
     }
