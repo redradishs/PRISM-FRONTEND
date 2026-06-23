@@ -220,10 +220,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
           switch (data.type) {
             case 'connected':
-              console.log('Real-time connection established.');
+              // console.log('Real-time connection established.');
               break;
             case 'update_detected':
-              console.log('Real-time update detected. Fetching latest data...');
+              // console.log('Real-time update detected. Fetching latest data...');
               this.getOnGoingAssessments(this.userId);
               this.getScheduledAssessments(this.userId);
               break;

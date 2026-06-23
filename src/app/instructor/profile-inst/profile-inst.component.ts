@@ -582,7 +582,7 @@ export class ProfileInstComponent implements OnInit {
 
 
   formatResolution(resolution: string): string {
-    console.log('Resolution:', resolution);
+    // console.log('Resolution:', resolution);
     const resolutionMap: { [key: string]: string } = {
       'warning_issued': 'Warning Issued',
       'student_banned': 'Student Banned',

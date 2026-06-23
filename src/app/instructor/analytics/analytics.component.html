@@ -80,13 +80,13 @@
 
                 <div class="analytics-toolbar">
                     <div class="toolbar-tabs">
-                        <button (click)="onTabChange('platform')"
-                            class="toolbar-tab" [class.toolbar-tab--active]="mobileTab === 'platform'">
+                        <button (click)="onTabChange('platform')" class="toolbar-tab"
+                            [class.toolbar-tab--active]="mobileTab === 'platform'">
                             <i class="fas fa-chart-simple"></i>
                             <span>Platform Overview</span>
                         </button>
-                        <button (click)="onTabChange('individual')"
-                            class="toolbar-tab" [class.toolbar-tab--active]="mobileTab === 'individual'">
+                        <button (click)="onTabChange('individual')" class="toolbar-tab"
+                            [class.toolbar-tab--active]="mobileTab === 'individual'">
                             <i class="fas fa-chart-line"></i>
                             <span>Individual Class</span>
                         </button>
@@ -116,8 +116,7 @@
                             </select>
                         </div>
 
-                        <button class="toolbar-export-btn" (click)="exportPDFReport()"
-                            [disabled]="!canExport"
+                        <button class="toolbar-export-btn" (click)="exportPDFReport()" [disabled]="!canExport"
                             [class.toolbar-export-btn--disabled]="!canExport">
                             <i class="fa-solid fa-download"></i>
                             <span>Export PDF</span>
@@ -269,10 +268,12 @@
                         <div *ngIf="overallClassPerformanceData.length === 0" class="empty-state">
                             <div class="flex flex-col items-center justify-center py-12 px-6">
                                 <div class="relative mb-6">
-                                    <div class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
+                                    <div
+                                        class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
                                         <i class="fas fa-chart-bar text-3xl text-indigo-400"></i>
                                     </div>
-                                    <div class="absolute -top-1 -right-1 w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center">
+                                    <div
+                                        class="absolute -top-1 -right-1 w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center">
                                         <i class="fas fa-search text-xs text-yellow-600"></i>
                                     </div>
                                 </div>
@@ -296,8 +297,7 @@
                         <div class="class-performance-comparison">
                             <h2 class="table-title">Topic Analysis</h2>
 
-                            <div class="item-cont item-cont--top"
-                                *ngFor="let t of topTopics">
+                            <div class="item-cont item-cont--top" *ngFor="let t of topTopics">
                                 <div class="upper">
                                     <p class="title">{{t.categoryName}}</p>
                                     <p class="percentage percentage--top">{{t.percentage}}%</p>
@@ -337,8 +337,7 @@
                         <div class="class-performance-comparison">
                             <h2 class="table-title">Commonly Missed Topics</h2>
 
-                            <div class="item-cont item-cont--missed"
-                                *ngFor="let m of leastTopics">
+                            <div class="item-cont item-cont--missed" *ngFor="let m of leastTopics">
                                 <div class="upper">
                                     <p class="title">{{m.categoryName}}</p>
                                     <p class="percentage percentage--missed">{{m.percentage}}%</p>
@@ -475,10 +474,12 @@
                         <div *ngIf="!performanceTrendData?.trends?.length" class="empty-state">
                             <div class="flex flex-col items-center justify-center py-12 px-6">
                                 <div class="relative mb-6">
-                                    <div class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
+                                    <div
+                                        class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
                                         <i class="fas fa-chart-line text-3xl text-indigo-400"></i>
                                     </div>
-                                    <div class="absolute -top-1 -right-1 w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center">
+                                    <div
+                                        class="absolute -top-1 -right-1 w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center">
                                         <i class="fas fa-search text-xs text-yellow-600"></i>
                                     </div>
                                 </div>
@@ -656,10 +657,12 @@
                         <div *ngIf="!performers || performers.length === 0" class="empty-state">
                             <div class="flex flex-col items-center justify-center py-12 px-6">
                                 <div class="relative mb-6">
-                                    <div class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
+                                    <div
+                                        class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
                                         <i class="fas fa-clipboard-list text-3xl text-indigo-400"></i>
                                     </div>
-                                    <div class="absolute -top-1 -right-1 w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center">
+                                    <div
+                                        class="absolute -top-1 -right-1 w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center">
                                         <i class="fas fa-search text-xs text-yellow-600"></i>
                                     </div>
                                 </div>
@@ -715,10 +718,12 @@
                             <div *ngIf="!topPerformers || topPerformers.length === 0" class="empty-state">
                                 <div class="flex flex-col items-center justify-center py-12 px-6">
                                     <div class="relative mb-6">
-                                        <div class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
+                                        <div
+                                            class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
                                             <i class="fas fa-trophy text-3xl text-indigo-400"></i>
                                         </div>
-                                        <div class="absolute -top-1 -right-1 w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center">
+                                        <div
+                                            class="absolute -top-1 -right-1 w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center">
                                             <i class="fas fa-search text-xs text-yellow-600"></i>
                                         </div>
                                     </div>
@@ -769,17 +774,21 @@
                                 </div>
                             </div>
 
-                            <div *ngIf="(!leastPerformers || leastPerformers.length === 0) && topPerformers?.length > 0" class="empty-state">
+                            <div *ngIf="(!leastPerformers || leastPerformers.length === 0) && topPerformers?.length > 0"
+                                class="empty-state">
                                 <div class="flex flex-col items-center justify-center py-12 px-6">
                                     <div class="relative mb-6">
-                                        <div class="w-20 h-20 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center">
+                                        <div
+                                            class="w-20 h-20 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center">
                                             <i class="fas fa-check-circle text-3xl text-green-400"></i>
                                         </div>
-                                        <div class="absolute -top-1 -right-1 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                                        <div
+                                            class="absolute -top-1 -right-1 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
                                             <i class="fas fa-thumbs-up text-xs text-green-600"></i>
                                         </div>
                                     </div>
-                                    <h3 class="text-xl font-semibold text-gray-800 mb-2">All Students Performing Well</h3>
+                                    <h3 class="text-xl font-semibold text-gray-800 mb-2">All Students Performing Well
+                                    </h3>
                                     <p class="text-gray-500 text-center max-w-md leading-relaxed">
                                         No students currently need attention in this class for the selected time period.
                                         Your students are performing well across all assessments.
@@ -790,13 +799,16 @@
                                     </div>
                                 </div>
                             </div>
-                            <div *ngIf="(!leastPerformers || leastPerformers.length === 0) && (!topPerformers || topPerformers.length === 0)" class="empty-state">
+                            <div *ngIf="(!leastPerformers || leastPerformers.length === 0) && (!topPerformers || topPerformers.length === 0)"
+                                class="empty-state">
                                 <div class="flex flex-col items-center justify-center py-12 px-6">
                                     <div class="relative mb-6">
-                                        <div class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
+                                        <div
+                                            class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
                                             <i class="fas fa-users text-3xl text-indigo-400"></i>
                                         </div>
-                                        <div class="absolute -top-1 -right-1 w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center">
+                                        <div
+                                            class="absolute -top-1 -right-1 w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center">
                                             <i class="fas fa-search text-xs text-yellow-600"></i>
                                         </div>
                                     </div>
@@ -902,16 +914,19 @@
                         <div *ngIf="!performanceDistribution?.performanceRanges" class="empty-state">
                             <div class="flex flex-col items-center justify-center py-12 px-6">
                                 <div class="relative mb-6">
-                                    <div class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
+                                    <div
+                                        class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
                                         <i class="fas fa-chart-bar text-3xl text-indigo-400"></i>
                                     </div>
-                                    <div class="absolute -top-1 -right-1 w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center">
+                                    <div
+                                        class="absolute -top-1 -right-1 w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center">
                                         <i class="fas fa-search text-xs text-yellow-600"></i>
                                     </div>
                                 </div>
                                 <h3 class="text-xl font-semibold text-gray-800 mb-2">No Distribution Data</h3>
                                 <p class="text-gray-500 text-center max-w-md leading-relaxed">
-                                    There is no performance distribution data available for this class in the selected time period.
+                                    There is no performance distribution data available for this class in the selected
+                                    time period.
                                     Distribution will populate once students complete assessments.
                                 </p>
                                 <div class="mt-6 flex items-center space-x-2 text-sm text-gray-400">
@@ -922,238 +937,214 @@
                         </div>
 
                         <ng-container *ngIf="performanceDistribution?.performanceRanges">
-                        <div class="progress-students grade-a">
-                            <div class="progress-student">
-                                <div class="left-side">
-                                    <p class="row-ttl">A (90 - 100%) </p>
-                                    <p class="row-desc">{{performanceDistribution?.performanceRanges?.excellent?.count >
-                                        1 ? performanceDistribution?.performanceRanges?.excellent?.count + ' students' :
-                                        performanceDistribution?.performanceRanges?.excellent?.count + ' student' }}
+                            <div class="progress-students grade-a">
+                                <div class="progress-student">
+                                    <div class="left-side">
+                                        <p class="row-ttl">A (90 - 100%) </p>
+                                        <p class="row-desc">
+                                            {{performanceDistribution?.performanceRanges?.excellent?.count >
+                                            1 ? performanceDistribution?.performanceRanges?.excellent?.count + '
+                                            students' :
+                                            performanceDistribution?.performanceRanges?.excellent?.count + ' student' }}
 
-                                        ({{performanceDistribution?.performanceRanges?.excellent?.percentage}}%)</p>
+                                            ({{performanceDistribution?.performanceRanges?.excellent?.percentage}}%)</p>
+                                    </div>
+
+                                    <div class="right-side">
+                                        <span
+                                            class="row-span">{{performanceDistribution?.performanceRanges?.excellent?.count
+                                            > 1 ? performanceDistribution?.performanceRanges?.excellent?.count + '
+                                            students'
+                                            : performanceDistribution?.performanceRanges?.excellent?.count + ' student'
+                                            }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-student-progress"
+                                        [style.width.%]="performanceDistribution?.performanceRanges?.excellent?.percentage || 0">
+                                    </div>
                                 </div>
 
-                                <div class="right-side">
+                                <div class="list-of-stud">
                                     <span
-                                        class="row-span">{{performanceDistribution?.performanceRanges?.excellent?.count
-                                        > 1 ? performanceDistribution?.performanceRanges?.excellent?.count + ' students'
-                                        : performanceDistribution?.performanceRanges?.excellent?.count + ' student' }}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="progress-bar-container">
-                                <div class="progress-student-progress"
-                                    [style.width.%]="performanceDistribution?.performanceRanges?.excellent?.percentage || 0">
+                                        *ngFor="let e of performanceDistribution?.performanceRanges?.excellent?.students">{{e.name}}</span>
                                 </div>
                             </div>
 
-                            <div class="list-of-stud">
-                                <span
-                                    *ngFor="let e of performanceDistribution?.performanceRanges?.excellent?.students">{{e.name}}</span>
-                            </div>
-                        </div>
+                            <div class="progress-students grade-b">
+                                <div class="progress-student">
+                                    <div class="left-side">
+                                        <p class="row-ttl">B (80 - 89%) </p>
+                                        <p class="row-desc">
+                                            {{performanceDistribution?.performanceRanges?.veryGood?.count >
+                                            1 ? performanceDistribution?.performanceRanges?.veryGood?.count + '
+                                            students' :
+                                            performanceDistribution?.performanceRanges?.veryGood?.count + ' student' }}
 
-                        <div class="progress-students grade-b">
-                            <div class="progress-student">
-                                <div class="left-side">
-                                    <p class="row-ttl">B (80 - 89%) </p>
-                                    <p class="row-desc">{{performanceDistribution?.performanceRanges?.veryGood?.count >
-                                        1 ? performanceDistribution?.performanceRanges?.veryGood?.count + ' students' :
-                                        performanceDistribution?.performanceRanges?.veryGood?.count + ' student' }}
+                                            ({{performanceDistribution?.performanceRanges?.veryGood?.percentage}}%)</p>
+                                    </div>
 
-                                        ({{performanceDistribution?.performanceRanges?.veryGood?.percentage}}%)</p>
+                                    <div class="right-side">
+                                        <span
+                                            class="row-span">{{performanceDistribution?.performanceRanges?.veryGood?.count
+                                            > 1 ? performanceDistribution?.performanceRanges?.veryGood?.count + '
+                                            students'
+                                            : performanceDistribution?.performanceRanges?.veryGood?.count + ' student'
+                                            }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-student-progress"
+                                        [style.width.%]="performanceDistribution?.performanceRanges?.veryGood?.percentage || 0">
+                                    </div>
                                 </div>
 
-                                <div class="right-side">
-                                    <span class="row-span">{{performanceDistribution?.performanceRanges?.veryGood?.count
-                                        > 1 ? performanceDistribution?.performanceRanges?.veryGood?.count + ' students'
-                                        : performanceDistribution?.performanceRanges?.veryGood?.count + ' student' }}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="progress-bar-container">
-                                <div class="progress-student-progress"
-                                    [style.width.%]="performanceDistribution?.performanceRanges?.veryGood?.percentage || 0">
-                                </div>
-                            </div>
-
-                            <div class="list-of-stud">
-                                <span
-                                    *ngFor="let e of performanceDistribution?.performanceRanges?.veryGood?.students">{{e.name}}</span>
-                            </div>
-                        </div>
-
-                        <div class="progress-students grade-c">
-                            <div class="progress-student">
-                                <div class="left-side">
-                                    <p class="row-ttl">C (70 - 79%) </p>
-                                    <p class="row-desc">{{performanceDistribution?.performanceRanges?.good?.count > 1 ?
-                                        performanceDistribution?.performanceRanges?.good?.count + ' students' :
-                                        performanceDistribution?.performanceRanges?.good?.count + ' student' }}
-
-                                        ({{performanceDistribution?.performanceRanges?.good?.percentage}}%)</p>
-                                </div>
-
-                                <div class="right-side">
-                                    <span class="row-span">{{performanceDistribution?.performanceRanges?.good?.count > 1
-                                        ? performanceDistribution?.performanceRanges?.good?.count + ' students' :
-                                        performanceDistribution?.performanceRanges?.good?.count + ' student' }}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="progress-bar-container">
-                                <div class="progress-student-progress"
-                                    [style.width.%]="performanceDistribution?.performanceRanges?.good?.percentage || 0">
-                                </div>
-                            </div>
-
-                            <div class="list-of-stud">
-                                <span
-                                    *ngFor="let e of performanceDistribution?.performanceRanges?.good?.students">{{e.name}}</span>
-                            </div>
-                        </div>
-
-                        <div class="progress-students grade-d">
-                            <div class="progress-student">
-                                <div class="left-side">
-                                    <p class="row-ttl">D (60 - 69%) </p>
-                                    <p class="row-desc">
-                                        {{performanceDistribution?.performanceRanges?.satisfactory?.count > 1 ?
-                                        performanceDistribution?.performanceRanges?.satisfactory?.count + ' students' :
-                                        performanceDistribution?.performanceRanges?.satisfactory?.count + ' student' }}
-                                        ({{performanceDistribution?.performanceRanges?.satisfactory?.percentage}}%)</p>
-                                </div>
-
-                                <div class="right-side">
+                                <div class="list-of-stud">
                                     <span
-                                        class="row-span">{{performanceDistribution?.performanceRanges?.satisfactory?.count
-                                        > 1 ? performanceDistribution?.performanceRanges?.satisfactory?.count + '
-                                        students' : performanceDistribution?.performanceRanges?.satisfactory?.count + '
-                                        student' }}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="progress-bar-container">
-                                <div class="progress-student-progress"
-                                    [style.width.%]="performanceDistribution?.performanceRanges?.satisfactory?.percentage || 0">
+                                        *ngFor="let e of performanceDistribution?.performanceRanges?.veryGood?.students">{{e.name}}</span>
                                 </div>
                             </div>
 
-                            <div class="list-of-stud">
-                                <span
-                                    *ngFor="let e of performanceDistribution?.performanceRanges?.satisfactory?.students">{{e.name}}</span>
-                            </div>
-                        </div>
+                            <div class="progress-students grade-c">
+                                <div class="progress-student">
+                                    <div class="left-side">
+                                        <p class="row-ttl">C (70 - 79%) </p>
+                                        <p class="row-desc">{{performanceDistribution?.performanceRanges?.good?.count >
+                                            1 ?
+                                            performanceDistribution?.performanceRanges?.good?.count + ' students' :
+                                            performanceDistribution?.performanceRanges?.good?.count + ' student' }}
 
-                        <div class="progress-students grade-e">
-                            <div class="progress-student">
-                                <div class="left-side">
-                                    <p class="row-ttl">E (50 - 59%) </p>
-                                    <p class="row-desc">
-                                        {{performanceDistribution?.performanceRanges?.needsImprovement?.count > 1 ?
-                                        performanceDistribution?.performanceRanges?.needsImprovement?.count + '
-                                        students' : performanceDistribution?.performanceRanges?.needsImprovement?.count
-                                        + ' student' }}
-                                        ({{performanceDistribution?.performanceRanges?.needsImprovement?.percentage}}%)
-                                    </p>
+                                            ({{performanceDistribution?.performanceRanges?.good?.percentage}}%)</p>
+                                    </div>
+
+                                    <div class="right-side">
+                                        <span class="row-span">{{performanceDistribution?.performanceRanges?.good?.count
+                                            > 1
+                                            ? performanceDistribution?.performanceRanges?.good?.count + ' students' :
+                                            performanceDistribution?.performanceRanges?.good?.count + ' student' }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-student-progress"
+                                        [style.width.%]="performanceDistribution?.performanceRanges?.good?.percentage || 0">
+                                    </div>
                                 </div>
 
-                                <div class="right-side">
+                                <div class="list-of-stud">
                                     <span
-                                        class="row-span">{{performanceDistribution?.performanceRanges?.needsImprovement?.count
-                                        > 1 ? performanceDistribution?.performanceRanges?.needsImprovement?.count + '
-                                        students' : performanceDistribution?.performanceRanges?.needsImprovement?.count
-                                        + ' student' }}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="progress-bar-container">
-                                <div class="progress-student-progress"
-                                    [style.width.%]="performanceDistribution?.performanceRanges?.needsImprovement?.percentage || 0">
+                                        *ngFor="let e of performanceDistribution?.performanceRanges?.good?.students">{{e.name}}</span>
                                 </div>
                             </div>
 
-                            <div class="list-of-stud">
-                                <span
-                                    *ngFor="let e of performanceDistribution?.performanceRanges?.needsImprovement?.students">{{e.name}}</span>
-                            </div>
-                        </div>
+                            <div class="progress-students grade-d">
+                                <div class="progress-student">
+                                    <div class="left-side">
+                                        <p class="row-ttl">D (60 - 69%) </p>
+                                        <p class="row-desc">
+                                            {{performanceDistribution?.performanceRanges?.satisfactory?.count > 1 ?
+                                            performanceDistribution?.performanceRanges?.satisfactory?.count + '
+                                            students' :
+                                            performanceDistribution?.performanceRanges?.satisfactory?.count + ' student'
+                                            }}
+                                            ({{performanceDistribution?.performanceRanges?.satisfactory?.percentage}}%)
+                                        </p>
+                                    </div>
 
-                        <div class="progress-students grade-f">
-                            <div class="progress-student">
-                                <div class="left-side">
-                                    <p class="row-ttl">F (0 - 49%) </p>
-                                    <p class="row-desc">{{performanceDistribution?.performanceRanges?.poor?.count > 1 ?
-                                        performanceDistribution?.performanceRanges?.poor?.count + ' students' :
-                                        performanceDistribution?.performanceRanges?.poor?.count + ' student' }}
-
-                                        ({{performanceDistribution?.performanceRanges?.poor?.percentage}}%)</p>
+                                    <div class="right-side">
+                                        <span
+                                            class="row-span">{{performanceDistribution?.performanceRanges?.satisfactory?.count
+                                            > 1 ? performanceDistribution?.performanceRanges?.satisfactory?.count + '
+                                            students' : performanceDistribution?.performanceRanges?.satisfactory?.count
+                                            + '
+                                            student' }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-student-progress"
+                                        [style.width.%]="performanceDistribution?.performanceRanges?.satisfactory?.percentage || 0">
+                                    </div>
                                 </div>
 
-                                <div class="right-side">
-                                    <span class="row-span">{{performanceDistribution?.performanceRanges?.poor?.count > 1
-                                        ? performanceDistribution?.performanceRanges?.poor?.count + ' students' :
-                                        performanceDistribution?.performanceRanges?.poor?.count + ' student' }}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="progress-bar-container">
-                                <div class="progress-student-progress"
-                                    [style.width.%]="performanceDistribution?.performanceRanges?.poor?.percentage || 0">
+                                <div class="list-of-stud">
+                                    <span
+                                        *ngFor="let e of performanceDistribution?.performanceRanges?.satisfactory?.students">{{e.name}}</span>
                                 </div>
                             </div>
 
-                            <div class="list-of-stud">
-                                <span
-                                    *ngFor="let e of performanceDistribution?.performanceRanges?.poor?.students">{{e.name}}</span>
+                            <div class="progress-students grade-e">
+                                <div class="progress-student">
+                                    <div class="left-side">
+                                        <p class="row-ttl">E (50 - 59%) </p>
+                                        <p class="row-desc">
+                                            {{performanceDistribution?.performanceRanges?.needsImprovement?.count > 1 ?
+                                            performanceDistribution?.performanceRanges?.needsImprovement?.count + '
+                                            students' :
+                                            performanceDistribution?.performanceRanges?.needsImprovement?.count
+                                            + ' student' }}
+                                            ({{performanceDistribution?.performanceRanges?.needsImprovement?.percentage}}%)
+                                        </p>
+                                    </div>
+
+                                    <div class="right-side">
+                                        <span
+                                            class="row-span">{{performanceDistribution?.performanceRanges?.needsImprovement?.count
+                                            > 1 ? performanceDistribution?.performanceRanges?.needsImprovement?.count +
+                                            '
+                                            students' :
+                                            performanceDistribution?.performanceRanges?.needsImprovement?.count
+                                            + ' student' }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-student-progress"
+                                        [style.width.%]="performanceDistribution?.performanceRanges?.needsImprovement?.percentage || 0">
+                                    </div>
+                                </div>
+
+                                <div class="list-of-stud">
+                                    <span
+                                        *ngFor="let e of performanceDistribution?.performanceRanges?.needsImprovement?.students">{{e.name}}</span>
+                                </div>
                             </div>
-                        </div>
+
+                            <div class="progress-students grade-f">
+                                <div class="progress-student">
+                                    <div class="left-side">
+                                        <p class="row-ttl">F (0 - 49%) </p>
+                                        <p class="row-desc">{{performanceDistribution?.performanceRanges?.poor?.count >
+                                            1 ?
+                                            performanceDistribution?.performanceRanges?.poor?.count + ' students' :
+                                            performanceDistribution?.performanceRanges?.poor?.count + ' student' }}
+
+                                            ({{performanceDistribution?.performanceRanges?.poor?.percentage}}%)</p>
+                                    </div>
+
+                                    <div class="right-side">
+                                        <span class="row-span">{{performanceDistribution?.performanceRanges?.poor?.count
+                                            > 1
+                                            ? performanceDistribution?.performanceRanges?.poor?.count + ' students' :
+                                            performanceDistribution?.performanceRanges?.poor?.count + ' student' }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-student-progress"
+                                        [style.width.%]="performanceDistribution?.performanceRanges?.poor?.percentage || 0">
+                                    </div>
+                                </div>
+
+                                <div class="list-of-stud">
+                                    <span
+                                        *ngFor="let e of performanceDistribution?.performanceRanges?.poor?.students">{{e.name}}</span>
+                                </div>
+                            </div>
                         </ng-container>
                     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 </div>
             </main>
         </div>

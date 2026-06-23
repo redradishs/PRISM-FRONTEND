@@ -174,7 +174,7 @@
                             <i class="fas {{getModeIcon(assessment.type)}}"></i>
                         </div>
                         <div class="list-main">
-                            <!-- desktop hidden on mobile -->
+                            <!-- desktop view h on mobile -->
                             <div class="list-header-main">
                                 <span class="list-title">{{ assessment.title }}</span>
                                 <span class="badge badge-{{assessment.type | lowercase}}">{{assessment.type}}</span>
@@ -183,14 +183,12 @@
                                     <span>{{assessment.status | titlecase}}</span>
                                 </span>
                             </div>
-                            <!-- for mobile hidden on desktop -->
+                            <!-- mobile h on desktop -->
                             <div class="list-header-mobile">
                                 <div style="display: flex; flex-direction: column; gap: 6px; flex: 1;">
-                                    <!-- Top row: Title and Status Date -->
                                     <div
                                         style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
                                         <span class="list-title">{{ assessment.title }}</span>
-                                        <!-- Status date information for mobile - upper right -->
                                         <span *ngIf="assessment.status === 'completed'" class="mobile-status-info">
                                             <i class="fas fa-check-circle"></i>
                                             Completed: {{ assessment.dueDate | date:'MMM d, y' }}
@@ -204,7 +202,6 @@
                                             Due {{assessment.dueDate | date:'MMM d, y, h:mm a':'PHT'}}
                                         </span>
                                     </div>
-                                    <!-- Bottom row: Badges -->
                                     <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
                                         <span
                                             class="badge badge-{{assessment.type | lowercase}}">{{assessment.type}}</span>

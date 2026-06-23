@@ -476,7 +476,6 @@
                 </div>
 
 
-                <!-- Question Examples Section -->
                 <div class="qtype-container">
                     <!-- All Questions in Chronological Order -->
                     <div class="qtype-card" [class.editing]="isEditing(question.id)"
@@ -730,7 +729,6 @@
                     </div>
                 </div>
 
-                <!-- Bottom Spacing for Comfortable Editing -->
                 <div *ngIf="!isGenerating && questions.length > 0" class="questions-bottom-space"></div>
 
                 <div class="fab-container" *ngIf="questions.length > 0">
@@ -786,10 +784,8 @@
     </div>
 </div>
 
-<!-- Compact Add Question Modal -->
 <div class="modal-overlay" *ngIf="showAddDialog" (click)="showAddDialog = false">
     <div class="modal-container" (click)="$event.stopPropagation()">
-        <!-- Compact Header -->
         <div class="modal-header">
             <div class="modal-header-content">
                 <h3>Add Questions</h3>
@@ -799,13 +795,11 @@
             </button>
         </div>
 
-        <!-- Header Summary -->
         <div class="compact-summary">
             <span class="summary-text">Select your Question Type Template and modify the quanity to be added on your
                 Assessment.</span>
         </div>
 
-        <!-- Question Type Grid -->
         <div class="modal-body">
             <div class="question-type-grid">
                 <div class="question-type-item" *ngFor="let type of questionTypes"
@@ -823,7 +817,6 @@
                         </div>
 
                         <div class="type-actions">
-                            <!-- Quantity Controls (shown when selected) -->
                             <div class="quantity-controls" *ngIf="newQuestion.selectedTypes[type.value]"
                                 (click)="$event.stopPropagation()">
                                 <button type="button" class="qty-btn" (click)="decreaseQuantity(type.value)"
@@ -838,7 +831,6 @@
                                 </button>
                             </div>
 
-                            <!-- Checkbox -->
                             <div class="type-checkbox">
                                 <input type="checkbox" [id]="'type-' + type.value"
                                     [checked]="newQuestion.selectedTypes[type.value]"
@@ -855,7 +847,6 @@
             </div>
         </div>
 
-        <!-- Action Buttons -->
         <div class="modal-footer">
             <button class="action-btn cancel-btn" (click)="showAddDialog = false">
                 Cancel

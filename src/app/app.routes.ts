@@ -10,6 +10,7 @@ import { JoinAssessmentComponent } from './adons/join-assessment/join-assessment
 import { JoinClassComponent } from './adons/join-class/join-class.component';
 import { IndexComponent } from './adons/index/index.component';
 import { SetpasswordComponent } from './adons/setpassword/setpassword.component';
+import { AboutComponent } from './adons/about/about.component';
 
 export const routes: Routes = [
   {
@@ -58,6 +59,17 @@ export const routes: Routes = [
         title: 'PRISM | Reset Password',
         description: 'Reset your PRISM account password - Secure password recovery for Gordon College CCS students and instructors',
         keywords: 'PRISM Reset, PRISM Student, PRISM password reset, forgot password, account recovery, PRISM'
+      }
+    }
+  },
+  {
+    path: 'about',
+    component: AboutComponent,
+    data: {
+      seo: {
+        title: 'PRISM | About',
+        description: 'Learn more about PRISM, the AI-powered assessment platform by Gordon College CCS',
+        keywords: 'PRISM About, about PRISM, PRISM platform, PRISM features'
       }
     }
   },

@@ -409,16 +409,6 @@ export class ManageComponent implements OnInit {
     })
   }
 
-  duplicateAssessment(assessment: Assessment) {
-    // TODO: Implement duplication logic
-    console.log('Duplicating assessment:', assessment.assessmentId);
-  }
-
-  deleteAssessment(assessment: Assessment) {
-    // TODO: Implement deletion logic
-    console.log('Deleting assessment:', assessment.assessmentId);
-  }
-
   addStudent() {
     this.router.navigate(['instructor/students']);
   }
