@@ -40,3 +40,12 @@
     <priority>0.6</priority>
   </url>
 </urlset>
+
+  <!-- IMRAD Research (Further Research Details) -->
+<url>
+    <loc>https://prismgcccs.app/imrad-research</loc>
+    <lastmod>2026-06-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.2</priority>
+  </url>
+</urlset>
