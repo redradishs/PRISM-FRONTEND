@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
   <!-- Main Landing Page (redirects to login) -->
   <url>
     <loc>https://prismgcccs.app/</loc>
@@ -39,13 +40,13 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
-</urlset>
 
-  <!-- IMRAD Research (Further Research Details) -->
-<url>
+  <!-- IMRAD Research -->
+  <url>
     <loc>https://prismgcccs.app/imrad-research</loc>
     <lastmod>2026-06-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.2</priority>
   </url>
+
 </urlset>
