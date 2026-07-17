@@ -61,25 +61,27 @@ The instructor's command center. A welcome header with quick-action buttons ("Cr
 
 ### Classes Page (Instructor)
 
-![Instructor Classes]<img width="1898" height="938" alt="Screenshot 2026-07-14 111728" src="https://github.com/user-attachments/assets/d2b17009-325a-450d-a704-b907a5fb0e6f" />
+<img width="1898" height="938" alt="Screenshot 2026-07-14 111728" src="https://github.com/user-attachments/assets/d2b17009-325a-450d-a704-b907a5fb0e6f" />
 
 Instructors can view the classes they own. Instructors can see the basic data of the class, the statistics. A "Create Class" button opens a modal for entering creating a class. From this page the Instructor can click a student name and view their past submissions *(src/app/instructor/students/)*
 
 ### Assessment History (Instructor)
 
-![Assessment History]<img width="1895" height="942" alt="Screenshot 2026-07-14 111742" src="https://github.com/user-attachments/assets/4df69a6c-3c10-4c8d-9cd0-07db4e73f24f" />
+<img width="1895" height="942" alt="Screenshot 2026-07-14 111742" src="https://github.com/user-attachments/assets/4df69a6c-3c10-4c8d-9cd0-07db4e73f24f" />
 A full history of all the Instructor Assigned Assessments with status tabs (All, Scheduled, Ongoing, Completed). Each assessment row displays the type icon, title, mode badge, status badge, category tag, metadata (questions, time limit, class, score, time spent, remaining attempts), and a CTA button to either view the result or start the assessment. Supports search, mode filtering, sorting, and infinite scroll pagination. *(src/app/instructor/manage/)*
 
 ### AI Assessment Generation
 
-![Assessment Generation]<img width="1899" height="944" alt="Screenshot 2026-07-14 111815" src="https://github.com/user-attachments/assets/766bfc36-f1d4-4576-9299-a37e2692216f" />
+<img width="1899" height="944" alt="Screenshot 2026-07-14 111815" src="https://github.com/user-attachments/assets/766bfc36-f1d4-4576-9299-a37e2692216f" />
 
 A two-step AI-powered workflow. **Step 1:** Instructors enter a topic, select difficulty, choose question types with per-type quantity controls, upload reference materials (PDF/DOCX/PPTX), pick an AI model, and generate. A real-time progress animation shows "PRISM AI is generating questions..." with bouncing dots. **Step 2:** Review generated questions organized by type, edit inline, add manual questions, then save. A floating action button provides quick access to sort, delete, generate more, or save. *(src/app/instructor/final-generate-assessment/)*
 
 ### Assessment Results (Instructor)
 
-![Instructor Result]<img width="1896" height="941" alt="Screenshot 2026-07-14 111854" src="https://github.com/user-attachments/assets/2a5d661f-898d-4abf-ba1e-d297a6c28b0d" />
+<img width="1896" height="941" alt="Screenshot 2026-07-14 111854" src="https://github.com/user-attachments/assets/2a5d661f-898d-4abf-ba1e-d297a6c28b0d" />
+
 Class-wide results view with a PRISM Insights card showing AI-generated performance analysis. The class overview displays total students, average/highest/lowest scores with animated rolling numbers. A student list table includes search, status filter, and sort options — each row shows name, score (color-coded), submission status, and integrity rating (Clean/Warning/Cheated). A detailed question analysis table breaks down success rates per question with progress bars. Instructors can start, end, extend assessments, or export results. *(src/app/instructor/result/)*
+
 ---
 
 ## Getting Started
