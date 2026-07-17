@@ -8,8 +8,8 @@ export class AuthInterceptor implements HttpInterceptor {
     constructor(private authService: AuthService) { }
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        // sklip nebius ai
-        if (req.url.includes('api.studio.nebius.com') || req.url.includes('prism-ai-worker.asherjamesmayson.workers.dev') || req.url.includes('http://127.0.0.1:8787/api')) {
+        // skip AI worker endpoints
+        if (req.url.includes('prism-ai-worker.asherjamesmayson.workers.dev') || req.url.includes('http://127.0.0.1:8787/api')) {
             return next.handle(req);
         }
 

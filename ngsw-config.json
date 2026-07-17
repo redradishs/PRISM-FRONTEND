@@ -43,18 +43,6 @@
         "maxAge": "1h",
         "timeout": "15s"
       }
-    },
-    {
-      "name": "ai-api-bypass",
-      "urls": [
-        "https://api.studio.nebius.com/**"
-      ],
-      "cacheConfig": {
-        "strategy": "performance",
-        "maxSize": 0,
-        "maxAge": "0u",
-        "timeout": "30s"
-      }
     }
   ],
   "navigationUrls": [

@@ -46,7 +46,6 @@ export class SidebarComponent {
     { icon: 'fas fa-square-check', label: 'Assign', id: 'assessment', route: '/instructor/assign' },
     // { icon: 'fas fa-tasks', label: 'Assessment', id: 'assessment', route: '/instructor/assessment' }, this is the assessment route
     // { icon: 'fas fa-star', label: 'Generate', id: 'Generate', route: '/instructor/generate' }, this is the original generate
-    // { icon: 'fas fa-star', label: 'Create', id: 'Create', route: '/instructor/create' }, this is the new Nebius with AI,
     { icon: 'fas fa-file-circle-plus', label: 'Create', id: 'Create', route: '/instructor/createAssessment' },
     { icon: 'fas fa-user-group', label: 'Coordinator', id: 'coordinator', route: '/instructor/coordinator', coordinatorOnly: true },
     { icon: 'fas fa-user', label: 'Profile', id: 'profile', route: '/instructor/profile' },

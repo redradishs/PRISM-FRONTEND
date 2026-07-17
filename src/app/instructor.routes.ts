@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './instructor/home/home.component';
 import { StudentsComponent } from './instructor/students/students.component';
-import { GenerateAssessmentComponent } from './instructor/generate-assessment/generate-assessment.component';
 import { ResultComponent } from './instructor/result/result.component';
 import { ProfileInstComponent } from './instructor/profile-inst/profile-inst.component';
 import { ResponseReviewComponent } from './instructor/response-review/response-review.component';
@@ -22,7 +21,6 @@ export const INSTRUCTOR_ROUTES: Routes = [
     { path: 'dashboard', component: HomeComponent },
     { path: 'students', component: StudentsComponent },
     { path: 'profile', component: ProfileInstComponent },
-    { path: 'create', component: GenerateAssessmentComponent },
     { path: 'createAssessment', component: FinalGenerateAssessmentComponent },
     { path: 'assign', component: AssignAssessmentComponent },
     { path: 'result', component: ResultComponent },
