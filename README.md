@@ -56,40 +56,30 @@ PRISM is a full-stack educational assessment platform connecting instructors and
 
 ### Instructor Dashboard
 
-![Instructor Dashboard](https://placehold.co/800x450/1e293b/ffffff?text=Instructor+Dashboard)
-
+![Instructor Dashboard]<img width="1895" height="944" alt="Screenshot 2026-07-14 111705" src="https://github.com/user-attachments/assets/7f8bc565-ddfb-4bb3-a9cb-55e43bd81032" />
 The instructor's command center. A welcome header with quick-action buttons ("Create Assessment", "View Classes"), three stat cards showing total students, active assessments, and total classes. Below are ongoing and scheduled assessment cards with progress bars and due dates. A student performance table lists each student's completion count, average score with color-coded badges, and enrolled classes. Class performance bar charts and student distribution pie charts provide visual analytics. *(src/app/instructor/home/)*
 
-### Classes Page (Student)
+### Classes Page (Instructor)
 
-![Student Classes](https://placehold.co/800x450/1e293b/ffffff?text=Student+Classes)
+![Instructor Classes]<img width="1898" height="938" alt="Screenshot 2026-07-14 111728" src="https://github.com/user-attachments/assets/d2b17009-325a-450d-a704-b907a5fb0e6f" />
 
-Students view their enrolled classes in grid or list view. Each class card shows the instructor's name and avatar, the student's current performance percentage, completed vs. total assessment count, nearest due date, and stats (assessments, materials, ongoing). A "Join Class" button opens a modal for entering a class code. A separate "Pending Applications" tab tracks join requests awaiting instructor approval. *(src/app/students/stud-classes/)*
+Instructors can view the classes they own. Instructors can see the basic data of the class, the statistics. A "Create Class" button opens a modal for entering creating a class. From this page the Instructor can click a student name and view their past submissions *(src/app/instructor/students/)*
 
-### Assessment History (Student)
+### Assessment History (Instructor)
 
-![Assessment History](https://placehold.co/800x450/1e293b/ffffff?text=Assessment+History)
-
-A full history of all student assessments with status tabs (All, Scheduled, Ongoing, Completed). Each assessment row displays the type icon, title, mode badge, status badge, category tag, metadata (questions, time limit, class, score, time spent, remaining attempts), and a CTA button to either view the result or start the assessment. Supports search, mode filtering, sorting, and infinite scroll pagination. *(src/app/students/stud-history/)*
+![Assessment History]<img width="1895" height="942" alt="Screenshot 2026-07-14 111742" src="https://github.com/user-attachments/assets/4df69a6c-3c10-4c8d-9cd0-07db4e73f24f" />
+A full history of all the Instructor Assigned Assessments with status tabs (All, Scheduled, Ongoing, Completed). Each assessment row displays the type icon, title, mode badge, status badge, category tag, metadata (questions, time limit, class, score, time spent, remaining attempts), and a CTA button to either view the result or start the assessment. Supports search, mode filtering, sorting, and infinite scroll pagination. *(src/app/instructor/manage/)*
 
 ### AI Assessment Generation
 
-![Assessment Generation](https://placehold.co/800x450/1e293b/ffffff?text=Assessment+Generation)
+![Assessment Generation]<img width="1899" height="944" alt="Screenshot 2026-07-14 111815" src="https://github.com/user-attachments/assets/766bfc36-f1d4-4576-9299-a37e2692216f" />
 
 A two-step AI-powered workflow. **Step 1:** Instructors enter a topic, select difficulty, choose question types with per-type quantity controls, upload reference materials (PDF/DOCX/PPTX), pick an AI model, and generate. A real-time progress animation shows "PRISM AI is generating questions..." with bouncing dots. **Step 2:** Review generated questions organized by type, edit inline, add manual questions, then save. A floating action button provides quick access to sort, delete, generate more, or save. *(src/app/instructor/final-generate-assessment/)*
 
 ### Assessment Results (Instructor)
 
-![Instructor Result](https://placehold.co/800x450/1e293b/ffffff?text=Instructor+Result)
-
+![Instructor Result]<img width="1896" height="941" alt="Screenshot 2026-07-14 111854" src="https://github.com/user-attachments/assets/2a5d661f-898d-4abf-ba1e-d297a6c28b0d" />
 Class-wide results view with a PRISM Insights card showing AI-generated performance analysis. The class overview displays total students, average/highest/lowest scores with animated rolling numbers. A student list table includes search, status filter, and sort options — each row shows name, score (color-coded), submission status, and integrity rating (Clean/Warning/Cheated). A detailed question analysis table breaks down success rates per question with progress bars. Instructors can start, end, extend assessments, or export results. *(src/app/instructor/result/)*
-
-### Assessment Result (Student)
-
-![Student Result](https://placehold.co/800x450/1e293b/ffffff?text=Student+Result)
-
-A comprehensive score card with animated percentage, pass/fail badge, raw score, and progress bars comparing the student's score against the passing score. Below are stat cards (rank, score), performance breakdown by question type with color-coded badges, a ranking & comparison card with circular percentile gauge and class average/top score comparison, and AI performance insights with recommended learning resources. Individual question review cards show correct/incorrect status, correct answers, and AI rectification reasoning for non-objective questions. *(src/app/students/stude-assessmentresult/)*
-
 ---
 
 ## Getting Started
@@ -103,7 +93,7 @@ A comprehensive score card with animated percentage, pass/fail badge, raw score,
 ### Local Setup
 
 ```bash
-git clone https://github.com/your-org/prism-frontend.git
+git clone https://github.com/redradishs/prism-frontend.git
 cd prism-frontend
 npm install --legacy-peer-deps
 cp .env.example .env
@@ -195,4 +185,6 @@ The build output is in `dist/prism_frontend/browser/`. Deployable to any static 
 
 ## License
 
-MIT © 2025 — Built by Gordon College — College of Computer Studies (CCS) under ICTe Solutions.
+MIT © 2025 — Capstone Project for College of Computer Studies (CCS) under ICTe Solutions.
+
+### Gordon College Best in BSIT Capstone Project of the Year
