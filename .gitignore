@@ -12,6 +12,8 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 
 .angular
+.angular/
+/.angular/
 
 # Runtime data
 pids

@@ -31,7 +31,7 @@
     {
       "name": "api-cache-first",
       "urls": [
-        "https://api.prismgcccs.live/**",
+        "https://vps.prismgcccs.live/**",
         "https://prismapi2.onrender.com/**",
         "https://redprismai.vercel.app/**",
         "http://localhost:8000/**",

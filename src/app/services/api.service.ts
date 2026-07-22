@@ -46,8 +46,8 @@ export class ApiService {
 
 
   //VPS 2 SERVER
-  rtUrl = 'https://api.prismgcccs.app/rt';
-  apiUrl = 'https://api.prismgcccs.app/instructor';
+  rtUrl = 'https://vps.prismgcccs.app/rt';
+  apiUrl = 'https://vps.prismgcccs.app/instructor';
 
   //AI SERVER LINUX
   aihostedserver = 'https://prismai.prismgcccs.app';

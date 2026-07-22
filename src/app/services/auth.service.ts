@@ -43,9 +43,9 @@ export class AuthService {
 
 
   //VPS BACKUP
-  private baseUrl = 'https://api.prismgcccs.app/user';
-  private prism_set = 'https://api.prismgcccs.app/settings';
-  private prism_public = 'https://api.prismgcccs.app/public';
+  private baseUrl = 'https://vps.prismgcccs.app/user';
+  private prism_set = 'https://vps.prismgcccs.app/settings';
+  private prism_public = 'https://vps.prismgcccs.app/public';
 
   private tokenKey = 'jwt';
   private currentUserSubject: BehaviorSubject<any> = new BehaviorSubject<any>(

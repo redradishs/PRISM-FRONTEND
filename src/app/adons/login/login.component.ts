@@ -54,6 +54,7 @@ export class LoginComponent implements OnInit {
   enableInstructorRegistration: boolean = false;
   requireEmailVerification: boolean = true;
 
+  isDown: boolean = false;
 
   canInstallPwa: boolean = false;
   pwaInstallLoading: boolean = false;
@@ -164,6 +165,7 @@ export class LoginComponent implements OnInit {
 
       }, error: (error: any) => {
         console.error(error);
+        this.isDown = true;
         this.errorMessage = 'PRISM server is experiencing technical issues. Please try again later.';
       }
     })
