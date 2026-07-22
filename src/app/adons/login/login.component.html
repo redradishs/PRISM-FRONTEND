@@ -110,7 +110,7 @@
                     </button>
                 </div>
 
-                <p *ngIf="allowSignup || !isDown" class="create-account">
+                <p *ngIf="allowSignup && !isDown" class="create-account">
                     Don't have an account? <a (click)="activeTab = 'signup'" class="auth-link">Create an account</a>
                 </p>
                 <p *ngIf="!allowSignup" class="disable-signup">
