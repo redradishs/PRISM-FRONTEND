@@ -62,13 +62,13 @@
 
                 <p *ngIf="isMaintenanceMode" class="maintenance-mode">System is Under Maintenance</p>
 
-                <button type="submit" class="sign-in-btn" [disabled]="loading">
+                <button type="submit" class="sign-in-btn" [disabled]="loading || isDown">
                     <span *ngIf="loading" class="spinner"></span>
                     <span *ngIf="!loading">Sign in</span>
                 </button>
                 <div class="divider">or continue with</div>
 
-                <button type="button" class="button" (click)="loginWithGoogle()" [disabled]="googleLoading">
+                <button type="button" class="button" (click)="loginWithGoogle()" [disabled]="googleLoading || isDown">
                     <span *ngIf="googleLoading" class="spinner"></span>
                     <span *ngIf="!googleLoading">
                         <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid" viewBox="0 0 256 262">
@@ -110,7 +110,7 @@
                     </button>
                 </div>
 
-                <p *ngIf="allowSignup" class="create-account">
+                <p *ngIf="allowSignup || !isDown" class="create-account">
                     Don't have an account? <a (click)="activeTab = 'signup'" class="auth-link">Create an account</a>
                 </p>
                 <p *ngIf="!allowSignup" class="disable-signup">
